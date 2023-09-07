@@ -15,6 +15,12 @@ jobs:
     name: Update SDK Repo
     runs-on: ubuntu-latest
     steps:
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ vars.SSH_KNOWN_HOSTS }}
+    steps:
       - name: Install Java
         uses: actions/setup-java@v3
         with:
@@ -36,5 +42,6 @@ jobs:
       - name: Push SDK
         env: 
           GH_REPO: 'stackitcloud/stackit-sdk-go'
+          GH_TOKEN: ${{ secrets.SDK_PR_TOKEN }}
         run: |
           scripts/sdk-create-pr.sh "oas-bot-${{ github.run_id }}" "Generate services" "Generator: update SDK /services" "Generated from GitHub run ${{ github.run_id }} (${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"

@@ -129,14 +129,6 @@
         },
         "type": "object"
       },
-      "instance.CreateRestoreInstanceResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/instance.Restore"
-          }
-        },
-        "type": "object"
-      },
       "instance.DataPoint": {
         "properties": {
           "timestamp": {
@@ -404,42 +396,6 @@
         },
         "type": "object"
       },
-      "UpdateUserPayload": {
-        "properties": {
-          "database": {
-            "type": "string"
-          },
-          "roles": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "CreateInstanceClonePayload": {
-        "properties": {
-          "instanceId": {
-            "type": "string"
-          },
-          "timestamp": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "RestoreInstancePayload": {
-        "properties": {
-          "backupId": {
-            "type": "string"
-          },
-          "instanceId": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "CreateInstancePayload": {
         "properties": {
           "acl": {
@@ -486,6 +442,17 @@
         ],
         "type": "object"
       },
+      "CloneInstancePayload": {
+        "properties": {
+          "instanceId": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "UpdateInstancePayload": {
         "properties": {
           "acl": {
@@ -524,6 +491,60 @@
           },
           "version": {
             "example": "1.0",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PartialUpdateInstancePayload": {
+        "properties": {
+          "acl": {
+            "$ref": "#/components/schemas/instance.Acl"
+          },
+          "backupSchedule": {
+            "example": "6 6 * * *",
+            "type": "string"
+          },
+          "flavorId": {
+            "example": "1.1",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Following fields are not certain/clear",
+            "type": "object"
+          },
+          "name": {
+            "type": "string"
+          },
+          "options": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "replicas": {
+            "example": 3,
+            "type": "integer"
+          },
+          "storage": {
+            "$ref": "#/components/schemas/instance.Storage"
+          },
+          "version": {
+            "example": "1.0",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "RestoreInstancePayload": {
+        "properties": {
+          "backupId": {
+            "type": "string"
+          },
+          "instanceId": {
             "type": "string"
           }
         },
@@ -569,6 +590,34 @@
         },
         "type": "object"
       },
+      "UpdateUserPayload": {
+        "properties": {
+          "database": {
+            "type": "string"
+          },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "PartialUpdateUserPayload": {
+        "properties": {
+          "database": {
+            "type": "string"
+          },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "GetBackupsResponse": {
         "properties": {
           "count": {
@@ -579,6 +628,52 @@
               "$ref": "#/components/schemas/instance.Backup"
             },
             "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "RestoreInstanceResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/instance.Restore"
+          }
+        },
+        "type": "object"
+      },
+      "GetMetricsResponse": {
+        "properties": {
+          "hosts": {
+            "items": {
+              "$ref": "#/components/schemas/instance.Host"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateInstanceResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/instance.SingleInstance"
+          }
+        },
+        "type": "object"
+      },
+      "GetInstanceRestoresResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/instance.Restore"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "GetBackupResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/instance.Backup"
           }
         },
         "type": "object"
@@ -597,11 +692,16 @@
         },
         "type": "object"
       },
-      "CreateInstanceCloneResponse": {
+      "GetUsersResponse": {
         "properties": {
-          "instanceId": {
-            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
-            "type": "string"
+          "count": {
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/instance.ListUser"
+            },
+            "type": "array"
           }
         },
         "type": "object"
@@ -615,7 +715,7 @@
         },
         "type": "object"
       },
-      "VersionsResponse": {
+      "GetVersionsResponse": {
         "properties": {
           "versions": {
             "example": [
@@ -629,32 +729,19 @@
         },
         "type": "object"
       },
-      "GetInstanceResponse": {
+      "GetUserResponse": {
         "properties": {
           "item": {
-            "$ref": "#/components/schemas/instance.SingleInstance"
+            "$ref": "#/components/schemas/instance.ResponseUser"
           }
         },
         "type": "object"
       },
-      "GetStorageResponse": {
+      "CloneInstanceResponse": {
         "properties": {
-          "storageClasses": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "storageRange": {
-            "$ref": "#/components/schemas/instance.StorageRange"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateInstanceResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/instance.SingleInstance"
+          "instanceId": {
+            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
+            "type": "string"
           }
         },
         "type": "object"
@@ -670,43 +757,10 @@
         },
         "type": "object"
       },
-      "GetBackupResponse": {
+      "GetInstanceResponse": {
         "properties": {
           "item": {
-            "$ref": "#/components/schemas/instance.Backup"
-          }
-        },
-        "type": "object"
-      },
-      "MetricsResponse": {
-        "properties": {
-          "hosts": {
-            "items": {
-              "$ref": "#/components/schemas/instance.Host"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "GetUserResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/instance.ResponseUser"
-          }
-        },
-        "type": "object"
-      },
-      "GetUsersResponse": {
-        "properties": {
-          "count": {
-            "type": "integer"
-          },
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/instance.ListUser"
-            },
-            "type": "array"
+            "$ref": "#/components/schemas/instance.SingleInstance"
           }
         },
         "type": "object"
@@ -719,13 +773,16 @@
         },
         "type": "object"
       },
-      "GetInstanceRestoresResponse": {
+      "GetStorageResponse": {
         "properties": {
-          "items": {
+          "storageClasses": {
             "items": {
-              "$ref": "#/components/schemas/instance.Restore"
+              "type": "string"
             },
             "type": "array"
+          },
+          "storageRange": {
+            "$ref": "#/components/schemas/instance.StorageRange"
           }
         },
         "type": "object"
@@ -1135,6 +1192,103 @@
         "summary": "Get instance",
         "operationId": "GetInstance"
       },
+      "patch": {
+        "description": "Updates a deployment plan\u003cbr/\u003e Note that the time format for the backupSchedule is in UTC",
+        "parameters": [
+          {
+            "description": "project id",
+            "explode": false,
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "instance id",
+            "explode": false,
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartialUpdateInstancePayload"
+              }
+            }
+          },
+          "description": "payload",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateInstanceResponse"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/instance.Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/instance.Error"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/instance.Error"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/instance.Error"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Patch endpoint",
+        "operationId": "PartialUpdateInstance"
+      },
       "put": {
         "description": "Updates a deployment plan\u003cbr/\u003e Note that the time format for the backupSchedule is in UTC",
         "parameters": [
@@ -1488,7 +1642,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateInstanceClonePayload"
+                "$ref": "#/components/schemas/CloneInstancePayload"
               }
             }
           },
@@ -1500,7 +1654,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateInstanceCloneResponse"
+                  "$ref": "#/components/schemas/CloneInstanceResponse"
                 }
               }
             },
@@ -1533,7 +1687,7 @@
           }
         ],
         "summary": "Clone instance",
-        "operationId": "CreateInstanceClone"
+        "operationId": "CloneInstance"
       }
     },
     "/v1/projects/{projectId}/instances/{instanceId}/metrics/cpu": {
@@ -1609,7 +1763,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MetricsResponse"
+                  "$ref": "#/components/schemas/GetMetricsResponse"
                 }
               }
             },
@@ -1728,7 +1882,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MetricsResponse"
+                  "$ref": "#/components/schemas/GetMetricsResponse"
                 }
               }
             },
@@ -1847,7 +2001,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MetricsResponse"
+                  "$ref": "#/components/schemas/GetMetricsResponse"
                 }
               }
             },
@@ -1966,7 +2120,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MetricsResponse"
+                  "$ref": "#/components/schemas/GetMetricsResponse"
                 }
               }
             },
@@ -2085,7 +2239,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MetricsResponse"
+                  "$ref": "#/components/schemas/GetMetricsResponse"
                 }
               }
             },
@@ -2215,7 +2369,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MetricsResponse"
+                  "$ref": "#/components/schemas/GetMetricsResponse"
                 }
               }
             },
@@ -2370,7 +2524,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/instance.CreateRestoreInstanceResponse"
+                  "$ref": "#/components/schemas/RestoreInstanceResponse"
                 }
               }
             },
@@ -2719,6 +2873,97 @@
         "summary": "Get User",
         "operationId": "GetUser"
       },
+      "patch": {
+        "description": "updates user for a mongodb instance",
+        "parameters": [
+          {
+            "description": "project id",
+            "explode": false,
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "instance id",
+            "explode": false,
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "user id",
+            "explode": false,
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartialUpdateUserPayload"
+              }
+            }
+          },
+          "description": "payload",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/instance.Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/instance.Error"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/instance.Error"
+                }
+              }
+            },
+            "description": "Conflict"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Update User",
+        "operationId": "PartialUpdateUser"
+      },
       "put": {
         "description": "updates user for a mongodb instance",
         "parameters": [
@@ -2979,7 +3224,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VersionsResponse"
+                  "$ref": "#/components/schemas/GetVersionsResponse"
                 }
               }
             },

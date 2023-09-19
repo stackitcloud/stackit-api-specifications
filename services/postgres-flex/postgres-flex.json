@@ -371,6 +371,15 @@
         },
         "type": "object"
       },
+      "UpdateBackupSchedulePayload": {
+        "properties": {
+          "backupSchedule": {
+            "example": "6 6 * * *",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "CreateUserPayload": {
         "properties": {
           "roles": {
@@ -385,74 +394,10 @@
         },
         "type": "object"
       },
-      "UpdateBackupSchedulePayload": {
-        "properties": {
-          "backupSchedule": {
-            "example": "6 6 * * *",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "CreateUserResponse": {
         "properties": {
           "item": {
             "$ref": "#/components/schemas/instance.User"
-          }
-        },
-        "type": "object"
-      },
-      "InstancesResponse": {
-        "properties": {
-          "count": {
-            "type": "integer"
-          },
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/instance.ListInstance"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "UserResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/user.ResponseUser"
-          }
-        },
-        "type": "object"
-      },
-      "BackupResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/instance.Backup"
-          }
-        },
-        "type": "object"
-      },
-      "FlavorsResponse": {
-        "properties": {
-          "flavors": {
-            "items": {
-              "$ref": "#/components/schemas/instance.Flavor"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "StoragesResponse": {
-        "properties": {
-          "storageClasses": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "storageRange": {
-            "$ref": "#/components/schemas/instance.StorageRange"
           }
         },
         "type": "object"
@@ -485,7 +430,15 @@
         },
         "type": "object"
       },
-      "UpdateInstanceResponse": {
+      "BackupResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/instance.Backup"
+          }
+        },
+        "type": "object"
+      },
+      "InstanceResponse": {
         "properties": {
           "item": {
             "$ref": "#/components/schemas/instance.SingleInstance"
@@ -502,14 +455,6 @@
         },
         "type": "object"
       },
-      "InstanceResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/instance.SingleInstance"
-          }
-        },
-        "type": "object"
-      },
       "UsersResponse": {
         "properties": {
           "count": {
@@ -518,6 +463,61 @@
           "items": {
             "items": {
               "$ref": "#/components/schemas/instance.ListUser"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateInstanceResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/instance.SingleInstance"
+          }
+        },
+        "type": "object"
+      },
+      "FlavorsResponse": {
+        "properties": {
+          "flavors": {
+            "items": {
+              "$ref": "#/components/schemas/instance.Flavor"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "UserResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/user.ResponseUser"
+          }
+        },
+        "type": "object"
+      },
+      "StoragesResponse": {
+        "properties": {
+          "storageClasses": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "storageRange": {
+            "$ref": "#/components/schemas/instance.StorageRange"
+          }
+        },
+        "type": "object"
+      },
+      "InstancesResponse": {
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/instance.ListInstance"
             },
             "type": "array"
           }
@@ -1515,7 +1515,6 @@
   },
   "servers": [
     {
-      "description": "prd stage",
       "url": "https://postgres-flex-service.api.{region}stackit.cloud",
       "variables": {
         "region": {

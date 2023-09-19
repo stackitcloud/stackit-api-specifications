@@ -469,6 +469,20 @@
         ],
         "type": "object"
       },
+      "UpdateInstancePayload": {
+        "properties": {
+          "parameters": {
+            "$ref": "#/components/schemas/InstanceParameters"
+          },
+          "planId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "planId"
+        ],
+        "type": "object"
+      },
       "CreateInstancePayload": {
         "properties": {
           "instanceName": {
@@ -487,17 +501,17 @@
         ],
         "type": "object"
       },
-      "UpdateInstancePayload": {
+      "CredentialsIdsResponse": {
         "properties": {
-          "parameters": {
-            "$ref": "#/components/schemas/InstanceParameters"
-          },
-          "planId": {
-            "type": "string"
+          "credentialsList": {
+            "items": {
+              "$ref": "#/components/schemas/CredentialsListItem"
+            },
+            "type": "array"
           }
         },
         "required": [
-          "planId"
+          "credentialsList"
         ],
         "type": "object"
       },
@@ -541,20 +555,6 @@
         },
         "required": [
           "instanceId"
-        ],
-        "type": "object"
-      },
-      "CredentialsIdsResponse": {
-        "properties": {
-          "credentialsList": {
-            "items": {
-              "$ref": "#/components/schemas/CredentialsListItem"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "credentialsList"
         ],
         "type": "object"
       }
@@ -952,7 +952,6 @@
   },
   "servers": [
     {
-      "description": "prod",
       "url": "https://postgresql.api.{region}stackit.cloud",
       "variables": {
         "region": {

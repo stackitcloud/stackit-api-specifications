@@ -404,17 +404,6 @@
         },
         "type": "object"
       },
-      "RestoreInstancePayload": {
-        "properties": {
-          "backupId": {
-            "type": "string"
-          },
-          "instanceId": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "UpdateUserPayload": {
         "properties": {
           "database": {
@@ -425,29 +414,6 @@
               "type": "string"
             },
             "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateBackupSchedulePayload": {
-        "properties": {
-          "backupSchedule": {
-            "type": "string"
-          },
-          "dailySnapshotRetentionDays": {
-            "type": "integer"
-          },
-          "monthlySnapshotRetentionMonths": {
-            "type": "integer"
-          },
-          "pointInTimeWindowHours": {
-            "type": "integer"
-          },
-          "snapshotRetentionDays": {
-            "type": "integer"
-          },
-          "weeklySnapshotRetentionWeeks": {
-            "type": "integer"
           }
         },
         "type": "object"
@@ -463,61 +429,12 @@
         },
         "type": "object"
       },
-      "CreateUserPayload": {
+      "RestoreInstancePayload": {
         "properties": {
-          "database": {
+          "backupId": {
             "type": "string"
           },
-          "roles": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "username": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateInstancePayload": {
-        "properties": {
-          "acl": {
-            "$ref": "#/components/schemas/instance.Acl"
-          },
-          "backupSchedule": {
-            "example": "6 6 * * *",
-            "type": "string"
-          },
-          "flavorId": {
-            "example": "1.1",
-            "type": "string"
-          },
-          "labels": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "description": "Following fields are not certain/clear",
-            "type": "object"
-          },
-          "name": {
-            "type": "string"
-          },
-          "options": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "type": "object"
-          },
-          "replicas": {
-            "example": 3,
-            "type": "integer"
-          },
-          "storage": {
-            "$ref": "#/components/schemas/instance.Storage"
-          },
-          "version": {
-            "example": "1.0",
+          "instanceId": {
             "type": "string"
           }
         },
@@ -569,19 +486,97 @@
         ],
         "type": "object"
       },
-      "GetUserResponse": {
+      "UpdateInstancePayload": {
         "properties": {
-          "item": {
-            "$ref": "#/components/schemas/instance.ResponseUser"
+          "acl": {
+            "$ref": "#/components/schemas/instance.Acl"
+          },
+          "backupSchedule": {
+            "example": "6 6 * * *",
+            "type": "string"
+          },
+          "flavorId": {
+            "example": "1.1",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Following fields are not certain/clear",
+            "type": "object"
+          },
+          "name": {
+            "type": "string"
+          },
+          "options": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "replicas": {
+            "example": 3,
+            "type": "integer"
+          },
+          "storage": {
+            "$ref": "#/components/schemas/instance.Storage"
+          },
+          "version": {
+            "example": "1.0",
+            "type": "string"
           }
         },
         "type": "object"
       },
-      "MetricsResponse": {
+      "CreateUserPayload": {
         "properties": {
-          "hosts": {
+          "database": {
+            "type": "string"
+          },
+          "roles": {
             "items": {
-              "$ref": "#/components/schemas/instance.Host"
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateBackupSchedulePayload": {
+        "properties": {
+          "backupSchedule": {
+            "type": "string"
+          },
+          "dailySnapshotRetentionDays": {
+            "type": "integer"
+          },
+          "monthlySnapshotRetentionMonths": {
+            "type": "integer"
+          },
+          "pointInTimeWindowHours": {
+            "type": "integer"
+          },
+          "snapshotRetentionDays": {
+            "type": "integer"
+          },
+          "weeklySnapshotRetentionWeeks": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "GetBackupsResponse": {
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/instance.Backup"
             },
             "type": "array"
           }
@@ -602,6 +597,24 @@
         },
         "type": "object"
       },
+      "CreateInstanceCloneResponse": {
+        "properties": {
+          "instanceId": {
+            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CreateInstanceResponse": {
+        "properties": {
+          "id": {
+            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "VersionsResponse": {
         "properties": {
           "versions": {
@@ -616,52 +629,10 @@
         },
         "type": "object"
       },
-      "CreateInstanceResponse": {
-        "properties": {
-          "id": {
-            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "CreateUserResponse": {
+      "GetInstanceResponse": {
         "properties": {
           "item": {
-            "$ref": "#/components/schemas/instance.User"
-          }
-        },
-        "type": "object"
-      },
-      "GetBackupResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/instance.Backup"
-          }
-        },
-        "type": "object"
-      },
-      "GetInstanceRestoresResponse": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/instance.Restore"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "GetUsersResponse": {
-        "properties": {
-          "count": {
-            "type": "integer"
-          },
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/instance.ListUser"
-            },
-            "type": "array"
+            "$ref": "#/components/schemas/instance.SingleInstance"
           }
         },
         "type": "object"
@@ -680,37 +651,6 @@
         },
         "type": "object"
       },
-      "CreateInstanceCloneResponse": {
-        "properties": {
-          "instanceId": {
-            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "GetInstanceResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/instance.SingleInstance"
-          }
-        },
-        "type": "object"
-      },
-      "GetBackupsResponse": {
-        "properties": {
-          "count": {
-            "type": "integer"
-          },
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/instance.Backup"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
       "UpdateInstanceResponse": {
         "properties": {
           "item": {
@@ -724,6 +664,66 @@
           "flavors": {
             "items": {
               "$ref": "#/components/schemas/handlers_infra.Flavor"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "GetBackupResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/instance.Backup"
+          }
+        },
+        "type": "object"
+      },
+      "MetricsResponse": {
+        "properties": {
+          "hosts": {
+            "items": {
+              "$ref": "#/components/schemas/instance.Host"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "GetUserResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/instance.ResponseUser"
+          }
+        },
+        "type": "object"
+      },
+      "GetUsersResponse": {
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/instance.ListUser"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "CreateUserResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/instance.User"
+          }
+        },
+        "type": "object"
+      },
+      "GetInstanceRestoresResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/instance.Restore"
             },
             "type": "array"
           }
@@ -3008,7 +3008,6 @@
   },
   "servers": [
     {
-      "description": "prd stage",
       "url": "https://mongodb-flex-service.api.{region}stackit.cloud",
       "variables": {
         "region": {

@@ -1,106 +1,6 @@
 {
   "components": {
     "schemas": {
-      "CreateZonePayload": {
-        "description": "Zone to create.",
-        "properties": {
-          "acl": {
-            "default": "0.0.0.0/0,::/0",
-            "description": "access control list",
-            "example": "0.0.0.0/0,::/0",
-            "maxLength": 2000,
-            "type": "string"
-          },
-          "contactEmail": {
-            "default": "hostmaster@stackit.cloud",
-            "description": "contact e-mail for the zone",
-            "example": "hostmaster@stackit.cloud",
-            "maxLength": 255,
-            "type": "string"
-          },
-          "defaultTTL": {
-            "description": "default time to live",
-            "example": 3600,
-            "minimum": 60,
-            "type": "integer"
-          },
-          "description": {
-            "description": "description of the zone",
-            "example": "this is our example zone",
-            "maxLength": 1024,
-            "type": "string"
-          },
-          "dnsName": {
-            "description": "zone name",
-            "example": "example.com",
-            "maxLength": 253,
-            "minLength": 1,
-            "type": "string"
-          },
-          "expireTime": {
-            "description": "expire time",
-            "example": 1209600,
-            "minimum": 60,
-            "type": "integer"
-          },
-          "isReverseZone": {
-            "default": false,
-            "description": "if the zone is a reverse zone or not",
-            "example": false,
-            "type": "boolean"
-          },
-          "name": {
-            "description": "user given name",
-            "example": "test",
-            "maxLength": 63,
-            "minLength": 1,
-            "type": "string"
-          },
-          "negativeCache": {
-            "description": "negative caching",
-            "example": 60,
-            "minimum": 60,
-            "type": "integer"
-          },
-          "primaries": {
-            "description": "primary name server for secondary zone",
-            "example": [
-              "1.2.3.4"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "refreshTime": {
-            "description": "refresh time",
-            "example": 3600,
-            "minimum": 60,
-            "type": "integer"
-          },
-          "retryTime": {
-            "description": "retry time",
-            "example": 600,
-            "minimum": 60,
-            "type": "integer"
-          },
-          "type": {
-            "default": "primary",
-            "description": "zone type",
-            "enum": [
-              "primary",
-              "secondary"
-            ],
-            "example": "primary",
-            "type": "string"
-          }
-        },
-        "required": [
-          "dnsName",
-          "name"
-        ],
-        "type": "object"
-      },
       "UpdateRecordSetPayload": {
         "description": "RRSetPatch for rr patch set info.",
         "properties": {
@@ -287,100 +187,103 @@
         ],
         "type": "object"
       },
-      "ZonesResponse": {
-        "description": "ResponseZoneAll for filtered zones.",
-        "example": {
-          "itemsPerPage": 0,
-          "message": "Success",
-          "totalItems": 6,
-          "totalPages": 1,
-          "zones": [
-            {
-              "acl": "0.0.0.0/0,::/0",
-              "active": true,
-              "contactEmail": "hostmaster.at.stackit.cloud.",
-              "creationFinished": "2022-01-31T10:00:00Z",
-              "creationStarted": "2022-01-31T10:00:00Z",
-              "defaultTTL": 3600,
-              "description": "this is our example zone",
-              "dnsName": "example.com",
-              "error": "error message",
-              "expireTime": 1209600,
-              "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
-              "isReverseZone": false,
-              "name": "test",
-              "negativeCache": 60,
-              "primaries": [
-                "1.2.3.4"
-              ],
-              "primaryNameServer": "example.com",
-              "recordCount": 300,
-              "refreshTime": 3600,
-              "retryTime": 600,
-              "serialNumber": 2022111400,
-              "state": "CREATE_SUCCEEDED",
-              "type": "primary",
-              "updateFinished": "2022-01-31T10:00:00Z",
-              "updateStarted": "2022-01-31T10:00:00Z",
-              "visibility": "public"
-            },
-            {
-              "acl": "0.0.0.0/0,::/0",
-              "active": true,
-              "contactEmail": "hostmaster.at.stackit.cloud.",
-              "creationFinished": "2022-01-31T10:00:00Z",
-              "creationStarted": "2022-01-31T10:00:00Z",
-              "defaultTTL": 3600,
-              "description": "this is our example zone",
-              "dnsName": "example.com",
-              "error": "error message",
-              "expireTime": 1209600,
-              "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
-              "isReverseZone": false,
-              "name": "test",
-              "negativeCache": 60,
-              "primaries": [
-                "1.2.3.4"
-              ],
-              "primaryNameServer": "example.com",
-              "recordCount": 300,
-              "refreshTime": 3600,
-              "retryTime": 600,
-              "serialNumber": 2022111400,
-              "state": "CREATE_SUCCEEDED",
-              "type": "primary",
-              "updateFinished": "2022-01-31T10:00:00Z",
-              "updateStarted": "2022-01-31T10:00:00Z",
-              "visibility": "public"
-            }
-          ]
-        },
+      "CreateZonePayload": {
+        "description": "Zone to create.",
         "properties": {
-          "itemsPerPage": {
-            "type": "integer"
-          },
-          "message": {
-            "example": "Success",
+          "acl": {
+            "default": "0.0.0.0/0,::/0",
+            "description": "access control list",
+            "example": "0.0.0.0/0,::/0",
+            "maxLength": 2000,
             "type": "string"
           },
-          "totalItems": {
+          "contactEmail": {
+            "default": "hostmaster@stackit.cloud",
+            "description": "contact e-mail for the zone",
+            "example": "hostmaster@stackit.cloud",
+            "maxLength": 255,
+            "type": "string"
+          },
+          "defaultTTL": {
+            "description": "default time to live",
+            "example": 3600,
+            "minimum": 60,
             "type": "integer"
           },
-          "totalPages": {
+          "description": {
+            "description": "description of the zone",
+            "example": "this is our example zone",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "dnsName": {
+            "description": "zone name",
+            "example": "example.com",
+            "maxLength": 253,
+            "minLength": 1,
+            "type": "string"
+          },
+          "expireTime": {
+            "description": "expire time",
+            "example": 1209600,
+            "minimum": 60,
             "type": "integer"
           },
-          "zones": {
+          "isReverseZone": {
+            "default": false,
+            "description": "if the zone is a reverse zone or not",
+            "example": false,
+            "type": "boolean"
+          },
+          "name": {
+            "description": "user given name",
+            "example": "test",
+            "maxLength": 63,
+            "minLength": 1,
+            "type": "string"
+          },
+          "negativeCache": {
+            "description": "negative caching",
+            "example": 60,
+            "minimum": 60,
+            "type": "integer"
+          },
+          "primaries": {
+            "description": "primary name server for secondary zone",
+            "example": [
+              "1.2.3.4"
+            ],
             "items": {
-              "$ref": "#/components/schemas/Zone"
+              "type": "string"
             },
             "type": "array"
+          },
+          "refreshTime": {
+            "description": "refresh time",
+            "example": 3600,
+            "minimum": 60,
+            "type": "integer"
+          },
+          "retryTime": {
+            "description": "retry time",
+            "example": 600,
+            "minimum": 60,
+            "type": "integer"
+          },
+          "type": {
+            "default": "primary",
+            "description": "zone type",
+            "enum": [
+              "primary",
+              "secondary"
+            ],
+            "example": "primary",
+            "type": "string"
           }
         },
         "required": [
-          "itemsPerPage",
-          "totalItems",
-          "totalPages",
-          "zones"
+          "dnsName",
+          "name"
         ],
         "type": "object"
       },
@@ -410,273 +313,6 @@
         },
         "required": [
           "dnsName"
-        ],
-        "type": "object"
-      },
-      "RecordSet": {
-        "description": "RRSet.",
-        "example": {
-          "active": true,
-          "comment": "This is a comment",
-          "creationFinished": "2022-01-31T10:00:00Z",
-          "creationStarted": "2022-01-31T10:00:00Z",
-          "error": "error message",
-          "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
-          "name": "example.com.",
-          "records": [
-            {
-              "content": "1.2.3.4",
-              "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96"
-            },
-            {
-              "content": "1.2.3.4",
-              "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96"
-            }
-          ],
-          "state": "CREATE_SUCCEEDED",
-          "ttl": 3600,
-          "type": "A",
-          "updateFinished": "2022-01-31T10:00:00Z",
-          "updateStarted": "2022-01-31T10:00:00Z"
-        },
-        "properties": {
-          "active": {
-            "description": "if the record set is active or not",
-            "example": true,
-            "type": "boolean"
-          },
-          "comment": {
-            "description": "comment",
-            "example": "This is a comment",
-            "maxLength": 255,
-            "type": "string"
-          },
-          "creationFinished": {
-            "description": "when record set creation finished",
-            "example": "2022-01-31T10:00:00Z",
-            "type": "string"
-          },
-          "creationStarted": {
-            "description": "when record set creation started",
-            "example": "2022-01-31T10:00:00Z",
-            "type": "string"
-          },
-          "error": {
-            "description": "Error shows error in case create/update/delete failed",
-            "example": "error message",
-            "maxLength": 2000,
-            "type": "string"
-          },
-          "id": {
-            "description": "rr set id",
-            "example": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
-            "type": "string"
-          },
-          "name": {
-            "description": "name of the record which should be a valid domain according to rfc1035 Section 2.3.4",
-            "example": "example.com.",
-            "maxLength": 63,
-            "minLength": 1,
-            "type": "string"
-          },
-          "records": {
-            "description": "records",
-            "items": {
-              "$ref": "#/components/schemas/Record"
-            },
-            "minItems": 1,
-            "type": "array"
-          },
-          "state": {
-            "description": "record set state",
-            "enum": [
-              "CREATING",
-              "CREATE_SUCCEEDED",
-              "CREATE_FAILED",
-              "DELETING",
-              "DELETE_SUCCEEDED",
-              "DELETE_FAILED",
-              "UPDATING",
-              "UPDATE_SUCCEEDED",
-              "UPDATE_FAILED"
-            ],
-            "example": "CREATE_SUCCEEDED",
-            "type": "string"
-          },
-          "ttl": {
-            "description": "time to live",
-            "example": 3600,
-            "maximum": 99999999,
-            "minimum": 60,
-            "type": "integer"
-          },
-          "type": {
-            "description": "record set type",
-            "enum": [
-              "A",
-              "AAAA",
-              "SOA",
-              "CNAME",
-              "NS",
-              "MX",
-              "TXT",
-              "SRV",
-              "PTR",
-              "ALIAS",
-              "DNAME",
-              "CAA"
-            ],
-            "example": "A",
-            "type": "string"
-          },
-          "updateFinished": {
-            "description": "when record set update/deletion finished",
-            "example": "2022-01-31T10:00:00Z",
-            "type": "string"
-          },
-          "updateStarted": {
-            "description": "when record set update/deletion started",
-            "example": "2022-01-31T10:00:00Z",
-            "type": "string"
-          }
-        },
-        "required": [
-          "creationFinished",
-          "creationStarted",
-          "id",
-          "name",
-          "records",
-          "state",
-          "ttl",
-          "type",
-          "updateFinished",
-          "updateStarted"
-        ],
-        "type": "object"
-      },
-      "Record": {
-        "description": "Record.",
-        "example": {
-          "content": "1.2.3.4",
-          "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96"
-        },
-        "properties": {
-          "content": {
-            "description": "content of the record",
-            "example": "1.2.3.4",
-            "maxLength": 64000,
-            "minLength": 1,
-            "type": "string"
-          },
-          "id": {
-            "description": "rr set id",
-            "example": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
-            "minLength": 1,
-            "type": "string"
-          }
-        },
-        "required": [
-          "content",
-          "id"
-        ],
-        "type": "object"
-      },
-      "MoveCodeResponse": {
-        "example": {
-          "code": "3sLuLCLpLEbbQ6GZ05tu2U56dmKx1uCdWquTHz6BK34=",
-          "expiresAt": "2023-08-08T08:58:25Z",
-          "message": "successfully created code to move the zone"
-        },
-        "properties": {
-          "code": {
-            "description": "code to move the zone. It is one time shown so better keep it.",
-            "example": "3sLuLCLpLEbbQ6GZ05tu2U56dmKx1uCdWquTHz6BK34=",
-            "type": "string"
-          },
-          "expiresAt": {
-            "description": "when the code expires",
-            "example": "2023-08-08T08:58:25Z",
-            "type": "string"
-          },
-          "message": {
-            "description": "human readable message",
-            "example": "successfully created code to move the zone",
-            "type": "string"
-          }
-        },
-        "required": [
-          "code",
-          "expiresAt"
-        ],
-        "type": "object"
-      },
-      "ErrorMessage": {
-        "properties": {
-          "error": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "Message": {
-        "example": {
-          "message": "message"
-        },
-        "properties": {
-          "message": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "ZoneResponse": {
-        "description": "ResponseZone for user info.",
-        "example": {
-          "message": "Success",
-          "zone": {
-            "acl": "0.0.0.0/0,::/0",
-            "active": true,
-            "contactEmail": "hostmaster.at.stackit.cloud.",
-            "creationFinished": "2022-01-31T10:00:00Z",
-            "creationStarted": "2022-01-31T10:00:00Z",
-            "defaultTTL": 3600,
-            "description": "this is our example zone",
-            "dnsName": "example.com",
-            "error": "error message",
-            "expireTime": 1209600,
-            "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
-            "isReverseZone": false,
-            "name": "test",
-            "negativeCache": 60,
-            "primaries": [
-              "1.2.3.4"
-            ],
-            "primaryNameServer": "example.com",
-            "recordCount": 300,
-            "refreshTime": 3600,
-            "retryTime": 600,
-            "serialNumber": 2022111400,
-            "state": "CREATE_SUCCEEDED",
-            "type": "primary",
-            "updateFinished": "2022-01-31T10:00:00Z",
-            "updateStarted": "2022-01-31T10:00:00Z",
-            "visibility": "public"
-          }
-        },
-        "properties": {
-          "message": {
-            "example": "Success",
-            "type": "string"
-          },
-          "zone": {
-            "$ref": "#/components/schemas/Zone"
-          }
-        },
-        "required": [
-          "zone"
         ],
         "type": "object"
       },
@@ -901,81 +537,6 @@
         ],
         "type": "object"
       },
-      "RecordSetResponse": {
-        "description": "ResponseRRSet for rr set info.",
-        "example": {
-          "message": "Success",
-          "rrset": {
-            "active": true,
-            "comment": "This is a comment",
-            "creationFinished": "2022-01-31T10:00:00Z",
-            "creationStarted": "2022-01-31T10:00:00Z",
-            "error": "error message",
-            "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
-            "name": "example.com.",
-            "records": [
-              {
-                "content": "1.2.3.4",
-                "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96"
-              },
-              {
-                "content": "1.2.3.4",
-                "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96"
-              }
-            ],
-            "state": "CREATE_SUCCEEDED",
-            "ttl": 3600,
-            "type": "A",
-            "updateFinished": "2022-01-31T10:00:00Z",
-            "updateStarted": "2022-01-31T10:00:00Z"
-          }
-        },
-        "properties": {
-          "message": {
-            "example": "Success",
-            "type": "string"
-          },
-          "rrset": {
-            "$ref": "#/components/schemas/RecordSet"
-          }
-        },
-        "required": [
-          "rrset"
-        ],
-        "type": "object"
-      },
-      "RecordPayload": {
-        "description": "RecordPost for rr set info.",
-        "properties": {
-          "content": {
-            "description": "content of the record",
-            "example": "1.2.3.4",
-            "maxLength": 64000,
-            "minLength": 1,
-            "type": "string"
-          }
-        },
-        "required": [
-          "content"
-        ],
-        "type": "object"
-      },
-      "MoveCodeValidationRequest": {
-        "description": "PostValidateMoveCodeRequest body to validate move code request.",
-        "properties": {
-          "code": {
-            "description": "code that should be validated. It validates if it is valid, not expired and belongs to the zone.",
-            "example": "3sLuLCLpLEbbQ6GZ05tu2U56dmKx1uCdWquTHz6BK34=",
-            "maxLength": 1024,
-            "minLength": 1,
-            "type": "string"
-          }
-        },
-        "required": [
-          "code"
-        ],
-        "type": "object"
-      },
       "MoveZoneRequest": {
         "description": "body to move zone from one project to another.",
         "properties": {
@@ -997,6 +558,190 @@
         "required": [
           "code",
           "zoneDnsName"
+        ],
+        "type": "object"
+      },
+      "Message": {
+        "example": {
+          "message": "message"
+        },
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "MoveCodeValidationRequest": {
+        "description": "PostValidateMoveCodeRequest body to validate move code request.",
+        "properties": {
+          "code": {
+            "description": "code that should be validated. It validates if it is valid, not expired and belongs to the zone.",
+            "example": "3sLuLCLpLEbbQ6GZ05tu2U56dmKx1uCdWquTHz6BK34=",
+            "maxLength": 1024,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "type": "object"
+      },
+      "RecordSet": {
+        "description": "RRSet.",
+        "example": {
+          "active": true,
+          "comment": "This is a comment",
+          "creationFinished": "2022-01-31T10:00:00Z",
+          "creationStarted": "2022-01-31T10:00:00Z",
+          "error": "error message",
+          "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
+          "name": "example.com.",
+          "records": [
+            {
+              "content": "1.2.3.4",
+              "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96"
+            },
+            {
+              "content": "1.2.3.4",
+              "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96"
+            }
+          ],
+          "state": "CREATE_SUCCEEDED",
+          "ttl": 3600,
+          "type": "A",
+          "updateFinished": "2022-01-31T10:00:00Z",
+          "updateStarted": "2022-01-31T10:00:00Z"
+        },
+        "properties": {
+          "active": {
+            "description": "if the record set is active or not",
+            "example": true,
+            "type": "boolean"
+          },
+          "comment": {
+            "description": "comment",
+            "example": "This is a comment",
+            "maxLength": 255,
+            "type": "string"
+          },
+          "creationFinished": {
+            "description": "when record set creation finished",
+            "example": "2022-01-31T10:00:00Z",
+            "type": "string"
+          },
+          "creationStarted": {
+            "description": "when record set creation started",
+            "example": "2022-01-31T10:00:00Z",
+            "type": "string"
+          },
+          "error": {
+            "description": "Error shows error in case create/update/delete failed",
+            "example": "error message",
+            "maxLength": 2000,
+            "type": "string"
+          },
+          "id": {
+            "description": "rr set id",
+            "example": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
+            "type": "string"
+          },
+          "name": {
+            "description": "name of the record which should be a valid domain according to rfc1035 Section 2.3.4",
+            "example": "example.com.",
+            "maxLength": 63,
+            "minLength": 1,
+            "type": "string"
+          },
+          "records": {
+            "description": "records",
+            "items": {
+              "$ref": "#/components/schemas/Record"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "state": {
+            "description": "record set state",
+            "enum": [
+              "CREATING",
+              "CREATE_SUCCEEDED",
+              "CREATE_FAILED",
+              "DELETING",
+              "DELETE_SUCCEEDED",
+              "DELETE_FAILED",
+              "UPDATING",
+              "UPDATE_SUCCEEDED",
+              "UPDATE_FAILED"
+            ],
+            "example": "CREATE_SUCCEEDED",
+            "type": "string"
+          },
+          "ttl": {
+            "description": "time to live",
+            "example": 3600,
+            "maximum": 99999999,
+            "minimum": 60,
+            "type": "integer"
+          },
+          "type": {
+            "description": "record set type",
+            "enum": [
+              "A",
+              "AAAA",
+              "SOA",
+              "CNAME",
+              "NS",
+              "MX",
+              "TXT",
+              "SRV",
+              "PTR",
+              "ALIAS",
+              "DNAME",
+              "CAA"
+            ],
+            "example": "A",
+            "type": "string"
+          },
+          "updateFinished": {
+            "description": "when record set update/deletion finished",
+            "example": "2022-01-31T10:00:00Z",
+            "type": "string"
+          },
+          "updateStarted": {
+            "description": "when record set update/deletion started",
+            "example": "2022-01-31T10:00:00Z",
+            "type": "string"
+          }
+        },
+        "required": [
+          "creationFinished",
+          "creationStarted",
+          "id",
+          "name",
+          "records",
+          "state",
+          "ttl",
+          "type",
+          "updateFinished",
+          "updateStarted"
+        ],
+        "type": "object"
+      },
+      "RecordPayload": {
+        "description": "RecordPost for rr set info.",
+        "properties": {
+          "content": {
+            "description": "content of the record",
+            "example": "1.2.3.4",
+            "maxLength": 64000,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "content"
         ],
         "type": "object"
       },
@@ -1084,6 +829,261 @@
           "rrSets",
           "totalItems",
           "totalPages"
+        ],
+        "type": "object"
+      },
+      "ErrorMessage": {
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "MoveCodeResponse": {
+        "example": {
+          "code": "3sLuLCLpLEbbQ6GZ05tu2U56dmKx1uCdWquTHz6BK34=",
+          "expiresAt": "2023-08-08T08:58:25Z",
+          "message": "successfully created code to move the zone"
+        },
+        "properties": {
+          "code": {
+            "description": "code to move the zone. It is one time shown so better keep it.",
+            "example": "3sLuLCLpLEbbQ6GZ05tu2U56dmKx1uCdWquTHz6BK34=",
+            "type": "string"
+          },
+          "expiresAt": {
+            "description": "when the code expires",
+            "example": "2023-08-08T08:58:25Z",
+            "type": "string"
+          },
+          "message": {
+            "description": "human readable message",
+            "example": "successfully created code to move the zone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "expiresAt"
+        ],
+        "type": "object"
+      },
+      "ZoneResponse": {
+        "description": "ResponseZone for user info.",
+        "example": {
+          "message": "Success",
+          "zone": {
+            "acl": "0.0.0.0/0,::/0",
+            "active": true,
+            "contactEmail": "hostmaster.at.stackit.cloud.",
+            "creationFinished": "2022-01-31T10:00:00Z",
+            "creationStarted": "2022-01-31T10:00:00Z",
+            "defaultTTL": 3600,
+            "description": "this is our example zone",
+            "dnsName": "example.com",
+            "error": "error message",
+            "expireTime": 1209600,
+            "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
+            "isReverseZone": false,
+            "name": "test",
+            "negativeCache": 60,
+            "primaries": [
+              "1.2.3.4"
+            ],
+            "primaryNameServer": "example.com",
+            "recordCount": 300,
+            "refreshTime": 3600,
+            "retryTime": 600,
+            "serialNumber": 2022111400,
+            "state": "CREATE_SUCCEEDED",
+            "type": "primary",
+            "updateFinished": "2022-01-31T10:00:00Z",
+            "updateStarted": "2022-01-31T10:00:00Z",
+            "visibility": "public"
+          }
+        },
+        "properties": {
+          "message": {
+            "example": "Success",
+            "type": "string"
+          },
+          "zone": {
+            "$ref": "#/components/schemas/Zone"
+          }
+        },
+        "required": [
+          "zone"
+        ],
+        "type": "object"
+      },
+      "ZonesResponse": {
+        "description": "ResponseZoneAll for filtered zones.",
+        "example": {
+          "itemsPerPage": 0,
+          "message": "Success",
+          "totalItems": 6,
+          "totalPages": 1,
+          "zones": [
+            {
+              "acl": "0.0.0.0/0,::/0",
+              "active": true,
+              "contactEmail": "hostmaster.at.stackit.cloud.",
+              "creationFinished": "2022-01-31T10:00:00Z",
+              "creationStarted": "2022-01-31T10:00:00Z",
+              "defaultTTL": 3600,
+              "description": "this is our example zone",
+              "dnsName": "example.com",
+              "error": "error message",
+              "expireTime": 1209600,
+              "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
+              "isReverseZone": false,
+              "name": "test",
+              "negativeCache": 60,
+              "primaries": [
+                "1.2.3.4"
+              ],
+              "primaryNameServer": "example.com",
+              "recordCount": 300,
+              "refreshTime": 3600,
+              "retryTime": 600,
+              "serialNumber": 2022111400,
+              "state": "CREATE_SUCCEEDED",
+              "type": "primary",
+              "updateFinished": "2022-01-31T10:00:00Z",
+              "updateStarted": "2022-01-31T10:00:00Z",
+              "visibility": "public"
+            },
+            {
+              "acl": "0.0.0.0/0,::/0",
+              "active": true,
+              "contactEmail": "hostmaster.at.stackit.cloud.",
+              "creationFinished": "2022-01-31T10:00:00Z",
+              "creationStarted": "2022-01-31T10:00:00Z",
+              "defaultTTL": 3600,
+              "description": "this is our example zone",
+              "dnsName": "example.com",
+              "error": "error message",
+              "expireTime": 1209600,
+              "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
+              "isReverseZone": false,
+              "name": "test",
+              "negativeCache": 60,
+              "primaries": [
+                "1.2.3.4"
+              ],
+              "primaryNameServer": "example.com",
+              "recordCount": 300,
+              "refreshTime": 3600,
+              "retryTime": 600,
+              "serialNumber": 2022111400,
+              "state": "CREATE_SUCCEEDED",
+              "type": "primary",
+              "updateFinished": "2022-01-31T10:00:00Z",
+              "updateStarted": "2022-01-31T10:00:00Z",
+              "visibility": "public"
+            }
+          ]
+        },
+        "properties": {
+          "itemsPerPage": {
+            "type": "integer"
+          },
+          "message": {
+            "example": "Success",
+            "type": "string"
+          },
+          "totalItems": {
+            "type": "integer"
+          },
+          "totalPages": {
+            "type": "integer"
+          },
+          "zones": {
+            "items": {
+              "$ref": "#/components/schemas/Zone"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "itemsPerPage",
+          "totalItems",
+          "totalPages",
+          "zones"
+        ],
+        "type": "object"
+      },
+      "Record": {
+        "description": "Record.",
+        "example": {
+          "content": "1.2.3.4",
+          "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96"
+        },
+        "properties": {
+          "content": {
+            "description": "content of the record",
+            "example": "1.2.3.4",
+            "maxLength": 64000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "id": {
+            "description": "rr set id",
+            "example": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "content",
+          "id"
+        ],
+        "type": "object"
+      },
+      "RecordSetResponse": {
+        "description": "ResponseRRSet for rr set info.",
+        "example": {
+          "message": "Success",
+          "rrset": {
+            "active": true,
+            "comment": "This is a comment",
+            "creationFinished": "2022-01-31T10:00:00Z",
+            "creationStarted": "2022-01-31T10:00:00Z",
+            "error": "error message",
+            "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
+            "name": "example.com.",
+            "records": [
+              {
+                "content": "1.2.3.4",
+                "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96"
+              },
+              {
+                "content": "1.2.3.4",
+                "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96"
+              }
+            ],
+            "state": "CREATE_SUCCEEDED",
+            "ttl": 3600,
+            "type": "A",
+            "updateFinished": "2022-01-31T10:00:00Z",
+            "updateStarted": "2022-01-31T10:00:00Z"
+          }
+        },
+        "properties": {
+          "message": {
+            "example": "Success",
+            "type": "string"
+          },
+          "rrset": {
+            "$ref": "#/components/schemas/RecordSet"
+          }
+        },
+        "required": [
+          "rrset"
         ],
         "type": "object"
       }
@@ -2641,7 +2641,6 @@
   ],
   "servers": [
     {
-      "description": "prod",
       "url": "https://dns.api.{region}stackit.cloud",
       "variables": {
         "region": {

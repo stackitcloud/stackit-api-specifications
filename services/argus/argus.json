@@ -2822,177 +2822,49 @@
         ],
         "type": "object"
       },
-      "UpdateScrapeConfigPayload": {
+      "UpdateInstancePayload": {
+        "description": "Create update instance body.",
         "properties": {
-          "basicAuth": {
-            "description": "Sets the 'Authorization' header on every scrape request with the configured username and password.\n`Additional Validators:`\n* if basicAuth is in the body no other authentication method should be in the body",
-            "properties": {
-              "password": {
-                "description": "password",
-                "maxLength": 200,
-                "minLength": 1,
-                "type": "string"
-              },
-              "username": {
-                "description": "username",
-                "maxLength": 200,
-                "minLength": 1,
-                "type": "string"
-              }
-            },
-            "type": "object"
-          },
-          "bearerToken": {
-            "description": "Sets the 'Authorization' header on every scrape request with the configured bearer token. It is mutually exclusive with 'bearer_token_file'.\n`Additional Validators:`\n* needs to be a valid bearer token\n* if bearerToken is in the body no other authentication method should be in the body",
-            "type": "string"
-          },
-          "honorLabels": {
-            "default": false,
-            "description": "Note that any globally configured 'external_labels' are unaffected by this setting. In communication with external systems, they are always applied only when a time series does not have a given label yet and are ignored otherwise.",
-            "type": "boolean"
-          },
-          "honorTimeStamps": {
-            "default": false,
-            "description": "honor_timestamps controls whether Prometheus respects the timestamps present in scraped data. If honor_timestamps is set to 'true', the timestamps of the metrics exposed by the target will be used.",
-            "type": "boolean"
-          },
-          "metricsPath": {
-            "default": "/metrics",
-            "description": "The HTTP resource path on which to fetch metrics from targets. E.g. /metrics",
+          "name": {
+            "description": "Name of the service",
             "maxLength": 200,
             "minLength": 1,
             "type": "string"
           },
-          "metricsRelabelConfigs": {
-            "description": "List of metric relabel configurations",
-            "items": {
-              "properties": {
-                "action": {
-                  "default": "replace",
-                  "description": "Action to perform based on regex matching.\n`Additional Validators:`\n* if action is replace, targetLabel needs to be in body",
-                  "enum": [
-                    "replace",
-                    "keep",
-                    "drop",
-                    "hashmod",
-                    "labelmap",
-                    "labeldrop",
-                    "labelkeep"
-                  ],
-                  "type": "string"
-                },
-                "modulus": {
-                  "description": "Modulus to take of the hash of the source label values.",
-                  "type": "number"
-                },
-                "regex": {
-                  "default": ".*",
-                  "description": "Regular expression against which the extracted value is matched.",
-                  "maxLength": 400,
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "replacement": {
-                  "default": "$1",
-                  "description": "Replacement value against which a regex replace is performed if the regular expression matches. Regex capture groups are available.",
-                  "maxLength": 200,
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "separator": {
-                  "default": ";",
-                  "description": "Separator placed between concatenated source label values.",
-                  "maxLength": 20,
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "sourceLabels": {
-                  "description": "The source labels select values from existing labels. Their content is concatenated using the configured separator and matched against the configured regular expression for the replace, keep, and drop actions.",
-                  "items": {
-                    "maxLength": 200,
-                    "minLength": 1,
-                    "type": "string"
-                  },
-                  "type": "array"
-                },
-                "targetLabel": {
-                  "description": "Label to which the resulting value is written in a replace action. It is mandatory for replace actions. Regex capture groups are available.",
-                  "maxLength": 200,
-                  "minLength": 1,
-                  "type": "string"
-                }
-              },
-              "type": "object"
-            },
-            "type": "array"
-          },
-          "params": {
-            "description": "Optional http params\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not have more than 200 characters",
+          "parameter": {
+            "description": "additional parameters",
             "type": "object"
           },
-          "scheme": {
-            "description": "Configures the protocol scheme used for requests. https or http",
-            "enum": [
-              "http",
-              "https"
-            ],
+          "planId": {
+            "description": "uuid of the plan to create/update",
             "type": "string"
-          },
-          "scrapeInterval": {
-            "description": "How frequently to scrape targets from this job. E.g. 5m\n`Additional Validators:`\n* must be a valid time format* must be \u003e= 60s",
-            "maxLength": 8,
-            "minLength": 2,
-            "type": "string"
-          },
-          "scrapeTimeout": {
-            "description": "Per-scrape timeout when scraping this job.\n`Additional Validators:`\n* must be a valid time format* must be smaller than scrapeInterval",
-            "maxLength": 8,
-            "minLength": 2,
-            "type": "string"
-          },
-          "staticConfigs": {
-            "description": "A list of scrape configurations.",
-            "items": {
-              "properties": {
-                "labels": {
-                  "description": "Labels assigned to all metrics scraped from the targets.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
-                  "type": "object"
-                },
-                "targets": {
-                  "description": "The targets specified by the static config.",
-                  "items": {
-                    "maxLength": 500,
-                    "minLength": 1,
-                    "type": "string"
-                  },
-                  "type": "array"
-                }
-              },
-              "required": [
-                "targets"
-              ],
-              "type": "object"
-            },
-            "type": "array"
-          },
-          "tlsConfig": {
-            "description": "Configures the scrape request's TLS settings.",
-            "properties": {
-              "insecureSkipVerify": {
-                "default": false,
-                "description": "Disable validation of the server certificate.",
-                "type": "boolean"
-              }
-            },
-            "type": "object"
           }
         },
         "required": [
-          "metricsPath",
-          "scheme",
-          "scrapeInterval",
-          "scrapeTimeout",
-          "staticConfigs"
+          "planId"
+        ],
+        "type": "object"
+      },
+      "CreateInstancePayload": {
+        "description": "Create update instance body.",
+        "properties": {
+          "name": {
+            "description": "Name of the service",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "parameter": {
+            "description": "additional parameters",
+            "type": "object"
+          },
+          "planId": {
+            "description": "uuid of the plan to create/update",
+            "type": "string"
+          }
+        },
+        "required": [
+          "planId"
         ],
         "type": "object"
       },
@@ -3331,69 +3203,177 @@
         ],
         "type": "object"
       },
-      "UpdateInstancePayload": {
-        "description": "Create update instance body.",
+      "UpdateScrapeConfigPayload": {
         "properties": {
-          "name": {
-            "description": "Name of the service",
+          "basicAuth": {
+            "description": "Sets the 'Authorization' header on every scrape request with the configured username and password.\n`Additional Validators:`\n* if basicAuth is in the body no other authentication method should be in the body",
+            "properties": {
+              "password": {
+                "description": "password",
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "username": {
+                "description": "username",
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "bearerToken": {
+            "description": "Sets the 'Authorization' header on every scrape request with the configured bearer token. It is mutually exclusive with 'bearer_token_file'.\n`Additional Validators:`\n* needs to be a valid bearer token\n* if bearerToken is in the body no other authentication method should be in the body",
+            "type": "string"
+          },
+          "honorLabels": {
+            "default": false,
+            "description": "Note that any globally configured 'external_labels' are unaffected by this setting. In communication with external systems, they are always applied only when a time series does not have a given label yet and are ignored otherwise.",
+            "type": "boolean"
+          },
+          "honorTimeStamps": {
+            "default": false,
+            "description": "honor_timestamps controls whether Prometheus respects the timestamps present in scraped data. If honor_timestamps is set to 'true', the timestamps of the metrics exposed by the target will be used.",
+            "type": "boolean"
+          },
+          "metricsPath": {
+            "default": "/metrics",
+            "description": "The HTTP resource path on which to fetch metrics from targets. E.g. /metrics",
             "maxLength": 200,
             "minLength": 1,
             "type": "string"
           },
-          "parameter": {
-            "description": "additional parameters",
-            "type": "object"
-          },
-          "planId": {
-            "description": "uuid of the plan to create/update",
-            "type": "string"
-          }
-        },
-        "required": [
-          "planId"
-        ],
-        "type": "object"
-      },
-      "CreateInstancePayload": {
-        "description": "Create update instance body.",
-        "properties": {
-          "name": {
-            "description": "Name of the service",
-            "maxLength": 200,
-            "minLength": 1,
-            "type": "string"
-          },
-          "parameter": {
-            "description": "additional parameters",
-            "type": "object"
-          },
-          "planId": {
-            "description": "uuid of the plan to create/update",
-            "type": "string"
-          }
-        },
-        "required": [
-          "planId"
-        ],
-        "type": "object"
-      },
-      "ScrapeConfigsResponse": {
-        "properties": {
-          "data": {
+          "metricsRelabelConfigs": {
+            "description": "List of metric relabel configurations",
             "items": {
-              "$ref": "#/components/schemas/Job"
+              "properties": {
+                "action": {
+                  "default": "replace",
+                  "description": "Action to perform based on regex matching.\n`Additional Validators:`\n* if action is replace, targetLabel needs to be in body",
+                  "enum": [
+                    "replace",
+                    "keep",
+                    "drop",
+                    "hashmod",
+                    "labelmap",
+                    "labeldrop",
+                    "labelkeep"
+                  ],
+                  "type": "string"
+                },
+                "modulus": {
+                  "description": "Modulus to take of the hash of the source label values.",
+                  "type": "number"
+                },
+                "regex": {
+                  "default": ".*",
+                  "description": "Regular expression against which the extracted value is matched.",
+                  "maxLength": 400,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "replacement": {
+                  "default": "$1",
+                  "description": "Replacement value against which a regex replace is performed if the regular expression matches. Regex capture groups are available.",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "separator": {
+                  "default": ";",
+                  "description": "Separator placed between concatenated source label values.",
+                  "maxLength": 20,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "sourceLabels": {
+                  "description": "The source labels select values from existing labels. Their content is concatenated using the configured separator and matched against the configured regular expression for the replace, keep, and drop actions.",
+                  "items": {
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "targetLabel": {
+                  "description": "Label to which the resulting value is written in a replace action. It is mandatory for replace actions. Regex capture groups are available.",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
             },
             "type": "array"
           },
-          "message": {
-            "minLength": 1,
-            "title": "Message",
+          "params": {
+            "description": "Optional http params\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not have more than 200 characters",
+            "type": "object"
+          },
+          "scheme": {
+            "description": "Configures the protocol scheme used for requests. https or http",
+            "enum": [
+              "http",
+              "https"
+            ],
             "type": "string"
+          },
+          "scrapeInterval": {
+            "description": "How frequently to scrape targets from this job. E.g. 5m\n`Additional Validators:`\n* must be a valid time format* must be \u003e= 60s",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "scrapeTimeout": {
+            "description": "Per-scrape timeout when scraping this job.\n`Additional Validators:`\n* must be a valid time format* must be smaller than scrapeInterval",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "staticConfigs": {
+            "description": "A list of scrape configurations.",
+            "items": {
+              "properties": {
+                "labels": {
+                  "description": "Labels assigned to all metrics scraped from the targets.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+                  "type": "object"
+                },
+                "targets": {
+                  "description": "The targets specified by the static config.",
+                  "items": {
+                    "maxLength": 500,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "targets"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "tlsConfig": {
+            "description": "Configures the scrape request's TLS settings.",
+            "properties": {
+              "insecureSkipVerify": {
+                "default": false,
+                "description": "Disable validation of the server certificate.",
+                "type": "boolean"
+              }
+            },
+            "type": "object"
           }
         },
         "required": [
-          "data",
-          "message"
+          "metricsPath",
+          "scheme",
+          "scrapeInterval",
+          "scrapeTimeout",
+          "staticConfigs"
         ],
         "type": "object"
       },
@@ -3514,23 +3494,23 @@
         ],
         "type": "object"
       },
-      "PlansResponse": {
+      "ScrapeConfigsResponse": {
         "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Job"
+            },
+            "type": "array"
+          },
           "message": {
             "minLength": 1,
             "title": "Message",
             "type": "string"
-          },
-          "plans": {
-            "items": {
-              "$ref": "#/components/schemas/PlanModel"
-            },
-            "type": "array"
           }
         },
         "required": [
-          "message",
-          "plans"
+          "data",
+          "message"
         ],
         "type": "object"
       },
@@ -3556,6 +3536,26 @@
           "dashboardUrl",
           "instanceId",
           "message"
+        ],
+        "type": "object"
+      },
+      "PlansResponse": {
+        "properties": {
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "plans": {
+            "items": {
+              "$ref": "#/components/schemas/PlanModel"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "message",
+          "plans"
         ],
         "type": "object"
       },
@@ -4726,7 +4726,6 @@
   ],
   "servers": [
     {
-      "description": "prod",
       "url": "https://argus.api.{region}stackit.cloud",
       "variables": {
         "region": {

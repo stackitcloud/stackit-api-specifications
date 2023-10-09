@@ -947,26 +947,6 @@
         },
         "type": "object"
       },
-      "GrafanaConfigsSerializerRespond": {
-        "properties": {
-          "genericOauth": {
-            "$ref": "#/components/schemas/GrafanaOauth"
-          },
-          "message": {
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          },
-          "publicReadAccess": {
-            "title": "Publicreadaccess",
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "message"
-        ],
-        "type": "object"
-      },
       "GrafanaOauth": {
         "properties": {
           "apiUrl": {
@@ -984,6 +964,12 @@
           "enabled": {
             "title": "Enabled",
             "type": "boolean"
+          },
+          "name": {
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
           },
           "oauthClientId": {
             "maxLength": 300,
@@ -1020,6 +1006,10 @@
             "minLength": 1,
             "title": "Tokenurl",
             "type": "string"
+          },
+          "usePkce": {
+            "title": "Usepkce",
+            "type": "boolean"
           }
         },
         "required": [
@@ -1183,6 +1173,10 @@
             "title": "Grafanapublicreadaccess",
             "type": "boolean"
           },
+          "grafanaUseStackitSso": {
+            "title": "Grafanausestackitsso",
+            "type": "boolean"
+          },
           "instance": {
             "maxLength": 63,
             "minLength": 1,
@@ -1236,6 +1230,7 @@
         "required": [
           "cluster",
           "grafanaPublicReadAccess",
+          "grafanaUseStackitSso",
           "instance",
           "metricsRetentionTime1h",
           "metricsRetentionTime5m",
@@ -1280,6 +1275,10 @@
             "minLength": 1,
             "title": "Grafanaurl",
             "type": "string"
+          },
+          "grafanaUseStackitSso": {
+            "title": "Grafanausestackitsso",
+            "type": "boolean"
           },
           "instance": {
             "maxLength": 63,
@@ -1364,6 +1363,7 @@
           "grafanaAdminPassword",
           "grafanaAdminUser",
           "grafanaPublicReadAccess",
+          "grafanaUseStackitSso",
           "grafanaUrl",
           "instance",
           "jaegerTracesUrl",
@@ -1990,6 +1990,10 @@
             "title": "Targetnumber",
             "type": "integer"
           },
+          "totalMetricSamples": {
+            "title": "Totalmetricsamples",
+            "type": "integer"
+          },
           "tracesStorage": {
             "title": "Tracesstorage",
             "type": "integer"
@@ -2010,6 +2014,7 @@
           "planId",
           "samplesPerScrape",
           "targetNumber",
+          "totalMetricSamples",
           "tracesStorage"
         ],
         "type": "object"
@@ -2822,49 +2827,331 @@
         ],
         "type": "object"
       },
-      "UpdateInstancePayload": {
-        "description": "Create update instance body.",
+      "UpdateInstanceAlertConfigsPayload": {
+        "description": "Alert config",
         "properties": {
-          "name": {
-            "description": "Name of the service",
-            "maxLength": 200,
-            "minLength": 1,
-            "type": "string"
-          },
-          "parameter": {
-            "description": "additional parameters",
+          "global": {
+            "description": "Global config. If nothing passed the default argus config will be used.",
+            "properties": {
+              "opsgenieApiKey": {
+                "description": "Opsgenie api key\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9-",
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "opsgenieApiUrl": {
+                "description": "Opsgenie api url\n`Additional Validators:`\n* must be a syntactically valid url address",
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "resolveTimeout": {
+                "default": "5m",
+                "description": "ResolveTimeout is the default value used by alertmanager if the alert does not include EndsAt, after this time passes it can declare the alert as resolved if it has not been updated. This has no impact on alerts from Prometheus, as they always include EndsAt. \n`Additional Validators:`\n* must be a valid time format",
+                "maxLength": 8,
+                "minLength": 2,
+                "type": "string"
+              },
+              "smtpAuthIdentity": {
+                "description": "Auth identity.\n`Additional Validators:`\n* must be a syntactically valid email address",
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "smtpAuthPassword": {
+                "description": "SMTP Auth using LOGIN and PLAIN.",
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "smtpAuthUsername": {
+                "description": "SMTP Auth using CRAM-MD5, LOGIN and PLAIN. If empty, Alertmanager doesn't authenticate to the SMTP server.",
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "smtpFrom": {
+                "description": "The default SMTP From header field. \n`Additional Validators:`\n* must be a syntactically valid email address",
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "smtpSmarthost": {
+                "description": "The default SMTP smarthost used for sending emails, including port number. Port number usually is 25, or 587 for SMTP over TLS (sometimes referred to as STARTTLS). Example: smtp.example.org:587 \n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9_./@\u0026?:-",
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
             "type": "object"
           },
-          "planId": {
-            "description": "uuid of the plan to create/update",
-            "type": "string"
+          "inhibitRules": {
+            "description": "A list of inhibition rules.",
+            "properties": {
+              "equal": {
+                "description": "Labels that must have an equal value in the source and target alert for the inhibition to take effect.\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9_./@\u0026?:-",
+                "items": {
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "sourceMatch": {
+                "description": "map of key:value. Matchers for which one or more alerts have to exist for the inhibition to take effect.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not have more than 200 characters\n* each key and value should only include the characters: a-zA-Z0-9_./@\u0026?:-",
+                "type": "object"
+              },
+              "sourceMatchRe": {
+                "description": "map of key:value. Regex match\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not have more than 200 characters",
+                "type": "object"
+              },
+              "targetMatch": {
+                "description": "map of key:value. Matchers that have to be fulfilled in the alerts to be muted.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not have more than 200 characters\n* each key and value should only include the characters: a-zA-Z0-9_./@\u0026?:-",
+                "type": "object"
+              },
+              "targetMatchRe": {
+                "description": "map of key:value. Matchers that have to be fulfilled in the alerts to be muted. Regex.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not have more than 200 characters",
+                "type": "object"
+              }
+            },
+            "type": "object"
+          },
+          "receivers": {
+            "description": "A list of notification receivers.",
+            "items": {
+              "description": "Receivers",
+              "properties": {
+                "emailConfigs": {
+                  "description": "Email configurations",
+                  "items": {
+                    "properties": {
+                      "authIdentity": {
+                        "description": "SMTP authentication information.\n`Additional Validators:`\n* must be a syntactically valid email address",
+                        "maxLength": 200,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "authPassword": {
+                        "description": "SMTP authentication information.",
+                        "maxLength": 200,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "authUsername": {
+                        "description": "SMTP authentication information.",
+                        "maxLength": 200,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "from": {
+                        "description": "The sender address.\n`Additional Validators:`\n* must be a syntactically valid email address",
+                        "maxLength": 200,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "smarthost": {
+                        "description": "The SMTP host through which emails are sent.\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9_./@\u0026?:-",
+                        "maxLength": 200,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "to": {
+                        "description": "The email address to send notifications to.\n`Additional Validators:`\n* must be a syntactically valid email address",
+                        "maxLength": 200,
+                        "minLength": 1,
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "name": {
+                  "description": "`Additional Validators:`\n* must be unique\n* should only include the characters: a-zA-Z0-9-",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "opsgenieConfigs": {
+                  "description": "Configuration for ops genie.",
+                  "items": {
+                    "properties": {
+                      "apiKey": {
+                        "description": "The API key to use when talking to the OpsGenie API.\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9-",
+                        "maxLength": 200,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "apiUrl": {
+                        "description": "The host to send OpsGenie API requests to.\n`Additional Validators:`\n* must be a syntactically valid url address",
+                        "maxLength": 200,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "tags": {
+                        "description": "Comma separated list of tags attached to the notifications.",
+                        "maxLength": 400,
+                        "minLength": 1,
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "webHookConfigs": {
+                  "items": {
+                    "properties": {
+                      "msTeams": {
+                        "default": false,
+                        "description": "Microsoft Teams webhooks require special handling. If you set this property to true, it is treated as such",
+                        "type": "boolean"
+                      },
+                      "url": {
+                        "description": "The endpoint to send HTTP POST requests to.\n`Additional Validators:`\n* must be a syntactically valid url address",
+                        "maxLength": 500,
+                        "minLength": 1,
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "route": {
+            "description": "The root node of the routing tree.",
+            "properties": {
+              "groupBy": {
+                "description": "The labels by which incoming alerts are grouped together. For example, multiple alerts coming in for cluster=A and alertname=LatencyHigh would be batched into a single group. To aggregate by all possible labels use the special value '...' as the sole label name, for example: group_by: ['...']. This effectively disables aggregation entirely, passing through all alerts as-is. This is unlikely to be what you want, unless you have a very low alert volume or your upstream notification system performs its own grouping.",
+                "items": {
+                  "description": "As described",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "groupInterval": {
+                "default": "5m",
+                "description": "How long to wait before sending a notification about new alerts that are added to a group of alerts for which an initial notification has already been sent. (Usually ~5m or more.)\n`Additional Validators:`\n* must be a valid time format",
+                "maxLength": 8,
+                "minLength": 2,
+                "type": "string"
+              },
+              "groupWait": {
+                "default": "30s",
+                "description": "How long to initially wait to send a notification for a group of alerts. Allows to wait for an inhibiting alert to arrive or collect more initial alerts for the same group. (Usually ~0s to few minutes.)\n`Additional Validators:`\n* must be a valid time format",
+                "maxLength": 8,
+                "minLength": 2,
+                "type": "string"
+              },
+              "match": {
+                "description": "map of key:value. A set of equality matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters\n* key and values should only include the characters: a-zA-Z0-9_./@\u0026?:-",
+                "type": "object"
+              },
+              "matchRe": {
+                "description": "map of key:value. A set of regex-matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+                "type": "object"
+              },
+              "matchers": {
+                "description": "A list of matchers that an alert has to fulfill to match the node. A matcher is a string with a syntax inspired by PromQL and OpenMetrics. The syntax of a matcher consists of three tokens:\n* A valid Prometheus label name.\n* One of =, !=, =~, or !~. = means equals, != means that the strings are not equal, =~ is used for equality of regex expressions and !~ is used for un-equality of regex expressions. They have the same meaning as known from PromQL selectors.\n* A UTF-8 string, which may be enclosed in double quotes. Before or after each token, there may be any amount of whitespace.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+                "items": {
+                  "description": "Item of matchers",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "receiver": {
+                "description": "Receiver that should be one item of receivers\n`Additional Validators:`\n* must be a in name of receivers",
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "repeatInterval": {
+                "default": "4h",
+                "description": "How long to wait before sending a notification again if it has already been sent successfully for an alert. (Usually ~3h or more).\n`Additional Validators:`\n* must be a valid time format",
+                "maxLength": 8,
+                "minLength": 2,
+                "type": "string"
+              },
+              "routes": {
+                "description": "Zero or more child routes.",
+                "items": {
+                  "description": "As in one level above",
+                  "properties": {
+                    "groupBy": {
+                      "items": {
+                        "description": "As in one level above",
+                        "maxLength": 200,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "groupInterval": {
+                      "description": "As in one level above",
+                      "maxLength": 8,
+                      "minLength": 2,
+                      "type": "string"
+                    },
+                    "groupWait": {
+                      "description": "As in one level above",
+                      "maxLength": 8,
+                      "type": "string"
+                    },
+                    "match": {
+                      "description": "As in one level above",
+                      "type": "object"
+                    },
+                    "matchRe": {
+                      "description": "As in one level above",
+                      "type": "object"
+                    },
+                    "receiver": {
+                      "description": "As in one level above",
+                      "maxLength": 100,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "repeatInterval": {
+                      "description": "As in one level above",
+                      "maxLength": 8,
+                      "minLength": 2,
+                      "type": "string"
+                    },
+                    "routes": {
+                      "description": "Another child routes",
+                      "items": {
+                        "description": "As in one level above",
+                        "type": "object"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "receiver"
+            ],
+            "type": "object"
           }
         },
         "required": [
-          "planId"
-        ],
-        "type": "object"
-      },
-      "CreateInstancePayload": {
-        "description": "Create update instance body.",
-        "properties": {
-          "name": {
-            "description": "Name of the service",
-            "maxLength": 200,
-            "minLength": 1,
-            "type": "string"
-          },
-          "parameter": {
-            "description": "additional parameters",
-            "type": "object"
-          },
-          "planId": {
-            "description": "uuid of the plan to create/update",
-            "type": "string"
-          }
-        },
-        "required": [
-          "planId"
+          "receivers",
+          "route"
         ],
         "type": "object"
       },
@@ -3203,6 +3490,375 @@
         ],
         "type": "object"
       },
+      "UpdateInstanceAlertConfigReceiverPayload": {
+        "description": "Receivers",
+        "properties": {
+          "emailConfigs": {
+            "description": "Email configurations",
+            "items": {
+              "properties": {
+                "authIdentity": {
+                  "description": "SMTP authentication information.\n`Additional Validators:`\n* must be a syntactically valid email address",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "authPassword": {
+                  "description": "SMTP authentication information.",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "authUsername": {
+                  "description": "SMTP authentication information.",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "from": {
+                  "description": "The sender address.\n`Additional Validators:`\n* must be a syntactically valid email address",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "smarthost": {
+                  "description": "The SMTP host through which emails are sent.\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9_./@\u0026?:-",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "to": {
+                  "description": "The email address to send notifications to.\n`Additional Validators:`\n* must be a syntactically valid email address",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "name": {
+            "description": "`Additional Validators:`\n* must be unique\n* should only include the characters: a-zA-Z0-9-",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "opsgenieConfigs": {
+            "description": "Configuration for ops genie.",
+            "items": {
+              "properties": {
+                "apiKey": {
+                  "description": "The API key to use when talking to the OpsGenie API.\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9-",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "apiUrl": {
+                  "description": "The host to send OpsGenie API requests to.\n`Additional Validators:`\n* must be a syntactically valid url address",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "tags": {
+                  "description": "Comma separated list of tags attached to the notifications.",
+                  "maxLength": 400,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "webHookConfigs": {
+            "items": {
+              "properties": {
+                "msTeams": {
+                  "default": false,
+                  "description": "Microsoft Teams webhooks require special handling. If you set this property to true, it is treated as such",
+                  "type": "boolean"
+                },
+                "url": {
+                  "description": "The endpoint to send HTTP POST requests to.\n`Additional Validators:`\n* must be a syntactically valid url address",
+                  "maxLength": 500,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "UpdateInstanceAlertConfigRouteReceiverPayload": {
+        "description": "The root node of the routing tree.",
+        "properties": {
+          "groupBy": {
+            "description": "The labels by which incoming alerts are grouped together. For example, multiple alerts coming in for cluster=A and alertname=LatencyHigh would be batched into a single group. To aggregate by all possible labels use the special value '...' as the sole label name, for example: group_by: ['...']. This effectively disables aggregation entirely, passing through all alerts as-is. This is unlikely to be what you want, unless you have a very low alert volume or your upstream notification system performs its own grouping.",
+            "items": {
+              "description": "As described",
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "groupInterval": {
+            "default": "5m",
+            "description": "How long to wait before sending a notification about new alerts that are added to a group of alerts for which an initial notification has already been sent. (Usually ~5m or more.)\n`Additional Validators:`\n* must be a valid time format",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "groupWait": {
+            "default": "30s",
+            "description": "How long to initially wait to send a notification for a group of alerts. Allows to wait for an inhibiting alert to arrive or collect more initial alerts for the same group. (Usually ~0s to few minutes.)\n`Additional Validators:`\n* must be a valid time format",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "match": {
+            "description": "map of key:value. A set of equality matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters\n* key and values should only include the characters: a-zA-Z0-9_./@\u0026?:-",
+            "type": "object"
+          },
+          "matchRe": {
+            "description": "map of key:value. A set of regex-matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+            "type": "object"
+          },
+          "matchers": {
+            "description": "A list of matchers that an alert has to fulfill to match the node. A matcher is a string with a syntax inspired by PromQL and OpenMetrics. The syntax of a matcher consists of three tokens:\n* A valid Prometheus label name.\n* One of =, !=, =~, or !~. = means equals, != means that the strings are not equal, =~ is used for equality of regex expressions and !~ is used for un-equality of regex expressions. They have the same meaning as known from PromQL selectors.\n* A UTF-8 string, which may be enclosed in double quotes. Before or after each token, there may be any amount of whitespace.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+            "items": {
+              "description": "Item of matchers",
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "receiver": {
+            "description": "Receiver that should be one item of receivers\n`Additional Validators:`\n* must be a in name of receivers",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "repeatInterval": {
+            "default": "4h",
+            "description": "How long to wait before sending a notification again if it has already been sent successfully for an alert. (Usually ~3h or more).\n`Additional Validators:`\n* must be a valid time format",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "routes": {
+            "description": "Zero or more child routes.",
+            "items": {
+              "description": "As in one level above",
+              "properties": {
+                "groupBy": {
+                  "items": {
+                    "description": "As in one level above",
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "groupInterval": {
+                  "description": "As in one level above",
+                  "maxLength": 8,
+                  "minLength": 2,
+                  "type": "string"
+                },
+                "groupWait": {
+                  "description": "As in one level above",
+                  "maxLength": 8,
+                  "type": "string"
+                },
+                "match": {
+                  "description": "As in one level above",
+                  "type": "object"
+                },
+                "matchRe": {
+                  "description": "As in one level above",
+                  "type": "object"
+                },
+                "receiver": {
+                  "description": "As in one level above",
+                  "maxLength": 100,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "repeatInterval": {
+                  "description": "As in one level above",
+                  "maxLength": 8,
+                  "minLength": 2,
+                  "type": "string"
+                },
+                "routes": {
+                  "description": "Another child routes",
+                  "items": {
+                    "description": "As in one level above",
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "receiver"
+        ],
+        "type": "object"
+      },
+      "UpdateInstanceAclPayload": {
+        "description": "List of cidr. Send empty string to remove acl.",
+        "properties": {
+          "acl": {
+            "description": "list of cidr",
+            "items": {
+              "description": "cidr correct format",
+              "maxLength": 100,
+              "type": "string"
+            },
+            "maxLength": 20,
+            "type": "array"
+          }
+        },
+        "required": [
+          "acl"
+        ],
+        "type": "object"
+      },
+      "CreateInstanceAlertConfigRoutePayload": {
+        "description": "The root node of the routing tree.",
+        "properties": {
+          "groupBy": {
+            "description": "The labels by which incoming alerts are grouped together. For example, multiple alerts coming in for cluster=A and alertname=LatencyHigh would be batched into a single group. To aggregate by all possible labels use the special value '...' as the sole label name, for example: group_by: ['...']. This effectively disables aggregation entirely, passing through all alerts as-is. This is unlikely to be what you want, unless you have a very low alert volume or your upstream notification system performs its own grouping.",
+            "items": {
+              "description": "As described",
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "groupInterval": {
+            "default": "5m",
+            "description": "How long to wait before sending a notification about new alerts that are added to a group of alerts for which an initial notification has already been sent. (Usually ~5m or more.)\n`Additional Validators:`\n* must be a valid time format",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "groupWait": {
+            "default": "30s",
+            "description": "How long to initially wait to send a notification for a group of alerts. Allows to wait for an inhibiting alert to arrive or collect more initial alerts for the same group. (Usually ~0s to few minutes.)\n`Additional Validators:`\n* must be a valid time format",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "match": {
+            "description": "map of key:value. A set of equality matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters\n* key and values should only include the characters: a-zA-Z0-9_./@\u0026?:-",
+            "type": "object"
+          },
+          "matchRe": {
+            "description": "map of key:value. A set of regex-matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+            "type": "object"
+          },
+          "matchers": {
+            "description": "A list of matchers that an alert has to fulfill to match the node. A matcher is a string with a syntax inspired by PromQL and OpenMetrics. The syntax of a matcher consists of three tokens:\n* A valid Prometheus label name.\n* One of =, !=, =~, or !~. = means equals, != means that the strings are not equal, =~ is used for equality of regex expressions and !~ is used for un-equality of regex expressions. They have the same meaning as known from PromQL selectors.\n* A UTF-8 string, which may be enclosed in double quotes. Before or after each token, there may be any amount of whitespace.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+            "items": {
+              "description": "Item of matchers",
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "receiver": {
+            "description": "Receiver that should be one item of receivers\n`Additional Validators:`\n* must be a in name of receivers",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "repeatInterval": {
+            "default": "4h",
+            "description": "How long to wait before sending a notification again if it has already been sent successfully for an alert. (Usually ~3h or more).\n`Additional Validators:`\n* must be a valid time format",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "routes": {
+            "description": "Zero or more child routes.",
+            "items": {
+              "description": "As in one level above",
+              "properties": {
+                "groupBy": {
+                  "items": {
+                    "description": "As in one level above",
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "groupInterval": {
+                  "description": "As in one level above",
+                  "maxLength": 8,
+                  "minLength": 2,
+                  "type": "string"
+                },
+                "groupWait": {
+                  "description": "As in one level above",
+                  "maxLength": 8,
+                  "type": "string"
+                },
+                "match": {
+                  "description": "As in one level above",
+                  "type": "object"
+                },
+                "matchRe": {
+                  "description": "As in one level above",
+                  "type": "object"
+                },
+                "receiver": {
+                  "description": "As in one level above",
+                  "maxLength": 100,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "repeatInterval": {
+                  "description": "As in one level above",
+                  "maxLength": 8,
+                  "minLength": 2,
+                  "type": "string"
+                },
+                "routes": {
+                  "description": "Another child routes",
+                  "items": {
+                    "description": "As in one level above",
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "receiver"
+        ],
+        "type": "object"
+      },
       "UpdateScrapeConfigPayload": {
         "properties": {
           "basicAuth": {
@@ -3377,6 +4033,348 @@
         ],
         "type": "object"
       },
+      "UpdateCredentialRemoteWriteConfigPayload": {
+        "description": "Remote write limit config.",
+        "properties": {
+          "maxLimit": {
+            "description": "Remote write metric sample limit for credential to push in a single minute.",
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateInstanceGrafanaConfigsPayload": {
+        "description": "Sending any of the attributes results in a set of the attribute and overwrites any previous configuration.",
+        "properties": {
+          "genericOauth": {
+            "properties": {
+              "apiUrl": {
+                "description": "Set api_url to the resource that returns OpenID UserInfo compatible information.",
+                "type": "string"
+              },
+              "authUrl": {
+                "description": "Authentication endpoint of idp.",
+                "type": "string"
+              },
+              "enabled": {
+                "description": "enable or disable generic oauth login",
+                "type": "boolean"
+              },
+              "name": {
+                "description": "Display name for the oAuth provider",
+                "type": "string"
+              },
+              "oauthClientId": {
+                "description": "Oauth client id for auth endpoint.",
+                "type": "string"
+              },
+              "oauthClientSecret": {
+                "description": "Oauth client secret for auth endpoint.",
+                "type": "string"
+              },
+              "roleAttributePath": {
+                "description": "Grafana checks for the presence of a role using the JMESPath specified via the role_attribute_path configuration option. The JMESPath is applied to the id_token first. If there is no match, then the UserInfo endpoint specified via the api_url configuration option is tried next. The result after evaluation of the role_attribute_path JMESPath expression should be a valid Grafana role, for example, Viewer, Editor or Admin\nFor example: contains(roles[\\*], 'grafana-admin') \u0026\u0026 'Admin' || contains(roles[\\*], 'grafana-editor') \u0026\u0026 'Editor' || contains(roles[\\*], 'grafana-viewer') \u0026\u0026 'Viewer'",
+                "type": "string"
+              },
+              "roleAttributeStrict": {
+                "default": true,
+                "description": "If  therole_attribute_path property does not return a role, then the user is assigned the Viewer role by default. You can disable the role assignment by setting role_attribute_strict = true. It denies user access if no role or an invalid role is returned.",
+                "type": "boolean"
+              },
+              "scopes": {
+                "default": "openid profile email",
+                "description": "Space seperated list of scopes of the token",
+                "type": "string"
+              },
+              "tokenUrl": {
+                "description": "Token endpoint of the idp.",
+                "type": "string"
+              },
+              "usePkce": {
+                "description": "enable or disable Proof Key for Code Exchange",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "apiUrl",
+              "authUrl",
+              "enabled",
+              "oauthClientId",
+              "oauthClientSecret",
+              "roleAttributePath",
+              "tokenUrl"
+            ],
+            "type": "object"
+          },
+          "publicReadAccess": {
+            "description": "If it's true, anyone can access the Grafana dashboards without logging in. If it is wrong, a login is required.",
+            "type": "boolean"
+          },
+          "useStackitSso": {
+            "description": "If it's true, it overwrites the current genericOauth config and configures STACKIT SSO for this instance.",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "CreateInstanceAlertConfigReceiverPayload": {
+        "description": "Receivers",
+        "properties": {
+          "emailConfigs": {
+            "description": "Email configurations",
+            "items": {
+              "properties": {
+                "authIdentity": {
+                  "description": "SMTP authentication information.\n`Additional Validators:`\n* must be a syntactically valid email address",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "authPassword": {
+                  "description": "SMTP authentication information.",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "authUsername": {
+                  "description": "SMTP authentication information.",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "from": {
+                  "description": "The sender address.\n`Additional Validators:`\n* must be a syntactically valid email address",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "smarthost": {
+                  "description": "The SMTP host through which emails are sent.\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9_./@\u0026?:-",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "to": {
+                  "description": "The email address to send notifications to.\n`Additional Validators:`\n* must be a syntactically valid email address",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "name": {
+            "description": "`Additional Validators:`\n* must be unique\n* should only include the characters: a-zA-Z0-9-",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "opsgenieConfigs": {
+            "description": "Configuration for ops genie.",
+            "items": {
+              "properties": {
+                "apiKey": {
+                  "description": "The API key to use when talking to the OpsGenie API.\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9-",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "apiUrl": {
+                  "description": "The host to send OpsGenie API requests to.\n`Additional Validators:`\n* must be a syntactically valid url address",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "tags": {
+                  "description": "Comma separated list of tags attached to the notifications.",
+                  "maxLength": 400,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "webHookConfigs": {
+            "items": {
+              "properties": {
+                "msTeams": {
+                  "default": false,
+                  "description": "Microsoft Teams webhooks require special handling. If you set this property to true, it is treated as such",
+                  "type": "boolean"
+                },
+                "url": {
+                  "description": "The endpoint to send HTTP POST requests to.\n`Additional Validators:`\n* must be a syntactically valid url address",
+                  "maxLength": 500,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "CreateInstancePayload": {
+        "description": "Create update instance body.",
+        "properties": {
+          "name": {
+            "description": "Name of the service",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "parameter": {
+            "description": "additional parameters",
+            "type": "object"
+          },
+          "planId": {
+            "description": "uuid of the plan to create/update",
+            "type": "string"
+          }
+        },
+        "required": [
+          "planId"
+        ],
+        "type": "object"
+      },
+      "UpdateInstancePayload": {
+        "description": "Create update instance body.",
+        "properties": {
+          "name": {
+            "description": "Name of the service",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "parameter": {
+            "description": "additional parameters",
+            "type": "object"
+          },
+          "planId": {
+            "description": "uuid of the plan to create/update",
+            "type": "string"
+          }
+        },
+        "required": [
+          "planId"
+        ],
+        "type": "object"
+      },
+      "PlansResponse": {
+        "properties": {
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "plans": {
+            "items": {
+              "$ref": "#/components/schemas/PlanModel"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "message",
+          "plans"
+        ],
+        "type": "object"
+      },
+      "ScrapeConfigsResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Job"
+            },
+            "type": "array"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "message"
+        ],
+        "type": "object"
+      },
+      "ScrapeConfigResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Job"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "message"
+        ],
+        "type": "object"
+      },
+      "CreateInstanceResponse": {
+        "properties": {
+          "dashboardUrl": {
+            "minLength": 1,
+            "title": "Dashboardurl",
+            "type": "string"
+          },
+          "instanceId": {
+            "minLength": 1,
+            "title": "Instanceid",
+            "type": "string"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dashboardUrl",
+          "instanceId",
+          "message"
+        ],
+        "type": "object"
+      },
+      "GrafanaConfigs": {
+        "properties": {
+          "genericOauth": {
+            "$ref": "#/components/schemas/GrafanaOauth"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "publicReadAccess": {
+            "title": "Publicreadaccess",
+            "type": "boolean"
+          },
+          "useStackitSso": {
+            "title": "Usestackitsso",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
       "InstanceResponse": {
         "properties": {
           "dashboardUrl": {
@@ -3477,88 +4475,6 @@
         ],
         "type": "object"
       },
-      "ScrapeConfigResponse": {
-        "properties": {
-          "data": {
-            "$ref": "#/components/schemas/Job"
-          },
-          "message": {
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          }
-        },
-        "required": [
-          "data",
-          "message"
-        ],
-        "type": "object"
-      },
-      "ScrapeConfigsResponse": {
-        "properties": {
-          "data": {
-            "items": {
-              "$ref": "#/components/schemas/Job"
-            },
-            "type": "array"
-          },
-          "message": {
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          }
-        },
-        "required": [
-          "data",
-          "message"
-        ],
-        "type": "object"
-      },
-      "CreateInstanceResponse": {
-        "properties": {
-          "dashboardUrl": {
-            "minLength": 1,
-            "title": "Dashboardurl",
-            "type": "string"
-          },
-          "instanceId": {
-            "minLength": 1,
-            "title": "Instanceid",
-            "type": "string"
-          },
-          "message": {
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          }
-        },
-        "required": [
-          "dashboardUrl",
-          "instanceId",
-          "message"
-        ],
-        "type": "object"
-      },
-      "PlansResponse": {
-        "properties": {
-          "message": {
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          },
-          "plans": {
-            "items": {
-              "$ref": "#/components/schemas/PlanModel"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "message",
-          "plans"
-        ],
-        "type": "object"
-      },
       "Credential": {
         "properties": {
           "password": {
@@ -3587,7 +4503,7 @@
     "description": "API endpoints for Argus on STACKIT",
     "termsOfService": "https://stackit.de/en/imprint",
     "title": "STACKIT Argus API",
-    "version": "1.0.1"
+    "version": "1.1.0"
   },
   "openapi": "3.0.1",
   "paths": {
@@ -3800,6 +4716,7 @@
                     "grafanaPlugins": [],
                     "grafanaPublicReadAccess": false,
                     "grafanaUrl": "https://ui.stackit.argus.eu01.cloud/instances/9449de83-64ac-45dc-9967-e7c75bbdca70",
+                    "grafanaUseStackitSso": false,
                     "instance": "9449de83-64ac-45dc-9967-e7c75bbdca70",
                     "jaegerTracesUrl": "9449de83-64ac-gj.traces.stackit.argus.eu01.cloud:443",
                     "jaegerUiUrl": "https://9449de83-64ac-jui.traces.stackit.argus.eu01.cloud/instances/9449de83-64ac-45dc-9967-e7c75bbdca70",
@@ -3829,9 +4746,10 @@
                       "logsStorage": 20,
                       "name": "SmallPlan",
                       "planId": "7b1fbd9c-9acd-42ce-95d3-0f6822d6cabe",
-                      "samplesPerScrape": 1000,
+                      "samplesPerScrape": 0,
                       "schema": "",
                       "targetNumber": 2,
+                      "totalMetricSamples": 5000,
                       "tracesStorage": 20
                     },
                     "pushMetricsUrl": "https://push.metrics.stackit.argus.eu01.cloud/instances/9449de83-64ac-45dc-9967-e7c75bbdca70/api/v1/receive",
@@ -3940,6 +4858,1440 @@
               }
             },
             "description": "You do not have permission to perform this action."
+          }
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/acl": {
+      "get": {
+        "description": "Get acl for instance.",
+        "operationId": "GetInstanceAcl",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "acl": [
+                    "0.0.0.0"
+                  ],
+                  "message": "Successfully got acl"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/AclResponse"
+                }
+              }
+            },
+            "description": "Get acl config"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You do not have permission to perform this action."
+          }
+        }
+      },
+      "put": {
+        "description": "Update acl config.",
+        "operationId": "UpdateInstanceAcl",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInstanceAclPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully updated acl"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Update acl config."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Could not update acl config"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You do not have permission to perform this action."
+          }
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/alertconfigs": {
+      "get": {
+        "description": "Get alert config.",
+        "operationId": "GetInstanceAlertConfigs",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "global": {
+                      "smtpAuthPassword": "password",
+                      "smtpAuthUsername": "alertmanager",
+                      "smtpFrom": "alertmanager@example.org",
+                      "smtpSmarthost": "localhost:25"
+                    },
+                    "inhibitRules": [
+                      {
+                        "equal": [
+                          "alertname",
+                          "cluster",
+                          "service"
+                        ],
+                        "sourceMatch": {
+                          "severity": "criticals"
+                        },
+                        "targetMatch": {
+                          "severity": "warning"
+                        }
+                      }
+                    ],
+                    "receivers": [
+                      {
+                        "emailConfigs": [
+                          {
+                            "to": "team-X+alerts@example.org"
+                          }
+                        ],
+                        "name": "team-X-mails"
+                      },
+                      {
+                        "emailConfigs": [
+                          {
+                            "to": "team-X+papers@example.org"
+                          }
+                        ],
+                        "name": "team-X-paper"
+                      },
+                      {
+                        "emailConfigs": [
+                          {
+                            "to": "team-Y+paper@example.org"
+                          }
+                        ],
+                        "name": "team-Y-paper"
+                      },
+                      {
+                        "emailConfigs": [
+                          {
+                            "to": "team-X+alerts-critical@example.org"
+                          }
+                        ],
+                        "name": "team-X-pager",
+                        "opsgenieConfigs": [
+                          {
+                            "apiKey": "12345678",
+                            "apiUrl": "https://example.opsgenie.org"
+                          }
+                        ]
+                      }
+                    ],
+                    "route": {
+                      "groupBy": [
+                        "alertname",
+                        "cluster",
+                        "service"
+                      ],
+                      "groupInterval": "5m",
+                      "groupWait": "30s",
+                      "receiver": "team-X-mails",
+                      "repeatInterval": "3h",
+                      "routes": [
+                        {
+                          "matchRe": {
+                            "service": "^(foo1|foo2|baz)$"
+                          },
+                          "receiver": "team-X-paper"
+                        },
+                        {
+                          "match": {
+                            "service": "files"
+                          },
+                          "receiver": "team-X-pager"
+                        }
+                      ]
+                    }
+                  },
+                  "message": "Success"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GetAlert"
+                }
+              }
+            },
+            "description": "Get alert config"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        }
+      },
+      "put": {
+        "description": "Update alert config.",
+        "operationId": "UpdateInstanceAlertConfigs",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInstanceAlertConfigsPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "global": {
+                      "smtpAuthPassword": "password",
+                      "smtpAuthUsername": "alertmanager",
+                      "smtpFrom": "alertmanager@example.org",
+                      "smtpSmarthost": "localhost:25"
+                    },
+                    "inhibitRules": [
+                      {
+                        "equal": [
+                          "alertname",
+                          "cluster",
+                          "service"
+                        ],
+                        "sourceMatch": {
+                          "severity": "criticals"
+                        },
+                        "targetMatch": {
+                          "severity": "warning"
+                        }
+                      }
+                    ],
+                    "receivers": [
+                      {
+                        "emailConfigs": [
+                          {
+                            "to": "team-X+alerts@example.org"
+                          }
+                        ],
+                        "name": "team-X-mails"
+                      },
+                      {
+                        "emailConfigs": [
+                          {
+                            "to": "team-X+papers@example.org"
+                          }
+                        ],
+                        "name": "team-X-paper"
+                      },
+                      {
+                        "emailConfigs": [
+                          {
+                            "to": "team-Y+paper@example.org"
+                          }
+                        ],
+                        "name": "team-Y-paper"
+                      },
+                      {
+                        "emailConfigs": [
+                          {
+                            "to": "team-X+alerts-critical@example.org"
+                          }
+                        ],
+                        "name": "team-X-pager",
+                        "opsgenieConfigs": [
+                          {
+                            "apiKey": "12345678",
+                            "apiUrl": "https://example.opsgenie.org"
+                          }
+                        ]
+                      }
+                    ],
+                    "route": {
+                      "groupBy": [
+                        "alertname",
+                        "cluster",
+                        "service"
+                      ],
+                      "groupInterval": "5m",
+                      "groupWait": "30s",
+                      "receiver": "team-X-mails",
+                      "repeatInterval": "3h",
+                      "routes": [
+                        {
+                          "matchRe": {
+                            "service": "^(foo1|foo2|baz)$"
+                          },
+                          "receiver": "team-X-paper"
+                        },
+                        {
+                          "match": {
+                            "service": "files"
+                          },
+                          "receiver": "team-X-pager"
+                        }
+                      ]
+                    }
+                  },
+                  "message": "Success"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PutAlert"
+                }
+              }
+            },
+            "description": "Update alert config."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Could not update alert config"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong updating the alert config."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/alertconfigs/receivers": {
+      "get": {
+        "description": "Get alert config receivers.",
+        "operationId": "GetInstanceAlertConfigReceivers",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "emailConfigs": [
+                        {
+                          "to": "team-X+alerts@example.org"
+                        }
+                      ],
+                      "name": "team-X-mails"
+                    },
+                    {
+                      "emailConfigs": [
+                        {
+                          "to": "team-X+papers@example.org"
+                        }
+                      ],
+                      "name": "team-X-paper"
+                    },
+                    {
+                      "emailConfigs": [
+                        {
+                          "to": "team-Y+paper@example.org"
+                        }
+                      ],
+                      "name": "team-Y-paper"
+                    },
+                    {
+                      "emailConfigs": [
+                        {
+                          "to": "team-X+alerts-critical@example.org"
+                        }
+                      ],
+                      "name": "team-X-pager",
+                      "opsgenieConfigs": [
+                        {
+                          "apiKey": "12345678",
+                          "apiUrl": "https://example.opsgenie.org"
+                        }
+                      ]
+                    }
+                  ],
+                  "message": "Success"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiversResponse"
+                }
+              }
+            },
+            "description": "Get alert config receivers"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        }
+      },
+      "post": {
+        "description": "Create alert config receiver.",
+        "operationId": "CreateInstanceAlertConfigReceiver",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInstanceAlertConfigReceiverPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "emailConfigs": [
+                        {
+                          "to": "team-X+alerts@example.org"
+                        }
+                      ],
+                      "name": "team-X-mails"
+                    },
+                    {
+                      "emailConfigs": [
+                        {
+                          "to": "team-X+papers@example.org"
+                        }
+                      ],
+                      "name": "team-X-paper"
+                    },
+                    {
+                      "emailConfigs": [
+                        {
+                          "to": "team-Y+paper@example.org"
+                        }
+                      ],
+                      "name": "team-Y-paper"
+                    },
+                    {
+                      "emailConfigs": [
+                        {
+                          "to": "team-X+alerts-critical@example.org"
+                        }
+                      ],
+                      "name": "team-X-pager",
+                      "opsgenieConfigs": [
+                        {
+                          "apiKey": "12345678",
+                          "apiUrl": "https://example.opsgenie.org"
+                        }
+                      ]
+                    }
+                  ],
+                  "message": "Success"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiversResponse"
+                }
+              }
+            },
+            "description": "Create alert config receiver."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Something went wrong"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/alertconfigs/receivers/{receiver}": {
+      "delete": {
+        "description": "Delete alert config receiver.",
+        "operationId": "DeleteInstanceAlertConfigReceiver",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "receiver",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "emailConfigs": [
+                        {
+                          "to": "team-X+alerts@example.org"
+                        }
+                      ],
+                      "name": "team-X-mails"
+                    },
+                    {
+                      "emailConfigs": [
+                        {
+                          "to": "team-X+papers@example.org"
+                        }
+                      ],
+                      "name": "team-X-paper"
+                    },
+                    {
+                      "emailConfigs": [
+                        {
+                          "to": "team-Y+paper@example.org"
+                        }
+                      ],
+                      "name": "team-Y-paper"
+                    },
+                    {
+                      "emailConfigs": [
+                        {
+                          "to": "team-X+alerts-critical@example.org"
+                        }
+                      ],
+                      "name": "team-X-pager",
+                      "opsgenieConfigs": [
+                        {
+                          "apiKey": "12345678",
+                          "apiUrl": "https://example.opsgenie.org"
+                        }
+                      ]
+                    }
+                  ],
+                  "message": "Success"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiversResponse"
+                }
+              }
+            },
+            "description": "Delete alert config receiver."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Alert config receiver not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Alert config receiver not found."
+          }
+        }
+      },
+      "get": {
+        "description": "Get alert config receivers.",
+        "operationId": "GetInstanceAlertConfigReceiver",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "receiver",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "emailConfigs": [
+                      {
+                        "to": "team-X+alerts@example.org"
+                      }
+                    ],
+                    "name": "team-X-mails"
+                  },
+                  "message": "Success"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiversResponseSerializerSingle"
+                }
+              }
+            },
+            "description": "Get alert config receiver"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Alert config receiver not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Alert config receiver not found."
+          }
+        }
+      },
+      "put": {
+        "description": "Update alert config receiver.",
+        "operationId": "UpdateInstanceAlertConfigReceiver",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "receiver",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInstanceAlertConfigReceiverPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "emailConfigs": [
+                        {
+                          "to": "team-X+alerts@example.org"
+                        }
+                      ],
+                      "name": "team-X-mails"
+                    },
+                    {
+                      "emailConfigs": [
+                        {
+                          "to": "team-X+papers@example.org"
+                        }
+                      ],
+                      "name": "team-X-paper"
+                    },
+                    {
+                      "emailConfigs": [
+                        {
+                          "to": "team-Y+paper@example.org"
+                        }
+                      ],
+                      "name": "team-Y-paper"
+                    },
+                    {
+                      "emailConfigs": [
+                        {
+                          "to": "team-X+alerts-critical@example.org"
+                        }
+                      ],
+                      "name": "team-X-pager",
+                      "opsgenieConfigs": [
+                        {
+                          "apiKey": "12345678",
+                          "apiUrl": "https://example.opsgenie.org"
+                        }
+                      ]
+                    }
+                  ],
+                  "message": "Success"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiversResponse"
+                }
+              }
+            },
+            "description": "Update alert config receiver."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Something went wrong"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Alert config receiver not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Alert config receiver not found."
+          }
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/alertconfigs/routes": {
+      "get": {
+        "description": "Get alert config route.",
+        "operationId": "GetInstanceAlertConfigRoutes",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "groupBy": [
+                      "alertname",
+                      "cluster",
+                      "service"
+                    ],
+                    "groupInterval": "5m",
+                    "groupWait": "30s",
+                    "receiver": "team-X-mails",
+                    "repeatInterval": "3h",
+                    "routes": [
+                      {
+                        "matchRe": {
+                          "service": "^(foo1|foo2|baz)$"
+                        },
+                        "receiver": "team-X-paper"
+                      },
+                      {
+                        "match": {
+                          "service": "files"
+                        },
+                        "receiver": "team-X-pager"
+                      }
+                    ]
+                  },
+                  "message": "Success"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/RouteResponse"
+                }
+              }
+            },
+            "description": "Get alert config route"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        }
+      },
+      "post": {
+        "description": "Create alert config route in routes of route.",
+        "operationId": "CreateInstanceAlertConfigRoute",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInstanceAlertConfigRoutePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "groupBy": [
+                      "alertname",
+                      "cluster",
+                      "service"
+                    ],
+                    "groupInterval": "5m",
+                    "groupWait": "30s",
+                    "receiver": "team-X-mails",
+                    "repeatInterval": "3h",
+                    "routes": [
+                      {
+                        "matchRe": {
+                          "service": "^(foo1|foo2|baz)$"
+                        },
+                        "receiver": "team-X-paper"
+                      },
+                      {
+                        "match": {
+                          "service": "files"
+                        },
+                        "receiver": "team-X-pager"
+                      }
+                    ]
+                  },
+                  "message": "Success"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/RouteResponse"
+                }
+              }
+            },
+            "description": "Create alert config route."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Something went wrong"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/alertconfigs/routes/{receiver}": {
+      "delete": {
+        "description": "Delete alert receiver for route.",
+        "operationId": "DeleteInstanceAlertConfigRouteReceiver",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "receiver",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "groupBy": [
+                      "alertname",
+                      "cluster",
+                      "service"
+                    ],
+                    "groupInterval": "5m",
+                    "groupWait": "30s",
+                    "receiver": "team-X-mails",
+                    "repeatInterval": "3h",
+                    "routes": [
+                      {
+                        "matchRe": {
+                          "service": "^(foo1|foo2|baz)$"
+                        },
+                        "receiver": "team-X-paper"
+                      },
+                      {
+                        "match": {
+                          "service": "files"
+                        },
+                        "receiver": "team-X-pager"
+                      }
+                    ]
+                  },
+                  "message": "Success"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/RouteResponse"
+                }
+              }
+            },
+            "description": "Delete alert config route."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Alert config route not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Alert config route not found."
+          }
+        }
+      },
+      "get": {
+        "description": "Get alert receiver for route.",
+        "operationId": "GetInstanceAlertConfigRouteReceiver",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "receiver",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "groupBy": [
+                      "alertname",
+                      "cluster",
+                      "service"
+                    ],
+                    "groupInterval": "5m",
+                    "groupWait": "30s",
+                    "receiver": "team-X-mails",
+                    "repeatInterval": "3h",
+                    "routes": [
+                      {
+                        "matchRe": {
+                          "service": "^(foo1|foo2|baz)$"
+                        },
+                        "receiver": "team-X-paper"
+                      },
+                      {
+                        "match": {
+                          "service": "files"
+                        },
+                        "receiver": "team-X-pager"
+                      }
+                    ]
+                  },
+                  "message": "Success"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/RouteResponse"
+                }
+              }
+            },
+            "description": "Get alert config route"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        }
+      },
+      "put": {
+        "description": "Update alert receiver for route.",
+        "operationId": "UpdateInstanceAlertConfigRouteReceiver",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "receiver",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInstanceAlertConfigRouteReceiverPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "groupBy": [
+                      "alertname",
+                      "cluster",
+                      "service"
+                    ],
+                    "groupInterval": "5m",
+                    "groupWait": "30s",
+                    "receiver": "team-X-mails",
+                    "repeatInterval": "3h",
+                    "routes": [
+                      {
+                        "matchRe": {
+                          "service": "^(foo1|foo2|baz)$"
+                        },
+                        "receiver": "team-X-paper"
+                      },
+                      {
+                        "match": {
+                          "service": "files"
+                        },
+                        "receiver": "team-X-pager"
+                      }
+                    ]
+                  },
+                  "message": "Success"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/RouteResponse"
+                }
+              }
+            },
+            "description": "Update alert config route."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Something went wrong"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Alert config route not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Alert config route not found."
           }
         }
       }
@@ -4217,6 +6569,428 @@
               }
             },
             "description": "Technical credentials do not exists."
+          }
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/credentials/{username}/remote-write-limits": {
+      "delete": {
+        "description": "Delete remote write config for credentials.",
+        "operationId": "DeleteCredentialRemoteWriteConfig",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "maxLimit": 5000,
+                  "message": "Successfully deleted remote write limit config"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/CredentialsRemoteWriteDeleteResponse"
+                }
+              }
+            },
+            "description": "Delete credentials remote write limit config."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "json body is not valid"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You do not have permission to perform this action."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "credentials do not exist"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "credentials do not exist"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "failed to read kubernetes configmap"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "failed to read kubernetes configmap"
+          }
+        }
+      },
+      "get": {
+        "description": "Get remote write config.",
+        "operationId": "GetCredentialRemoteWriteConfig",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "credentialsMaxLimit": 5000,
+                  "maxLimit": 5000,
+                  "message": "Successfully got remote write limit config"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/CredentialsRemoteWriteResponse"
+                }
+              }
+            },
+            "description": "Get credentials remote write limit config."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You do not have permission to perform this action."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "credentials do not exist"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "credentials do not exist"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "failed to read kubernetes configmap"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "failed to read kubernetes configmap"
+          }
+        }
+      },
+      "put": {
+        "description": "Update remote write config for credentials.",
+        "operationId": "UpdateCredentialRemoteWriteConfig",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCredentialRemoteWriteConfigPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "credentialsMaxLimit": 5000,
+                  "maxLimit": 5000,
+                  "message": "Successfully updated remote write limit config"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/CredentialsRemoteWriteResponse"
+                }
+              }
+            },
+            "description": "Update credentials remote write limit config."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "json body is not valid"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You do not have permission to perform this action."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "credentials do not exist"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "credentials do not exist"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "failed to read kubernetes configmap"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "failed to read kubernetes configmap"
+          }
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/grafana-configs": {
+      "get": {
+        "description": "Get grafana config.",
+        "operationId": "GetInstanceGrafanaConfigs",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully got grafana config",
+                  "publicReadAccess": false,
+                  "useStackitSso": false
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GrafanaConfigs"
+                }
+              }
+            },
+            "description": "Get grafana config."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You do not have permission to perform this action."
+          }
+        }
+      },
+      "put": {
+        "description": "Update grafana config.",
+        "operationId": "UpdateInstanceGrafanaConfigs",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInstanceGrafanaConfigsPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully updated grafana config"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Update grafana config."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Something went wrong"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You do not have permission to perform this action."
           }
         }
       }
@@ -4688,9 +7462,10 @@
                       "logsStorage": 20,
                       "name": "SmallPlan",
                       "planId": "7b1fbd9c-9acd-42ce-95d3-0f6822d6cabe",
-                      "samplesPerScrape": 1000,
+                      "samplesPerScrape": 0,
                       "schema": "{}",
                       "targetNumber": 2,
+                      "totalMetricSamples": 5000,
                       "tracesStorage": 20
                     }
                   ]

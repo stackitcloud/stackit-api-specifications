@@ -102,11 +102,12 @@
           "protocol": {
             "description": "Protocol is the highest network protocol we understand to load balance. Currently only PROTOCOL_TCP and PROTOCOL_TCP_PROXY are supported.",
             "enum": [
+              "PROTOCOL_UNSPECIFIED",
               "PROTOCOL_TCP",
               "PROTOCOL_UDP",
               "PROTOCOL_TCP_PROXY"
             ],
-            "type": "integer"
+            "type": "string"
           },
           "targetPool": {
             "description": "Reference target pool by target pool name.",
@@ -236,9 +237,12 @@
           "role": {
             "description": "The role defines how the load balancer is using the network. Currently only ROLE_LISTENERS_AND_TARGETS is supported.",
             "enum": [
-              "ROLE_LISTENERS_AND_TARGETS"
+              "ROLE_UNSPECIFIED",
+              "ROLE_LISTENERS_AND_TARGETS",
+              "ROLE_LISTENERS",
+              "ROLE_TARGETS"
             ],
-            "type": "integer"
+            "type": "string"
           }
         },
         "type": "object"
@@ -356,32 +360,6 @@
         },
         "type": "object"
       },
-      "UpdateTargetPoolPayload": {
-        "properties": {
-          "activeHealthCheck": {
-            "$ref": "#/components/schemas/ActiveHealthCheck"
-          },
-          "name": {
-            "description": "Target pool name",
-            "example": "my-target-pool",
-            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,18}[0-9a-z])?$",
-            "type": "string"
-          },
-          "targetPort": {
-            "description": "Identical port number where each target listens for traffic.",
-            "maximum": 65535,
-            "minimum": 1,
-            "type": "integer"
-          },
-          "targets": {
-            "items": {
-              "$ref": "#/components/schemas/Target"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
       "CreateLoadBalancerPayload": {
         "properties": {
           "errors": {
@@ -440,6 +418,32 @@
             "description": "List of all target pools which will be used in the load balancer.",
             "items": {
               "$ref": "#/components/schemas/TargetPool"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateTargetPoolPayload": {
+        "properties": {
+          "activeHealthCheck": {
+            "$ref": "#/components/schemas/ActiveHealthCheck"
+          },
+          "name": {
+            "description": "Target pool name",
+            "example": "my-target-pool",
+            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,18}[0-9a-z])?$",
+            "type": "string"
+          },
+          "targetPort": {
+            "description": "Identical port number where each target listens for traffic.",
+            "maximum": 65535,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "targets": {
+            "items": {
+              "$ref": "#/components/schemas/Target"
             },
             "type": "array"
           }

@@ -38,6 +38,12 @@ jobs:
         run: make download-oas
       - name: Generate SDK
         run: make generate-sdk
+      - name: Lint
+        working-directory: ./sdk-repo-updated
+        run: make lint skip-non-generated-files=true
+      - name: Test
+        working-directory: ./sdk-repo-updated
+        run: make test skip-non-generated-files=true
       - name: Push SDK
         env: 
           GH_REPO: 'stackitcloud/stackit-sdk-go'

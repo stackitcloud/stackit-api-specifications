@@ -442,17 +442,6 @@
         ],
         "type": "object"
       },
-      "CloneInstancePayload": {
-        "properties": {
-          "instanceId": {
-            "type": "string"
-          },
-          "timestamp": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "UpdateInstancePayload": {
         "properties": {
           "acl": {
@@ -539,6 +528,40 @@
         },
         "type": "object"
       },
+      "UpdateBackupSchedulePayload": {
+        "properties": {
+          "backupSchedule": {
+            "type": "string"
+          },
+          "dailySnapshotRetentionDays": {
+            "type": "integer"
+          },
+          "monthlySnapshotRetentionMonths": {
+            "type": "integer"
+          },
+          "pointInTimeWindowHours": {
+            "type": "integer"
+          },
+          "snapshotRetentionDays": {
+            "type": "integer"
+          },
+          "weeklySnapshotRetentionWeeks": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "CloneInstancePayload": {
+        "properties": {
+          "instanceId": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "RestoreInstancePayload": {
         "properties": {
           "backupId": {
@@ -563,29 +586,6 @@
           },
           "username": {
             "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateBackupSchedulePayload": {
-        "properties": {
-          "backupSchedule": {
-            "type": "string"
-          },
-          "dailySnapshotRetentionDays": {
-            "type": "integer"
-          },
-          "monthlySnapshotRetentionMonths": {
-            "type": "integer"
-          },
-          "pointInTimeWindowHours": {
-            "type": "integer"
-          },
-          "snapshotRetentionDays": {
-            "type": "integer"
-          },
-          "weeklySnapshotRetentionWeeks": {
-            "type": "integer"
           }
         },
         "type": "object"
@@ -618,6 +618,103 @@
         },
         "type": "object"
       },
+      "GetFlavorsResponse": {
+        "properties": {
+          "flavors": {
+            "items": {
+              "$ref": "#/components/schemas/handlers_infra.Flavor"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "GetInstanceResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/instance.SingleInstance"
+          }
+        },
+        "type": "object"
+      },
+      "CloneInstanceResponse": {
+        "properties": {
+          "instanceId": {
+            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CreateInstanceResponse": {
+        "properties": {
+          "id": {
+            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "RestoreInstanceResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/instance.Restore"
+          }
+        },
+        "type": "object"
+      },
+      "CreateUserResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/instance.User"
+          }
+        },
+        "type": "object"
+      },
+      "GetBackupResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/instance.Backup"
+          }
+        },
+        "type": "object"
+      },
+      "GetStorageResponse": {
+        "properties": {
+          "storageClasses": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "storageRange": {
+            "$ref": "#/components/schemas/instance.StorageRange"
+          }
+        },
+        "type": "object"
+      },
+      "GetUserResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/instance.ResponseUser"
+          }
+        },
+        "type": "object"
+      },
+      "GetVersionsResponse": {
+        "properties": {
+          "versions": {
+            "example": [
+              "1.0"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "GetBackupsResponse": {
         "properties": {
           "count": {
@@ -632,29 +729,16 @@
         },
         "type": "object"
       },
-      "RestoreInstanceResponse": {
+      "GetInstancesResponse": {
         "properties": {
-          "item": {
-            "$ref": "#/components/schemas/instance.Restore"
-          }
-        },
-        "type": "object"
-      },
-      "GetMetricsResponse": {
-        "properties": {
-          "hosts": {
+          "count": {
+            "type": "integer"
+          },
+          "items": {
             "items": {
-              "$ref": "#/components/schemas/instance.Host"
+              "$ref": "#/components/schemas/instance.ListInstance"
             },
             "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateInstanceResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/instance.SingleInstance"
           }
         },
         "type": "object"
@@ -664,28 +748,6 @@
           "items": {
             "items": {
               "$ref": "#/components/schemas/instance.Restore"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "GetBackupResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/instance.Backup"
-          }
-        },
-        "type": "object"
-      },
-      "GetInstancesResponse": {
-        "properties": {
-          "count": {
-            "type": "integer"
-          },
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/instance.ListInstance"
             },
             "type": "array"
           }
@@ -706,83 +768,21 @@
         },
         "type": "object"
       },
-      "CreateInstanceResponse": {
+      "GetMetricsResponse": {
         "properties": {
-          "id": {
-            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "GetVersionsResponse": {
-        "properties": {
-          "versions": {
-            "example": [
-              "1.0"
-            ],
+          "hosts": {
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/instance.Host"
             },
             "type": "array"
           }
         },
         "type": "object"
       },
-      "GetUserResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/instance.ResponseUser"
-          }
-        },
-        "type": "object"
-      },
-      "CloneInstanceResponse": {
-        "properties": {
-          "instanceId": {
-            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "GetFlavorsResponse": {
-        "properties": {
-          "flavors": {
-            "items": {
-              "$ref": "#/components/schemas/handlers_infra.Flavor"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "GetInstanceResponse": {
+      "UpdateInstanceResponse": {
         "properties": {
           "item": {
             "$ref": "#/components/schemas/instance.SingleInstance"
-          }
-        },
-        "type": "object"
-      },
-      "CreateUserResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/instance.User"
-          }
-        },
-        "type": "object"
-      },
-      "GetStorageResponse": {
-        "properties": {
-          "storageClasses": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "storageRange": {
-            "$ref": "#/components/schemas/instance.StorageRange"
           }
         },
         "type": "object"

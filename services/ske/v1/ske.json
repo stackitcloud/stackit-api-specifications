@@ -46,6 +46,64 @@
         ],
         "type": "object"
       },
+      "ACL": {
+        "properties": {
+          "allowedCidrs": {
+            "description": "Array of CIDRs to allow access to the kubernetes API.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "enabled": {
+            "description": "Enables the acl extension.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "allowedCidrs",
+          "enabled"
+        ],
+        "type": "object"
+      },
+      "Argus": {
+        "properties": {
+          "argusInstanceId": {
+            "description": "Argus instance ID to choose which Argus instance is used.",
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Enables the argus extension.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "argusInstanceId",
+          "enabled"
+        ],
+        "type": "object"
+      },
+      "AvailabilityZone": {
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CRI": {
+        "properties": {
+          "name": {
+            "enum": [
+              "docker",
+              "containerd"
+            ],
+            "title": "Name of the cri library",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "ClusterResponse": {
         "properties": {
           "extensions": {
@@ -79,6 +137,95 @@
         "required": [
           "kubernetes",
           "nodepools"
+        ],
+        "type": "object"
+      },
+      "ClusterStatus": {
+        "properties": {
+          "aggregated": {
+            "$ref": "#/components/schemas/ClusterStatusState"
+          },
+          "error": {
+            "$ref": "#/components/schemas/RuntimeError"
+          },
+          "hibernated": {
+            "title": "Indicates whether the cluster is currently hibernated",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "ClusterStatusState": {
+        "default": "STATE_UNSPECIFIED",
+        "enum": [
+          "STATE_UNSPECIFIED",
+          "STATE_HEALTHY",
+          "STATE_CREATING",
+          "STATE_DELETING",
+          "STATE_UNHEALTHY",
+          "STATE_RECONCILING",
+          "STATE_HIBERNATED",
+          "STATE_HIBERNATING",
+          "STATE_WAKINGUP"
+        ],
+        "title": "aggregated state of the cluster",
+        "type": "string"
+      },
+      "ClustersResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ClusterResponse"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "CredentialsResponse": {
+        "properties": {
+          "certificateAuthorityData": {
+            "title": "Certificate authority data for accessing the cluster",
+            "type": "string"
+          },
+          "kubeconfig": {
+            "description": "This string contains the kubeconfig as yaml. If you want to directly get the yaml without any \n characters you can use the following command: curl -s 'api.stackit.cloud/ske/v1/projects/{projectId}/clusters/{clusterName}/credentials' |jq -r .kubeconfig",
+            "title": "Kubeconfig for the cluster as yml string",
+            "type": "string"
+          },
+          "server": {
+            "title": "Kubernetes api server address",
+            "type": "string"
+          },
+          "token": {
+            "title": "Access token used to authenticate with the cluster",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Extension": {
+        "properties": {
+          "acl": {
+            "$ref": "#/components/schemas/ACL"
+          },
+          "argus": {
+            "$ref": "#/components/schemas/Argus"
+          }
+        },
+        "type": "object"
+      },
+      "Hibernation": {
+        "properties": {
+          "schedules": {
+            "items": {
+              "$ref": "#/components/schemas/HibernationSchedule"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "schedules"
         ],
         "type": "object"
       },
@@ -122,119 +269,23 @@
         ],
         "type": "object"
       },
-      "Machine": {
+      "Kubernetes": {
+        "description": "For valid versions please take a look at /provider-options kubernetesVersions",
         "properties": {
-          "image": {
-            "$ref": "#/components/schemas/Image"
-          },
-          "type": {
-            "description": "For valid types please take a look at /provider-options machineTypes",
-            "type": "string"
-          }
-        },
-        "required": [
-          "image",
-          "type"
-        ],
-        "type": "object"
-      },
-      "ProjectResponse": {
-        "properties": {
-          "projectId": {
-            "type": "string"
-          },
-          "state": {
-            "$ref": "#/components/schemas/ProjectState"
-          }
-        },
-        "type": "object"
-      },
-      "Taint": {
-        "properties": {
-          "effect": {
-            "enum": [
-              "NoSchedule",
-              "PreferNoSchedule",
-              "NoExecute"
-            ],
-            "type": "string"
-          },
-          "key": {
-            "title": "Taint key to be applied to a node",
-            "type": "string"
-          },
-          "value": {
-            "title": "Taint value corresponding to the taint key",
-            "type": "string"
-          }
-        },
-        "required": [
-          "effect",
-          "key"
-        ],
-        "type": "object"
-      },
-      "AvailabilityZone": {
-        "properties": {
-          "name": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "CRI": {
-        "properties": {
-          "name": {
-            "enum": [
-              "docker",
-              "containerd"
-            ],
-            "title": "Name of the cri library",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "VolumeType": {
-        "properties": {
-          "name": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "Argus": {
-        "properties": {
-          "argusInstanceId": {
-            "description": "Argus instance ID to choose which Argus instance is used.",
-            "type": "string"
-          },
-          "enabled": {
-            "description": "Enables the argus extension.",
+          "allowPrivilegedContainers": {
+            "description": "DEPRECATED as of Kubernetes 1.25+\nFlag to specify if privileged mode for containers is enabled or not.\nThis should be used with care since it also disables a couple of other features like the use of some volume type (e.g. PVCs).\nBy default this is set to true.",
             "type": "boolean"
+          },
+          "version": {
+            "pattern": "^\\d+\\.\\d+\\.\\d+$",
+            "title": "Kubernetes version used for the cluster",
+            "type": "string"
           }
         },
         "required": [
-          "argusInstanceId",
-          "enabled"
+          "version"
         ],
         "type": "object"
-      },
-      "ClusterStatusState": {
-        "default": "STATE_UNSPECIFIED",
-        "enum": [
-          "STATE_UNSPECIFIED",
-          "STATE_HEALTHY",
-          "STATE_CREATING",
-          "STATE_DELETING",
-          "STATE_UNHEALTHY",
-          "STATE_RECONCILING",
-          "STATE_HIBERNATED",
-          "STATE_HIBERNATING",
-          "STATE_WAKINGUP"
-        ],
-        "title": "aggregated state of the cluster",
-        "type": "string"
       },
       "KubernetesVersion": {
         "properties": {
@@ -261,60 +312,88 @@
         },
         "type": "object"
       },
-      "ProviderOptions": {
+      "Machine": {
         "properties": {
-          "availabilityZones": {
-            "items": {
-              "$ref": "#/components/schemas/AvailabilityZone"
-            },
-            "type": "array"
+          "image": {
+            "$ref": "#/components/schemas/Image"
           },
-          "kubernetesVersions": {
-            "items": {
-              "$ref": "#/components/schemas/KubernetesVersion"
-            },
-            "title": "List of supported Kubernetes versions",
-            "type": "array"
+          "type": {
+            "description": "For valid types please take a look at /provider-options machineTypes",
+            "type": "string"
+          }
+        },
+        "required": [
+          "image",
+          "type"
+        ],
+        "type": "object"
+      },
+      "MachineImage": {
+        "properties": {
+          "name": {
+            "title": "Image name",
+            "type": "string"
           },
-          "machineImages": {
+          "versions": {
             "items": {
-              "$ref": "#/components/schemas/MachineImage"
-            },
-            "type": "array"
-          },
-          "machineTypes": {
-            "items": {
-              "$ref": "#/components/schemas/MachineType"
-            },
-            "title": "List of supported machine types",
-            "type": "array"
-          },
-          "volumeTypes": {
-            "items": {
-              "$ref": "#/components/schemas/VolumeType"
+              "$ref": "#/components/schemas/MachineImageVersion"
             },
             "type": "array"
           }
         },
         "type": "object"
       },
-      "ACL": {
+      "MachineImageVersion": {
         "properties": {
-          "allowedCidrs": {
-            "description": "Array of CIDRs to allow access to the kubernetes API.",
+          "cri": {
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/CRI"
             },
+            "title": "supported container runtimes",
             "type": "array"
           },
-          "enabled": {
-            "description": "Enables the acl extension.",
-            "type": "boolean"
+          "expirationDate": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "version": {
+            "pattern": "^\\d+\\.\\d+\\.\\d+$",
+            "title": "Image version",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "MachineType": {
+        "properties": {
+          "cpu": {
+            "title": "number of CPU cores",
+            "type": "integer"
+          },
+          "memory": {
+            "title": "memory in GB",
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Maintenance": {
+        "properties": {
+          "autoUpdate": {
+            "$ref": "#/components/schemas/MaintenanceAutoUpdate"
+          },
+          "timeWindow": {
+            "$ref": "#/components/schemas/TimeWindow"
           }
         },
         "required": [
-          "allowedCidrs",
-          "enabled"
+          "autoUpdate",
+          "timeWindow"
         ],
         "type": "object"
       },
@@ -386,158 +465,13 @@
         ],
         "type": "object"
       },
-      "Volume": {
+      "ProjectResponse": {
         "properties": {
-          "size": {
-            "maximum": 10240,
-            "minimum": 20,
-            "title": "Size of volume in GB",
-            "type": "integer"
-          },
-          "type": {
-            "description": "For valid values please take a look at /provider-options volumeTypes",
-            "type": "string"
-          }
-        },
-        "required": [
-          "size"
-        ],
-        "type": "object"
-      },
-      "ClustersResponse": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/ClusterResponse"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "Maintenance": {
-        "properties": {
-          "autoUpdate": {
-            "$ref": "#/components/schemas/MaintenanceAutoUpdate"
-          },
-          "timeWindow": {
-            "$ref": "#/components/schemas/TimeWindow"
-          }
-        },
-        "required": [
-          "autoUpdate",
-          "timeWindow"
-        ],
-        "type": "object"
-      },
-      "TimeWindow": {
-        "properties": {
-          "end": {
-            "type": "string"
-          },
-          "start": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "end",
-          "start"
-        ],
-        "type": "object"
-      },
-      "Hibernation": {
-        "properties": {
-          "schedules": {
-            "items": {
-              "$ref": "#/components/schemas/HibernationSchedule"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "schedules"
-        ],
-        "type": "object"
-      },
-      "Kubernetes": {
-        "description": "For valid versions please take a look at /provider-options kubernetesVersions",
-        "properties": {
-          "allowPrivilegedContainers": {
-            "description": "DEPRECATED as of Kubernetes 1.25+\nFlag to specify if privileged mode for containers is enabled or not.\nThis should be used with care since it also disables a couple of other features like the use of some volume type (e.g. PVCs).\nBy default this is set to true.",
-            "type": "boolean"
-          },
-          "version": {
-            "pattern": "^\\d+\\.\\d+\\.\\d+$",
-            "title": "Kubernetes version used for the cluster",
-            "type": "string"
-          }
-        },
-        "required": [
-          "version"
-        ],
-        "type": "object"
-      },
-      "MachineType": {
-        "properties": {
-          "cpu": {
-            "title": "number of CPU cores",
-            "type": "integer"
-          },
-          "memory": {
-            "title": "memory in GB",
-            "type": "integer"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "Extension": {
-        "properties": {
-          "acl": {
-            "$ref": "#/components/schemas/ACL"
-          },
-          "argus": {
-            "$ref": "#/components/schemas/Argus"
-          }
-        },
-        "type": "object"
-      },
-      "MachineImageVersion": {
-        "properties": {
-          "cri": {
-            "items": {
-              "$ref": "#/components/schemas/CRI"
-            },
-            "title": "supported container runtimes",
-            "type": "array"
-          },
-          "expirationDate": {
+          "projectId": {
             "type": "string"
           },
           "state": {
-            "type": "string"
-          },
-          "version": {
-            "pattern": "^\\d+\\.\\d+\\.\\d+$",
-            "title": "Image version",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "MachineImage": {
-        "properties": {
-          "name": {
-            "title": "Image name",
-            "type": "string"
-          },
-          "versions": {
-            "items": {
-              "$ref": "#/components/schemas/MachineImageVersion"
-            },
-            "type": "array"
+            "$ref": "#/components/schemas/ProjectState"
           }
         },
         "type": "object"
@@ -552,6 +486,43 @@
           "STATE_FAILED"
         ],
         "type": "string"
+      },
+      "ProviderOptions": {
+        "properties": {
+          "availabilityZones": {
+            "items": {
+              "$ref": "#/components/schemas/AvailabilityZone"
+            },
+            "type": "array"
+          },
+          "kubernetesVersions": {
+            "items": {
+              "$ref": "#/components/schemas/KubernetesVersion"
+            },
+            "title": "List of supported Kubernetes versions",
+            "type": "array"
+          },
+          "machineImages": {
+            "items": {
+              "$ref": "#/components/schemas/MachineImage"
+            },
+            "type": "array"
+          },
+          "machineTypes": {
+            "items": {
+              "$ref": "#/components/schemas/MachineType"
+            },
+            "title": "List of supported machine types",
+            "type": "array"
+          },
+          "volumeTypes": {
+            "items": {
+              "$ref": "#/components/schemas/VolumeType"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
       },
       "RuntimeError": {
         "properties": {
@@ -580,38 +551,67 @@
         },
         "type": "object"
       },
-      "ClusterStatus": {
+      "Taint": {
         "properties": {
-          "aggregated": {
-            "$ref": "#/components/schemas/ClusterStatusState"
+          "effect": {
+            "enum": [
+              "NoSchedule",
+              "PreferNoSchedule",
+              "NoExecute"
+            ],
+            "type": "string"
           },
-          "error": {
-            "$ref": "#/components/schemas/RuntimeError"
+          "key": {
+            "title": "Taint key to be applied to a node",
+            "type": "string"
           },
-          "hibernated": {
-            "title": "Indicates whether the cluster is currently hibernated",
-            "type": "boolean"
+          "value": {
+            "title": "Taint value corresponding to the taint key",
+            "type": "string"
           }
         },
+        "required": [
+          "effect",
+          "key"
+        ],
         "type": "object"
       },
-      "CredentialsResponse": {
+      "TimeWindow": {
         "properties": {
-          "certificateAuthorityData": {
-            "title": "Certificate authority data for accessing the cluster",
+          "end": {
             "type": "string"
           },
-          "kubeconfig": {
-            "description": "This string contains the kubeconfig as yaml. If you want to directly get the yaml without any \n characters you can use the following command: curl -s 'api.stackit.cloud/ske/v1/projects/{projectId}/clusters/{clusterName}/credentials' |jq -r .kubeconfig",
-            "title": "Kubeconfig for the cluster as yml string",
+          "start": {
             "type": "string"
+          }
+        },
+        "required": [
+          "end",
+          "start"
+        ],
+        "type": "object"
+      },
+      "Volume": {
+        "properties": {
+          "size": {
+            "maximum": 10240,
+            "minimum": 20,
+            "title": "Size of volume in GB",
+            "type": "integer"
           },
-          "server": {
-            "title": "Kubernetes api server address",
+          "type": {
+            "description": "For valid values please take a look at /provider-options volumeTypes",
             "type": "string"
-          },
-          "token": {
-            "title": "Access token used to authenticate with the cluster",
+          }
+        },
+        "required": [
+          "size"
+        ],
+        "type": "object"
+      },
+      "VolumeType": {
+        "properties": {
+          "name": {
             "type": "string"
           }
         },

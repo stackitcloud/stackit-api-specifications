@@ -2827,6 +2827,71 @@
         ],
         "type": "object"
       },
+      "CreateInstancePayload": {
+        "description": "Create update instance body.",
+        "properties": {
+          "name": {
+            "description": "Name of the service",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "parameter": {
+            "description": "additional parameters",
+            "type": "object"
+          },
+          "planId": {
+            "description": "uuid of the plan to create/update",
+            "type": "string"
+          }
+        },
+        "required": [
+          "planId"
+        ],
+        "type": "object"
+      },
+      "UpdateInstancePayload": {
+        "description": "Create update instance body.",
+        "properties": {
+          "name": {
+            "description": "Name of the service",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "parameter": {
+            "description": "additional parameters",
+            "type": "object"
+          },
+          "planId": {
+            "description": "uuid of the plan to create/update",
+            "type": "string"
+          }
+        },
+        "required": [
+          "planId"
+        ],
+        "type": "object"
+      },
+      "UpdateInstanceAclPayload": {
+        "description": "List of cidr. Send empty string to remove acl.",
+        "properties": {
+          "acl": {
+            "description": "list of cidr",
+            "items": {
+              "description": "cidr correct format",
+              "maxLength": 100,
+              "type": "string"
+            },
+            "maxLength": 20,
+            "type": "array"
+          }
+        },
+        "required": [
+          "acl"
+        ],
+        "type": "object"
+      },
       "UpdateInstanceAlertConfigsPayload": {
         "description": "Alert config",
         "properties": {
@@ -3153,6 +3218,546 @@
           "receivers",
           "route"
         ],
+        "type": "object"
+      },
+      "CreateInstanceAlertConfigReceiverPayload": {
+        "description": "Receivers",
+        "properties": {
+          "emailConfigs": {
+            "description": "Email configurations",
+            "items": {
+              "properties": {
+                "authIdentity": {
+                  "description": "SMTP authentication information.\n`Additional Validators:`\n* must be a syntactically valid email address",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "authPassword": {
+                  "description": "SMTP authentication information.",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "authUsername": {
+                  "description": "SMTP authentication information.",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "from": {
+                  "description": "The sender address.\n`Additional Validators:`\n* must be a syntactically valid email address",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "smarthost": {
+                  "description": "The SMTP host through which emails are sent.\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9_./@\u0026?:-",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "to": {
+                  "description": "The email address to send notifications to.\n`Additional Validators:`\n* must be a syntactically valid email address",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "name": {
+            "description": "`Additional Validators:`\n* must be unique\n* should only include the characters: a-zA-Z0-9-",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "opsgenieConfigs": {
+            "description": "Configuration for ops genie.",
+            "items": {
+              "properties": {
+                "apiKey": {
+                  "description": "The API key to use when talking to the OpsGenie API.\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9-",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "apiUrl": {
+                  "description": "The host to send OpsGenie API requests to.\n`Additional Validators:`\n* must be a syntactically valid url address",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "tags": {
+                  "description": "Comma separated list of tags attached to the notifications.",
+                  "maxLength": 400,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "webHookConfigs": {
+            "items": {
+              "properties": {
+                "msTeams": {
+                  "default": false,
+                  "description": "Microsoft Teams webhooks require special handling. If you set this property to true, it is treated as such",
+                  "type": "boolean"
+                },
+                "url": {
+                  "description": "The endpoint to send HTTP POST requests to.\n`Additional Validators:`\n* must be a syntactically valid url address",
+                  "maxLength": 500,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "UpdateInstanceAlertConfigReceiverPayload": {
+        "description": "Receivers",
+        "properties": {
+          "emailConfigs": {
+            "description": "Email configurations",
+            "items": {
+              "properties": {
+                "authIdentity": {
+                  "description": "SMTP authentication information.\n`Additional Validators:`\n* must be a syntactically valid email address",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "authPassword": {
+                  "description": "SMTP authentication information.",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "authUsername": {
+                  "description": "SMTP authentication information.",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "from": {
+                  "description": "The sender address.\n`Additional Validators:`\n* must be a syntactically valid email address",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "smarthost": {
+                  "description": "The SMTP host through which emails are sent.\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9_./@\u0026?:-",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "to": {
+                  "description": "The email address to send notifications to.\n`Additional Validators:`\n* must be a syntactically valid email address",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "name": {
+            "description": "`Additional Validators:`\n* must be unique\n* should only include the characters: a-zA-Z0-9-",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "opsgenieConfigs": {
+            "description": "Configuration for ops genie.",
+            "items": {
+              "properties": {
+                "apiKey": {
+                  "description": "The API key to use when talking to the OpsGenie API.\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9-",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "apiUrl": {
+                  "description": "The host to send OpsGenie API requests to.\n`Additional Validators:`\n* must be a syntactically valid url address",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "tags": {
+                  "description": "Comma separated list of tags attached to the notifications.",
+                  "maxLength": 400,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "webHookConfigs": {
+            "items": {
+              "properties": {
+                "msTeams": {
+                  "default": false,
+                  "description": "Microsoft Teams webhooks require special handling. If you set this property to true, it is treated as such",
+                  "type": "boolean"
+                },
+                "url": {
+                  "description": "The endpoint to send HTTP POST requests to.\n`Additional Validators:`\n* must be a syntactically valid url address",
+                  "maxLength": 500,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "CreateInstanceAlertConfigRoutePayload": {
+        "description": "The root node of the routing tree.",
+        "properties": {
+          "groupBy": {
+            "description": "The labels by which incoming alerts are grouped together. For example, multiple alerts coming in for cluster=A and alertname=LatencyHigh would be batched into a single group. To aggregate by all possible labels use the special value '...' as the sole label name, for example: group_by: ['...']. This effectively disables aggregation entirely, passing through all alerts as-is. This is unlikely to be what you want, unless you have a very low alert volume or your upstream notification system performs its own grouping.",
+            "items": {
+              "description": "As described",
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "groupInterval": {
+            "default": "5m",
+            "description": "How long to wait before sending a notification about new alerts that are added to a group of alerts for which an initial notification has already been sent. (Usually ~5m or more.)\n`Additional Validators:`\n* must be a valid time format",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "groupWait": {
+            "default": "30s",
+            "description": "How long to initially wait to send a notification for a group of alerts. Allows to wait for an inhibiting alert to arrive or collect more initial alerts for the same group. (Usually ~0s to few minutes.)\n`Additional Validators:`\n* must be a valid time format",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "match": {
+            "description": "map of key:value. A set of equality matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters\n* key and values should only include the characters: a-zA-Z0-9_./@\u0026?:-",
+            "type": "object"
+          },
+          "matchRe": {
+            "description": "map of key:value. A set of regex-matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+            "type": "object"
+          },
+          "matchers": {
+            "description": "A list of matchers that an alert has to fulfill to match the node. A matcher is a string with a syntax inspired by PromQL and OpenMetrics. The syntax of a matcher consists of three tokens:\n* A valid Prometheus label name.\n* One of =, !=, =~, or !~. = means equals, != means that the strings are not equal, =~ is used for equality of regex expressions and !~ is used for un-equality of regex expressions. They have the same meaning as known from PromQL selectors.\n* A UTF-8 string, which may be enclosed in double quotes. Before or after each token, there may be any amount of whitespace.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+            "items": {
+              "description": "Item of matchers",
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "receiver": {
+            "description": "Receiver that should be one item of receivers\n`Additional Validators:`\n* must be a in name of receivers",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "repeatInterval": {
+            "default": "4h",
+            "description": "How long to wait before sending a notification again if it has already been sent successfully for an alert. (Usually ~3h or more).\n`Additional Validators:`\n* must be a valid time format",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "routes": {
+            "description": "Zero or more child routes.",
+            "items": {
+              "description": "As in one level above",
+              "properties": {
+                "groupBy": {
+                  "items": {
+                    "description": "As in one level above",
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "groupInterval": {
+                  "description": "As in one level above",
+                  "maxLength": 8,
+                  "minLength": 2,
+                  "type": "string"
+                },
+                "groupWait": {
+                  "description": "As in one level above",
+                  "maxLength": 8,
+                  "type": "string"
+                },
+                "match": {
+                  "description": "As in one level above",
+                  "type": "object"
+                },
+                "matchRe": {
+                  "description": "As in one level above",
+                  "type": "object"
+                },
+                "receiver": {
+                  "description": "As in one level above",
+                  "maxLength": 100,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "repeatInterval": {
+                  "description": "As in one level above",
+                  "maxLength": 8,
+                  "minLength": 2,
+                  "type": "string"
+                },
+                "routes": {
+                  "description": "Another child routes",
+                  "items": {
+                    "description": "As in one level above",
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "receiver"
+        ],
+        "type": "object"
+      },
+      "UpdateInstanceAlertConfigRouteReceiverPayload": {
+        "description": "The root node of the routing tree.",
+        "properties": {
+          "groupBy": {
+            "description": "The labels by which incoming alerts are grouped together. For example, multiple alerts coming in for cluster=A and alertname=LatencyHigh would be batched into a single group. To aggregate by all possible labels use the special value '...' as the sole label name, for example: group_by: ['...']. This effectively disables aggregation entirely, passing through all alerts as-is. This is unlikely to be what you want, unless you have a very low alert volume or your upstream notification system performs its own grouping.",
+            "items": {
+              "description": "As described",
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "groupInterval": {
+            "default": "5m",
+            "description": "How long to wait before sending a notification about new alerts that are added to a group of alerts for which an initial notification has already been sent. (Usually ~5m or more.)\n`Additional Validators:`\n* must be a valid time format",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "groupWait": {
+            "default": "30s",
+            "description": "How long to initially wait to send a notification for a group of alerts. Allows to wait for an inhibiting alert to arrive or collect more initial alerts for the same group. (Usually ~0s to few minutes.)\n`Additional Validators:`\n* must be a valid time format",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "match": {
+            "description": "map of key:value. A set of equality matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters\n* key and values should only include the characters: a-zA-Z0-9_./@\u0026?:-",
+            "type": "object"
+          },
+          "matchRe": {
+            "description": "map of key:value. A set of regex-matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+            "type": "object"
+          },
+          "matchers": {
+            "description": "A list of matchers that an alert has to fulfill to match the node. A matcher is a string with a syntax inspired by PromQL and OpenMetrics. The syntax of a matcher consists of three tokens:\n* A valid Prometheus label name.\n* One of =, !=, =~, or !~. = means equals, != means that the strings are not equal, =~ is used for equality of regex expressions and !~ is used for un-equality of regex expressions. They have the same meaning as known from PromQL selectors.\n* A UTF-8 string, which may be enclosed in double quotes. Before or after each token, there may be any amount of whitespace.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+            "items": {
+              "description": "Item of matchers",
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "receiver": {
+            "description": "Receiver that should be one item of receivers\n`Additional Validators:`\n* must be a in name of receivers",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "repeatInterval": {
+            "default": "4h",
+            "description": "How long to wait before sending a notification again if it has already been sent successfully for an alert. (Usually ~3h or more).\n`Additional Validators:`\n* must be a valid time format",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "routes": {
+            "description": "Zero or more child routes.",
+            "items": {
+              "description": "As in one level above",
+              "properties": {
+                "groupBy": {
+                  "items": {
+                    "description": "As in one level above",
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "groupInterval": {
+                  "description": "As in one level above",
+                  "maxLength": 8,
+                  "minLength": 2,
+                  "type": "string"
+                },
+                "groupWait": {
+                  "description": "As in one level above",
+                  "maxLength": 8,
+                  "type": "string"
+                },
+                "match": {
+                  "description": "As in one level above",
+                  "type": "object"
+                },
+                "matchRe": {
+                  "description": "As in one level above",
+                  "type": "object"
+                },
+                "receiver": {
+                  "description": "As in one level above",
+                  "maxLength": 100,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "repeatInterval": {
+                  "description": "As in one level above",
+                  "maxLength": 8,
+                  "minLength": 2,
+                  "type": "string"
+                },
+                "routes": {
+                  "description": "Another child routes",
+                  "items": {
+                    "description": "As in one level above",
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "receiver"
+        ],
+        "type": "object"
+      },
+      "UpdateCredentialRemoteWriteConfigPayload": {
+        "description": "Remote write limit config.",
+        "properties": {
+          "maxLimit": {
+            "description": "Remote write metric sample limit for credential to push in a single minute.",
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateInstanceGrafanaConfigsPayload": {
+        "description": "Sending any of the attributes results in a set of the attribute and overwrites any previous configuration.",
+        "properties": {
+          "genericOauth": {
+            "properties": {
+              "apiUrl": {
+                "description": "Set api_url to the resource that returns OpenID UserInfo compatible information.",
+                "type": "string"
+              },
+              "authUrl": {
+                "description": "Authentication endpoint of idp.",
+                "type": "string"
+              },
+              "enabled": {
+                "description": "enable or disable generic oauth login",
+                "type": "boolean"
+              },
+              "name": {
+                "description": "Display name for the oAuth provider",
+                "type": "string"
+              },
+              "oauthClientId": {
+                "description": "Oauth client id for auth endpoint.",
+                "type": "string"
+              },
+              "oauthClientSecret": {
+                "description": "Oauth client secret for auth endpoint.",
+                "type": "string"
+              },
+              "roleAttributePath": {
+                "description": "Grafana checks for the presence of a role using the JMESPath specified via the role_attribute_path configuration option. The JMESPath is applied to the id_token first. If there is no match, then the UserInfo endpoint specified via the api_url configuration option is tried next. The result after evaluation of the role_attribute_path JMESPath expression should be a valid Grafana role, for example, Viewer, Editor or Admin\nFor example: contains(roles[\\*], 'grafana-admin') \u0026\u0026 'Admin' || contains(roles[\\*], 'grafana-editor') \u0026\u0026 'Editor' || contains(roles[\\*], 'grafana-viewer') \u0026\u0026 'Viewer'",
+                "type": "string"
+              },
+              "roleAttributeStrict": {
+                "default": true,
+                "description": "If  therole_attribute_path property does not return a role, then the user is assigned the Viewer role by default. You can disable the role assignment by setting role_attribute_strict = true. It denies user access if no role or an invalid role is returned.",
+                "type": "boolean"
+              },
+              "scopes": {
+                "default": "openid profile email",
+                "description": "Space seperated list of scopes of the token",
+                "type": "string"
+              },
+              "tokenUrl": {
+                "description": "Token endpoint of the idp.",
+                "type": "string"
+              },
+              "usePkce": {
+                "description": "enable or disable Proof Key for Code Exchange",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "apiUrl",
+              "authUrl",
+              "enabled",
+              "oauthClientId",
+              "oauthClientSecret",
+              "roleAttributePath",
+              "tokenUrl"
+            ],
+            "type": "object"
+          },
+          "publicReadAccess": {
+            "description": "If it's true, anyone can access the Grafana dashboards without logging in. If it is wrong, a login is required.",
+            "type": "boolean"
+          },
+          "useStackitSso": {
+            "description": "If it's true, it overwrites the current genericOauth config and configures STACKIT SSO for this instance.",
+            "type": "boolean"
+          }
+        },
         "type": "object"
       },
       "CreateScrapeConfigPayload": {
@@ -3490,375 +4095,6 @@
         ],
         "type": "object"
       },
-      "UpdateInstanceAlertConfigReceiverPayload": {
-        "description": "Receivers",
-        "properties": {
-          "emailConfigs": {
-            "description": "Email configurations",
-            "items": {
-              "properties": {
-                "authIdentity": {
-                  "description": "SMTP authentication information.\n`Additional Validators:`\n* must be a syntactically valid email address",
-                  "maxLength": 200,
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "authPassword": {
-                  "description": "SMTP authentication information.",
-                  "maxLength": 200,
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "authUsername": {
-                  "description": "SMTP authentication information.",
-                  "maxLength": 200,
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "from": {
-                  "description": "The sender address.\n`Additional Validators:`\n* must be a syntactically valid email address",
-                  "maxLength": 200,
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "smarthost": {
-                  "description": "The SMTP host through which emails are sent.\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9_./@\u0026?:-",
-                  "maxLength": 200,
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "to": {
-                  "description": "The email address to send notifications to.\n`Additional Validators:`\n* must be a syntactically valid email address",
-                  "maxLength": 200,
-                  "minLength": 1,
-                  "type": "string"
-                }
-              },
-              "type": "object"
-            },
-            "type": "array"
-          },
-          "name": {
-            "description": "`Additional Validators:`\n* must be unique\n* should only include the characters: a-zA-Z0-9-",
-            "maxLength": 200,
-            "minLength": 1,
-            "type": "string"
-          },
-          "opsgenieConfigs": {
-            "description": "Configuration for ops genie.",
-            "items": {
-              "properties": {
-                "apiKey": {
-                  "description": "The API key to use when talking to the OpsGenie API.\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9-",
-                  "maxLength": 200,
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "apiUrl": {
-                  "description": "The host to send OpsGenie API requests to.\n`Additional Validators:`\n* must be a syntactically valid url address",
-                  "maxLength": 200,
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "tags": {
-                  "description": "Comma separated list of tags attached to the notifications.",
-                  "maxLength": 400,
-                  "minLength": 1,
-                  "type": "string"
-                }
-              },
-              "type": "object"
-            },
-            "type": "array"
-          },
-          "webHookConfigs": {
-            "items": {
-              "properties": {
-                "msTeams": {
-                  "default": false,
-                  "description": "Microsoft Teams webhooks require special handling. If you set this property to true, it is treated as such",
-                  "type": "boolean"
-                },
-                "url": {
-                  "description": "The endpoint to send HTTP POST requests to.\n`Additional Validators:`\n* must be a syntactically valid url address",
-                  "maxLength": 500,
-                  "minLength": 1,
-                  "type": "string"
-                }
-              },
-              "type": "object"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "name"
-        ],
-        "type": "object"
-      },
-      "UpdateInstanceAlertConfigRouteReceiverPayload": {
-        "description": "The root node of the routing tree.",
-        "properties": {
-          "groupBy": {
-            "description": "The labels by which incoming alerts are grouped together. For example, multiple alerts coming in for cluster=A and alertname=LatencyHigh would be batched into a single group. To aggregate by all possible labels use the special value '...' as the sole label name, for example: group_by: ['...']. This effectively disables aggregation entirely, passing through all alerts as-is. This is unlikely to be what you want, unless you have a very low alert volume or your upstream notification system performs its own grouping.",
-            "items": {
-              "description": "As described",
-              "maxLength": 200,
-              "minLength": 1,
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "groupInterval": {
-            "default": "5m",
-            "description": "How long to wait before sending a notification about new alerts that are added to a group of alerts for which an initial notification has already been sent. (Usually ~5m or more.)\n`Additional Validators:`\n* must be a valid time format",
-            "maxLength": 8,
-            "minLength": 2,
-            "type": "string"
-          },
-          "groupWait": {
-            "default": "30s",
-            "description": "How long to initially wait to send a notification for a group of alerts. Allows to wait for an inhibiting alert to arrive or collect more initial alerts for the same group. (Usually ~0s to few minutes.)\n`Additional Validators:`\n* must be a valid time format",
-            "maxLength": 8,
-            "minLength": 2,
-            "type": "string"
-          },
-          "match": {
-            "description": "map of key:value. A set of equality matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters\n* key and values should only include the characters: a-zA-Z0-9_./@\u0026?:-",
-            "type": "object"
-          },
-          "matchRe": {
-            "description": "map of key:value. A set of regex-matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
-            "type": "object"
-          },
-          "matchers": {
-            "description": "A list of matchers that an alert has to fulfill to match the node. A matcher is a string with a syntax inspired by PromQL and OpenMetrics. The syntax of a matcher consists of three tokens:\n* A valid Prometheus label name.\n* One of =, !=, =~, or !~. = means equals, != means that the strings are not equal, =~ is used for equality of regex expressions and !~ is used for un-equality of regex expressions. They have the same meaning as known from PromQL selectors.\n* A UTF-8 string, which may be enclosed in double quotes. Before or after each token, there may be any amount of whitespace.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
-            "items": {
-              "description": "Item of matchers",
-              "maxLength": 200,
-              "minLength": 1,
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "receiver": {
-            "description": "Receiver that should be one item of receivers\n`Additional Validators:`\n* must be a in name of receivers",
-            "maxLength": 200,
-            "minLength": 1,
-            "type": "string"
-          },
-          "repeatInterval": {
-            "default": "4h",
-            "description": "How long to wait before sending a notification again if it has already been sent successfully for an alert. (Usually ~3h or more).\n`Additional Validators:`\n* must be a valid time format",
-            "maxLength": 8,
-            "minLength": 2,
-            "type": "string"
-          },
-          "routes": {
-            "description": "Zero or more child routes.",
-            "items": {
-              "description": "As in one level above",
-              "properties": {
-                "groupBy": {
-                  "items": {
-                    "description": "As in one level above",
-                    "maxLength": 200,
-                    "minLength": 1,
-                    "type": "string"
-                  },
-                  "type": "array"
-                },
-                "groupInterval": {
-                  "description": "As in one level above",
-                  "maxLength": 8,
-                  "minLength": 2,
-                  "type": "string"
-                },
-                "groupWait": {
-                  "description": "As in one level above",
-                  "maxLength": 8,
-                  "type": "string"
-                },
-                "match": {
-                  "description": "As in one level above",
-                  "type": "object"
-                },
-                "matchRe": {
-                  "description": "As in one level above",
-                  "type": "object"
-                },
-                "receiver": {
-                  "description": "As in one level above",
-                  "maxLength": 100,
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "repeatInterval": {
-                  "description": "As in one level above",
-                  "maxLength": 8,
-                  "minLength": 2,
-                  "type": "string"
-                },
-                "routes": {
-                  "description": "Another child routes",
-                  "items": {
-                    "description": "As in one level above",
-                    "type": "object"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "receiver"
-        ],
-        "type": "object"
-      },
-      "UpdateInstanceAclPayload": {
-        "description": "List of cidr. Send empty string to remove acl.",
-        "properties": {
-          "acl": {
-            "description": "list of cidr",
-            "items": {
-              "description": "cidr correct format",
-              "maxLength": 100,
-              "type": "string"
-            },
-            "maxLength": 20,
-            "type": "array"
-          }
-        },
-        "required": [
-          "acl"
-        ],
-        "type": "object"
-      },
-      "CreateInstanceAlertConfigRoutePayload": {
-        "description": "The root node of the routing tree.",
-        "properties": {
-          "groupBy": {
-            "description": "The labels by which incoming alerts are grouped together. For example, multiple alerts coming in for cluster=A and alertname=LatencyHigh would be batched into a single group. To aggregate by all possible labels use the special value '...' as the sole label name, for example: group_by: ['...']. This effectively disables aggregation entirely, passing through all alerts as-is. This is unlikely to be what you want, unless you have a very low alert volume or your upstream notification system performs its own grouping.",
-            "items": {
-              "description": "As described",
-              "maxLength": 200,
-              "minLength": 1,
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "groupInterval": {
-            "default": "5m",
-            "description": "How long to wait before sending a notification about new alerts that are added to a group of alerts for which an initial notification has already been sent. (Usually ~5m or more.)\n`Additional Validators:`\n* must be a valid time format",
-            "maxLength": 8,
-            "minLength": 2,
-            "type": "string"
-          },
-          "groupWait": {
-            "default": "30s",
-            "description": "How long to initially wait to send a notification for a group of alerts. Allows to wait for an inhibiting alert to arrive or collect more initial alerts for the same group. (Usually ~0s to few minutes.)\n`Additional Validators:`\n* must be a valid time format",
-            "maxLength": 8,
-            "minLength": 2,
-            "type": "string"
-          },
-          "match": {
-            "description": "map of key:value. A set of equality matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters\n* key and values should only include the characters: a-zA-Z0-9_./@\u0026?:-",
-            "type": "object"
-          },
-          "matchRe": {
-            "description": "map of key:value. A set of regex-matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
-            "type": "object"
-          },
-          "matchers": {
-            "description": "A list of matchers that an alert has to fulfill to match the node. A matcher is a string with a syntax inspired by PromQL and OpenMetrics. The syntax of a matcher consists of three tokens:\n* A valid Prometheus label name.\n* One of =, !=, =~, or !~. = means equals, != means that the strings are not equal, =~ is used for equality of regex expressions and !~ is used for un-equality of regex expressions. They have the same meaning as known from PromQL selectors.\n* A UTF-8 string, which may be enclosed in double quotes. Before or after each token, there may be any amount of whitespace.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
-            "items": {
-              "description": "Item of matchers",
-              "maxLength": 200,
-              "minLength": 1,
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "receiver": {
-            "description": "Receiver that should be one item of receivers\n`Additional Validators:`\n* must be a in name of receivers",
-            "maxLength": 200,
-            "minLength": 1,
-            "type": "string"
-          },
-          "repeatInterval": {
-            "default": "4h",
-            "description": "How long to wait before sending a notification again if it has already been sent successfully for an alert. (Usually ~3h or more).\n`Additional Validators:`\n* must be a valid time format",
-            "maxLength": 8,
-            "minLength": 2,
-            "type": "string"
-          },
-          "routes": {
-            "description": "Zero or more child routes.",
-            "items": {
-              "description": "As in one level above",
-              "properties": {
-                "groupBy": {
-                  "items": {
-                    "description": "As in one level above",
-                    "maxLength": 200,
-                    "minLength": 1,
-                    "type": "string"
-                  },
-                  "type": "array"
-                },
-                "groupInterval": {
-                  "description": "As in one level above",
-                  "maxLength": 8,
-                  "minLength": 2,
-                  "type": "string"
-                },
-                "groupWait": {
-                  "description": "As in one level above",
-                  "maxLength": 8,
-                  "type": "string"
-                },
-                "match": {
-                  "description": "As in one level above",
-                  "type": "object"
-                },
-                "matchRe": {
-                  "description": "As in one level above",
-                  "type": "object"
-                },
-                "receiver": {
-                  "description": "As in one level above",
-                  "maxLength": 100,
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "repeatInterval": {
-                  "description": "As in one level above",
-                  "maxLength": 8,
-                  "minLength": 2,
-                  "type": "string"
-                },
-                "routes": {
-                  "description": "Another child routes",
-                  "items": {
-                    "description": "As in one level above",
-                    "type": "object"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "receiver"
-        ],
-        "type": "object"
-      },
       "UpdateScrapeConfigPayload": {
         "properties": {
           "basicAuth": {
@@ -4033,262 +4269,6 @@
         ],
         "type": "object"
       },
-      "UpdateCredentialRemoteWriteConfigPayload": {
-        "description": "Remote write limit config.",
-        "properties": {
-          "maxLimit": {
-            "description": "Remote write metric sample limit for credential to push in a single minute.",
-            "type": "number"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateInstanceGrafanaConfigsPayload": {
-        "description": "Sending any of the attributes results in a set of the attribute and overwrites any previous configuration.",
-        "properties": {
-          "genericOauth": {
-            "properties": {
-              "apiUrl": {
-                "description": "Set api_url to the resource that returns OpenID UserInfo compatible information.",
-                "type": "string"
-              },
-              "authUrl": {
-                "description": "Authentication endpoint of idp.",
-                "type": "string"
-              },
-              "enabled": {
-                "description": "enable or disable generic oauth login",
-                "type": "boolean"
-              },
-              "name": {
-                "description": "Display name for the oAuth provider",
-                "type": "string"
-              },
-              "oauthClientId": {
-                "description": "Oauth client id for auth endpoint.",
-                "type": "string"
-              },
-              "oauthClientSecret": {
-                "description": "Oauth client secret for auth endpoint.",
-                "type": "string"
-              },
-              "roleAttributePath": {
-                "description": "Grafana checks for the presence of a role using the JMESPath specified via the role_attribute_path configuration option. The JMESPath is applied to the id_token first. If there is no match, then the UserInfo endpoint specified via the api_url configuration option is tried next. The result after evaluation of the role_attribute_path JMESPath expression should be a valid Grafana role, for example, Viewer, Editor or Admin\nFor example: contains(roles[\\*], 'grafana-admin') \u0026\u0026 'Admin' || contains(roles[\\*], 'grafana-editor') \u0026\u0026 'Editor' || contains(roles[\\*], 'grafana-viewer') \u0026\u0026 'Viewer'",
-                "type": "string"
-              },
-              "roleAttributeStrict": {
-                "default": true,
-                "description": "If  therole_attribute_path property does not return a role, then the user is assigned the Viewer role by default. You can disable the role assignment by setting role_attribute_strict = true. It denies user access if no role or an invalid role is returned.",
-                "type": "boolean"
-              },
-              "scopes": {
-                "default": "openid profile email",
-                "description": "Space seperated list of scopes of the token",
-                "type": "string"
-              },
-              "tokenUrl": {
-                "description": "Token endpoint of the idp.",
-                "type": "string"
-              },
-              "usePkce": {
-                "description": "enable or disable Proof Key for Code Exchange",
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "apiUrl",
-              "authUrl",
-              "enabled",
-              "oauthClientId",
-              "oauthClientSecret",
-              "roleAttributePath",
-              "tokenUrl"
-            ],
-            "type": "object"
-          },
-          "publicReadAccess": {
-            "description": "If it's true, anyone can access the Grafana dashboards without logging in. If it is wrong, a login is required.",
-            "type": "boolean"
-          },
-          "useStackitSso": {
-            "description": "If it's true, it overwrites the current genericOauth config and configures STACKIT SSO for this instance.",
-            "type": "boolean"
-          }
-        },
-        "type": "object"
-      },
-      "CreateInstanceAlertConfigReceiverPayload": {
-        "description": "Receivers",
-        "properties": {
-          "emailConfigs": {
-            "description": "Email configurations",
-            "items": {
-              "properties": {
-                "authIdentity": {
-                  "description": "SMTP authentication information.\n`Additional Validators:`\n* must be a syntactically valid email address",
-                  "maxLength": 200,
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "authPassword": {
-                  "description": "SMTP authentication information.",
-                  "maxLength": 200,
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "authUsername": {
-                  "description": "SMTP authentication information.",
-                  "maxLength": 200,
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "from": {
-                  "description": "The sender address.\n`Additional Validators:`\n* must be a syntactically valid email address",
-                  "maxLength": 200,
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "smarthost": {
-                  "description": "The SMTP host through which emails are sent.\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9_./@\u0026?:-",
-                  "maxLength": 200,
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "to": {
-                  "description": "The email address to send notifications to.\n`Additional Validators:`\n* must be a syntactically valid email address",
-                  "maxLength": 200,
-                  "minLength": 1,
-                  "type": "string"
-                }
-              },
-              "type": "object"
-            },
-            "type": "array"
-          },
-          "name": {
-            "description": "`Additional Validators:`\n* must be unique\n* should only include the characters: a-zA-Z0-9-",
-            "maxLength": 200,
-            "minLength": 1,
-            "type": "string"
-          },
-          "opsgenieConfigs": {
-            "description": "Configuration for ops genie.",
-            "items": {
-              "properties": {
-                "apiKey": {
-                  "description": "The API key to use when talking to the OpsGenie API.\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9-",
-                  "maxLength": 200,
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "apiUrl": {
-                  "description": "The host to send OpsGenie API requests to.\n`Additional Validators:`\n* must be a syntactically valid url address",
-                  "maxLength": 200,
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "tags": {
-                  "description": "Comma separated list of tags attached to the notifications.",
-                  "maxLength": 400,
-                  "minLength": 1,
-                  "type": "string"
-                }
-              },
-              "type": "object"
-            },
-            "type": "array"
-          },
-          "webHookConfigs": {
-            "items": {
-              "properties": {
-                "msTeams": {
-                  "default": false,
-                  "description": "Microsoft Teams webhooks require special handling. If you set this property to true, it is treated as such",
-                  "type": "boolean"
-                },
-                "url": {
-                  "description": "The endpoint to send HTTP POST requests to.\n`Additional Validators:`\n* must be a syntactically valid url address",
-                  "maxLength": 500,
-                  "minLength": 1,
-                  "type": "string"
-                }
-              },
-              "type": "object"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "name"
-        ],
-        "type": "object"
-      },
-      "CreateInstancePayload": {
-        "description": "Create update instance body.",
-        "properties": {
-          "name": {
-            "description": "Name of the service",
-            "maxLength": 200,
-            "minLength": 1,
-            "type": "string"
-          },
-          "parameter": {
-            "description": "additional parameters",
-            "type": "object"
-          },
-          "planId": {
-            "description": "uuid of the plan to create/update",
-            "type": "string"
-          }
-        },
-        "required": [
-          "planId"
-        ],
-        "type": "object"
-      },
-      "UpdateInstancePayload": {
-        "description": "Create update instance body.",
-        "properties": {
-          "name": {
-            "description": "Name of the service",
-            "maxLength": 200,
-            "minLength": 1,
-            "type": "string"
-          },
-          "parameter": {
-            "description": "additional parameters",
-            "type": "object"
-          },
-          "planId": {
-            "description": "uuid of the plan to create/update",
-            "type": "string"
-          }
-        },
-        "required": [
-          "planId"
-        ],
-        "type": "object"
-      },
-      "PlansResponse": {
-        "properties": {
-          "message": {
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          },
-          "plans": {
-            "items": {
-              "$ref": "#/components/schemas/PlanModel"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "message",
-          "plans"
-        ],
-        "type": "object"
-      },
       "ScrapeConfigsResponse": {
         "properties": {
           "data": {
@@ -4309,6 +4289,25 @@
         ],
         "type": "object"
       },
+      "Credential": {
+        "properties": {
+          "password": {
+            "minLength": 1,
+            "title": "Password",
+            "type": "string"
+          },
+          "username": {
+            "minLength": 1,
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "password",
+          "username"
+        ],
+        "type": "object"
+      },
       "ScrapeConfigResponse": {
         "properties": {
           "data": {
@@ -4322,31 +4321,6 @@
         },
         "required": [
           "data",
-          "message"
-        ],
-        "type": "object"
-      },
-      "CreateInstanceResponse": {
-        "properties": {
-          "dashboardUrl": {
-            "minLength": 1,
-            "title": "Dashboardurl",
-            "type": "string"
-          },
-          "instanceId": {
-            "minLength": 1,
-            "title": "Instanceid",
-            "type": "string"
-          },
-          "message": {
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          }
-        },
-        "required": [
-          "dashboardUrl",
-          "instanceId",
           "message"
         ],
         "type": "object"
@@ -4372,6 +4346,26 @@
         },
         "required": [
           "message"
+        ],
+        "type": "object"
+      },
+      "PlansResponse": {
+        "properties": {
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "plans": {
+            "items": {
+              "$ref": "#/components/schemas/PlanModel"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "message",
+          "plans"
         ],
         "type": "object"
       },
@@ -4475,22 +4469,28 @@
         ],
         "type": "object"
       },
-      "Credential": {
+      "CreateInstanceResponse": {
         "properties": {
-          "password": {
+          "dashboardUrl": {
             "minLength": 1,
-            "title": "Password",
+            "title": "Dashboardurl",
             "type": "string"
           },
-          "username": {
+          "instanceId": {
             "minLength": 1,
-            "title": "Username",
+            "title": "Instanceid",
+            "type": "string"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
             "type": "string"
           }
         },
         "required": [
-          "password",
-          "username"
+          "dashboardUrl",
+          "instanceId",
+          "message"
         ],
         "type": "object"
       }

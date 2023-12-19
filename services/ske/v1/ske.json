@@ -104,7 +104,7 @@
         },
         "type": "object"
       },
-      "ClusterResponse": {
+      "Cluster": {
         "properties": {
           "extensions": {
             "$ref": "#/components/schemas/Extension"
@@ -171,18 +171,18 @@
         "title": "aggregated state of the cluster",
         "type": "string"
       },
-      "ClustersResponse": {
+      "ListClustersResponse": {
         "properties": {
           "items": {
             "items": {
-              "$ref": "#/components/schemas/ClusterResponse"
+              "$ref": "#/components/schemas/Cluster"
             },
             "type": "array"
           }
         },
         "type": "object"
       },
-      "CredentialsResponse": {
+      "Credentials": {
         "properties": {
           "certificateAuthorityData": {
             "title": "Certificate authority data for accessing the cluster",
@@ -634,7 +634,7 @@
     "/v1/projects/{projectId}": {
       "delete": {
         "description": "Deletes the SKE project specified by 'project_id' (portalProjectID). Deleting a project deletes all corresponding shoots.",
-        "operationId": "DeleteProject",
+        "operationId": "DisableService",
         "parameters": [
           {
             "in": "path",
@@ -691,7 +691,7 @@
       },
       "get": {
         "description": "Get a Project specified by 'project_id' (portalProjectID).",
-        "operationId": "GetProject",
+        "operationId": "GetServiceStatus",
         "parameters": [
           {
             "in": "path",
@@ -738,7 +738,7 @@
       },
       "put": {
         "description": "Returns creation state of Project specified by 'project_id' (portalProjectID).",
-        "operationId": "CreateProject",
+        "operationId": "EnableService",
         "parameters": [
           {
             "in": "path",
@@ -787,7 +787,7 @@
     "/v1/projects/{projectId}/clusters": {
       "get": {
         "description": "Return a list of Kubernetes clusters in the project specified by 'project_id' (portalProjectID).",
-        "operationId": "GetClusters",
+        "operationId": "ListClusters",
         "parameters": [
           {
             "in": "path",
@@ -803,7 +803,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ClustersResponse"
+                  "$ref": "#/components/schemas/ListClustersResponse"
                 }
               }
             },
@@ -925,7 +925,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ClusterResponse"
+                  "$ref": "#/components/schemas/Cluster"
                 }
               }
             },
@@ -980,7 +980,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ClusterResponse"
+                  "$ref": "#/components/schemas/Cluster"
                 }
               }
             },
@@ -1057,7 +1057,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CredentialsResponse"
+                  "$ref": "#/components/schemas/Credentials"
                 }
               }
             },
@@ -1368,7 +1368,7 @@
     "/v1/provider-options": {
       "get": {
         "description": "Returns a list of supported Kubernetes versions and a list of supported machine types for the cluster nodes.",
-        "operationId": "GetOptions",
+        "operationId": "ListProviderOptions",
         "responses": {
           "200": {
             "content": {

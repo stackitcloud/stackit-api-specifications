@@ -1,7 +1,162 @@
 {
   "components": {
     "schemas": {
-      "instance.Acl": {
+      "instance.CreateCloneInstanceRequest": {
+        "properties": {
+          "class": {
+            "example": "premium-perf6-stackit",
+            "type": "string"
+          },
+          "size": {
+            "example": 10,
+            "type": "integer"
+          },
+          "timestamp": {
+            "description": "The timestamp should be specified in UTC time following the format provided in the example.",
+            "example": "2023-04-17T09:28:00+00:00",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "instance.CreateCloneInstanceResponse": {
+        "properties": {
+          "instanceId": {
+            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "instance.ListInstance": {
+        "properties": {
+          "id": {
+            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "example": "RUNNING",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CreateInstancePayload": {
+        "properties": {
+          "acl": {
+            "$ref": "#/components/schemas/ACL"
+          },
+          "backupSchedule": {
+            "example": "6 6 * * *",
+            "type": "string"
+          },
+          "flavorId": {
+            "example": "1.1",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Following fields are not certain/clear",
+            "type": "object"
+          },
+          "name": {
+            "type": "string"
+          },
+          "options": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "replicas": {
+            "example": 3,
+            "type": "integer"
+          },
+          "storage": {
+            "$ref": "#/components/schemas/Storage"
+          },
+          "version": {
+            "example": "1.0",
+            "type": "string"
+          }
+        },
+        "required": [
+          "acl"
+        ],
+        "type": "object"
+      },
+      "PartialUpdateInstancePayload": {
+        "properties": {
+          "acl": {
+            "$ref": "#/components/schemas/ACL"
+          },
+          "backupSchedule": {
+            "example": "6 6 * * *",
+            "type": "string"
+          },
+          "flavorId": {
+            "example": "1.1",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Following fields are not certain/clear",
+            "type": "object"
+          },
+          "name": {
+            "type": "string"
+          },
+          "options": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "replicas": {
+            "example": 3,
+            "type": "integer"
+          },
+          "storage": {
+            "$ref": "#/components/schemas/Storage"
+          },
+          "version": {
+            "example": "1.0",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateBackupSchedulePayload": {
+        "properties": {
+          "backupSchedule": {
+            "example": "6 6 * * *",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CreateUserPayload": {
+        "properties": {
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ACL": {
         "properties": {
           "items": {
             "example": [
@@ -15,7 +170,7 @@
         },
         "type": "object"
       },
-      "instance.Backup": {
+      "Backup": {
         "properties": {
           "endTime": {
             "type": "string"
@@ -50,34 +205,24 @@
         },
         "type": "object"
       },
-      "instance.CreateCloneInstanceRequest": {
+      "CreateInstanceResponse": {
         "properties": {
-          "class": {
-            "example": "premium-perf6-stackit",
-            "type": "string"
-          },
-          "size": {
-            "example": 10,
-            "type": "integer"
-          },
-          "timestamp": {
-            "description": "The timestamp should be specified in UTC time following the format provided in the example.",
-            "example": "2023-04-17T09:28:00+00:00",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "instance.CreateCloneInstanceResponse": {
-        "properties": {
-          "instanceId": {
+          "id": {
             "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
             "type": "string"
           }
         },
         "type": "object"
       },
-      "instance.Error": {
+      "CreateUserResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "type": "object"
+      },
+      "Error": {
         "properties": {
           "code": {
             "example": 404,
@@ -103,7 +248,7 @@
         },
         "type": "object"
       },
-      "instance.Flavor": {
+      "Flavor": {
         "properties": {
           "cpu": {
             "example": 1,
@@ -124,23 +269,90 @@
         },
         "type": "object"
       },
-      "instance.ListInstance": {
+      "GetBackupResponse": {
         "properties": {
-          "id": {
-            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "status": {
-            "example": "RUNNING",
-            "type": "string"
+          "item": {
+            "$ref": "#/components/schemas/Backup"
           }
         },
         "type": "object"
       },
-      "instance.ListUser": {
+      "ListStoragesResponse": {
+        "properties": {
+          "storageClasses": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "storageRange": {
+            "$ref": "#/components/schemas/StorageRange"
+          }
+        },
+        "type": "object"
+      },
+      "ListFlavorsResponse": {
+        "properties": {
+          "flavors": {
+            "items": {
+              "$ref": "#/components/schemas/Flavor"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "InstanceResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/Instance"
+          }
+        },
+        "type": "object"
+      },
+      "ListVersionsResponse": {
+        "properties": {
+          "versions": {
+            "example": [
+              "1.0"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ListBackupsResponse": {
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Backup"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ListInstancesResponse": {
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/instance.ListInstance"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ListUser": {
         "properties": {
           "id": {
             "type": "string"
@@ -151,25 +363,39 @@
         },
         "type": "object"
       },
-      "instance.ResetUserResponse": {
+      "ListUsersResponse": {
         "properties": {
-          "item": {
-            "$ref": "#/components/schemas/instance.User"
+          "count": {
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ListUser"
+            },
+            "type": "array"
           }
         },
         "type": "object"
       },
-      "instance.SingleInstance": {
+      "ResetUserResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "type": "object"
+      },
+      "Instance": {
         "properties": {
           "acl": {
-            "$ref": "#/components/schemas/instance.Acl"
+            "$ref": "#/components/schemas/ACL"
           },
           "backupSchedule": {
             "example": "6 6 * * *",
             "type": "string"
           },
           "flavor": {
-            "$ref": "#/components/schemas/instance.Flavor"
+            "$ref": "#/components/schemas/Flavor"
           },
           "id": {
             "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
@@ -193,7 +419,7 @@
             "type": "string"
           },
           "storage": {
-            "$ref": "#/components/schemas/instance.Storage"
+            "$ref": "#/components/schemas/Storage"
           },
           "version": {
             "example": "1.0",
@@ -202,7 +428,7 @@
         },
         "type": "object"
       },
-      "instance.Storage": {
+      "Storage": {
         "properties": {
           "class": {
             "type": "string"
@@ -214,7 +440,7 @@
         },
         "type": "object"
       },
-      "instance.StorageRange": {
+      "StorageRange": {
         "properties": {
           "max": {
             "example": 1000,
@@ -227,7 +453,15 @@
         },
         "type": "object"
       },
-      "instance.User": {
+      "PartialUpdateInstanceResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/Instance"
+          }
+        },
+        "type": "object"
+      },
+      "User": {
         "properties": {
           "database": {
             "type": "string"
@@ -259,7 +493,29 @@
         },
         "type": "object"
       },
-      "user.ResponseUser": {
+      "CreateUserRequest": {
+        "properties": {
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GetUserResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/UserResponse"
+          }
+        },
+        "type": "object"
+      },
+      "UserResponse": {
         "properties": {
           "host": {
             "type": "string"
@@ -278,248 +534,6 @@
           },
           "username": {
             "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "CreateInstancePayload": {
-        "properties": {
-          "acl": {
-            "$ref": "#/components/schemas/instance.Acl"
-          },
-          "backupSchedule": {
-            "example": "6 6 * * *",
-            "type": "string"
-          },
-          "flavorId": {
-            "example": "1.1",
-            "type": "string"
-          },
-          "labels": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "description": "Following fields are not certain/clear",
-            "type": "object"
-          },
-          "name": {
-            "type": "string"
-          },
-          "options": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "type": "object"
-          },
-          "replicas": {
-            "example": 3,
-            "type": "integer"
-          },
-          "storage": {
-            "$ref": "#/components/schemas/instance.Storage"
-          },
-          "version": {
-            "example": "1.0",
-            "type": "string"
-          }
-        },
-        "required": [
-          "acl"
-        ],
-        "type": "object"
-      },
-      "UpdateInstancePayload": {
-        "properties": {
-          "acl": {
-            "$ref": "#/components/schemas/instance.Acl"
-          },
-          "backupSchedule": {
-            "example": "6 6 * * *",
-            "type": "string"
-          },
-          "flavorId": {
-            "example": "1.1",
-            "type": "string"
-          },
-          "labels": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "description": "Following fields are not certain/clear",
-            "type": "object"
-          },
-          "name": {
-            "type": "string"
-          },
-          "options": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "type": "object"
-          },
-          "replicas": {
-            "example": 3,
-            "type": "integer"
-          },
-          "storage": {
-            "$ref": "#/components/schemas/instance.Storage"
-          },
-          "version": {
-            "example": "1.0",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateBackupSchedulePayload": {
-        "properties": {
-          "backupSchedule": {
-            "example": "6 6 * * *",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "CreateUserPayload": {
-        "properties": {
-          "roles": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "username": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "CreateInstanceResponse": {
-        "properties": {
-          "id": {
-            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "CreateUserResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/instance.User"
-          }
-        },
-        "type": "object"
-      },
-      "BackupResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/instance.Backup"
-          }
-        },
-        "type": "object"
-      },
-      "StoragesResponse": {
-        "properties": {
-          "storageClasses": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "storageRange": {
-            "$ref": "#/components/schemas/instance.StorageRange"
-          }
-        },
-        "type": "object"
-      },
-      "FlavorsResponse": {
-        "properties": {
-          "flavors": {
-            "items": {
-              "$ref": "#/components/schemas/instance.Flavor"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "InstanceResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/instance.SingleInstance"
-          }
-        },
-        "type": "object"
-      },
-      "VersionsResponse": {
-        "properties": {
-          "versions": {
-            "example": [
-              "1.0"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "BackupsResponse": {
-        "properties": {
-          "count": {
-            "type": "integer"
-          },
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/instance.Backup"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "InstancesResponse": {
-        "properties": {
-          "count": {
-            "type": "integer"
-          },
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/instance.ListInstance"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "UsersResponse": {
-        "properties": {
-          "count": {
-            "type": "integer"
-          },
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/instance.ListUser"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateInstanceResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/instance.SingleInstance"
-          }
-        },
-        "type": "object"
-      },
-      "UserResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/user.ResponseUser"
           }
         },
         "type": "object"
@@ -560,7 +574,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FlavorsResponse"
+                  "$ref": "#/components/schemas/ListFlavorsResponse"
                 }
               }
             },
@@ -570,7 +584,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/instance.Error"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             },
@@ -589,7 +603,7 @@
           }
         ],
         "summary": "Get Flavors",
-        "operationId": "GetFlavors"
+        "operationId": "ListFlavors"
       }
     },
     "/v1/projects/{projectId}/instances": {
@@ -613,7 +627,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InstancesResponse"
+                  "$ref": "#/components/schemas/ListInstancesResponse"
                 }
               }
             },
@@ -623,7 +637,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/instance.Error"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             },
@@ -642,7 +656,7 @@
           }
         ],
         "summary": "List Instances",
-        "operationId": "GetInstances"
+        "operationId": "ListInstances"
       },
       "post": {
         "description": "Create a new instance of a postgres database",
@@ -685,7 +699,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/instance.Error"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             },
@@ -742,7 +756,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/instance.Error"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             },
@@ -804,7 +818,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/instance.Error"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             },
@@ -855,7 +869,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateInstancePayload"
+                "$ref": "#/components/schemas/PartialUpdateInstancePayload"
               }
             }
           },
@@ -867,7 +881,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateInstanceResponse"
+                  "$ref": "#/components/schemas/PartialUpdateInstanceResponse"
                 }
               }
             },
@@ -877,7 +891,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/instance.Error"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             },
@@ -896,7 +910,7 @@
           }
         ],
         "summary": "Update Instance",
-        "operationId": "UpdateInstance"
+        "operationId": "PartialUpdateInstance"
       }
     },
     "/v1/projects/{projectId}/instances/{instanceId}/backups": {
@@ -931,7 +945,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BackupsResponse"
+                  "$ref": "#/components/schemas/ListBackupsResponse"
                 }
               }
             },
@@ -941,7 +955,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/instance.Error"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             },
@@ -960,7 +974,7 @@
           }
         ],
         "summary": "List backups",
-        "operationId": "GetBackups"
+        "operationId": "ListBackups"
       },
       "put": {
         "description": "Update backup schedule",
@@ -1007,7 +1021,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/instance.Error"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             },
@@ -1075,7 +1089,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BackupResponse"
+                  "$ref": "#/components/schemas/GetBackupResponse"
                 }
               }
             },
@@ -1085,7 +1099,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/instance.Error"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             },
@@ -1139,7 +1153,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UsersResponse"
+                  "$ref": "#/components/schemas/ListUsersResponse"
                 }
               }
             },
@@ -1149,7 +1163,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/instance.Error"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             },
@@ -1168,7 +1182,7 @@
           }
         ],
         "summary": "List Users",
-        "operationId": "GetUsers"
+        "operationId": "ListUsers"
       },
       "post": {
         "description": "Create user for an instance",
@@ -1222,7 +1236,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/instance.Error"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             },
@@ -1290,7 +1304,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/instance.Error"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             },
@@ -1353,7 +1367,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserResponse"
+                  "$ref": "#/components/schemas/GetUserResponse"
                 }
               }
             },
@@ -1363,7 +1377,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/instance.Error"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             },
@@ -1417,7 +1431,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StoragesResponse"
+                  "$ref": "#/components/schemas/ListStoragesResponse"
                 }
               }
             },
@@ -1427,7 +1441,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/instance.Error"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             },
@@ -1446,7 +1460,7 @@
           }
         ],
         "summary": "Get Storages",
-        "operationId": "GetStorages"
+        "operationId": "ListStorages"
       }
     },
     "/v1/projects/{projectId}/versions": {
@@ -1480,7 +1494,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VersionsResponse"
+                  "$ref": "#/components/schemas/ListVersionsResponse"
                 }
               }
             },
@@ -1490,7 +1504,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/instance.Error"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             },
@@ -1509,7 +1523,7 @@
           }
         ],
         "summary": "Get Versions",
-        "operationId": "GetVersions"
+        "operationId": "ListVersions"
       }
     }
   },

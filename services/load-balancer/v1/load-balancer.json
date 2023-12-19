@@ -94,16 +94,8 @@
         "description": "Response for deleting a load balancer has an empty body if successful.",
         "type": "object"
       },
-      "DisableResponse": {
-        "description": "Response for disabling the load balancer has empty body if successful.",
-        "type": "object"
-      },
       "DisableServiceResponse": {
         "description": "Response for disabling the load balancer has empty body if successful.",
-        "type": "object"
-      },
-      "EnableResponse": {
-        "description": "Response for enabling the load balancer has empty body if successful.",
         "type": "object"
       },
       "EnableServiceResponse": {
@@ -409,24 +401,6 @@
         },
         "type": "object"
       },
-      "StatusResponse": {
-        "description": "Response with customer project status.",
-        "properties": {
-          "status": {
-            "description": "status of the project",
-            "enum": [
-              "STATUS_UNSPECIFIED",
-              "STATUS_READY",
-              "STATUS_FAILED",
-              "STATUS_UPDATING",
-              "STATUS_DELETING",
-              "STATUS_DISABLED"
-            ],
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "Target": {
         "properties": {
           "displayName": {
@@ -695,6 +669,24 @@
           }
         },
         "type": "object"
+      },
+      "GetServiceStatusResponse": {
+        "description": "Response with customer project status.",
+        "properties": {
+          "status": {
+            "description": "status of the project",
+            "enum": [
+              "STATUS_UNSPECIFIED",
+              "STATUS_READY",
+              "STATUS_FAILED",
+              "STATUS_UPDATING",
+              "STATUS_DELETING",
+              "STATUS_DISABLED"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
       }
     }
   },
@@ -708,7 +700,7 @@
     "/v1/projects/{projectId}": {
       "delete": {
         "description": "Disable will disable the load balancer functionality for the project specified.",
-        "operationId": "DisableLoadBalancing",
+        "operationId": "DisableService",
         "parameters": [
           {
             "in": "path",
@@ -724,7 +716,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DisableResponse"
+                  "$ref": "#/components/schemas/DisableServiceResponse"
                 }
               }
             },
@@ -747,7 +739,7 @@
       },
       "get": {
         "description": "Status will return the load balancer functionality status for the project specified.",
-        "operationId": "GetStatus",
+        "operationId": "GetServiceStatus",
         "parameters": [
           {
             "in": "path",
@@ -763,7 +755,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StatusResponse"
+                  "$ref": "#/components/schemas/GetServiceStatusResponse"
                 }
               }
             },
@@ -786,7 +778,7 @@
       },
       "post": {
         "description": "Enable will enable the load balancer functionality for the project specified.",
-        "operationId": "EnableLoadBalancing",
+        "operationId": "EnableService",
         "parameters": [
           {
             "in": "path",
@@ -812,7 +804,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EnableResponse"
+                  "$ref": "#/components/schemas/EnableServiceResponse"
                 }
               }
             },

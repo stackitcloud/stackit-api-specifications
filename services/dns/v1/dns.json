@@ -101,7 +101,7 @@
         ],
         "type": "object"
       },
-      "UpdateZonePayload": {
+      "PartialUpdateZonePayload": {
         "properties": {
           "acl": {
             "default": "0.0.0.0/0,::/0",
@@ -230,7 +230,7 @@
         ],
         "type": "object"
       },
-      "UpdateRecordSetPayload": {
+      "PartialUpdateRecordSetPayload": {
         "description": "RRSetPatch for rr patch set info.",
         "properties": {
           "comment": {
@@ -263,7 +263,7 @@
         },
         "type": "object"
       },
-      "UpdateRecordPayload": {
+      "PartialUpdateRecordPayload": {
         "description": "RecordPatch for record patch in record set.",
         "properties": {
           "action": {
@@ -287,7 +287,7 @@
         ],
         "type": "object"
       },
-      "CloneZoneRequest": {
+      "CloneZonePayload": {
         "description": "metadata to clone a zone.",
         "properties": {
           "description": {
@@ -705,7 +705,7 @@
         ],
         "type": "object"
       },
-      "MoveZoneRequest": {
+      "MoveZonePayload": {
         "description": "body to move zone from one project to another.",
         "properties": {
           "code": {
@@ -788,7 +788,7 @@
         ],
         "type": "object"
       },
-      "RecordSetsResponse": {
+      "ListRecordSetsResponse": {
         "description": "ResponseRRSetAll.",
         "example": {
           "itemsPerPage": 0,
@@ -926,7 +926,7 @@
         ],
         "type": "object"
       },
-      "MoveCodeValidationRequest": {
+      "ValidateMoveCodePayload": {
         "description": "PostValidateMoveCodeRequest body to validate move code request.",
         "properties": {
           "code": {
@@ -990,7 +990,7 @@
         ],
         "type": "object"
       },
-      "ZonesResponse": {
+      "ListZonesResponse": {
         "description": "ResponseZoneAll for filtered zones.",
         "example": {
           "itemsPerPage": 0,
@@ -1523,7 +1523,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ZonesResponse"
+                  "$ref": "#/components/schemas/ListZonesResponse"
                 }
               }
             },
@@ -1551,7 +1551,7 @@
           }
         },
         "summary": "All get selected zones",
-        "operationId": "GetZones"
+        "operationId": "ListZones"
       },
       "post": {
         "description": "Post zone create a new zone",
@@ -1784,7 +1784,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateZonePayload"
+                "$ref": "#/components/schemas/PartialUpdateZonePayload"
               }
             }
           },
@@ -1834,7 +1834,7 @@
           }
         },
         "summary": "Patch update an existing zone",
-        "operationId": "UpdateZone"
+        "operationId": "PartialUpdateZone"
       }
     },
     "/v1/projects/{projectId}/zones/{zoneId}/rrsets": {
@@ -2194,7 +2194,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RecordSetsResponse"
+                  "$ref": "#/components/schemas/ListRecordSetsResponse"
                 }
               }
             },
@@ -2222,7 +2222,7 @@
           }
         },
         "summary": "All get selected RRSets",
-        "operationId": "GetRecordSets"
+        "operationId": "ListRecordSets"
       },
       "post": {
         "description": "Post record set",
@@ -2491,7 +2491,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateRecordSetPayload"
+                "$ref": "#/components/schemas/PartialUpdateRecordSetPayload"
               }
             }
           },
@@ -2541,7 +2541,7 @@
           }
         },
         "summary": "Patch updates a record set",
-        "operationId": "UpdateRecordSet"
+        "operationId": "PartialUpdateRecordSet"
       }
     },
     "/v1/projects/{projectId}/zones/{zoneId}/rrsets/{rrSetId}/records": {
@@ -2580,7 +2580,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateRecordPayload"
+                "$ref": "#/components/schemas/PartialUpdateRecordPayload"
               }
             }
           },
@@ -2630,7 +2630,7 @@
           }
         },
         "summary": "PatchRecords updates a record in a rrset",
-        "operationId": "UpdateRecord"
+        "operationId": "PartialUpdateRecord"
       }
     }
   },

@@ -1,28 +1,6 @@
 {
   "components": {
     "schemas": {
-      "AclResponse": {
-        "properties": {
-          "acl": {
-            "items": {
-              "maxLength": 100,
-              "minLength": 1,
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "message": {
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          }
-        },
-        "required": [
-          "message",
-          "acl"
-        ],
-        "type": "object"
-      },
       "Alert": {
         "properties": {
           "global": {
@@ -50,38 +28,10 @@
         ],
         "type": "object"
       },
-      "AlertGroupJson": {
-        "properties": {
-          "interval": {
-            "default": "60s",
-            "maxLength": 8,
-            "minLength": 2,
-            "title": "Interval",
-            "type": "string"
-          },
-          "name": {
-            "maxLength": 200,
-            "minLength": 1,
-            "title": "Name",
-            "type": "string"
-          },
-          "rules": {
-            "items": {
-              "$ref": "#/components/schemas/AlertRuleRecordJson"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "name",
-          "rules"
-        ],
-        "type": "object"
-      },
       "AlertGroupResponse": {
         "properties": {
           "data": {
-            "$ref": "#/components/schemas/AlertGroupJson"
+            "$ref": "#/components/schemas/AlertGroup"
           },
           "message": {
             "minLength": 1,
@@ -99,7 +49,7 @@
         "properties": {
           "data": {
             "items": {
-              "$ref": "#/components/schemas/AlertGroupJson"
+              "$ref": "#/components/schemas/AlertGroup"
             },
             "type": "array"
           },
@@ -225,54 +175,6 @@
         ],
         "type": "object"
       },
-      "AlertRuleRecordJson": {
-        "properties": {
-          "alert": {
-            "maxLength": 200,
-            "minLength": 1,
-            "title": "Alert",
-            "type": "string"
-          },
-          "annotations": {
-            "additionalProperties": {
-              "minLength": 1,
-              "type": "string"
-            },
-            "title": "Annotations",
-            "type": "object"
-          },
-          "expr": {
-            "maxLength": 600,
-            "minLength": 1,
-            "title": "Expr",
-            "type": "string"
-          },
-          "for": {
-            "maxLength": 8,
-            "minLength": 2,
-            "title": "For",
-            "type": "string"
-          },
-          "labels": {
-            "additionalProperties": {
-              "minLength": 1,
-              "type": "string"
-            },
-            "title": "Labels",
-            "type": "object"
-          },
-          "record": {
-            "maxLength": 300,
-            "minLength": 1,
-            "title": "Record",
-            "type": "string"
-          }
-        },
-        "required": [
-          "expr"
-        ],
-        "type": "object"
-      },
       "AlertRuleResponse": {
         "properties": {
           "data": {
@@ -374,23 +276,6 @@
         ],
         "type": "object"
       },
-      "ApiUserProjectCreated": {
-        "properties": {
-          "credentials": {
-            "$ref": "#/components/schemas/Credential"
-          },
-          "message": {
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          }
-        },
-        "required": [
-          "credentials",
-          "message"
-        ],
-        "type": "object"
-      },
       "BackupResponse": {
         "properties": {
           "alertConfigBackups": {
@@ -473,26 +358,6 @@
         ],
         "type": "object"
       },
-      "BackupScheduleModelJson": {
-        "properties": {
-          "schedule": {
-            "maxLength": 100,
-            "minLength": 1,
-            "title": "Schedule",
-            "type": "string"
-          },
-          "scheduleId": {
-            "format": "uuid",
-            "title": "Scheduleid",
-            "type": "string"
-          }
-        },
-        "required": [
-          "schedule",
-          "scheduleId"
-        ],
-        "type": "object"
-      },
       "BackupSchedulePostResponse": {
         "properties": {
           "message": {
@@ -521,7 +386,7 @@
             "type": "string"
           },
           "schedule": {
-            "$ref": "#/components/schemas/BackupScheduleModelJson"
+            "$ref": "#/components/schemas/BackupSchedule"
           }
         },
         "required": [
@@ -534,19 +399,19 @@
         "properties": {
           "alertConfigBackupSchedules": {
             "items": {
-              "$ref": "#/components/schemas/BackupScheduleModelJson"
+              "$ref": "#/components/schemas/BackupSchedule"
             },
             "type": "array"
           },
           "alertRulesBackupSchedules": {
             "items": {
-              "$ref": "#/components/schemas/BackupScheduleModelJson"
+              "$ref": "#/components/schemas/BackupSchedule"
             },
             "type": "array"
           },
           "grafanaBackupSchedules": {
             "items": {
-              "$ref": "#/components/schemas/BackupScheduleModelJson"
+              "$ref": "#/components/schemas/BackupSchedule"
             },
             "type": "array"
           },
@@ -557,7 +422,7 @@
           },
           "scrapeConfigBackupSchedules": {
             "items": {
-              "$ref": "#/components/schemas/BackupScheduleModelJson"
+              "$ref": "#/components/schemas/BackupSchedule"
             },
             "type": "array"
           }
@@ -662,23 +527,22 @@
         ],
         "type": "object"
       },
-      "CredentialsListResponse": {
+      "Credentials": {
         "properties": {
-          "credentials": {
-            "items": {
-              "$ref": "#/components/schemas/ServiceKeysList"
-            },
-            "type": "array"
-          },
-          "message": {
+          "password": {
             "minLength": 1,
-            "title": "Message",
+            "title": "Password",
+            "type": "string"
+          },
+          "username": {
+            "minLength": 1,
+            "title": "Username",
             "type": "string"
           }
         },
         "required": [
-          "credentials",
-          "message"
+          "password",
+          "username"
         ],
         "type": "object"
       },
@@ -697,33 +561,6 @@
           }
         },
         "required": [
-          "maxLimit",
-          "message"
-        ],
-        "type": "object"
-      },
-      "CredentialsRemoteWriteResponse": {
-        "properties": {
-          "credentialsMaxLimit": {
-            "maximum": 6000000,
-            "minimum": 0,
-            "title": "Credentialsmaxlimit",
-            "type": "integer"
-          },
-          "maxLimit": {
-            "maximum": 6000000,
-            "minimum": 0,
-            "title": "Maxlimit",
-            "type": "integer"
-          },
-          "message": {
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          }
-        },
-        "required": [
-          "credentialsMaxLimit",
           "maxLimit",
           "message"
         ],
@@ -869,23 +706,6 @@
           }
         },
         "required": [
-          "message"
-        ],
-        "type": "object"
-      },
-      "GetAlert": {
-        "properties": {
-          "data": {
-            "$ref": "#/components/schemas/Alert"
-          },
-          "message": {
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          }
-        },
-        "required": [
-          "data",
           "message"
         ],
         "type": "object"
@@ -1644,7 +1464,7 @@
           },
           "mysqlChecks": {
             "items": {
-              "$ref": "#/components/schemas/MysqlCheckChildResponse"
+              "$ref": "#/components/schemas/MySQLCheckChildResponse"
             },
             "maxItems": 100,
             "type": "array"
@@ -1653,25 +1473,6 @@
         "required": [
           "message",
           "mysqlChecks"
-        ],
-        "type": "object"
-      },
-      "MysqlCheckChildResponse": {
-        "properties": {
-          "id": {
-            "minLength": 1,
-            "title": "Id",
-            "type": "string"
-          },
-          "server": {
-            "minLength": 1,
-            "title": "Server",
-            "type": "string"
-          }
-        },
-        "required": [
-          "server",
-          "id"
         ],
         "type": "object"
       },
@@ -1783,7 +1584,7 @@
           },
           "plans": {
             "items": {
-              "$ref": "#/components/schemas/PlanModel"
+              "$ref": "#/components/schemas/Plan"
             },
             "type": "array"
           },
@@ -1947,16 +1748,6 @@
             "title": "Id",
             "type": "string"
           },
-          "isFree": {
-            "default": false,
-            "title": "Isfree",
-            "type": "boolean"
-          },
-          "isPublic": {
-            "default": true,
-            "title": "Ispublic",
-            "type": "boolean"
-          },
           "logsAlert": {
             "title": "Logsalert",
             "type": "integer"
@@ -1979,12 +1770,6 @@
           "samplesPerScrape": {
             "title": "Samplesperscrape",
             "type": "integer"
-          },
-          "schema": {
-            "default": "",
-            "maxLength": 500,
-            "title": "Schema",
-            "type": "string"
           },
           "targetNumber": {
             "title": "Targetnumber",
@@ -2013,8 +1798,8 @@
           "logsStorage",
           "planId",
           "samplesPerScrape",
-          "targetNumber",
           "totalMetricSamples",
+          "targetNumber",
           "tracesStorage"
         ],
         "type": "object"
@@ -2122,56 +1907,6 @@
         ],
         "type": "object"
       },
-      "ProjectInstanceFullMany": {
-        "properties": {
-          "instances": {
-            "items": {
-              "$ref": "#/components/schemas/ProjectInstanceFull"
-            },
-            "type": "array"
-          },
-          "message": {
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          }
-        },
-        "required": [
-          "instances",
-          "message"
-        ],
-        "type": "object"
-      },
-      "ProjectInstancesUpdateResponse": {
-        "properties": {
-          "message": {
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          }
-        },
-        "required": [
-          "message"
-        ],
-        "type": "object"
-      },
-      "PutAlert": {
-        "properties": {
-          "data": {
-            "$ref": "#/components/schemas/Alert"
-          },
-          "message": {
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          }
-        },
-        "required": [
-          "data",
-          "message"
-        ],
-        "type": "object"
-      },
       "RabbitMQCheckChildResponse": {
         "properties": {
           "id": {
@@ -2251,43 +1986,6 @@
         },
         "required": [
           "name"
-        ],
-        "type": "object"
-      },
-      "ReceiversResponse": {
-        "properties": {
-          "data": {
-            "items": {
-              "$ref": "#/components/schemas/Receivers"
-            },
-            "type": "array"
-          },
-          "message": {
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          }
-        },
-        "required": [
-          "data",
-          "message"
-        ],
-        "type": "object"
-      },
-      "ReceiversResponseSerializerSingle": {
-        "properties": {
-          "data": {
-            "$ref": "#/components/schemas/Receivers"
-          },
-          "message": {
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          }
-        },
-        "required": [
-          "data",
-          "message"
         ],
         "type": "object"
       },
@@ -2404,110 +2102,7 @@
           },
           "routes": {
             "items": {
-              "$ref": "#/components/schemas/RouteSerializer2"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "receiver"
-        ],
-        "type": "object"
-      },
-      "RouteResponse": {
-        "properties": {
-          "data": {
-            "$ref": "#/components/schemas/Route"
-          },
-          "message": {
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          }
-        },
-        "required": [
-          "data",
-          "message"
-        ],
-        "type": "object"
-      },
-      "RouteSerializer2": {
-        "properties": {
-          "continue": {
-            "default": false,
-            "title": "Continue",
-            "type": "boolean"
-          },
-          "groupBy": {
-            "items": {
-              "maxLength": 200,
-              "minLength": 1,
-              "type": "string"
-            },
-            "maxItems": 5,
-            "type": "array"
-          },
-          "groupInterval": {
-            "default": "5m",
-            "maxLength": 8,
-            "minLength": 2,
-            "title": "Groupinterval",
-            "type": "string"
-          },
-          "groupWait": {
-            "default": "30s",
-            "maxLength": 8,
-            "minLength": 2,
-            "title": "Groupwait",
-            "type": "string"
-          },
-          "match": {
-            "additionalProperties": {
-              "maxLength": 200,
-              "minLength": 1,
-              "type": "string"
-            },
-            "title": "Match",
-            "type": "object"
-          },
-          "matchRe": {
-            "additionalProperties": {
-              "maxLength": 200,
-              "minLength": 1,
-              "type": "string"
-            },
-            "title": "Matchre",
-            "type": "object"
-          },
-          "matchers": {
-            "items": {
-              "maxLength": 200,
-              "minLength": 1,
-              "type": "string"
-            },
-            "maxItems": 5,
-            "type": "array"
-          },
-          "receiver": {
-            "maxLength": 200,
-            "minLength": 1,
-            "title": "Receiver",
-            "type": "string"
-          },
-          "repeatInterval": {
-            "default": "4h",
-            "maxLength": 8,
-            "minLength": 2,
-            "title": "Repeatinterval",
-            "type": "string"
-          },
-          "routes": {
-            "items": {
-              "additionalProperties": {
-                "nullable": true,
-                "type": "string"
-              },
-              "type": "object"
+              "$ref": "#/components/schemas/RouteSerializer"
             },
             "type": "array"
           }
@@ -2542,41 +2137,6 @@
         },
         "required": [
           "id",
-          "name"
-        ],
-        "type": "object"
-      },
-      "ServiceKeysResponse": {
-        "properties": {
-          "credentialsInfo": {
-            "additionalProperties": {
-              "nullable": true,
-              "type": "string"
-            },
-            "title": "Credentialsinfo",
-            "type": "object"
-          },
-          "id": {
-            "maxLength": 200,
-            "minLength": 1,
-            "title": "Id",
-            "type": "string"
-          },
-          "message": {
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          },
-          "name": {
-            "maxLength": 200,
-            "minLength": 1,
-            "title": "Name",
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "message",
           "name"
         ],
         "type": "object"
@@ -2873,7 +2433,7 @@
         ],
         "type": "object"
       },
-      "UpdateInstanceAclPayload": {
+      "UpdateACLPayload": {
         "description": "List of cidr. Send empty string to remove acl.",
         "properties": {
           "acl": {
@@ -2892,7 +2452,7 @@
         ],
         "type": "object"
       },
-      "UpdateInstanceAlertConfigsPayload": {
+      "UpdateAlertConfigsPayload": {
         "description": "Alert config",
         "properties": {
           "global": {
@@ -3220,7 +2780,7 @@
         ],
         "type": "object"
       },
-      "CreateInstanceAlertConfigReceiverPayload": {
+      "CreateAlertConfigReceiverPayload": {
         "description": "Receivers",
         "properties": {
           "emailConfigs": {
@@ -3326,7 +2886,7 @@
         ],
         "type": "object"
       },
-      "UpdateInstanceAlertConfigReceiverPayload": {
+      "UpdateAlertConfigReceiverPayload": {
         "description": "Receivers",
         "properties": {
           "emailConfigs": {
@@ -3432,7 +2992,7 @@
         ],
         "type": "object"
       },
-      "CreateInstanceAlertConfigRoutePayload": {
+      "CreateAlertConfigRoutePayload": {
         "description": "The root node of the routing tree.",
         "properties": {
           "groupBy": {
@@ -3554,7 +3114,7 @@
         ],
         "type": "object"
       },
-      "UpdateInstanceAlertConfigRouteReceiverPayload": {
+      "UpdateAlertConfigRoutePayload": {
         "description": "The root node of the routing tree.",
         "properties": {
           "groupBy": {
@@ -3676,7 +3236,7 @@
         ],
         "type": "object"
       },
-      "UpdateCredentialRemoteWriteConfigPayload": {
+      "UpdateCredentialsRemoteWriteConfigPayload": {
         "description": "Remote write limit config.",
         "properties": {
           "maxLimit": {
@@ -3686,7 +3246,7 @@
         },
         "type": "object"
       },
-      "UpdateInstanceGrafanaConfigsPayload": {
+      "UpdateGrafanaConfigsPayload": {
         "description": "Sending any of the attributes results in a set of the attribute and overwrites any previous configuration.",
         "properties": {
           "genericOauth": {
@@ -4269,6 +3829,141 @@
         ],
         "type": "object"
       },
+      "ListACLResponse": {
+        "properties": {
+          "acl": {
+            "items": {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message",
+          "acl"
+        ],
+        "type": "object"
+      },
+      "AlertGroup": {
+        "properties": {
+          "interval": {
+            "default": "60s",
+            "maxLength": 8,
+            "minLength": 2,
+            "title": "Interval",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/AlertRuleRecord"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "rules"
+        ],
+        "type": "object"
+      },
+      "AlertRuleRecord": {
+        "properties": {
+          "alert": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Alert",
+            "type": "string"
+          },
+          "annotations": {
+            "additionalProperties": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Annotations",
+            "type": "object"
+          },
+          "expr": {
+            "maxLength": 600,
+            "minLength": 1,
+            "title": "Expr",
+            "type": "string"
+          },
+          "for": {
+            "maxLength": 8,
+            "minLength": 2,
+            "title": "For",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Labels",
+            "type": "object"
+          },
+          "record": {
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Record",
+            "type": "string"
+          }
+        },
+        "required": [
+          "expr"
+        ],
+        "type": "object"
+      },
+      "CreateCredentialsResponse": {
+        "properties": {
+          "credentials": {
+            "$ref": "#/components/schemas/Credentials"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "credentials",
+          "message"
+        ],
+        "type": "object"
+      },
+      "BackupSchedule": {
+        "properties": {
+          "schedule": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Schedule",
+            "type": "string"
+          },
+          "scheduleId": {
+            "format": "uuid",
+            "title": "Scheduleid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "schedule",
+          "scheduleId"
+        ],
+        "type": "object"
+      },
       "ScrapeConfigsResponse": {
         "properties": {
           "data": {
@@ -4289,26 +3984,111 @@
         ],
         "type": "object"
       },
-      "Credential": {
+      "ListCredentialsResponse": {
         "properties": {
-          "password": {
-            "minLength": 1,
-            "title": "Password",
-            "type": "string"
+          "credentials": {
+            "items": {
+              "$ref": "#/components/schemas/ServiceKeysList"
+            },
+            "type": "array"
           },
-          "username": {
+          "message": {
             "minLength": 1,
-            "title": "Username",
+            "title": "Message",
             "type": "string"
           }
         },
         "required": [
-          "password",
-          "username"
+          "credentials",
+          "message"
         ],
         "type": "object"
       },
-      "ScrapeConfigResponse": {
+      "CredentialsRemoteWriteConfig": {
+        "properties": {
+          "credentialsMaxLimit": {
+            "maximum": 6000000,
+            "minimum": 0,
+            "title": "Credentialsmaxlimit",
+            "type": "integer"
+          },
+          "maxLimit": {
+            "maximum": 6000000,
+            "minimum": 0,
+            "title": "Maxlimit",
+            "type": "integer"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "credentialsMaxLimit",
+          "maxLimit",
+          "message"
+        ],
+        "type": "object"
+      },
+      "DeleteScrapeConfigResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Job"
+            },
+            "type": "array"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "message"
+        ],
+        "type": "object"
+      },
+      "GetAlertConfigsResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Alert"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "message"
+        ],
+        "type": "object"
+      },
+      "ListScrapeConfigsResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Job"
+            },
+            "type": "array"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "message"
+        ],
+        "type": "object"
+      },
+      "GetScrapeConfigResponse": {
         "properties": {
           "data": {
             "$ref": "#/components/schemas/Job"
@@ -4349,6 +4129,25 @@
         ],
         "type": "object"
       },
+      "MySQLCheckChildResponse": {
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "server": {
+            "minLength": 1,
+            "title": "Server",
+            "type": "string"
+          }
+        },
+        "required": [
+          "server",
+          "id"
+        ],
+        "type": "object"
+      },
       "PlansResponse": {
         "properties": {
           "message": {
@@ -4358,7 +4157,7 @@
           },
           "plans": {
             "items": {
-              "$ref": "#/components/schemas/PlanModel"
+              "$ref": "#/components/schemas/Plan"
             },
             "type": "array"
           }
@@ -4369,7 +4168,151 @@
         ],
         "type": "object"
       },
-      "InstanceResponse": {
+      "Plan": {
+        "properties": {
+          "alertMatchers": {
+            "title": "Alertmatchers",
+            "type": "integer"
+          },
+          "alertReceivers": {
+            "title": "Alertreceivers",
+            "type": "integer"
+          },
+          "alertRules": {
+            "title": "Alertrules",
+            "type": "integer"
+          },
+          "amount": {
+            "maximum": 10000000,
+            "minimum": 0,
+            "title": "Amount",
+            "type": "number"
+          },
+          "bucketSize": {
+            "minimum": 20,
+            "title": "Bucketsize",
+            "type": "integer"
+          },
+          "description": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "grafanaGlobalDashboards": {
+            "title": "Grafanaglobaldashboards",
+            "type": "integer"
+          },
+          "grafanaGlobalOrgs": {
+            "title": "Grafanaglobalorgs",
+            "type": "integer"
+          },
+          "grafanaGlobalSessions": {
+            "title": "Grafanaglobalsessions",
+            "type": "integer"
+          },
+          "grafanaGlobalUsers": {
+            "title": "Grafanaglobalusers",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "isFree": {
+            "default": false,
+            "title": "Isfree",
+            "type": "boolean"
+          },
+          "isPublic": {
+            "default": true,
+            "title": "Ispublic",
+            "type": "boolean"
+          },
+          "logsAlert": {
+            "title": "Logsalert",
+            "type": "integer"
+          },
+          "logsStorage": {
+            "title": "Logsstorage",
+            "type": "integer"
+          },
+          "name": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "planId": {
+            "format": "uuid",
+            "title": "Planid",
+            "type": "string"
+          },
+          "samplesPerScrape": {
+            "title": "Samplesperscrape",
+            "type": "integer"
+          },
+          "schema": {
+            "default": "",
+            "maxLength": 500,
+            "title": "Schema",
+            "type": "string"
+          },
+          "targetNumber": {
+            "title": "Targetnumber",
+            "type": "integer"
+          },
+          "totalMetricSamples": {
+            "title": "Totalmetricsamples",
+            "type": "integer"
+          },
+          "tracesStorage": {
+            "title": "Tracesstorage",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "alertMatchers",
+          "alertReceivers",
+          "alertRules",
+          "bucketSize",
+          "grafanaGlobalDashboards",
+          "grafanaGlobalOrgs",
+          "grafanaGlobalSessions",
+          "grafanaGlobalUsers",
+          "id",
+          "logsAlert",
+          "logsStorage",
+          "planId",
+          "samplesPerScrape",
+          "targetNumber",
+          "totalMetricSamples",
+          "tracesStorage"
+        ],
+        "type": "object"
+      },
+      "ListInstancesResponse": {
+        "properties": {
+          "instances": {
+            "items": {
+              "$ref": "#/components/schemas/ProjectInstanceFull"
+            },
+            "type": "array"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "instances",
+          "message"
+        ],
+        "type": "object"
+      },
+      "GetInstanceResponse": {
         "properties": {
           "dashboardUrl": {
             "maxLength": 500,
@@ -4493,6 +4436,211 @@
           "message"
         ],
         "type": "object"
+      },
+      "InstanceResponse": {
+        "properties": {
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
+      "UpdateAlertConfigsResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Alert"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "message"
+        ],
+        "type": "object"
+      },
+      "AlertConfigReceiversResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Receivers"
+            },
+            "type": "array"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "message"
+        ],
+        "type": "object"
+      },
+      "Receiver": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Receivers"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "message"
+        ],
+        "type": "object"
+      },
+      "AlertConfigRouteResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Route"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "message"
+        ],
+        "type": "object"
+      },
+      "RouteSerializer": {
+        "properties": {
+          "continue": {
+            "default": false,
+            "title": "Continue",
+            "type": "boolean"
+          },
+          "groupBy": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 5,
+            "type": "array"
+          },
+          "groupInterval": {
+            "default": "5m",
+            "maxLength": 8,
+            "minLength": 2,
+            "title": "Groupinterval",
+            "type": "string"
+          },
+          "groupWait": {
+            "default": "30s",
+            "maxLength": 8,
+            "minLength": 2,
+            "title": "Groupwait",
+            "type": "string"
+          },
+          "match": {
+            "additionalProperties": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Match",
+            "type": "object"
+          },
+          "matchRe": {
+            "additionalProperties": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Matchre",
+            "type": "object"
+          },
+          "matchers": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 5,
+            "type": "array"
+          },
+          "receiver": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Receiver",
+            "type": "string"
+          },
+          "repeatInterval": {
+            "default": "4h",
+            "maxLength": 8,
+            "minLength": 2,
+            "title": "Repeatinterval",
+            "type": "string"
+          },
+          "routes": {
+            "items": {
+              "additionalProperties": {
+                "nullable": true,
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "receiver"
+        ],
+        "type": "object"
+      },
+      "GetCredentialsResponse": {
+        "properties": {
+          "credentialsInfo": {
+            "additionalProperties": {
+              "nullable": true,
+              "type": "string"
+            },
+            "title": "Credentialsinfo",
+            "type": "object"
+          },
+          "id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "message",
+          "name"
+        ],
+        "type": "object"
       }
     }
   },
@@ -4510,7 +4658,7 @@
     "/v1/projects/{projectId}/instances": {
       "get": {
         "description": "Get all instances for a project.",
-        "operationId": "GetInstances",
+        "operationId": "ListInstances",
         "parameters": [
           {
             "in": "path",
@@ -4539,7 +4687,7 @@
                   "message": "Successfully got instances"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectInstanceFullMany"
+                  "$ref": "#/components/schemas/ListInstancesResponse"
                 }
               }
             },
@@ -4658,7 +4806,7 @@
                   "message": "Successfully deleted instance"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectInstancesUpdateResponse"
+                  "$ref": "#/components/schemas/InstanceResponse"
                 }
               }
             },
@@ -4767,7 +4915,7 @@
                   "status": "CREATE_SUCCEEDED"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/InstanceResponse"
+                  "$ref": "#/components/schemas/GetInstanceResponse"
                 }
               }
             },
@@ -4827,7 +4975,7 @@
                   "message": "Successfully updated instance"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectInstancesUpdateResponse"
+                  "$ref": "#/components/schemas/InstanceResponse"
                 }
               }
             },
@@ -4865,7 +5013,7 @@
     "/v1/projects/{projectId}/instances/{instanceId}/acl": {
       "get": {
         "description": "Get acl for instance.",
-        "operationId": "GetInstanceAcl",
+        "operationId": "ListACL",
         "parameters": [
           {
             "in": "path",
@@ -4895,7 +5043,7 @@
                   "message": "Successfully got acl"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/AclResponse"
+                  "$ref": "#/components/schemas/ListACLResponse"
                 }
               }
             },
@@ -4918,7 +5066,7 @@
       },
       "put": {
         "description": "Update acl config.",
-        "operationId": "UpdateInstanceAcl",
+        "operationId": "UpdateACL",
         "parameters": [
           {
             "in": "path",
@@ -4941,7 +5089,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateInstanceAclPayload"
+                "$ref": "#/components/schemas/UpdateACLPayload"
               }
             }
           }
@@ -4992,7 +5140,7 @@
     "/v1/projects/{projectId}/instances/{instanceId}/alertconfigs": {
       "get": {
         "description": "Get alert config.",
-        "operationId": "GetInstanceAlertConfigs",
+        "operationId": "GetAlertConfigs",
         "parameters": [
           {
             "in": "path",
@@ -5107,7 +5255,7 @@
                   "message": "Success"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/GetAlert"
+                  "$ref": "#/components/schemas/GetAlertConfigsResponse"
                 }
               }
             },
@@ -5130,7 +5278,7 @@
       },
       "put": {
         "description": "Update alert config.",
-        "operationId": "UpdateInstanceAlertConfigs",
+        "operationId": "UpdateAlertConfigs",
         "parameters": [
           {
             "in": "path",
@@ -5153,7 +5301,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateInstanceAlertConfigsPayload"
+                "$ref": "#/components/schemas/UpdateAlertConfigsPayload"
               }
             }
           },
@@ -5255,7 +5403,7 @@
                   "message": "Success"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/PutAlert"
+                  "$ref": "#/components/schemas/UpdateAlertConfigsResponse"
                 }
               }
             },
@@ -5293,7 +5441,7 @@
     "/v1/projects/{projectId}/instances/{instanceId}/alertconfigs/receivers": {
       "get": {
         "description": "Get alert config receivers.",
-        "operationId": "GetInstanceAlertConfigReceivers",
+        "operationId": "ListAlertConfigReceivers",
         "parameters": [
           {
             "in": "path",
@@ -5360,7 +5508,7 @@
                   "message": "Success"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ReceiversResponse"
+                  "$ref": "#/components/schemas/AlertConfigReceiversResponse"
                 }
               }
             },
@@ -5383,7 +5531,7 @@
       },
       "post": {
         "description": "Create alert config receiver.",
-        "operationId": "CreateInstanceAlertConfigReceiver",
+        "operationId": "CreateAlertConfigReceiver",
         "parameters": [
           {
             "in": "path",
@@ -5406,7 +5554,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateInstanceAlertConfigReceiverPayload"
+                "$ref": "#/components/schemas/CreateAlertConfigReceiverPayload"
               }
             }
           },
@@ -5460,7 +5608,7 @@
                   "message": "Success"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ReceiversResponse"
+                  "$ref": "#/components/schemas/AlertConfigReceiversResponse"
                 }
               }
             },
@@ -5498,7 +5646,7 @@
     "/v1/projects/{projectId}/instances/{instanceId}/alertconfigs/receivers/{receiver}": {
       "delete": {
         "description": "Delete alert config receiver.",
-        "operationId": "DeleteInstanceAlertConfigReceiver",
+        "operationId": "DeleteAlertConfigReceiver",
         "parameters": [
           {
             "in": "path",
@@ -5573,7 +5721,7 @@
                   "message": "Success"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ReceiversResponse"
+                  "$ref": "#/components/schemas/AlertConfigReceiversResponse"
                 }
               }
             },
@@ -5609,7 +5757,7 @@
       },
       "get": {
         "description": "Get alert config receivers.",
-        "operationId": "GetInstanceAlertConfigReceiver",
+        "operationId": "GetAlertConfigReceiver",
         "parameters": [
           {
             "in": "path",
@@ -5652,7 +5800,7 @@
                   "message": "Success"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ReceiversResponseSerializerSingle"
+                  "$ref": "#/components/schemas/Receiver"
                 }
               }
             },
@@ -5688,7 +5836,7 @@
       },
       "put": {
         "description": "Update alert config receiver.",
-        "operationId": "UpdateInstanceAlertConfigReceiver",
+        "operationId": "UpdateAlertConfigReceiver",
         "parameters": [
           {
             "in": "path",
@@ -5719,7 +5867,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateInstanceAlertConfigReceiverPayload"
+                "$ref": "#/components/schemas/UpdateAlertConfigReceiverPayload"
               }
             }
           },
@@ -5773,7 +5921,7 @@
                   "message": "Success"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ReceiversResponse"
+                  "$ref": "#/components/schemas/AlertConfigReceiversResponse"
                 }
               }
             },
@@ -5824,7 +5972,7 @@
     "/v1/projects/{projectId}/instances/{instanceId}/alertconfigs/routes": {
       "get": {
         "description": "Get alert config route.",
-        "operationId": "GetInstanceAlertConfigRoutes",
+        "operationId": "ListAlertConfigRoutes",
         "parameters": [
           {
             "in": "path",
@@ -5876,7 +6024,7 @@
                   "message": "Success"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/RouteResponse"
+                  "$ref": "#/components/schemas/AlertConfigRouteResponse"
                 }
               }
             },
@@ -5899,7 +6047,7 @@
       },
       "post": {
         "description": "Create alert config route in routes of route.",
-        "operationId": "CreateInstanceAlertConfigRoute",
+        "operationId": "CreateAlertConfigRoute",
         "parameters": [
           {
             "in": "path",
@@ -5922,7 +6070,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateInstanceAlertConfigRoutePayload"
+                "$ref": "#/components/schemas/CreateAlertConfigRoutePayload"
               }
             }
           },
@@ -5961,7 +6109,7 @@
                   "message": "Success"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/RouteResponse"
+                  "$ref": "#/components/schemas/AlertConfigRouteResponse"
                 }
               }
             },
@@ -5999,7 +6147,7 @@
     "/v1/projects/{projectId}/instances/{instanceId}/alertconfigs/routes/{receiver}": {
       "delete": {
         "description": "Delete alert receiver for route.",
-        "operationId": "DeleteInstanceAlertConfigRouteReceiver",
+        "operationId": "DeleteAlertConfigRoute",
         "parameters": [
           {
             "in": "path",
@@ -6059,7 +6207,7 @@
                   "message": "Success"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/RouteResponse"
+                  "$ref": "#/components/schemas/AlertConfigRouteResponse"
                 }
               }
             },
@@ -6095,7 +6243,7 @@
       },
       "get": {
         "description": "Get alert receiver for route.",
-        "operationId": "GetInstanceAlertConfigRouteReceiver",
+        "operationId": "GetAlertConfigRoute",
         "parameters": [
           {
             "in": "path",
@@ -6155,7 +6303,7 @@
                   "message": "Success"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/RouteResponse"
+                  "$ref": "#/components/schemas/AlertConfigRouteResponse"
                 }
               }
             },
@@ -6178,7 +6326,7 @@
       },
       "put": {
         "description": "Update alert receiver for route.",
-        "operationId": "UpdateInstanceAlertConfigRouteReceiver",
+        "operationId": "UpdateAlertConfigRoute",
         "parameters": [
           {
             "in": "path",
@@ -6209,7 +6357,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateInstanceAlertConfigRouteReceiverPayload"
+                "$ref": "#/components/schemas/UpdateAlertConfigRoutePayload"
               }
             }
           },
@@ -6248,7 +6396,7 @@
                   "message": "Success"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/RouteResponse"
+                  "$ref": "#/components/schemas/AlertConfigRouteResponse"
                 }
               }
             },
@@ -6299,7 +6447,7 @@
     "/v1/projects/{projectId}/instances/{instanceId}/credentials": {
       "get": {
         "description": "Get all technical user credentials.",
-        "operationId": "GetCredentials",
+        "operationId": "ListCredentials",
         "parameters": [
           {
             "in": "path",
@@ -6335,7 +6483,7 @@
                   "message": "Successfully received all technical users"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/CredentialsListResponse"
+                  "$ref": "#/components/schemas/ListCredentialsResponse"
                 }
               }
             },
@@ -6358,7 +6506,7 @@
       },
       "post": {
         "description": "Create technical user credentials.",
-        "operationId": "CreateCredential",
+        "operationId": "CreateCredentials",
         "parameters": [
           {
             "in": "path",
@@ -6389,7 +6537,7 @@
                   "message": "Successfully created api user"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ApiUserProjectCreated"
+                  "$ref": "#/components/schemas/CreateCredentialsResponse"
                 }
               }
             },
@@ -6414,7 +6562,7 @@
     "/v1/projects/{projectId}/instances/{instanceId}/credentials/{username}": {
       "delete": {
         "description": "Delete technical credentials.",
-        "operationId": "DeleteCredential",
+        "operationId": "DeleteCredentials",
         "parameters": [
           {
             "in": "path",
@@ -6498,7 +6646,7 @@
       },
       "get": {
         "description": "Get single technical credentials.",
-        "operationId": "GetCredential",
+        "operationId": "GetCredentials",
         "parameters": [
           {
             "in": "path",
@@ -6538,7 +6686,7 @@
                   "name": "testing_9449de83-64ac-45dc-9967-e7c75bbdca70_4d92d3d9-d5c2-4c0b-98ad-950878101d9e"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ServiceKeysResponse"
+                  "$ref": "#/components/schemas/GetCredentialsResponse"
                 }
               }
             },
@@ -6576,7 +6724,7 @@
     "/v1/projects/{projectId}/instances/{instanceId}/credentials/{username}/remote-write-limits": {
       "delete": {
         "description": "Delete remote write config for credentials.",
-        "operationId": "DeleteCredentialRemoteWriteConfig",
+        "operationId": "DeleteCredentialsRemoteWriteConfig",
         "parameters": [
           {
             "in": "path",
@@ -6674,7 +6822,7 @@
       },
       "get": {
         "description": "Get remote write config.",
-        "operationId": "GetCredentialRemoteWriteConfig",
+        "operationId": "GetCredentialsRemoteWriteConfig",
         "parameters": [
           {
             "in": "path",
@@ -6711,7 +6859,7 @@
                   "message": "Successfully got remote write limit config"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/CredentialsRemoteWriteResponse"
+                  "$ref": "#/components/schemas/CredentialsRemoteWriteConfig"
                 }
               }
             },
@@ -6760,7 +6908,7 @@
       },
       "put": {
         "description": "Update remote write config for credentials.",
-        "operationId": "UpdateCredentialRemoteWriteConfig",
+        "operationId": "UpdateCredentialsRemoteWriteConfig",
         "parameters": [
           {
             "in": "path",
@@ -6791,7 +6939,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateCredentialRemoteWriteConfigPayload"
+                "$ref": "#/components/schemas/UpdateCredentialsRemoteWriteConfigPayload"
               }
             }
           },
@@ -6807,7 +6955,7 @@
                   "message": "Successfully updated remote write limit config"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/CredentialsRemoteWriteResponse"
+                  "$ref": "#/components/schemas/CredentialsRemoteWriteConfig"
                 }
               }
             },
@@ -6871,7 +7019,7 @@
     "/v1/projects/{projectId}/instances/{instanceId}/grafana-configs": {
       "get": {
         "description": "Get grafana config.",
-        "operationId": "GetInstanceGrafanaConfigs",
+        "operationId": "GetGrafanaConfigs",
         "parameters": [
           {
             "in": "path",
@@ -6923,7 +7071,7 @@
       },
       "put": {
         "description": "Update grafana config.",
-        "operationId": "UpdateInstanceGrafanaConfigs",
+        "operationId": "UpdateGrafanaConfigs",
         "parameters": [
           {
             "in": "path",
@@ -6946,7 +7094,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateInstanceGrafanaConfigsPayload"
+                "$ref": "#/components/schemas/UpdateGrafanaConfigsPayload"
               }
             }
           },
@@ -6998,7 +7146,7 @@
     "/v1/projects/{projectId}/instances/{instanceId}/scrapeconfigs": {
       "get": {
         "description": "Get scrape configs.",
-        "operationId": "GetScrapeConfigs",
+        "operationId": "ListScrapeConfigs",
         "parameters": [
           {
             "in": "path",
@@ -7041,7 +7189,7 @@
                   "message": "Successfully got scrape config"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ScrapeConfigsResponse"
+                  "$ref": "#/components/schemas/ListScrapeConfigsResponse"
                 }
               }
             },
@@ -7206,7 +7354,7 @@
                   "message": "Job has been deleted successfully"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ScrapeConfigsResponse"
+                  "$ref": "#/components/schemas/DeleteScrapeConfigResponse"
                 }
               }
             },
@@ -7291,7 +7439,7 @@
                   "message": "Successfully got scrape target"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ScrapeConfigResponse"
+                  "$ref": "#/components/schemas/GetScrapeConfigResponse"
                 }
               }
             },
@@ -7426,7 +7574,7 @@
     "/v1/projects/{projectId}/plans": {
       "get": {
         "description": "Get all plans.",
-        "operationId": "GetPlans",
+        "operationId": "ListPlans",
         "parameters": [
           {
             "in": "path",

@@ -62,155 +62,6 @@
         "title": "Bucket",
         "type": "object"
       },
-      "CredentialsGroup": {
-        "properties": {
-          "credentialsGroupId": {
-            "description": "The ID of the credentials group",
-            "example": "3969597f-d2f3-4c07-8533-1a4bf8159c0e",
-            "title": "Credentials group ID",
-            "type": "string"
-          },
-          "displayName": {
-            "description": "Name of the group holding credentials",
-            "example": "group-name-1",
-            "title": "Credentials group name",
-            "type": "string"
-          },
-          "urn": {
-            "description": "Credentials group URN",
-            "example": "urn:sgws:identity::12345678901234567890:user/credentials-group-123456",
-            "title": "Urn",
-            "type": "string"
-          }
-        },
-        "required": [
-          "credentialsGroupId",
-          "urn",
-          "displayName"
-        ],
-        "title": "CredentialsGroup",
-        "type": "object"
-      },
-      "DetailedError": {
-        "properties": {
-          "key": {
-            "example": "example.error_key",
-            "title": "Error Key",
-            "type": "string"
-          },
-          "msg": {
-            "example": "Some details about the error.",
-            "title": "Error message",
-            "type": "string"
-          }
-        },
-        "required": [
-          "key",
-          "msg"
-        ],
-        "title": "DetailedError",
-        "type": "object"
-      },
-      "ErrorMessage": {
-        "properties": {
-          "detail": {
-            "items": {
-              "$ref": "#/components/schemas/DetailedError"
-            },
-            "title": "Detail",
-            "type": "array"
-          }
-        },
-        "required": [
-          "detail"
-        ],
-        "title": "ErrorMessage",
-        "type": "object"
-      },
-      "HTTPValidationError": {
-        "properties": {
-          "detail": {
-            "items": {
-              "$ref": "#/components/schemas/ValidationError"
-            },
-            "title": "Detail",
-            "type": "array"
-          }
-        },
-        "title": "HTTPValidationError",
-        "type": "object"
-      },
-      "ProjectScope": {
-        "description": "The scope of a STACKIT project can be public (default) or\ncan have client specific special requirements.",
-        "enum": [
-          "PUBLIC",
-          "SCHWARZ"
-        ],
-        "title": "ProjectScope"
-      },
-      "ValidationError": {
-        "properties": {
-          "loc": {
-            "items": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "integer"
-                }
-              ]
-            },
-            "title": "Location",
-            "type": "array"
-          },
-          "msg": {
-            "title": "Message",
-            "type": "string"
-          },
-          "type": {
-            "title": "Error Type",
-            "type": "string"
-          }
-        },
-        "required": [
-          "loc",
-          "msg",
-          "type"
-        ],
-        "title": "ValidationError",
-        "type": "object"
-      },
-      "CreateAccessKeyPayload": {
-        "properties": {
-          "expires": {
-            "description": "Expiration date. Null means never expires.",
-            "example": "2020-09-04T00:00:00.000Z",
-            "format": "date-time",
-            "title": "Expires",
-            "type": "string"
-          }
-        },
-        "title": "CreateAccessKeyRequest",
-        "type": "object"
-      },
-      "CreateCredentialsGroupPayload": {
-        "properties": {
-          "displayName": {
-            "description": "Name of the group holding credentials",
-            "example": "group-name-1",
-            "maxLength": 32,
-            "minLength": 1,
-            "title": "Credentials group name",
-            "type": "string"
-          }
-        },
-        "required": [
-          "displayName"
-        ],
-        "title": "CreateCredentialsGroupRequest",
-        "type": "object"
-      },
       "CreateAccessKeyResponse": {
         "properties": {
           "accessKey": {
@@ -302,6 +153,35 @@
         "title": "CreateCredentialsGroupResponse",
         "type": "object"
       },
+      "CredentialsGroup": {
+        "properties": {
+          "credentialsGroupId": {
+            "description": "The ID of the credentials group",
+            "example": "3969597f-d2f3-4c07-8533-1a4bf8159c0e",
+            "title": "Credentials group ID",
+            "type": "string"
+          },
+          "displayName": {
+            "description": "Name of the group holding credentials",
+            "example": "group-name-1",
+            "title": "Credentials group name",
+            "type": "string"
+          },
+          "urn": {
+            "description": "Credentials group URN",
+            "example": "urn:sgws:identity::12345678901234567890:user/credentials-group-123456",
+            "title": "Urn",
+            "type": "string"
+          }
+        },
+        "required": [
+          "credentialsGroupId",
+          "urn",
+          "displayName"
+        ],
+        "title": "CredentialsGroup",
+        "type": "object"
+      },
       "DeleteAccessKeyResponse": {
         "properties": {
           "keyId": {
@@ -368,7 +248,146 @@
         "title": "DeleteCredentialsGroupResponse",
         "type": "object"
       },
-      "GetAccessKeysResponse": {
+      "DetailedError": {
+        "properties": {
+          "key": {
+            "example": "example.error_key",
+            "title": "Error Key",
+            "type": "string"
+          },
+          "msg": {
+            "example": "Some details about the error.",
+            "title": "Error message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "msg"
+        ],
+        "title": "DetailedError",
+        "type": "object"
+      },
+      "ErrorMessage": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/DetailedError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "required": [
+          "detail"
+        ],
+        "title": "ErrorMessage",
+        "type": "object"
+      },
+      "GetBucketResponse": {
+        "properties": {
+          "bucket": {
+            "$ref": "#/components/schemas/Bucket"
+          },
+          "project": {
+            "description": "Project ID",
+            "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
+            "title": "Project",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project",
+          "bucket"
+        ],
+        "title": "GetBucketResponse",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "ProjectScope": {
+        "description": "The scope of a STACKIT project can be public (default) or\ncan have client specific special requirements.",
+        "enum": [
+          "PUBLIC",
+          "SCHWARZ"
+        ],
+        "title": "ProjectScope"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "CreateAccessKeyPayload": {
+        "properties": {
+          "expires": {
+            "description": "Expiration date. Null means never expires.",
+            "example": "2020-09-04T00:00:00.000Z",
+            "format": "date-time",
+            "title": "Expires",
+            "type": "string"
+          }
+        },
+        "title": "CreateAccessKeyRequest",
+        "type": "object"
+      },
+      "CreateCredentialsGroupPayload": {
+        "properties": {
+          "displayName": {
+            "description": "Name of the group holding credentials",
+            "example": "group-name-1",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Credentials group name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName"
+        ],
+        "title": "CreateCredentialsGroupRequest",
+        "type": "object"
+      },
+      "ListAccessKeysResponse": {
         "properties": {
           "accessKeys": {
             "items": {
@@ -391,26 +410,7 @@
         "title": "GetAccessKeysResponse",
         "type": "object"
       },
-      "GetBucketResponse": {
-        "properties": {
-          "bucket": {
-            "$ref": "#/components/schemas/Bucket"
-          },
-          "project": {
-            "description": "Project ID",
-            "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
-            "title": "Project",
-            "type": "string"
-          }
-        },
-        "required": [
-          "project",
-          "bucket"
-        ],
-        "title": "GetBucketResponse",
-        "type": "object"
-      },
-      "GetBucketsResponse": {
+      "ListBucketsResponse": {
         "properties": {
           "buckets": {
             "items": {
@@ -433,7 +433,7 @@
         "title": "GetBucketsResponse",
         "type": "object"
       },
-      "GetCredentialsGroupsResponse": {
+      "ListCredentialsGroupsResponse": {
         "properties": {
           "credentialsGroups": {
             "items": {
@@ -456,7 +456,7 @@
         "title": "GetCredentialsGroupsResponse",
         "type": "object"
       },
-      "GetProjectResponse": {
+      "ProjectStatus": {
         "properties": {
           "project": {
             "description": "Project ID",
@@ -494,7 +494,7 @@
     "/v1/project/{projectId}": {
       "delete": {
         "description": "Delete the given project",
-        "operationId": "DeleteProject",
+        "operationId": "DisableService",
         "parameters": [
           {
             "description": "STACKIT project ID",
@@ -514,7 +514,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetProjectResponse"
+                  "$ref": "#/components/schemas/ProjectStatus"
                 }
               }
             },
@@ -575,7 +575,7 @@
       },
       "get": {
         "description": "Get project details.",
-        "operationId": "GetProject",
+        "operationId": "GetServiceStatus",
         "parameters": [
           {
             "description": "STACKIT project ID",
@@ -595,7 +595,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetProjectResponse"
+                  "$ref": "#/components/schemas/ProjectStatus"
                 }
               }
             },
@@ -646,7 +646,7 @@
       },
       "post": {
         "description": "Create a project. Creation will also be successful if the project\nalready exists, but will not create a duplicate",
-        "operationId": "CreateProject",
+        "operationId": "EnableService",
         "parameters": [
           {
             "description": "STACKIT project ID",
@@ -666,7 +666,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetProjectResponse"
+                  "$ref": "#/components/schemas/ProjectStatus"
                 }
               }
             },
@@ -676,7 +676,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetProjectResponse"
+                  "$ref": "#/components/schemas/ProjectStatus"
                 }
               }
             },
@@ -927,7 +927,7 @@
     "/v1/project/{projectId}/access-keys": {
       "get": {
         "description": "Get a list of access keys for the given project.",
-        "operationId": "GetAccessKeys",
+        "operationId": "ListAccessKeys",
         "parameters": [
           {
             "description": "STACKIT project ID",
@@ -957,7 +957,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetAccessKeysResponse"
+                  "$ref": "#/components/schemas/ListAccessKeysResponse"
                 }
               }
             },
@@ -1257,7 +1257,7 @@
     "/v1/project/{projectId}/buckets": {
       "get": {
         "description": "Get the list of all buckets in the given project",
-        "operationId": "GetBuckets",
+        "operationId": "ListBuckets",
         "parameters": [
           {
             "description": "STACKIT project ID",
@@ -1277,7 +1277,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetBucketsResponse"
+                  "$ref": "#/components/schemas/ListBucketsResponse"
                 }
               }
             },
@@ -1497,7 +1497,7 @@
     "/v1/project/{projectId}/credentials-groups": {
       "get": {
         "description": "Get credentials groups inside a project if the project exists",
-        "operationId": "GetCredentialsGroups",
+        "operationId": "ListCredentialsGroups",
         "parameters": [
           {
             "description": "STACKIT project ID",
@@ -1517,7 +1517,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetCredentialsGroupsResponse"
+                  "$ref": "#/components/schemas/ListCredentialsGroupsResponse"
                 }
               }
             },

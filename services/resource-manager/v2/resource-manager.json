@@ -985,7 +985,7 @@
         ],
         "type": "object"
       },
-      "UpdateProjectPayload": {
+      "PartialUpdateProjectPayload": {
         "properties": {
           "containerParentId": {
             "description": "New parent identifier for the resource container - containerId as well as UUID identifier is supported.",
@@ -1021,7 +1021,7 @@
     "/v2/projects": {
       "get": {
         "description": "Returns all projects and their metadata that: \n- Are children of the specific containerParentId\n- Match the given containerIds\n- User is member of\n\nFilter:\n- Either containerParentId OR containerIds OR member must be passed\n- If containerId and containerParentId are given, both are used for filtering - containers must point to the same parent\n- If member and containerParentId are given, both are used for filtering\n- If member is given, containers must not point to the same container parent",
-        "operationId": "GetProjects",
+        "operationId": "ListProjects",
         "parameters": [
           {
             "description": "Identifier of the parent resource container - containerId as well as UUID identifier is supported.",
@@ -1282,12 +1282,12 @@
       ],
       "patch": {
         "description": "Update the project and its metadata.\n- Update project name \n- Update project labels \n- Update project parent (folder or organization)",
-        "operationId": "UpdateProject",
+        "operationId": "PartialUpdateProject",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateProjectPayload"
+                "$ref": "#/components/schemas/PartialUpdateProjectPayload"
               }
             }
           }

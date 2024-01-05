@@ -1,81 +1,21 @@
 {
   "components": {
     "schemas": {
-      "dev.azure.com_schwarzit_schwarzit.stackit-mongodb_stackit-mongodb-api.git_handlers_infra.Flavor": {
-        "properties": {
-          "categories": {
-            "example": [
-              "Replica"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "cpu": {
-            "example": 1,
-            "type": "integer"
-          },
-          "description": {
-            "example": "Small, Compute optimized",
-            "type": "string"
-          },
-          "id": {
-            "example": "1.1",
-            "type": "string"
-          },
-          "memory": {
-            "example": 1,
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "dev.azure.com_schwarzit_schwarzit.stackit-mongodb_stackit-mongodb-api.git_handlers_infra.GetFlavorsResponse": {
+      "handlers_infra.GetFlavorsResponse": {
         "properties": {
           "flavors": {
             "items": {
-              "$ref": "#/components/schemas/dev.azure.com_schwarzit_schwarzit.stackit-mongodb_stackit-mongodb-api.git_handlers_infra.Flavor"
+              "$ref": "#/components/schemas/HandlersInfraFlavor"
             },
             "type": "array"
           }
         },
         "type": "object"
       },
-      "dev.azure.com_schwarzit_schwarzit.stackit-mongodb_stackit-mongodb-api.git_handlers_instances.GetInstanceResponse": {
+      "handlers_instances.GetInstanceResponse": {
         "properties": {
           "item": {
             "$ref": "#/components/schemas/Instance"
-          }
-        },
-        "type": "object"
-      },
-      "handlers_infra.Flavor": {
-        "properties": {
-          "categories": {
-            "example": [
-              "Replica"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "cpu": {
-            "example": 1,
-            "type": "integer"
-          },
-          "description": {
-            "example": "Small, Compute optimized",
-            "type": "string"
-          },
-          "id": {
-            "example": "1.1",
-            "type": "string"
-          },
-          "memory": {
-            "example": 1,
-            "type": "integer"
           }
         },
         "type": "object"
@@ -139,7 +79,7 @@
             "additionalProperties": {
               "type": "string"
             },
-            "description": "Following fields are not certain/clear",
+            "description": "Labels field is not certain/clear",
             "type": "object"
           },
           "name": {
@@ -164,7 +104,14 @@
           }
         },
         "required": [
-          "acl"
+          "acl",
+          "backupSchedule",
+          "flavorId",
+          "name",
+          "options",
+          "replicas",
+          "storage",
+          "version"
         ],
         "type": "object"
       },
@@ -185,7 +132,7 @@
             "additionalProperties": {
               "type": "string"
             },
-            "description": "Following fields are not certain/clear",
+            "description": "Labels field is not certain/clear",
             "type": "object"
           },
           "name": {
@@ -209,6 +156,16 @@
             "type": "string"
           }
         },
+        "required": [
+          "acl",
+          "backupSchedule",
+          "flavorId",
+          "name",
+          "options",
+          "replicas",
+          "storage",
+          "version"
+        ],
         "type": "object"
       },
       "PartialUpdateInstancePayload": {
@@ -228,7 +185,7 @@
             "additionalProperties": {
               "type": "string"
             },
-            "description": "Following fields are not certain/clear",
+            "description": "Labels field is not certain/clear",
             "type": "object"
           },
           "name": {
@@ -286,6 +243,9 @@
             "type": "string"
           }
         },
+        "required": [
+          "instanceId"
+        ],
         "type": "object"
       },
       "RestoreInstancePayload": {
@@ -297,6 +257,10 @@
             "type": "string"
           }
         },
+        "required": [
+          "backupId",
+          "instanceId"
+        ],
         "type": "object"
       },
       "CreateUserPayload": {
@@ -314,6 +278,10 @@
             "type": "string"
           }
         },
+        "required": [
+          "database",
+          "roles"
+        ],
         "type": "object"
       },
       "UpdateUserPayload": {
@@ -328,6 +296,10 @@
             "type": "array"
           }
         },
+        "required": [
+          "database",
+          "roles"
+        ],
         "type": "object"
       },
       "PartialUpdateUserPayload": {
@@ -344,11 +316,41 @@
         },
         "type": "object"
       },
+      "HandlersInfraFlavor": {
+        "properties": {
+          "categories": {
+            "example": [
+              "Replica"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "cpu": {
+            "example": 1,
+            "type": "integer"
+          },
+          "description": {
+            "example": "Small, Compute optimized",
+            "type": "string"
+          },
+          "id": {
+            "example": "1.1",
+            "type": "string"
+          },
+          "memory": {
+            "example": 1,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
       "ListFlavorsResponse": {
         "properties": {
           "flavors": {
             "items": {
-              "$ref": "#/components/schemas/handlers_infra.Flavor"
+              "$ref": "#/components/schemas/HandlersInfraFlavor"
             },
             "type": "array"
           }
@@ -453,6 +455,10 @@
             "type": "string"
           }
         },
+        "required": [
+          "database",
+          "roles"
+        ],
         "type": "object"
       },
       "CreateUserResponse": {
@@ -494,7 +500,6 @@
             "type": "string"
           },
           "type": {
-            "example": "NotFound",
             "type": "string"
           }
         },
@@ -1270,6 +1275,16 @@
           "required": true
         },
         "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateInstanceResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
           "202": {
             "content": {
               "application/json": {
@@ -1367,6 +1382,16 @@
           "required": true
         },
         "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateInstanceResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
           "202": {
             "content": {
               "application/json": {
@@ -1730,9 +1755,9 @@
         "operationId": "CloneInstance"
       }
     },
-    "/v1/projects/{projectId}/instances/{instanceId}/metrics/cpu": {
+    "/v1/projects/{projectId}/instances/{instanceId}/metrics/{metric}": {
       "get": {
-        "description": "returns CPU metrics for an instance",
+        "description": "returns metrics for an instance",
         "parameters": [
           {
             "description": "project id",
@@ -1750,6 +1775,17 @@
             "explode": false,
             "in": "path",
             "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "metric type",
+            "explode": false,
+            "in": "path",
+            "name": "metric",
             "required": true,
             "schema": {
               "type": "string"
@@ -1845,614 +1881,8 @@
             "BearerAuth": []
           }
         ],
-        "summary": "CPU Metrics",
-        "operationId": "ListCPUMetrics"
-      }
-    },
-    "/v1/projects/{projectId}/instances/{instanceId}/metrics/database": {
-      "get": {
-        "description": "returns databse storage metrics for an instance",
-        "parameters": [
-          {
-            "description": "project id",
-            "explode": false,
-            "in": "path",
-            "name": "projectId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          },
-          {
-            "description": "instance id",
-            "explode": false,
-            "in": "path",
-            "name": "instanceId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          },
-          {
-            "description": "granularity",
-            "explode": true,
-            "in": "query",
-            "name": "granularity",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "description": "period",
-            "explode": true,
-            "in": "query",
-            "name": "period",
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "description": "period start",
-            "explode": true,
-            "in": "query",
-            "name": "start",
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "description": "period end",
-            "explode": true,
-            "in": "query",
-            "name": "end",
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListMetricsResponse"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Bad Request"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Not Found"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "summary": "Database Storage Metrics",
-        "operationId": "ListDatabaseStorageMetrics"
-      }
-    },
-    "/v1/projects/{projectId}/instances/{instanceId}/metrics/disk-iops": {
-      "get": {
-        "description": "returns disk IOPS metrics for an instance",
-        "parameters": [
-          {
-            "description": "project id",
-            "explode": false,
-            "in": "path",
-            "name": "projectId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          },
-          {
-            "description": "instance id",
-            "explode": false,
-            "in": "path",
-            "name": "instanceId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          },
-          {
-            "description": "granularity",
-            "explode": true,
-            "in": "query",
-            "name": "granularity",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "description": "period",
-            "explode": true,
-            "in": "query",
-            "name": "period",
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "description": "period start",
-            "explode": true,
-            "in": "query",
-            "name": "start",
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "description": "period end",
-            "explode": true,
-            "in": "query",
-            "name": "end",
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListMetricsResponse"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Bad Request"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Not Found"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "summary": "Disk IOPS CPU Metrics",
-        "operationId": "ListDiskIOPSMetrics"
-      }
-    },
-    "/v1/projects/{projectId}/instances/{instanceId}/metrics/disk-use": {
-      "get": {
-        "description": "returns disk usage metrics for an instance",
-        "parameters": [
-          {
-            "description": "project id",
-            "explode": false,
-            "in": "path",
-            "name": "projectId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          },
-          {
-            "description": "instance id",
-            "explode": false,
-            "in": "path",
-            "name": "instanceId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          },
-          {
-            "description": "granularity",
-            "explode": true,
-            "in": "query",
-            "name": "granularity",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "description": "period",
-            "explode": true,
-            "in": "query",
-            "name": "period",
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "description": "period start",
-            "explode": true,
-            "in": "query",
-            "name": "start",
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "description": "period end",
-            "explode": true,
-            "in": "query",
-            "name": "end",
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListMetricsResponse"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Bad Request"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Not Found"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "summary": "Disk Usage Metrics",
-        "operationId": "ListDiskUsageMetrics"
-      }
-    },
-    "/v1/projects/{projectId}/instances/{instanceId}/metrics/exec-time": {
-      "get": {
-        "description": "returns Operation Execution Times metrics for an instance",
-        "parameters": [
-          {
-            "description": "project id",
-            "explode": false,
-            "in": "path",
-            "name": "projectId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          },
-          {
-            "description": "instance id",
-            "explode": false,
-            "in": "path",
-            "name": "instanceId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          },
-          {
-            "description": "granularity",
-            "explode": true,
-            "in": "query",
-            "name": "granularity",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "description": "period",
-            "explode": true,
-            "in": "query",
-            "name": "period",
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "description": "period start",
-            "explode": true,
-            "in": "query",
-            "name": "start",
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "description": "period end",
-            "explode": true,
-            "in": "query",
-            "name": "end",
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListMetricsResponse"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Bad Request"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Not Found"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "summary": "Operation Execution Time Metrics",
-        "operationId": "ListExecutionTimesMetrics"
-      }
-    },
-    "/v1/projects/{projectId}/instances/{instanceId}/metrics/memory": {
-      "get": {
-        "description": "returns memory metrics for an instance",
-        "parameters": [
-          {
-            "description": "project id",
-            "explode": false,
-            "in": "path",
-            "name": "projectId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          },
-          {
-            "description": "instance id",
-            "explode": false,
-            "in": "path",
-            "name": "instanceId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          },
-          {
-            "description": "instance id",
-            "explode": true,
-            "in": "query",
-            "name": "instanceId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "description": "granularity",
-            "explode": true,
-            "in": "query",
-            "name": "granularity",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "description": "period",
-            "explode": true,
-            "in": "query",
-            "name": "period",
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "description": "period start",
-            "explode": true,
-            "in": "query",
-            "name": "start",
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          },
-          {
-            "description": "period end",
-            "explode": true,
-            "in": "query",
-            "name": "end",
-            "schema": {
-              "type": "string"
-            },
-            "style": "form"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListMetricsResponse"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Bad Request"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Not Found"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "summary": "Memory Metrics",
-        "operationId": "ListMemoryMetrics"
+        "summary": "Metrics",
+        "operationId": "GetMetrics"
       }
     },
     "/v1/projects/{projectId}/instances/{instanceId}/restores": {
@@ -2962,8 +2392,8 @@
           "required": true
         },
         "responses": {
-          "202": {
-            "description": "Accepted"
+          "200": {
+            "description": "OK"
           },
           "400": {
             "content": {
@@ -3053,8 +2483,8 @@
           "required": true
         },
         "responses": {
-          "202": {
-            "description": "Accepted"
+          "200": {
+            "description": "OK"
           },
           "400": {
             "content": {

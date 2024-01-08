@@ -45,6 +45,38 @@
         },
         "type": "object"
       },
+      "CreateMigrationBody": {
+        "properties": {
+          "loadBalancer": {
+            "$ref": "#/components/schemas/LoadBalancer"
+          },
+          "migrationParams": {
+            "$ref": "#/components/schemas/MigrationParams"
+          }
+        },
+        "type": "object"
+      },
+      "CreateMigrationResponse": {
+        "properties": {
+          "loadBalancer": {
+            "$ref": "#/components/schemas/LoadBalancer"
+          },
+          "migrationParams": {
+            "$ref": "#/components/schemas/MigrationParams"
+          },
+          "migrationState": {
+            "enum": [
+              "MIGRATION_STATE_UNSPECIFIED",
+              "MIGRATION_STATE_INITIALIZING",
+              "MIGRATION_STATE_PREPARE",
+              "MIGRATION_STATE_MIGRATE",
+              "MIGRATION_STATE_COMPLETE"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "Credentials": {
         "properties": {
           "displayName": {
@@ -366,6 +398,23 @@
         },
         "type": "object"
       },
+      "MigrationParams": {
+        "properties": {
+          "fipId": {
+            "type": "string"
+          },
+          "portId": {
+            "type": "string"
+          },
+          "secGroupId": {
+            "type": "string"
+          },
+          "secGroupName": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "Network": {
         "properties": {
           "networkId": {
@@ -440,6 +489,44 @@
               "$ref": "#/components/schemas/Target"
             },
             "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateMigrationBody": {
+        "properties": {
+          "state": {
+            "description": "The new migration state of the loadbalancer.\nAllowed transitions are:\n- MIGRATION_STATE_PREPARE → MIGRATION_STATE_MIGRATE\n- MIGRATION_STATE_MIGRATE → MIGRATION_STATE_PREPARE\n- MIGRATION_STATE_MIGRATE → MIGRATION_STATE_COMPLETE\nUpdates other than the migration state should be done by the regular update endpoints.Aborting a migration can be done by deleting the loadbalancer.",
+            "enum": [
+              "MIGRATION_STATE_UNSPECIFIED",
+              "MIGRATION_STATE_INITIALIZING",
+              "MIGRATION_STATE_PREPARE",
+              "MIGRATION_STATE_MIGRATE",
+              "MIGRATION_STATE_COMPLETE"
+            ],
+            "example": "MIGRATION_STATE_MIGRATE",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateMigrationResponse": {
+        "properties": {
+          "loadBalancer": {
+            "$ref": "#/components/schemas/LoadBalancer"
+          },
+          "migrationParams": {
+            "$ref": "#/components/schemas/MigrationParams"
+          },
+          "migrationState": {
+            "enum": [
+              "MIGRATION_STATE_UNSPECIFIED",
+              "MIGRATION_STATE_INITIALIZING",
+              "MIGRATION_STATE_PREPARE",
+              "MIGRATION_STATE_MIGRATE",
+              "MIGRATION_STATE_COMPLETE"
+            ],
+            "type": "string"
           }
         },
         "type": "object"
@@ -693,7 +780,7 @@
   "info": {
     "description": "This API offers an interface to provision and manage load balancing servers in your STACKIT project. It also has the possibility of pooling target servers for load balancing purposes.\n\nFor each load balancer provided, two VMs are deployed in your OpenStack project subject to a fee.",
     "title": "Load Balancer API",
-    "version": "1.4.0"
+    "version": "1.4.2"
   },
   "openapi": "3.0.3",
   "paths": {

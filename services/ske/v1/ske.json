@@ -14,6 +14,33 @@
         },
         "type": "object"
       },
+      "v1Kubeconfig": {
+        "properties": {
+          "expirationTimestamp": {
+            "type": "string"
+          },
+          "kubeconfig": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "v1KubeconfigRequest": {
+        "properties": {
+          "expirationSeconds": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "v1NoopFeature": {
+        "properties": {
+          "content": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "CreateOrUpdateClusterPayload": {
         "properties": {
           "extensions": {
@@ -145,6 +172,9 @@
           "aggregated": {
             "$ref": "#/components/schemas/ClusterStatusState"
           },
+          "credentialsRotation": {
+            "$ref": "#/components/schemas/CredentialsRotationState"
+          },
           "error": {
             "$ref": "#/components/schemas/RuntimeError"
           },
@@ -199,6 +229,28 @@
           },
           "token": {
             "title": "Access token used to authenticate with the cluster",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CredentialsRotationState": {
+        "properties": {
+          "lastCompletionTime": {
+            "type": "string"
+          },
+          "lastInitiationTime": {
+            "type": "string"
+          },
+          "phase": {
+            "description": "Phase of the credentials rotation. \"Never\" indicates that no credentials rotation has been performed using the new credentials rotation endpoints yet. Using the deprecated \"/v1/projects/{project_id}/clusters/{cluster_name}/rotate-credentials\" endpoint will not update this status field.",
+            "enum": [
+              "Never",
+              "Preparing",
+              "Prepared",
+              "Completing",
+              "Completed"
+            ],
             "type": "string"
           }
         },
@@ -441,6 +493,7 @@
             "type": "integer"
           },
           "name": {
+            "description": "Maximum 15 chars",
             "title": "Name of the node pool",
             "type": "string"
           },
@@ -579,9 +632,11 @@
       "TimeWindow": {
         "properties": {
           "end": {
+            "title": "Format: 0000-01-01THH:MM:SS+00:00 e.g. 0000-01-01T24:00:00+00:00",
             "type": "string"
           },
           "start": {
+            "title": "Format: 0000-01-01THH:MM:SS+00:00 e.g. 0000-01-01T23:00:00+00:00",
             "type": "string"
           }
         },
@@ -627,7 +682,7 @@
     "description": "The SKE API provides endpoints to create, update, delete clusters within STACKIT portal projects and to trigger further cluster management tasks.",
     "termsOfService": "https://stackit.de/en/imprint",
     "title": "SKE-API",
-    "version": "1.0"
+    "version": "1.1"
   },
   "openapi": "3.0.1",
   "paths": {
@@ -1032,7 +1087,7 @@
     },
     "/v1/projects/{projectId}/clusters/{clusterName}/credentials": {
       "get": {
-        "description": "Get credentials for the cluster specified by 'cluster_name', belonging to the project specified by 'project_id' (portalProjectID).",
+        "description": "This endpoint is deprecated since version 1.1 of this API. It will not work for clusters with Kubernetes v1.27+, or if the new endpoints for credentials rotation have already been used. Use \"/v1/projects/{project_id}/clusters/{cluster_name}/kubeconfig\" instead to obtain a kubeconfig. For more information, please see [docs link].\n\nGet credentials for the cluster specified by 'cluster_name', belonging to the project specified by 'project_id' (portalProjectID).",
         "operationId": "GetCredentials",
         "parameters": [
           {
@@ -1094,7 +1149,7 @@
             "description": "An unexpected error response."
           }
         },
-        "summary": "Get credentials for a cluster"
+        "summary": "Get credentials for a cluster (deprecated)"
       }
     },
     "/v1/projects/{projectId}/clusters/{clusterName}/hibernate": {
@@ -1300,7 +1355,7 @@
     },
     "/v1/projects/{projectId}/clusters/{clusterName}/rotate-credentials": {
       "post": {
-        "description": "Trigger credential rotation. The old credentials (kubeconfig) will be invalid after the operation.",
+        "description": "This endpoint is deprecated since version 1.1 of this API. It will not work for clusters with Kubernetes v1.27+, or if a kubeconfig has already been obtained from the new \"/v1/projects/{project_id}/clusters/{cluster_name}/kubeconfig\" endpoint. Use \"/v1/projects/{project_id}/clusters/{cluster_name}/start-credentials-rotation\" instead to rotate all cluster credentials. For more information, please see [docs link].\n\nTrigger credential rotation. The old credentials (kubeconfig) will be invalid after the operation.",
         "operationId": "TriggerRotateCredentials",
         "parameters": [
           {
@@ -1362,7 +1417,7 @@
             "description": "An unexpected error response."
           }
         },
-        "summary": "Rotate cluster credentials"
+        "summary": "Rotate cluster credentials (deprecated)"
       }
     },
     "/v1/provider-options": {

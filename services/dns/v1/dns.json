@@ -1,6 +1,72 @@
 {
   "components": {
     "schemas": {
+      "label.ResponseAllLabels": {
+        "description": "ResponseAllLabels.",
+        "example": {
+          "labels": [
+            {
+              "key": "stage",
+              "value": "prod"
+            },
+            {
+              "key": "stage",
+              "value": "prod"
+            }
+          ],
+          "message": "message"
+        },
+        "properties": {
+          "labels": {
+            "items": {
+              "$ref": "#/components/schemas/Label"
+            },
+            "type": "array"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "label.ResponseDeleteLabel": {
+        "description": "ResponseDeleteLabel.",
+        "example": {
+          "label": {
+            "key": "stage",
+            "value": "prod"
+          },
+          "message": "message"
+        },
+        "properties": {
+          "label": {
+            "$ref": "#/components/schemas/Label"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "label.ResponseUpsertLabel": {
+        "description": "ResponseUpsertLabel.",
+        "example": {
+          "label": {
+            "key": "stage",
+            "value": "prod"
+          },
+          "message": "message"
+        },
+        "properties": {
+          "label": {
+            "$ref": "#/components/schemas/Label"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "CreateZonePayload": {
         "description": "Zone to create.",
         "properties": {
@@ -290,6 +356,11 @@
       "CloneZonePayload": {
         "description": "metadata to clone a zone.",
         "properties": {
+          "adjustRecords": {
+            "description": "Adjust record set content and replace the dns name of the original zone with the new dns name of the cloned zone",
+            "example": true,
+            "type": "boolean"
+          },
           "description": {
             "description": "New Description for the cloned zone. Leave empty to use the same description as the original zone",
             "example": "this is our example zone",
@@ -313,6 +384,31 @@
         },
         "required": [
           "dnsName"
+        ],
+        "type": "object"
+      },
+      "Label": {
+        "example": {
+          "key": "stage",
+          "value": "prod"
+        },
+        "properties": {
+          "key": {
+            "example": "stage",
+            "maxLength": 63,
+            "minLength": 1,
+            "type": "string"
+          },
+          "value": {
+            "example": "prod",
+            "maxLength": 63,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "value"
         ],
         "type": "object"
       },
@@ -499,6 +595,16 @@
           "expireTime": 1209600,
           "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
           "isReverseZone": false,
+          "labels": [
+            {
+              "key": "stage",
+              "value": "prod"
+            },
+            {
+              "key": "stage",
+              "value": "prod"
+            }
+          ],
           "name": "test",
           "negativeCache": 60,
           "primaries": [
@@ -583,6 +689,12 @@
             "description": "if the zone is a reverse zone or not",
             "example": false,
             "type": "boolean"
+          },
+          "labels": {
+            "items": {
+              "$ref": "#/components/schemas/Label"
+            },
+            "type": "array"
           },
           "name": {
             "description": "user given name",
@@ -959,6 +1071,16 @@
             "expireTime": 1209600,
             "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
             "isReverseZone": false,
+            "labels": [
+              {
+                "key": "stage",
+                "value": "prod"
+              },
+              {
+                "key": "stage",
+                "value": "prod"
+              }
+            ],
             "name": "test",
             "negativeCache": 60,
             "primaries": [
@@ -1011,6 +1133,16 @@
               "expireTime": 1209600,
               "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
               "isReverseZone": false,
+              "labels": [
+                {
+                  "key": "stage",
+                  "value": "prod"
+                },
+                {
+                  "key": "stage",
+                  "value": "prod"
+                }
+              ],
               "name": "test",
               "negativeCache": 60,
               "primaries": [
@@ -1040,6 +1172,16 @@
               "expireTime": 1209600,
               "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
               "isReverseZone": false,
+              "labels": [
+                {
+                  "key": "stage",
+                  "value": "prod"
+                },
+                {
+                  "key": "stage",
+                  "value": "prod"
+                }
+              ],
               "name": "test",
               "negativeCache": 60,
               "primaries": [
@@ -1408,6 +1550,32 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "description": "filter zones according to the zone label keys.",
+            "explode": false,
+            "in": "query",
+            "name": "labelKey[eq]",
+            "schema": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "style": "form"
+          },
+          {
+            "description": "filter zones according to the zone label values.",
+            "explode": false,
+            "in": "query",
+            "name": "labelValue[eq]",
+            "schema": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "style": "form"
           },
           {
             "description": "order by dns name",

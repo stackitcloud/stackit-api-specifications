@@ -3,19 +3,6 @@
     "schemas": {
       "label.ResponseAllLabels": {
         "description": "ResponseAllLabels.",
-        "example": {
-          "labels": [
-            {
-              "key": "stage",
-              "value": "prod"
-            },
-            {
-              "key": "stage",
-              "value": "prod"
-            }
-          ],
-          "message": "message"
-        },
         "properties": {
           "labels": {
             "items": {
@@ -24,6 +11,7 @@
             "type": "array"
           },
           "message": {
+            "example": "Success",
             "type": "string"
           }
         },
@@ -31,18 +19,12 @@
       },
       "label.ResponseDeleteLabel": {
         "description": "ResponseDeleteLabel.",
-        "example": {
-          "label": {
-            "key": "stage",
-            "value": "prod"
-          },
-          "message": "message"
-        },
         "properties": {
           "label": {
             "$ref": "#/components/schemas/Label"
           },
           "message": {
+            "example": "Success",
             "type": "string"
           }
         },
@@ -50,18 +32,12 @@
       },
       "label.ResponseUpsertLabel": {
         "description": "ResponseUpsertLabel.",
-        "example": {
-          "label": {
-            "key": "stage",
-            "value": "prod"
-          },
-          "message": "message"
-        },
         "properties": {
           "label": {
             "$ref": "#/components/schemas/Label"
           },
           "message": {
+            "example": "Success",
             "type": "string"
           }
         },
@@ -283,7 +259,15 @@
               "PTR",
               "ALIAS",
               "DNAME",
-              "CAA"
+              "CAA",
+              "DNSKEY",
+              "DS",
+              "LOC",
+              "NAPTR",
+              "SSHFP",
+              "TLSA",
+              "URI",
+              "CERT"
             ],
             "example": "A",
             "type": "string"
@@ -388,10 +372,6 @@
         "type": "object"
       },
       "Label": {
-        "example": {
-          "key": "stage",
-          "value": "prod"
-        },
         "properties": {
           "key": {
             "example": "stage",
@@ -414,30 +394,6 @@
       },
       "RecordSet": {
         "description": "RRSet.",
-        "example": {
-          "active": true,
-          "comment": "This is a comment",
-          "creationFinished": "2022-01-31T10:00:00Z",
-          "creationStarted": "2022-01-31T10:00:00Z",
-          "error": "error message",
-          "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
-          "name": "example.com.",
-          "records": [
-            {
-              "content": "1.2.3.4",
-              "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96"
-            },
-            {
-              "content": "1.2.3.4",
-              "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96"
-            }
-          ],
-          "state": "CREATE_SUCCEEDED",
-          "ttl": 3600,
-          "type": "A",
-          "updateFinished": "2022-01-31T10:00:00Z",
-          "updateStarted": "2022-01-31T10:00:00Z"
-        },
         "properties": {
           "active": {
             "description": "if the record set is active or not",
@@ -555,10 +511,6 @@
       },
       "Record": {
         "description": "Record.",
-        "example": {
-          "content": "1.2.3.4",
-          "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96"
-        },
         "properties": {
           "content": {
             "description": "content of the record",
@@ -582,45 +534,6 @@
       },
       "Zone": {
         "description": "Zone.",
-        "example": {
-          "acl": "0.0.0.0/0,::/0",
-          "active": true,
-          "contactEmail": "hostmaster.at.stackit.cloud.",
-          "creationFinished": "2022-01-31T10:00:00Z",
-          "creationStarted": "2022-01-31T10:00:00Z",
-          "defaultTTL": 3600,
-          "description": "this is our example zone",
-          "dnsName": "example.com",
-          "error": "error message",
-          "expireTime": 1209600,
-          "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
-          "isReverseZone": false,
-          "labels": [
-            {
-              "key": "stage",
-              "value": "prod"
-            },
-            {
-              "key": "stage",
-              "value": "prod"
-            }
-          ],
-          "name": "test",
-          "negativeCache": 60,
-          "primaries": [
-            "1.2.3.4"
-          ],
-          "primaryNameServer": "example.com",
-          "recordCount": 300,
-          "refreshTime": 3600,
-          "retryTime": 600,
-          "serialNumber": 2022111400,
-          "state": "CREATE_SUCCEEDED",
-          "type": "primary",
-          "updateFinished": "2022-01-31T10:00:00Z",
-          "updateStarted": "2022-01-31T10:00:00Z",
-          "visibility": "public"
-        },
         "properties": {
           "acl": {
             "description": "access control list",
@@ -859,33 +772,6 @@
       },
       "RecordSetResponse": {
         "description": "ResponseRRSet for rr set info.",
-        "example": {
-          "message": "Success",
-          "rrset": {
-            "active": true,
-            "comment": "This is a comment",
-            "creationFinished": "2022-01-31T10:00:00Z",
-            "creationStarted": "2022-01-31T10:00:00Z",
-            "error": "error message",
-            "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
-            "name": "example.com.",
-            "records": [
-              {
-                "content": "1.2.3.4",
-                "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96"
-              },
-              {
-                "content": "1.2.3.4",
-                "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96"
-              }
-            ],
-            "state": "CREATE_SUCCEEDED",
-            "ttl": 3600,
-            "type": "A",
-            "updateFinished": "2022-01-31T10:00:00Z",
-            "updateStarted": "2022-01-31T10:00:00Z"
-          }
-        },
         "properties": {
           "message": {
             "example": "Success",
@@ -902,64 +788,9 @@
       },
       "ListRecordSetsResponse": {
         "description": "ResponseRRSetAll.",
-        "example": {
-          "itemsPerPage": 0,
-          "message": "Success",
-          "rrSets": [
-            {
-              "active": true,
-              "comment": "This is a comment",
-              "creationFinished": "2022-01-31T10:00:00Z",
-              "creationStarted": "2022-01-31T10:00:00Z",
-              "error": "error message",
-              "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
-              "name": "example.com.",
-              "records": [
-                {
-                  "content": "1.2.3.4",
-                  "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96"
-                },
-                {
-                  "content": "1.2.3.4",
-                  "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96"
-                }
-              ],
-              "state": "CREATE_SUCCEEDED",
-              "ttl": 3600,
-              "type": "A",
-              "updateFinished": "2022-01-31T10:00:00Z",
-              "updateStarted": "2022-01-31T10:00:00Z"
-            },
-            {
-              "active": true,
-              "comment": "This is a comment",
-              "creationFinished": "2022-01-31T10:00:00Z",
-              "creationStarted": "2022-01-31T10:00:00Z",
-              "error": "error message",
-              "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
-              "name": "example.com.",
-              "records": [
-                {
-                  "content": "1.2.3.4",
-                  "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96"
-                },
-                {
-                  "content": "1.2.3.4",
-                  "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96"
-                }
-              ],
-              "state": "CREATE_SUCCEEDED",
-              "ttl": 3600,
-              "type": "A",
-              "updateFinished": "2022-01-31T10:00:00Z",
-              "updateStarted": "2022-01-31T10:00:00Z"
-            }
-          ],
-          "totalItems": 6,
-          "totalPages": 1
-        },
         "properties": {
           "itemsPerPage": {
+            "example": 1,
             "type": "integer"
           },
           "message": {
@@ -973,9 +804,11 @@
             "type": "array"
           },
           "totalItems": {
+            "example": 1,
             "type": "integer"
           },
           "totalPages": {
+            "example": 1,
             "type": "integer"
           }
         },
@@ -990,31 +823,26 @@
       "ErrorMessage": {
         "properties": {
           "error": {
+            "example": "Error",
             "type": "string"
           },
           "message": {
+            "example": "Error message",
             "type": "string"
           }
         },
         "type": "object"
       },
       "Message": {
-        "example": {
-          "message": "message"
-        },
         "properties": {
           "message": {
+            "example": "Success",
             "type": "string"
           }
         },
         "type": "object"
       },
       "MoveCodeResponse": {
-        "example": {
-          "code": "3sLuLCLpLEbbQ6GZ05tu2U56dmKx1uCdWquTHz6BK34=",
-          "expiresAt": "2023-08-08T08:58:25Z",
-          "message": "successfully created code to move the zone"
-        },
         "properties": {
           "code": {
             "description": "code to move the zone. It is one time shown so better keep it.",
@@ -1056,48 +884,6 @@
       },
       "ZoneResponse": {
         "description": "ResponseZone for user info.",
-        "example": {
-          "message": "Success",
-          "zone": {
-            "acl": "0.0.0.0/0,::/0",
-            "active": true,
-            "contactEmail": "hostmaster.at.stackit.cloud.",
-            "creationFinished": "2022-01-31T10:00:00Z",
-            "creationStarted": "2022-01-31T10:00:00Z",
-            "defaultTTL": 3600,
-            "description": "this is our example zone",
-            "dnsName": "example.com",
-            "error": "error message",
-            "expireTime": 1209600,
-            "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
-            "isReverseZone": false,
-            "labels": [
-              {
-                "key": "stage",
-                "value": "prod"
-              },
-              {
-                "key": "stage",
-                "value": "prod"
-              }
-            ],
-            "name": "test",
-            "negativeCache": 60,
-            "primaries": [
-              "1.2.3.4"
-            ],
-            "primaryNameServer": "example.com",
-            "recordCount": 300,
-            "refreshTime": 3600,
-            "retryTime": 600,
-            "serialNumber": 2022111400,
-            "state": "CREATE_SUCCEEDED",
-            "type": "primary",
-            "updateFinished": "2022-01-31T10:00:00Z",
-            "updateStarted": "2022-01-31T10:00:00Z",
-            "visibility": "public"
-          }
-        },
         "properties": {
           "message": {
             "example": "Success",
@@ -1114,94 +900,9 @@
       },
       "ListZonesResponse": {
         "description": "ResponseZoneAll for filtered zones.",
-        "example": {
-          "itemsPerPage": 0,
-          "message": "Success",
-          "totalItems": 6,
-          "totalPages": 1,
-          "zones": [
-            {
-              "acl": "0.0.0.0/0,::/0",
-              "active": true,
-              "contactEmail": "hostmaster.at.stackit.cloud.",
-              "creationFinished": "2022-01-31T10:00:00Z",
-              "creationStarted": "2022-01-31T10:00:00Z",
-              "defaultTTL": 3600,
-              "description": "this is our example zone",
-              "dnsName": "example.com",
-              "error": "error message",
-              "expireTime": 1209600,
-              "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
-              "isReverseZone": false,
-              "labels": [
-                {
-                  "key": "stage",
-                  "value": "prod"
-                },
-                {
-                  "key": "stage",
-                  "value": "prod"
-                }
-              ],
-              "name": "test",
-              "negativeCache": 60,
-              "primaries": [
-                "1.2.3.4"
-              ],
-              "primaryNameServer": "example.com",
-              "recordCount": 300,
-              "refreshTime": 3600,
-              "retryTime": 600,
-              "serialNumber": 2022111400,
-              "state": "CREATE_SUCCEEDED",
-              "type": "primary",
-              "updateFinished": "2022-01-31T10:00:00Z",
-              "updateStarted": "2022-01-31T10:00:00Z",
-              "visibility": "public"
-            },
-            {
-              "acl": "0.0.0.0/0,::/0",
-              "active": true,
-              "contactEmail": "hostmaster.at.stackit.cloud.",
-              "creationFinished": "2022-01-31T10:00:00Z",
-              "creationStarted": "2022-01-31T10:00:00Z",
-              "defaultTTL": 3600,
-              "description": "this is our example zone",
-              "dnsName": "example.com",
-              "error": "error message",
-              "expireTime": 1209600,
-              "id": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
-              "isReverseZone": false,
-              "labels": [
-                {
-                  "key": "stage",
-                  "value": "prod"
-                },
-                {
-                  "key": "stage",
-                  "value": "prod"
-                }
-              ],
-              "name": "test",
-              "negativeCache": 60,
-              "primaries": [
-                "1.2.3.4"
-              ],
-              "primaryNameServer": "example.com",
-              "recordCount": 300,
-              "refreshTime": 3600,
-              "retryTime": 600,
-              "serialNumber": 2022111400,
-              "state": "CREATE_SUCCEEDED",
-              "type": "primary",
-              "updateFinished": "2022-01-31T10:00:00Z",
-              "updateStarted": "2022-01-31T10:00:00Z",
-              "visibility": "public"
-            }
-          ]
-        },
         "properties": {
           "itemsPerPage": {
+            "example": 1,
             "type": "integer"
           },
           "message": {
@@ -1209,9 +910,11 @@
             "type": "string"
           },
           "totalItems": {
+            "example": 1,
             "type": "integer"
           },
           "totalPages": {
+            "example": 1,
             "type": "integer"
           },
           "zones": {
@@ -1246,6 +949,7 @@
     "/v1/projects/{projectId}/zones": {
       "get": {
         "description": "All zone",
+        "operationId": "ListZones",
         "parameters": [
           {
             "description": "project id",
@@ -1718,11 +1422,11 @@
             "description": "Bad Gateway"
           }
         },
-        "summary": "All get selected zones",
-        "operationId": "ListZones"
+        "summary": "All get selected zones"
       },
       "post": {
         "description": "Post zone create a new zone",
+        "operationId": "CreateZone",
         "parameters": [
           {
             "description": "project id",
@@ -1797,13 +1501,13 @@
             "description": "Bad Gateway"
           }
         },
-        "summary": "Post create a new zone",
-        "operationId": "CreateZone"
+        "summary": "Post create a new zone"
       }
     },
     "/v1/projects/{projectId}/zones/{zoneId}": {
       "delete": {
         "description": "Delete a zone",
+        "operationId": "DeleteZone",
         "parameters": [
           {
             "description": "project id",
@@ -1866,11 +1570,11 @@
             "description": "Bad Gateway"
           }
         },
-        "summary": "Delete a zone",
-        "operationId": "DeleteZone"
+        "summary": "Delete a zone"
       },
       "get": {
         "description": "Get zone",
+        "operationId": "GetZone",
         "parameters": [
           {
             "description": "project id",
@@ -1923,11 +1627,11 @@
             "description": "Bad Gateway"
           }
         },
-        "summary": "Get a single zone",
-        "operationId": "GetZone"
+        "summary": "Get a single zone"
       },
       "patch": {
         "description": "Patch update an existing zone",
+        "operationId": "PartialUpdateZone",
         "parameters": [
           {
             "description": "project id",
@@ -2001,13 +1705,13 @@
             "description": "Bad Gateway"
           }
         },
-        "summary": "Patch update an existing zone",
-        "operationId": "PartialUpdateZone"
+        "summary": "Patch update an existing zone"
       }
     },
     "/v1/projects/{projectId}/zones/{zoneId}/rrsets": {
       "get": {
         "description": "All RRSet",
+        "operationId": "ListRecordSets",
         "parameters": [
           {
             "description": "project id",
@@ -2072,7 +1776,15 @@
                 "PTR",
                 "ALIAS",
                 "DNAME",
-                "CAA"
+                "CAA",
+                "DNSKEY",
+                "DS",
+                "LOC",
+                "NAPTR",
+                "SSHFP",
+                "TLSA",
+                "URI",
+                "CERT"
               ],
               "type": "string"
             }
@@ -2389,11 +2101,11 @@
             "description": "Bad Gateway"
           }
         },
-        "summary": "All get selected RRSets",
-        "operationId": "ListRecordSets"
+        "summary": "All get selected RRSets"
       },
       "post": {
         "description": "Post record set",
+        "operationId": "CreateRecordSet",
         "parameters": [
           {
             "description": "project id",
@@ -2477,13 +2189,13 @@
             "description": "Bad Gateway"
           }
         },
-        "summary": "Post record set",
-        "operationId": "CreateRecordSet"
+        "summary": "Post record set"
       }
     },
     "/v1/projects/{projectId}/zones/{zoneId}/rrsets/{rrSetId}": {
       "delete": {
         "description": "Delete a record set",
+        "operationId": "DeleteRecordSet",
         "parameters": [
           {
             "description": "project id",
@@ -2555,11 +2267,11 @@
             "description": "Bad Gateway"
           }
         },
-        "summary": "Delete a record set",
-        "operationId": "DeleteRecordSet"
+        "summary": "Delete a record set"
       },
       "get": {
         "description": "Get rrset",
+        "operationId": "GetRecordSet",
         "parameters": [
           {
             "description": "project id",
@@ -2621,11 +2333,11 @@
             "description": "Bad Gateway"
           }
         },
-        "summary": "Get a single rrset",
-        "operationId": "GetRecordSet"
+        "summary": "Get a single rrset"
       },
       "patch": {
         "description": "Patch record set",
+        "operationId": "PartialUpdateRecordSet",
         "parameters": [
           {
             "description": "project id",
@@ -2708,13 +2420,13 @@
             "description": "Bad Gateway"
           }
         },
-        "summary": "Patch updates a record set",
-        "operationId": "PartialUpdateRecordSet"
+        "summary": "Patch updates a record set"
       }
     },
     "/v1/projects/{projectId}/zones/{zoneId}/rrsets/{rrSetId}/records": {
       "patch": {
         "description": "PatchRecords rrset updates a record in a rrset",
+        "operationId": "PartialUpdateRecord",
         "parameters": [
           {
             "description": "project id",
@@ -2797,8 +2509,7 @@
             "description": "Bad Gateway"
           }
         },
-        "summary": "PatchRecords updates a record in a rrset",
-        "operationId": "PartialUpdateRecord"
+        "summary": "PatchRecords updates a record in a rrset"
       }
     }
   },

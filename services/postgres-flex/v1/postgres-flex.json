@@ -28,6 +28,34 @@
         },
         "type": "object"
       },
+      "instance.CreateDatabaseRequest": {
+        "properties": {
+          "collation": {
+            "example": "SQL_Latin1_General_CP1_CI_AS",
+            "type": "string"
+          },
+          "name": {
+            "example": "Test",
+            "type": "string"
+          },
+          "options": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Database specific options",
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "instance.CreateDatabaseResponse": {
+        "properties": {
+          "database": {
+            "$ref": "#/components/schemas/instance.Database"
+          }
+        },
+        "type": "object"
+      },
       "instance.DataPoint": {
         "properties": {
           "timestamp": {
@@ -35,6 +63,31 @@
           },
           "value": {
             "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "instance.Database": {
+        "properties": {
+          "collation": {
+            "example": "SQL_Latin1_General_CP1_CI_AS",
+            "type": "string"
+          },
+          "createDate": {
+            "example": "2003-04-08T09:13:36.39Z",
+            "type": "string"
+          },
+          "id": {
+            "example": "1",
+            "type": "string"
+          },
+          "name": {
+            "example": "Peter_pan",
+            "type": "string"
+          },
+          "options": {
+            "description": "Database specific options",
+            "type": "object"
           }
         },
         "type": "object"
@@ -70,6 +123,17 @@
         },
         "type": "object"
       },
+      "instance.ListDatabasesResponse": {
+        "properties": {
+          "databases": {
+            "items": {
+              "$ref": "#/components/schemas/instance.Database"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "instance.ListInstance": {
         "properties": {
           "id": {
@@ -97,7 +161,7 @@
         },
         "type": "object"
       },
-      "instance.UpdateUserRequest": {
+      "instance.PartialUpdateUserRequest": {
         "properties": {
           "database": {
             "type": "string"
@@ -128,7 +192,7 @@
             "additionalProperties": {
               "type": "string"
             },
-            "description": "Following fields are not certain/clear",
+            "description": "Labels field is not certain/clear",
             "type": "object"
           },
           "name": {
@@ -153,7 +217,14 @@
           }
         },
         "required": [
-          "acl"
+          "acl",
+          "backupSchedule",
+          "flavorId",
+          "name",
+          "options",
+          "replicas",
+          "storage",
+          "version"
         ],
         "type": "object"
       },
@@ -174,7 +245,7 @@
             "additionalProperties": {
               "type": "string"
             },
-            "description": "Following fields are not certain/clear",
+            "description": "Labels field is not certain/clear",
             "type": "object"
           },
           "name": {
@@ -207,6 +278,9 @@
             "type": "string"
           }
         },
+        "required": [
+          "backupSchedule"
+        ],
         "type": "object"
       },
       "CreateUserPayload": {

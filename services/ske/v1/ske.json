@@ -14,20 +14,10 @@
         },
         "type": "object"
       },
-      "v1Kubeconfig": {
+      "v1Network": {
         "properties": {
-          "expirationTimestamp": {
-            "type": "string"
-          },
-          "kubeconfig": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "v1KubeconfigRequest": {
-        "properties": {
-          "expirationSeconds": {
+          "id": {
+            "title": "ID of the SNA network into which the cluster will be deployed",
             "type": "string"
           }
         },
@@ -55,6 +45,9 @@
           "maintenance": {
             "$ref": "#/components/schemas/Maintenance"
           },
+          "network": {
+            "$ref": "#/components/schemas/v1Network"
+          },
           "nodepools": {
             "items": {
               "$ref": "#/components/schemas/Nodepool"
@@ -71,6 +64,14 @@
           "kubernetes",
           "nodepools"
         ],
+        "type": "object"
+      },
+      "CreateKubeconfigPayload": {
+        "properties": {
+          "expirationSeconds": {
+            "type": "string"
+          }
+        },
         "type": "object"
       },
       "ACL": {
@@ -149,6 +150,9 @@
             "readOnly": true,
             "type": "string"
           },
+          "network": {
+            "$ref": "#/components/schemas/v1Network"
+          },
           "nodepools": {
             "items": {
               "$ref": "#/components/schemas/Nodepool"
@@ -219,7 +223,7 @@
             "type": "string"
           },
           "kubeconfig": {
-            "description": "This string contains the kubeconfig as yaml. If you want to directly get the yaml without any \n characters you can use the following command: curl -s 'api.stackit.cloud/ske/v1/projects/{projectId}/clusters/{clusterName}/credentials' |jq -r .kubeconfig",
+            "description": "This string contains the kubeconfig as yaml.",
             "title": "Kubeconfig for the cluster as yml string",
             "type": "string"
           },
@@ -243,7 +247,7 @@
             "type": "string"
           },
           "phase": {
-            "description": "Phase of the credentials rotation. \"NEVER\" indicates that no credentials rotation has been performed using the new credentials rotation endpoints yet. Using the deprecated \"/v1/projects/{project_id}/clusters/{cluster_name}/rotate-credentials\" endpoint will not update this status field.",
+            "description": "Phase of the credentials rotation. `NEVER` indicates that no credentials rotation has been performed using the new credentials rotation endpoints yet. Using the deprecated [rotate-credentials](#tag/Credentials/operation/SkeService_GetClusterCredentials) endpoint will not update this status field.",
             "enum": [
               "NEVER",
               "PREPARING",
@@ -305,7 +309,7 @@
         "type": "object"
       },
       "Image": {
-        "description": "For valid names and versions please take a look at /provider-options machineImages",
+        "description": "For valid names and versions please take a look at [provider-options](#tag/ProviderOptions/operation/SkeService_GetProviderOptions) `machineImages`.",
         "properties": {
           "name": {
             "title": "Name of os image",
@@ -321,8 +325,19 @@
         ],
         "type": "object"
       },
+      "Kubeconfig": {
+        "properties": {
+          "expirationTimestamp": {
+            "type": "string"
+          },
+          "kubeconfig": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "Kubernetes": {
-        "description": "For valid versions please take a look at /provider-options kubernetesVersions",
+        "description": "For valid versions please take a look at [provider-options](#tag/ProviderOptions/operation/SkeService_GetProviderOptions) `kubernetesVersions`.",
         "properties": {
           "allowPrivilegedContainers": {
             "description": "DEPRECATED as of Kubernetes 1.25+\nFlag to specify if privileged mode for containers is enabled or not.\nThis should be used with care since it also disables a couple of other features like the use of some volume type (e.g. PVCs).\nBy default this is set to true.",
@@ -370,7 +385,7 @@
             "$ref": "#/components/schemas/Image"
           },
           "type": {
-            "description": "For valid types please take a look at /provider-options machineTypes",
+            "description": "For valid types please take a look at [provider-options](#tag/ProviderOptions/operation/SkeService_GetProviderOptions) `machineTypes`.",
             "type": "string"
           }
         },
@@ -580,7 +595,7 @@
       "RuntimeError": {
         "properties": {
           "code": {
-            "description": "- Code:    \"SKE_UNSPECIFIED\"\n  Message: \"An error occurred. Please open a support ticket if this error persists.\"\n- Code:    \"SKE_TMP_AUTH_ERROR\"\n  Message: \"Authentication failed. This is a temporary error. Please wait while the system recovers.\"\n- Code:    \"SKE_QUOTA_EXCEEDED\"\n  Message: \"Your project's resource quotas are exhausted. Please make sure your quota is sufficient for the ordered cluster.\"\n- Code:    \"SKE_ARGUS_INSTANCE_NOT_FOUND\"\n  Message: \"The provided Argus instance could not be found.\"\n- Code:    \"SKE_RATE_LIMITS\"\n  Message: \"While provisioning your cluster, request rate limits where incurred. Please wait while the system recovers.\"\n- Code:    \"SKE_INFRA_ERROR\"\n  Message: \"An error occurred with the underlying infrastructure. Please open a support ticket if this error persists.\"\n- Code:    \"SKE_REMAINING_RESOURCES\"\n  Message: \"There are remaining Kubernetes resources in your cluster that prevent deletion. Please make sure to remove them.\"\n- Code:    \"SKE_CONFIGURATION_PROBLEM\"\n  Message: \"A configuration error occurred. Please open a support ticket if this error persists.\"\n- Code:    \"SKE_UNREADY_NODES\"\n  Message: \"Not all worker nodes are ready. Please open a support ticket if this error persists.\"\n- Code:    \"SKE_API_SERVER_ERROR\"\n  Message: \"The Kubernetes API server is not reporting readiness. Please open a support ticket if this error persists.\"\n",
+            "description": "- Code:    `SKE_UNSPECIFIED`\n  Message: \"An error occurred. Please open a support ticket if this error persists.\"\n- Code:    `SKE_TMP_AUTH_ERROR`\n  Message: \"Authentication failed. This is a temporary error. Please wait while the system recovers.\"\n- Code:    `SKE_QUOTA_EXCEEDED`\n  Message: \"Your project's resource quotas are exhausted. Please make sure your quota is sufficient for the ordered cluster.\"\n- Code:    `SKE_ARGUS_INSTANCE_NOT_FOUND`\n  Message: \"The provided Argus instance could not be found.\"\n- Code:    `SKE_RATE_LIMITS`\n  Message: \"While provisioning your cluster, request rate limits where incurred. Please wait while the system recovers.\"\n- Code:    `SKE_INFRA_ERROR`\n  Message: \"An error occurred with the underlying infrastructure. Please open a support ticket if this error persists.\"\n- Code:    `SKE_REMAINING_RESOURCES`\n  Message: \"There are remaining Kubernetes resources in your cluster that prevent deletion. Please make sure to remove them.\"\n- Code:    `SKE_CONFIGURATION_PROBLEM`\n  Message: \"A configuration error occurred. Please open a support ticket if this error persists.\"\n- Code:    `SKE_UNREADY_NODES`\n  Message: \"Not all worker nodes are ready. Please open a support ticket if this error persists.\"\n- Code:    `SKE_API_SERVER_ERROR`\n  Message: \"The Kubernetes API server is not reporting readiness. Please open a support ticket if this error persists.\"\n",
             "enum": [
               "SKE_UNSPECIFIED",
               "SKE_TMP_AUTH_ERROR",
@@ -655,7 +670,7 @@
             "type": "integer"
           },
           "type": {
-            "description": "For valid values please take a look at /provider-options volumeTypes",
+            "description": "For valid values please take a look at [provider-options](#tag/ProviderOptions/operation/SkeService_GetProviderOptions) `volumeTypes`.",
             "type": "string"
           }
         },
@@ -688,7 +703,7 @@
   "paths": {
     "/v1/projects/{projectId}": {
       "delete": {
-        "description": "Deletes the SKE project specified by 'project_id' (portalProjectID). Deleting a project deletes all corresponding shoots.",
+        "description": "Deletes the SKE project specified by `projectId`. Deleting a project deletes all corresponding shoots.",
         "operationId": "DisableService",
         "parameters": [
           {
@@ -745,7 +760,7 @@
         "summary": "Delete a project"
       },
       "get": {
-        "description": "Get a Project specified by 'project_id' (portalProjectID).",
+        "description": "Get a Project specified by `projectId`.",
         "operationId": "GetServiceStatus",
         "parameters": [
           {
@@ -792,7 +807,7 @@
         "summary": "Get a Project"
       },
       "put": {
-        "description": "Returns creation state of Project specified by 'project_id' (portalProjectID).",
+        "description": "Returns creation state of Project specified by `projectId`.",
         "operationId": "EnableService",
         "parameters": [
           {
@@ -841,7 +856,7 @@
     },
     "/v1/projects/{projectId}/clusters": {
       "get": {
-        "description": "Return a list of Kubernetes clusters in the project specified by 'project_id' (portalProjectID).",
+        "description": "Return a list of Kubernetes clusters in the project specified by `projectId`.",
         "operationId": "ListClusters",
         "parameters": [
           {
@@ -900,7 +915,7 @@
     },
     "/v1/projects/{projectId}/clusters/{clusterName}": {
       "delete": {
-        "description": "Delete Kubernetes cluster specified by the identifier, belonging to the project specified by 'project_id' (portalProjectID).",
+        "description": "Delete Kubernetes cluster specified by the identifier, belonging to the project specified by `projectId`.",
         "operationId": "DeleteCluster",
         "parameters": [
           {
@@ -955,7 +970,7 @@
         "summary": "Delete a cluster"
       },
       "get": {
-        "description": "Get Kubernetes cluster for the specified identifier, belonging to the project specified by 'project_id' (portalProjectID).",
+        "description": "Get Kubernetes cluster for the specified identifier, belonging to the project specified by `projectId`.",
         "operationId": "GetCluster",
         "parameters": [
           {
@@ -1000,7 +1015,7 @@
         "summary": "Get a cluster"
       },
       "put": {
-        "description": "Create a new cluster in your project or modify an existing one. To get valid values for certain properties please check the /provider-options endpoint.",
+        "description": "Create a new cluster in your project or modify an existing one. To get valid values for certain properties please check the [provider-options](#tag/ProviderOptions/operation/SkeService_GetProviderOptions) endpoint.",
         "operationId": "CreateOrUpdateCluster",
         "parameters": [
           {
@@ -1049,7 +1064,7 @@
                 }
               }
             },
-            "description": "Accepted, creation/ update of cluster happens asynchronously. The status of the cluster is specified in the status.conditions array of the response object. An entry in the status.conditions array represents the status of a condition type, whereat following types are supported: APIServerAvailable, ControlPlaneHealthy, EveryNodeReady, SystemComponentsHealthy. After creation of a cluster is triggered, the status of those types is initially 'Progressing' and changes to 'True' when the related type is successfully created and available."
+            "description": "Accepted, creation/update of cluster happens asynchronously. The status of the cluster is specified in the status.conditions array of the response object. An entry in the status.conditions array represents the status of a condition type, whereat following types are supported: APIServerAvailable, ControlPlaneHealthy, EveryNodeReady, SystemComponentsHealthy. After creation of a cluster is triggered, the status of those types is initially `Progressing` and changes to `True` when the related type is successfully created and available."
           },
           "400": {
             "content": {
@@ -1085,9 +1100,87 @@
         "summary": "Create or update a cluster"
       }
     },
+    "/v1/projects/{projectId}/clusters/{clusterName}/complete-credentials-rotation": {
+      "post": {
+        "description": "Complete cluster credentials rotation. This is step 2 of a two-step process. Start the rotation using [start-credentials-rotation](#tag/Credentials/operation/SkeService_StartClusterCredentialsRotation).",
+        "operationId": "CompleteCredentialsRotation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "clusterName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Accepted, execution happens asynchronously. Use the [get cluster](#tag/Cluster/operation/SkeService_GetCluster) endpoint to get the status of the operation from `status.credentialsRotation`."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Cluster not found."
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RuntimeError"
+                }
+              }
+            },
+            "description": "An unexpected error response."
+          }
+        },
+        "summary": "Complete cluster credentials rotation"
+      }
+    },
     "/v1/projects/{projectId}/clusters/{clusterName}/credentials": {
       "get": {
-        "description": "This endpoint is deprecated since version 1.1 of this API. It will not work for clusters with Kubernetes v1.27+, or if the new endpoints for credentials rotation have already been used. Use \"/v1/projects/{project_id}/clusters/{cluster_name}/kubeconfig\" instead to obtain a kubeconfig. For more information, please see [docs link].\n\nGet credentials for the cluster specified by 'cluster_name', belonging to the project specified by 'project_id' (portalProjectID).",
+        "deprecated": true,
+        "description": "This endpoint is deprecated since 2024-01-26. It will not work for clusters with Kubernetes v1.27+, or if the new endpoints for kubeconfig or credentials rotation have already been used. Use [kubeconfig](#tag/Credentials/operation/SkeService_CreateKubeconfig) instead to obtain a kubeconfig. For more information, see [How to rotate SKE credentials](https://docs.stackit.cloud/display/STACKIT/How+to+rotate+SKE+credentials).\n\nGet credentials for the cluster specified by `clusterName`, belonging to the project specified by `projectId`.",
         "operationId": "GetCredentials",
         "parameters": [
           {
@@ -1149,7 +1242,7 @@
             "description": "An unexpected error response."
           }
         },
-        "summary": "Get credentials for a cluster (deprecated)"
+        "summary": "Get credentials for a cluster"
       }
     },
     "/v1/projects/{projectId}/clusters/{clusterName}/hibernate": {
@@ -1217,6 +1310,63 @@
           }
         },
         "summary": "Trigger cluster hibernation"
+      }
+    },
+    "/v1/projects/{projectId}/clusters/{clusterName}/kubeconfig": {
+      "post": {
+        "description": "Create a new kubeconfig for the cluster. You can specify the expiration (in seconds) in the request body. Its value must be in the range from 3600 (1 hour) to 15552000 (6 months).",
+        "operationId": "CreateKubeconfig",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "clusterName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateKubeconfigPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Kubeconfig"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RuntimeError"
+                }
+              }
+            },
+            "description": "An unexpected error response."
+          }
+        },
+        "summary": "Create a kubeconfig"
       }
     },
     "/v1/projects/{projectId}/clusters/{clusterName}/maintenance": {
@@ -1355,7 +1505,8 @@
     },
     "/v1/projects/{projectId}/clusters/{clusterName}/rotate-credentials": {
       "post": {
-        "description": "This endpoint is deprecated since version 1.1 of this API. It will not work for clusters with Kubernetes v1.27+, or if a kubeconfig has already been obtained from the new \"/v1/projects/{project_id}/clusters/{cluster_name}/kubeconfig\" endpoint. Use \"/v1/projects/{project_id}/clusters/{cluster_name}/start-credentials-rotation\" instead to rotate all cluster credentials. For more information, please see [docs link].\n\nTrigger credential rotation. The old credentials (kubeconfig) will be invalid after the operation.",
+        "deprecated": true,
+        "description": "This endpoint is deprecated since 2024-01-26. It will not work for clusters with Kubernetes v1.27+, or if the new endpoints for kubeconfig or credentials rotation have already been used. Use [start-credentials-rotation](#tag/Credentials/operation/SkeService_StartClusterCredentialsRotation) instead to rotate all cluster credentials. For more information, see [How to rotate SKE credentials](https://docs.stackit.cloud/display/STACKIT/How+to+rotate+SKE+credentials).\n\nTrigger credential rotation. The old credentials (kubeconfig) will be invalid after the operation.",
         "operationId": "TriggerRotateCredentials",
         "parameters": [
           {
@@ -1417,7 +1568,84 @@
             "description": "An unexpected error response."
           }
         },
-        "summary": "Rotate cluster credentials (deprecated)"
+        "summary": "Rotate cluster credentials"
+      }
+    },
+    "/v1/projects/{projectId}/clusters/{clusterName}/start-credentials-rotation": {
+      "post": {
+        "description": "Start cluster credentials rotation. This is step 1 of a two-step process. Complete the rotation using [complete-credentials-rotation](#tag/Credentials/operation/SkeService_CompleteClusterCredentialsRotation).",
+        "operationId": "StartCredentialsRotation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "clusterName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Accepted, execution happens asynchronously. Use the [get cluster](#tag/Cluster/operation/SkeService_GetCluster) endpoint to get the status of the operation from `status.credentialsRotation`."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Cluster not found."
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RuntimeError"
+                }
+              }
+            },
+            "description": "An unexpected error response."
+          }
+        },
+        "summary": "Start cluster credentials rotation"
       }
     },
     "/v1/provider-options": {
@@ -1474,7 +1702,7 @@
       "name": "Cluster"
     },
     {
-      "description": "Endpoints for credentials",
+      "description": "Endpoints for credentials. See [How to rotate SKE credentials](https://docs.stackit.cloud/display/STACKIT/How+to+rotate+SKE+credentials) for details.",
       "name": "Credentials"
     },
     {

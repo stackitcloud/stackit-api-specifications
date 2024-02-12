@@ -416,6 +416,27 @@
         "title": "ExivityResponse",
         "type": "array"
       },
+      "FolderMember": {
+        "properties": {
+          "role": {
+            "description": "Unique name of the role.",
+            "enum": [
+              "owner",
+              "member",
+              "auditor"
+            ],
+            "example": "owner",
+            "type": "string"
+          },
+          "subject": {
+            "description": "Unique identifier of the user, service account, or client.",
+            "example": "max.mustermann@mail.schwarz",
+            "type": "string"
+          }
+        },
+        "title": "FolderMember",
+        "type": "object"
+      },
       "FolderRequestBody": {
         "properties": {
           "containerParentId": {
@@ -425,6 +446,15 @@
           },
           "labels": {
             "$ref": "#/components/schemas/ResourceLabels"
+          },
+          "members": {
+            "description": "The initial members assigned to the project. At least one subject needs to be a user, and not a client or service account.",
+            "items": {
+              "$ref": "#/components/schemas/FolderMember"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
           },
           "name": {
             "description": "The name of the folder matching the regex `^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$`.",
@@ -571,10 +601,9 @@
       "OrganizationMember": {
         "properties": {
           "role": {
-            "description": "Unique name of the role. ",
+            "description": "Unique name of the role.",
             "enum": [
-              "organization.owner",
-              "organization.admin",
+              "owner",
               "organization.member",
               "organization.auditor"
             ],
@@ -767,17 +796,18 @@
       "ProjectMember": {
         "properties": {
           "role": {
+            "description": "Unique name of the role.",
             "enum": [
-              "project.owner",
-              "project.member",
-              "project.admin",
-              "project.auditor"
+              "owner",
+              "member",
+              "auditor"
             ],
-            "example": "project.owner",
+            "example": "owner",
             "type": "string"
           },
           "subject": {
-            "example": "max.mustermann@schwarz.mail",
+            "description": "Unique identifier of the user, service account, or client.",
+            "example": "max.mustermann@mail.schwarz",
             "type": "string"
           }
         },
@@ -1016,7 +1046,7 @@
     "title": "Resource Manager API",
     "version": "2.0"
   },
-  "openapi": "3.0.3",
+  "openapi": "3.1.0",
   "paths": {
     "/v2/projects": {
       "get": {

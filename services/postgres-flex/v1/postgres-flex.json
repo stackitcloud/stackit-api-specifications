@@ -1,6 +1,20 @@
 {
   "components": {
     "schemas": {
+      "instance.Acl": {
+        "properties": {
+          "items": {
+            "example": [
+              "0.0.0.0/0"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "instance.CreateCloneInstanceRequest": {
         "properties": {
           "class": {
@@ -28,34 +42,6 @@
         },
         "type": "object"
       },
-      "instance.CreateDatabaseRequest": {
-        "properties": {
-          "collation": {
-            "example": "SQL_Latin1_General_CP1_CI_AS",
-            "type": "string"
-          },
-          "name": {
-            "example": "Test",
-            "type": "string"
-          },
-          "options": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "description": "Database specific options",
-            "type": "object"
-          }
-        },
-        "type": "object"
-      },
-      "instance.CreateDatabaseResponse": {
-        "properties": {
-          "database": {
-            "$ref": "#/components/schemas/instance.Database"
-          }
-        },
-        "type": "object"
-      },
       "instance.DataPoint": {
         "properties": {
           "timestamp": {
@@ -63,31 +49,6 @@
           },
           "value": {
             "type": "number"
-          }
-        },
-        "type": "object"
-      },
-      "instance.Database": {
-        "properties": {
-          "collation": {
-            "example": "SQL_Latin1_General_CP1_CI_AS",
-            "type": "string"
-          },
-          "createDate": {
-            "example": "2003-04-08T09:13:36.39Z",
-            "type": "string"
-          },
-          "id": {
-            "example": "1",
-            "type": "string"
-          },
-          "name": {
-            "example": "Peter_pan",
-            "type": "string"
-          },
-          "options": {
-            "description": "Database specific options",
-            "type": "object"
           }
         },
         "type": "object"
@@ -123,17 +84,6 @@
         },
         "type": "object"
       },
-      "instance.ListDatabasesResponse": {
-        "properties": {
-          "databases": {
-            "items": {
-              "$ref": "#/components/schemas/instance.Database"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
       "instance.ListInstance": {
         "properties": {
           "id": {
@@ -161,10 +111,24 @@
         },
         "type": "object"
       },
+      "instance.UpdateUserRequest": {
+        "properties": {
+          "database": {
+            "type": "string"
+          },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "CreateInstancePayload": {
         "properties": {
           "acl": {
-            "$ref": "#/components/schemas/ACL"
+            "$ref": "#/components/schemas/instance.Acl"
           },
           "backupSchedule": {
             "example": "6 6 * * *",
@@ -178,7 +142,7 @@
             "additionalProperties": {
               "type": "string"
             },
-            "description": "Labels field is not certain/clear",
+            "description": "Following fields are not certain/clear",
             "type": "object"
           },
           "name": {
@@ -203,21 +167,14 @@
           }
         },
         "required": [
-          "acl",
-          "backupSchedule",
-          "flavorId",
-          "name",
-          "options",
-          "replicas",
-          "storage",
-          "version"
+          "acl"
         ],
         "type": "object"
       },
       "PartialUpdateInstancePayload": {
         "properties": {
           "acl": {
-            "$ref": "#/components/schemas/ACL"
+            "$ref": "#/components/schemas/instance.Acl"
           },
           "backupSchedule": {
             "example": "6 6 * * *",
@@ -231,7 +188,7 @@
             "additionalProperties": {
               "type": "string"
             },
-            "description": "Labels field is not certain/clear",
+            "description": "Following fields are not certain/clear",
             "type": "object"
           },
           "name": {
@@ -264,9 +221,6 @@
             "type": "string"
           }
         },
-        "required": [
-          "backupSchedule"
-        ],
         "type": "object"
       },
       "CreateUserPayload": {
@@ -279,48 +233,6 @@
           },
           "username": {
             "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateUserPayload": {
-        "properties": {
-          "database": {
-            "type": "string"
-          },
-          "roles": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "PartialUpdateUserPayload": {
-        "properties": {
-          "database": {
-            "type": "string"
-          },
-          "roles": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "ACL": {
-        "properties": {
-          "items": {
-            "example": [
-              "0.0.0.0/0"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
           }
         },
         "type": "object"
@@ -542,7 +454,7 @@
       "Instance": {
         "properties": {
           "acl": {
-            "$ref": "#/components/schemas/ACL"
+            "$ref": "#/components/schemas/instance.Acl"
           },
           "backupSchedule": {
             "example": "6 6 * * *",
@@ -1551,264 +1463,6 @@
         ],
         "summary": "Get User",
         "operationId": "GetUser"
-      },
-      "patch": {
-        "description": "Update user for an instance. Only the roles are updatable.",
-        "parameters": [
-          {
-            "description": "The ID of the project",
-            "explode": false,
-            "in": "path",
-            "name": "projectId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          },
-          {
-            "description": "The ID of the instance",
-            "explode": false,
-            "in": "path",
-            "name": "instanceId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          },
-          {
-            "description": "The ID of the user in the database",
-            "explode": false,
-            "in": "path",
-            "name": "userId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PartialUpdateUserPayload"
-              }
-            }
-          },
-          "description": "The Request body only required in PUT endpoint. If empty request body is send via patch, then login and createdb roles are removed from user. The field "
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Bad Request"
-          },
-          "405": {
-            "description": "Method Not Allowed"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "summary": "Update User",
-        "operationId": "PartialUpdateUser"
-      },
-      "put": {
-        "description": "Update user for an instance. Only the roles are updatable.",
-        "parameters": [
-          {
-            "description": "The ID of the project",
-            "explode": false,
-            "in": "path",
-            "name": "projectId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          },
-          {
-            "description": "The ID of the instance",
-            "explode": false,
-            "in": "path",
-            "name": "instanceId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          },
-          {
-            "description": "The ID of the user in the database",
-            "explode": false,
-            "in": "path",
-            "name": "userId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateUserPayload"
-              }
-            }
-          },
-          "description": "The Request body only required in PUT endpoint. If empty request body is send via patch, then login and createdb roles are removed from user. The field "
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Bad Request"
-          },
-          "405": {
-            "description": "Method Not Allowed"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "summary": "Update User",
-        "operationId": "UpdateUser"
-      }
-    },
-    "/v1/projects/{projectId}/instances/{instanceId}/users/{userId}/reset": {
-      "post": {
-        "description": "Reset user password for a postgres instance",
-        "parameters": [
-          {
-            "description": "Project ID",
-            "explode": false,
-            "in": "path",
-            "name": "projectId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          },
-          {
-            "description": "Instance ID",
-            "explode": false,
-            "in": "path",
-            "name": "instanceId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          },
-          {
-            "description": "user ID",
-            "explode": false,
-            "in": "path",
-            "name": "userId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          }
-        ],
-        "responses": {
-          "202": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ResetUserResponse"
-                }
-              }
-            },
-            "description": "Accepted"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Bad Request"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Not Found"
-          },
-          "405": {
-            "description": "Method Not Allowed"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "summary": "Reset User",
-        "operationId": "ResetUser"
       }
     },
     "/v1/projects/{projectId}/storages/{flavorId}": {

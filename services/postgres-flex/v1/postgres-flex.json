@@ -1,33 +1,6 @@
 {
   "components": {
     "schemas": {
-      "instance.CreateCloneInstanceRequest": {
-        "properties": {
-          "class": {
-            "example": "premium-perf6-stackit",
-            "type": "string"
-          },
-          "size": {
-            "example": 10,
-            "type": "integer"
-          },
-          "timestamp": {
-            "description": "The timestamp should be specified in UTC time following the format provided in the example.",
-            "example": "2023-04-17T09:28:00+00:00",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "instance.CreateCloneInstanceResponse": {
-        "properties": {
-          "instanceId": {
-            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "instance.CreateDatabaseRequest": {
         "properties": {
           "collation": {
@@ -269,6 +242,24 @@
         ],
         "type": "object"
       },
+      "CloneInstancePayload": {
+        "properties": {
+          "class": {
+            "example": "premium-perf6-stackit",
+            "type": "string"
+          },
+          "size": {
+            "example": 10,
+            "type": "integer"
+          },
+          "timestamp": {
+            "description": "The timestamp should be specified in UTC time following the format provided in the example.",
+            "example": "2023-04-17T09:28:00+00:00",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "CreateUserPayload": {
         "properties": {
           "roles": {
@@ -355,6 +346,15 @@
             "type": "integer"
           },
           "startTime": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CloneInstanceResponse": {
+        "properties": {
+          "instanceId": {
+            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
             "type": "string"
           }
         },
@@ -1273,6 +1273,81 @@
         ],
         "summary": "Get specific backup",
         "operationId": "GetBackup"
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/clone": {
+      "post": {
+        "description": "Clone an existing instance of a postgres database to a new destination instance",
+        "parameters": [
+          {
+            "description": "Project ID",
+            "explode": false,
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Instance ID",
+            "explode": false,
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CloneInstancePayload"
+              }
+            }
+          },
+          "description": "Body",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloneInstanceResponse"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "405": {
+            "description": "Method Not Allowed"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Clone Instance",
+        "operationId": "CloneInstance"
       }
     },
     "/v1/projects/{projectId}/instances/{instanceId}/users": {

@@ -176,6 +176,11 @@
           "aggregated": {
             "$ref": "#/components/schemas/ClusterStatusState"
           },
+          "creationTime": {
+            "description": "Format: `2024-02-15T11:06:29Z`",
+            "title": "Cluster creation timestamp",
+            "type": "string"
+          },
           "credentialsRotation": {
             "$ref": "#/components/schemas/CredentialsRotationState"
           },
@@ -241,9 +246,13 @@
       "CredentialsRotationState": {
         "properties": {
           "lastCompletionTime": {
+            "description": "Format: `2024-02-15T11:06:29Z`",
+            "title": "CredentialsRotation last completed at",
             "type": "string"
           },
           "lastInitiationTime": {
+            "description": "Format: `2024-02-15T11:06:29Z`",
+            "title": "CredentialsRotation last started at",
             "type": "string"
           },
           "phase": {
@@ -1314,7 +1323,7 @@
     },
     "/v1/projects/{projectId}/clusters/{clusterName}/kubeconfig": {
       "post": {
-        "description": "Create a new kubeconfig for the cluster. You can specify the expiration (in seconds) in the request body. Its value must be in the range from 3600 (1 hour) to 15552000 (6 months).",
+        "description": "Create a new kubeconfig for the cluster. You can specify the expiration (in seconds) in the request body. Its value must be in the range from 600 (10 min) to 15552000 (6 months).",
         "operationId": "CreateKubeconfig",
         "parameters": [
           {

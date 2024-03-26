@@ -248,6 +248,12 @@
             "description": "Reference target pool by target pool name.",
             "example": "my-target-pool",
             "type": "string"
+          },
+          "tcp": {
+            "$ref": "#/components/schemas/OptionsTCP"
+          },
+          "udp": {
+            "$ref": "#/components/schemas/OptionsUDP"
           }
         },
         "type": "object"
@@ -255,6 +261,7 @@
       "LoadBalancer": {
         "properties": {
           "errors": {
+            "description": "Reports all errors a load balancer has.",
             "items": {
               "$ref": "#/components/schemas/LoadBalancerError"
             },
@@ -267,10 +274,11 @@
             "type": "string"
           },
           "listeners": {
-            "description": "List of all listeners which will accept traffic. Limited to 20.",
+            "description": "There is a maximum listener count of 20.\n\nPort and protocol limitations:\n\n- UDP listeners cannot have the same port.\n- TCP-derived listeners cannot have the same port. A TCP-derived listener is any listener that listens on a TCP port. As of now those are: TCP, TCP_PROXY, and PROTOCOL_TLS_PASSTHROUGH. The only exception is, if all listeners for the same port are PROTOCOL_TLS_PASSTHROUGH.\n- PROTOCOL_TLS_PASSTHROUGH listeners cannot have the same port and at least one common domain name.\n- PROTOCOL_TLS_PASSTHROUGH listeners can have the same domain name and different ports though (e.g. ports 443 and 8443 for domain example.com).\n- PROTOCOL_TLS_PASSTHROUGH listeners without a domain name serve as a default listener and you can have only one default listener.\n",
             "items": {
               "$ref": "#/components/schemas/Listener"
             },
+            "title": "List of all listeners which will accept traffic.",
             "type": "array"
           },
           "name": {
@@ -324,9 +332,11 @@
       "LoadBalancerError": {
         "properties": {
           "description": {
+            "description": "The error description contains additional helpful user information to fix the error state of the load balancer. For example the IP 45.135.247.139 does not exist in the project, then the description will report: Floating IP \"45.135.247.139\" could not be found.",
             "type": "string"
           },
           "type": {
+            "description": "The error type specifies which part of the load balancer encountered the error. I.e. the API will not check if a provided public IP is actually available in the project. Instead the load balancer with try to use the provided IP and if not available reports TYPE_FIP_NOT_CONFIGURED error.",
             "enum": [
               "TYPE_UNSPECIFIED",
               "TYPE_INTERNAL",
@@ -334,7 +344,9 @@
               "TYPE_QUOTA_SECGROUPRULE_EXCEEDED",
               "TYPE_PORT_NOT_CONFIGURED",
               "TYPE_FIP_NOT_CONFIGURED",
-              "TYPE_TARGET_NOT_ACTIVE"
+              "TYPE_TARGET_NOT_ACTIVE",
+              "TYPE_METRICS_MISCONFIGURED",
+              "TYPE_LOGS_MISCONFIGURED"
             ],
             "type": "string"
           }
@@ -384,7 +396,7 @@
           },
           "pushUrl": {
             "description": "The ARGUS/Loki Push URL you want the logs to be send to.",
-            "example": "https://logs.stackit4.argus.eu01.stackit.cloud/instances/\u003cargus-instance-id\u003e/loki/api/v1/push",
+            "example": "https://logs.stackit5.argus.eu01.stackit.cloud/instances/\u003cargus-instance-id\u003e/loki/api/v1/push",
             "title": "Push URL",
             "type": "string"
           }
@@ -400,7 +412,7 @@
           },
           "pushUrl": {
             "description": "The ARGUS/Prometheus remote write Push URL you want the metrics to be send to.",
-            "example": "https://push.metrics.stackit5.argus.eu01.stackit.cloud/instances/\u003cargus-instance-id\u003e/api/v1/receive",
+            "example": "https://push.metrics.stackit4.argus.eu01.stackit.cloud/instances/\u003cargus-instance-id\u003e/api/v1/receive",
             "title": "Push URL",
             "type": "string"
           }
@@ -458,6 +470,30 @@
         },
         "type": "object"
       },
+      "OptionsTCP": {
+        "properties": {
+          "idleTimeout": {
+            "description": "The connection idle timeout to be used with the protocol. The default value is set to 5 minutes, and the maximum value is one hour.",
+            "example": "300s",
+            "pattern": "^-?(?:0|[1-9][0-9]{0,11})(?:\\.[0-9]{1,9})?s$",
+            "title": "Idle timeout",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "OptionsUDP": {
+        "properties": {
+          "idleTimeout": {
+            "description": "The connection idle timeout to be used with the protocol. The default value is set to 1 minute, and the maximum value is 2 minutes.",
+            "example": "60s",
+            "pattern": "^-?(?:0|[1-9][0-9]{0,11})(?:\\.[0-9]{1,9})?s$",
+            "title": "Idle timeout",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "PingResponse": {
         "description": "Response to ping with projectId.",
         "properties": {
@@ -483,7 +519,7 @@
       "SessionPersistence": {
         "properties": {
           "useSourceIpAddress": {
-            "description": "Enable using source IP address to persist sessions from a single IP",
+            "description": "If enabled then all connections from one source IP address are redirected to the same target. This setting changes the load balancing algorithm to Maglev.",
             "example": true,
             "title": "UseSourceIPAddress",
             "type": "boolean"
@@ -533,6 +569,14 @@
               "$ref": "#/components/schemas/Target"
             },
             "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateCredentialsResponse": {
+        "properties": {
+          "credential": {
+            "$ref": "#/components/schemas/CredentialsResponse"
           }
         },
         "type": "object"
@@ -639,6 +683,7 @@
       "CreateLoadBalancerPayload": {
         "properties": {
           "errors": {
+            "description": "Reports all errors a load balancer has.",
             "items": {
               "$ref": "#/components/schemas/LoadBalancerError"
             },
@@ -651,10 +696,11 @@
             "type": "string"
           },
           "listeners": {
-            "description": "List of all listeners which will accept traffic. Limited to 20.",
+            "description": "There is a maximum listener count of 20.\n\nPort and protocol limitations:\n\n- UDP listeners cannot have the same port.\n- TCP-derived listeners cannot have the same port. A TCP-derived listener is any listener that listens on a TCP port. As of now those are: TCP, TCP_PROXY, and PROTOCOL_TLS_PASSTHROUGH. The only exception is, if all listeners for the same port are PROTOCOL_TLS_PASSTHROUGH.\n- PROTOCOL_TLS_PASSTHROUGH listeners cannot have the same port and at least one common domain name.\n- PROTOCOL_TLS_PASSTHROUGH listeners can have the same domain name and different ports though (e.g. ports 443 and 8443 for domain example.com).\n- PROTOCOL_TLS_PASSTHROUGH listeners without a domain name serve as a default listener and you can have only one default listener.\n",
             "items": {
               "$ref": "#/components/schemas/Listener"
             },
+            "title": "List of all listeners which will accept traffic.",
             "type": "array"
           },
           "name": {
@@ -708,6 +754,7 @@
       "UpdateLoadBalancerPayload": {
         "properties": {
           "errors": {
+            "description": "Reports all errors a load balancer has.",
             "items": {
               "$ref": "#/components/schemas/LoadBalancerError"
             },
@@ -720,10 +767,11 @@
             "type": "string"
           },
           "listeners": {
-            "description": "List of all listeners which will accept traffic. Limited to 20.",
+            "description": "There is a maximum listener count of 20.\n\nPort and protocol limitations:\n\n- UDP listeners cannot have the same port.\n- TCP-derived listeners cannot have the same port. A TCP-derived listener is any listener that listens on a TCP port. As of now those are: TCP, TCP_PROXY, and PROTOCOL_TLS_PASSTHROUGH. The only exception is, if all listeners for the same port are PROTOCOL_TLS_PASSTHROUGH.\n- PROTOCOL_TLS_PASSTHROUGH listeners cannot have the same port and at least one common domain name.\n- PROTOCOL_TLS_PASSTHROUGH listeners can have the same domain name and different ports though (e.g. ports 443 and 8443 for domain example.com).\n- PROTOCOL_TLS_PASSTHROUGH listeners without a domain name serve as a default listener and you can have only one default listener.\n",
             "items": {
               "$ref": "#/components/schemas/Listener"
             },
+            "title": "List of all listeners which will accept traffic.",
             "type": "array"
           },
           "name": {
@@ -823,7 +871,8 @@
               "STATUS_FAILED",
               "STATUS_UPDATING",
               "STATUS_DELETING",
-              "STATUS_DISABLED"
+              "STATUS_DISABLED",
+              "STATUS_PROJECT_UNKNOWN"
             ],
             "type": "string"
           }
@@ -835,7 +884,7 @@
   "info": {
     "description": "This API offers an interface to provision and manage load balancing servers in your STACKIT project. It also has the possibility of pooling target servers for load balancing purposes.\n\nFor each load balancer provided, two VMs are deployed in your OpenStack project subject to a fee.",
     "title": "Load Balancer API",
-    "version": "1.6.0"
+    "version": "1.6.1"
   },
   "openapi": "3.0.3",
   "paths": {
@@ -919,7 +968,8 @@
         "summary": "Return the status of load balancer functionality for the project specified."
       },
       "post": {
-        "description": "Enable will enable the load balancer functionality for the project specified.",
+        "deprecated": true,
+        "description": "DEPRECATED! Use CreateLoadBalancer directly instead.\n Enable will enable the load balancer functionality for the project specified.",
         "operationId": "EnableService",
         "parameters": [
           {
@@ -927,16 +977,6 @@
             "name": "projectId",
             "required": true,
             "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "example": "2438ac3c-37eb-4902-adef-ed16b4431030",
-            "in": "header",
-            "name": "X-Request-ID",
-            "required": true,
-            "schema": {
-              "format": "uuid",
               "type": "string"
             }
           }
@@ -1098,6 +1138,9 @@
             },
             "description": "OK"
           },
+          "400": {
+            "description": "One or more fields are invalid."
+          },
           "401": {
             "description": "Unauthorized"
           },
@@ -1142,6 +1185,9 @@
             },
             "description": "OK"
           },
+          "400": {
+            "description": "One or more fields are invalid."
+          },
           "401": {
             "description": "Unauthorized"
           },
@@ -1160,7 +1206,7 @@
     },
     "/v1/projects/{projectId}/load-balancers": {
       "get": {
-        "description": "ListLoadBalancer will list load balancers of a project.",
+        "description": "ListLoadBalancer will list load balancers of a project. This contains information set during\n creation or updates for every load balancer in the project. Additionally, it will have information about\n the state of the load balancer in the form of a status field and error description feedback.",
         "operationId": "ListLoadBalancers",
         "parameters": [
           {
@@ -1199,7 +1245,7 @@
         "summary": "List load balancers in a project."
       },
       "post": {
-        "description": "Create Load Balancer will create a load balancer.",
+        "description": "Create Load Balancer will create a load balancer.\n The default load balancing algorithm is round robin unless useSourceIpAddress in session persistence is enabled for a target pool then it is Maglev.",
         "operationId": "CreateLoadBalancer",
         "parameters": [
           {
@@ -1258,7 +1304,7 @@
             "description": "internal error - please retry again later or contact support if the issue persists"
           }
         },
-        "summary": "Create a load balancer in a project."
+        "summary": "Create a load balancer in a project"
       }
     },
     "/v1/projects/{projectId}/load-balancers/{name}": {
@@ -1310,7 +1356,7 @@
         "summary": "Delete a given load balancer in a project."
       },
       "get": {
-        "description": "Get Load Balancer will get a single load balancer of a project.",
+        "description": "Get Load Balancer will get a single load balancer of a project. This contains all the information set during\n creation or updates. Additionally, it will have information about the state of the load balancer in the form\n of a status field and error description feedback.",
         "operationId": "GetLoadBalancer",
         "parameters": [
           {
@@ -1360,7 +1406,7 @@
         "summary": "Get a single load balancer in a project."
       },
       "put": {
-        "description": "Update Load Balancer allows the change of listeners and target pools of an existing Load Balancer.\n The Load balancer resource version needs to be the current version to ensure concurrency safe updates.",
+        "description": "Update Load Balancer allows the change of listeners and target pools of an existing Load Balancer.\n The Load balancer resource version needs to be the current version to ensure concurrency safe updates.\n The default load balancing algorithm is round robin unless useSourceIpAddress in session persistence is enabled for a target pool then it is Maglev.",
         "operationId": "UpdateLoadBalancer",
         "parameters": [
           {

@@ -153,6 +153,29 @@
         "title": "CreateCredentialsGroupResponse",
         "type": "object"
       },
+      "CreateServiceAccountResponse": {
+        "properties": {
+          "accessKey": {
+            "$ref": "#/components/schemas/CreateAccessKeyResponse"
+          },
+          "project": {
+            "description": "Project ID",
+            "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
+            "title": "Project",
+            "type": "string"
+          },
+          "serviceAccounts": {
+            "$ref": "#/components/schemas/ServiceAccount"
+          }
+        },
+        "required": [
+          "project",
+          "serviceAccounts",
+          "accessKey"
+        ],
+        "title": "CreateServiceAccountResponse",
+        "type": "object"
+      },
       "CredentialsGroup": {
         "properties": {
           "credentialsGroupId": {
@@ -248,6 +271,28 @@
         "title": "DeleteCredentialsGroupResponse",
         "type": "object"
       },
+      "DeleteServiceAccountResponse": {
+        "properties": {
+          "project": {
+            "description": "Project ID",
+            "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
+            "title": "Project",
+            "type": "string"
+          },
+          "serviceAccountId": {
+            "description": "The ID of the service account",
+            "example": "svc-3969597f-d2f3-4c07-8533-1a4bf8159c0e",
+            "title": "Service account ID",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project",
+          "serviceAccountId"
+        ],
+        "title": "DeleteServiceAccountResponse",
+        "type": "object"
+      },
       "DetailedError": {
         "properties": {
           "key": {
@@ -284,6 +329,21 @@
         "title": "ErrorMessage",
         "type": "object"
       },
+      "ForceDeleteResponse": {
+        "properties": {
+          "project": {
+            "description": "Project ID",
+            "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
+            "title": "Project",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project"
+        ],
+        "title": "ForceDeleteResponse",
+        "type": "object"
+      },
       "GetBucketResponse": {
         "properties": {
           "bucket": {
@@ -301,6 +361,29 @@
           "bucket"
         ],
         "title": "GetBucketResponse",
+        "type": "object"
+      },
+      "GetServiceAccountsResponse": {
+        "properties": {
+          "project": {
+            "description": "Project ID",
+            "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
+            "title": "Project",
+            "type": "string"
+          },
+          "serviceAccounts": {
+            "items": {
+              "$ref": "#/components/schemas/ServiceAccount"
+            },
+            "title": "Serviceaccounts",
+            "type": "array"
+          }
+        },
+        "required": [
+          "project",
+          "serviceAccounts"
+        ],
+        "title": "GetServiceAccountsResponse",
         "type": "object"
       },
       "HTTPValidationError": {
@@ -323,6 +406,35 @@
           "SCHWARZ"
         ],
         "title": "ProjectScope"
+      },
+      "ServiceAccount": {
+        "properties": {
+          "ServiceAccountId": {
+            "description": "The ID of the service account",
+            "example": "3969597f-d2f3-4c07-8533-1a4bf8159c0e",
+            "title": "Service account ID",
+            "type": "string"
+          },
+          "displayName": {
+            "description": "Name of the Service Account",
+            "example": "service-account-1",
+            "title": "Service Account name",
+            "type": "string"
+          },
+          "urn": {
+            "description": "Service account URN",
+            "example": "urn:sgws:identity::12345678901234567890:user/service-account-1",
+            "title": "Urn",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ServiceAccountId",
+          "urn",
+          "displayName"
+        ],
+        "title": "ServiceAccount",
+        "type": "object"
       },
       "ValidationError": {
         "properties": {
@@ -484,10 +596,10 @@
     }
   },
   "info": {
-    "description": "STACKIT API to manage the Object Storage",
+    "description": "STACKIT API to manage the Object Storage\n",
     "termsOfService": "https://stackit.de/en/imprint",
     "title": "STACKIT Object Storage API",
-    "version": "1.0.8"
+    "version": "1.1.2"
   },
   "openapi": "3.0.2",
   "paths": {
@@ -1587,6 +1699,10 @@
     {
       "description": "Manage projects.",
       "name": "project"
+    },
+    {
+      "description": "Clean up project resources.",
+      "name": "project-force-delete"
     }
   ]
 }

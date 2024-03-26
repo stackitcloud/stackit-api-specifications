@@ -123,6 +123,71 @@
         ],
         "type": "object"
       },
+      "ElasticsearchInstanceParameters": {
+        "properties": {
+          "enable_monitoring": {
+            "default": false,
+            "type": "boolean"
+          },
+          "graphite": {
+            "description": "If you want to monitor your service with Graphite, you can set the custom parameter graphite. It expects the host and port where the Graphite metrics should be sent to.",
+            "example": "yourspace.your-graphite-endpoint.com:12345",
+            "type": "string"
+          },
+          "max_disk_threshold": {
+            "default": 80,
+            "description": "This component monitors ephemeral and persistent disk usage. If one of these disk usages reaches the default configured threshold of 80%, the a9s Parachute stops all processes on that node.",
+            "example": 90,
+            "type": "integer"
+          },
+          "metrics_frequency": {
+            "default": 10,
+            "description": "Frequency of metrics being emitted in seconds",
+            "type": "integer"
+          },
+          "metrics_prefix": {
+            "description": "Depending on your graphite provider, you might need to prefix the metrics with a certain value, like an API key for example.",
+            "example": "my-prefix",
+            "type": "string"
+          },
+          "monitoring_instance_id": {
+            "type": "string"
+          },
+          "plugins": {
+            "description": "The plugins repository-s3 and repository-azure are enabled by default and cannot be disabled.",
+            "items": {
+              "enum": [
+                "repository-s3",
+                "repository-azure",
+                "analysis-phonetic"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "sgw_acl": {
+            "description": "Comma separated list of IP networks in CIDR notation which are allowed to access this instance.",
+            "example": "0.0.0.0/0",
+            "type": "string"
+          },
+          "ssl_session_timeout": {
+            "default": "24h",
+            "description": "The content follows the nginx configuration file measurement units.",
+            "example": "4h",
+            "type": "string"
+          },
+          "syslog": {
+            "example": [
+              "logs4.your-syslog-endpoint.com:54321"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "Error": {
         "properties": {
           "description": {
@@ -165,6 +230,10 @@
             "type": "string"
           },
           "offeringName": {
+            "deprecated": true,
+            "type": "string"
+          },
+          "offeringVersion": {
             "type": "string"
           },
           "parameters": {
@@ -172,14 +241,30 @@
           },
           "planId": {
             "type": "string"
+          },
+          "planName": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "failed",
+              "stopped",
+              "creating",
+              "deleting",
+              "updating"
+            ],
+            "type": "string"
           }
         },
         "required": [
           "id",
           "name",
           "type",
-          "offeringName",
           "planId",
+          "planName",
+          "offeringName",
+          "offeringVersion",
           "dashboardUrl",
           "cfGuid",
           "cfSpaceGuid",
@@ -190,37 +275,45 @@
         ],
         "type": "object"
       },
-      "InstanceParameters": {
+      "InstanceBaseParameters": {
         "properties": {
           "enable_monitoring": {
             "default": false,
             "type": "boolean"
           },
           "graphite": {
+            "description": "If you want to monitor your service with Graphite, you can set the custom parameter graphite. It expects the host and port where the Graphite metrics should be sent to.",
+            "example": "yourspace.your-graphite-endpoint.com:12345",
             "type": "string"
           },
           "max_disk_threshold": {
-            "type": "string"
+            "default": 80,
+            "description": "This component monitors ephemeral and persistent disk usage. If one of these disk usages reaches the default configured threshold of 80%, the a9s Parachute stops all processes on that node.",
+            "example": 90,
+            "type": "integer"
           },
           "metrics_frequency": {
+            "default": 10,
+            "description": "Frequency of metrics being emitted in seconds",
             "type": "integer"
           },
           "metrics_prefix": {
+            "description": "Depending on your graphite provider, you might need to prefix the metrics with a certain value, like an API key for example.",
+            "example": "my-prefix",
             "type": "string"
           },
           "monitoring_instance_id": {
             "type": "string"
           },
-          "plugins": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
           "sgw_acl": {
+            "description": "Comma separated list of IP networks in CIDR notation which are allowed to access this instance.",
+            "example": "0.0.0.0/0",
             "type": "string"
           },
           "syslog": {
+            "example": [
+              "logs4.your-syslog-endpoint.com:54321"
+            ],
             "items": {
               "type": "string"
             },
@@ -244,6 +337,178 @@
         ],
         "type": "object"
       },
+      "LogMe2InstanceParameters": {
+        "properties": {
+          "enable_monitoring": {
+            "default": false,
+            "type": "boolean"
+          },
+          "fluentd-tcp": {
+            "default": 0,
+            "type": "integer"
+          },
+          "fluentd-tls": {
+            "default": 6514,
+            "type": "integer"
+          },
+          "fluentd-tls-ciphers": {
+            "type": "string"
+          },
+          "fluentd-tls-max-version": {
+            "type": "string"
+          },
+          "fluentd-tls-min-version": {
+            "type": "string"
+          },
+          "fluentd-tls-version": {
+            "type": "string"
+          },
+          "fluentd-udp": {
+            "default": 514,
+            "type": "integer"
+          },
+          "graphite": {
+            "description": "If you want to monitor your service with Graphite, you can set the custom parameter graphite. It expects the host and port where the Graphite metrics should be sent to.",
+            "example": "yourspace.your-graphite-endpoint.com:12345",
+            "type": "string"
+          },
+          "groks": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "ism_deletion_after": {
+            "default": "30d",
+            "description": "Combination of an integer and a timerange when an index will be considered 'd' and can be deleted from OpenSearch. Possible values for the timerange are s, m, h and d.",
+            "type": "string"
+          },
+          "ism_jitter": {
+            "default": 0.6,
+            "type": "number"
+          },
+          "ism_job_interval": {
+            "default": 5,
+            "type": "integer"
+          },
+          "java_heapspace": {
+            "description": "Default: not set, 46% of available memory will be used. The amount of memory (in MB) allocated as heap by the JVM for OpenSearch.",
+            "minimum": 256,
+            "type": "integer"
+          },
+          "java_maxmetaspace": {
+            "default": 512,
+            "description": "The amount of memory (in MB) used by the JVM to store metadata for OpenSearch.",
+            "maximum": 1024,
+            "minimum": 256,
+            "type": "integer"
+          },
+          "max_disk_threshold": {
+            "default": 80,
+            "description": "This component monitors ephemeral and persistent disk usage. If one of these disk usages reaches the default configured threshold of 80%, the a9s Parachute stops all processes on that node.",
+            "example": 90,
+            "type": "integer"
+          },
+          "metrics_frequency": {
+            "default": 10,
+            "description": "Frequency of metrics being emitted in seconds",
+            "type": "integer"
+          },
+          "metrics_prefix": {
+            "description": "Depending on your graphite provider, you might need to prefix the metrics with a certain value, like an API key for example.",
+            "example": "my-prefix",
+            "type": "string"
+          },
+          "monitoring_instance_id": {
+            "type": "string"
+          },
+          "opensearch-tls-ciphers": {
+            "items": {
+              "enum": [
+                "TLSv1.2",
+                "TLSv1.3"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "opensearch-tls-protocols": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "sgw_acl": {
+            "description": "Comma separated list of IP networks in CIDR notation which are allowed to access this instance.",
+            "example": "0.0.0.0/0",
+            "type": "string"
+          },
+          "syslog": {
+            "example": [
+              "logs4.your-syslog-endpoint.com:54321"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "syslog-use-udp": {
+            "enum": [
+              "yes",
+              "no"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "MariaDBInstanceParameters": {
+        "properties": {
+          "enable_monitoring": {
+            "default": false,
+            "type": "boolean"
+          },
+          "graphite": {
+            "description": "If you want to monitor your service with Graphite, you can set the custom parameter graphite. It expects the host and port where the Graphite metrics should be sent to.",
+            "example": "yourspace.your-graphite-endpoint.com:12345",
+            "type": "string"
+          },
+          "max_disk_threshold": {
+            "default": 80,
+            "description": "This component monitors ephemeral and persistent disk usage. If one of these disk usages reaches the default configured threshold of 80%, the a9s Parachute stops all processes on that node.",
+            "example": 90,
+            "type": "integer"
+          },
+          "metrics_frequency": {
+            "default": 10,
+            "description": "Frequency of metrics being emitted in seconds",
+            "type": "integer"
+          },
+          "metrics_prefix": {
+            "description": "Depending on your graphite provider, you might need to prefix the metrics with a certain value, like an API key for example.",
+            "example": "my-prefix",
+            "type": "string"
+          },
+          "monitoring_instance_id": {
+            "type": "string"
+          },
+          "sgw_acl": {
+            "description": "Comma separated list of IP networks in CIDR notation which are allowed to access this instance.",
+            "example": "0.0.0.0/0",
+            "type": "string"
+          },
+          "syslog": {
+            "example": [
+              "logs4.your-syslog-endpoint.com:54321"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "Object": {
         "type": "object"
       },
@@ -260,6 +525,10 @@
           },
           "latest": {
             "type": "boolean"
+          },
+          "lifecycle": {
+            "example": "deprecated",
+            "type": "string"
           },
           "name": {
             "type": "string"
@@ -294,6 +563,104 @@
         ],
         "type": "object"
       },
+      "OpenSearchInstanceParameters": {
+        "properties": {
+          "enable_monitoring": {
+            "default": false,
+            "type": "boolean"
+          },
+          "graphite": {
+            "description": "If you want to monitor your service with Graphite, you can set the custom parameter graphite. It expects the host and port where the Graphite metrics should be sent to.",
+            "example": "yourspace.your-graphite-endpoint.com:12345",
+            "type": "string"
+          },
+          "java_garbage_collector": {
+            "default": "UseG1GC",
+            "enum": [
+              "UseSerialGC",
+              "UseParallelGC",
+              "UseParallelOldGC",
+              "UseG1GC"
+            ],
+            "type": "string"
+          },
+          "java_heapspace": {
+            "description": "Default: not set, 46% of available memory will be used. The amount of memory (in MB) allocated as heap by the JVM for OpenSearch.",
+            "minimum": 256,
+            "type": "integer"
+          },
+          "java_maxmetaspace": {
+            "default": 512,
+            "description": "The amount of memory (in MB) used by the JVM to store metadata for OpenSearch.",
+            "maximum": 1024,
+            "minimum": 256,
+            "type": "integer"
+          },
+          "max_disk_threshold": {
+            "default": 80,
+            "description": "This component monitors ephemeral and persistent disk usage. If one of these disk usages reaches the default configured threshold of 80%, the a9s Parachute stops all processes on that node.",
+            "example": 90,
+            "type": "integer"
+          },
+          "metrics_frequency": {
+            "default": 10,
+            "description": "Frequency of metrics being emitted in seconds",
+            "type": "integer"
+          },
+          "metrics_prefix": {
+            "description": "Depending on your graphite provider, you might need to prefix the metrics with a certain value, like an API key for example.",
+            "example": "my-prefix",
+            "type": "string"
+          },
+          "monitoring_instance_id": {
+            "type": "string"
+          },
+          "plugins": {
+            "description": "The plugins repository-s3 and repository-azure are enabled by default and cannot be disabled.",
+            "example": [
+              "analysis-phonetic"
+            ],
+            "items": {
+              "enum": [
+                "repository-s3",
+                "repository-azure",
+                "analysis-phonetic"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "sgw_acl": {
+            "description": "Comma separated list of IP networks in CIDR notation which are allowed to access this instance.",
+            "example": "0.0.0.0/0",
+            "type": "string"
+          },
+          "syslog": {
+            "example": [
+              "logs4.your-syslog-endpoint.com:54321"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "tls-ciphers": {
+            "description": "Only Java format is supported.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "tls-protocols": {
+            "enum": [
+              "TLSv1.2",
+              "TLSv1.3"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "Plan": {
         "properties": {
           "description": {
@@ -312,9 +679,463 @@
         "required": [
           "id",
           "name",
+          "skuName",
           "description",
           "free"
         ],
+        "type": "object"
+      },
+      "PostgreSQLInstanceParameters": {
+        "properties": {
+          "archive_timeout": {
+            "default": 3600,
+            "description": "The units of the property are seconds.",
+            "minimum": 60,
+            "type": "integer"
+          },
+          "client_min_messages": {
+            "default": "NOTICE",
+            "enum": [
+              "DEBUG5",
+              "DEBUG4",
+              "DEBUG3",
+              "DEBUG2",
+              "DEBUG1",
+              "LOG",
+              "NOTICE",
+              "WARNING",
+              "ERROR",
+              "FATAL",
+              "PANIC"
+            ],
+            "type": "string"
+          },
+          "continuous_archiving": {
+            "default": "disabled",
+            "enum": [
+              "enabled",
+              "disabled"
+            ],
+            "type": "string"
+          },
+          "data_checksums": {
+            "default": "enabled",
+            "description": "This option can only be set during creation of the service instance, and cannot be changed later.",
+            "enum": [
+              "enabled",
+              "disabled"
+            ],
+            "type": "string"
+          },
+          "delete_plugins": {
+            "items": {
+              "enum": [
+                "postgis",
+                "uuid-ossp",
+                "ltree",
+                "pgcrypto",
+                "citext",
+                "pg_stat_statements",
+                "fuzzystrmatch",
+                "pg_trgm",
+                "hstore",
+                "vector"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "effective_cache_size": {
+            "description": "The units of the property are MB. Please note, that our BOSH release includes an algorithm which calculates a usable value for this property on the fly based on the resources of the VM running.",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "enable_monitoring": {
+            "default": false,
+            "type": "boolean"
+          },
+          "graphite": {
+            "description": "If you want to monitor your service with Graphite, you can set the custom parameter graphite. It expects the host and port where the Graphite metrics should be sent to.",
+            "example": "yourspace.your-graphite-endpoint.com:12345",
+            "type": "string"
+          },
+          "idle_in_transaction_session_timeout": {
+            "default": 0,
+            "description": "The units of the property are milliseconds.",
+            "type": "integer"
+          },
+          "install_plugins": {
+            "description": "The plugins pgcrypto and citext are enabled by default.",
+            "items": {
+              "enum": [
+                "postgis",
+                "uuid-ossp",
+                "ltree",
+                "pgcrypto",
+                "citext",
+                "pg_stat_statements",
+                "fuzzystrmatch",
+                "pg_trgm",
+                "hstore",
+                "vector"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "log_error_verbosity": {
+            "default": "TERSE",
+            "enum": [
+              "TERSE",
+              "DEFAULT",
+              "VERBOSE"
+            ],
+            "type": "string"
+          },
+          "log_min_duration_statement": {
+            "default": -1,
+            "minimum": -1,
+            "type": "integer"
+          },
+          "log_statement": {
+            "default": "none",
+            "enum": [
+              "none",
+              "ddl",
+              "mod",
+              "all"
+            ],
+            "type": "string"
+          },
+          "loglevel": {
+            "default": "DEBUG",
+            "enum": [
+              "DEBUG",
+              "INFO"
+            ],
+            "type": "string"
+          },
+          "maintenance_work_mem": {
+            "description": "The units of the property are kilobytes.",
+            "type": "integer"
+          },
+          "max_connections": {
+            "description": "You cannot decrease max_connections as this will break clustering. The default value increases with instance size.",
+            "type": "integer"
+          },
+          "max_disk_threshold": {
+            "default": 80,
+            "description": "This component monitors ephemeral and persistent disk usage. If one of these disk usages reaches the default configured threshold of 80%, the a9s Parachute stops all processes on that node.",
+            "example": 90,
+            "type": "integer"
+          },
+          "max_replication_slots": {
+            "default": 0,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "max_wal_senders": {
+            "default": 0,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "metric_databases": {
+            "description": "Expects an array of database names. If the parameter is not set or the array is set to empty, then metrics will be collected for all databases.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "metric_pg_database_size": {
+            "default": 300,
+            "type": "integer"
+          },
+          "metric_pg_replication": {
+            "default": 10,
+            "type": "integer"
+          },
+          "metric_pg_stat_all_indexes": {
+            "default": 0,
+            "type": "integer"
+          },
+          "metric_pg_stat_all_tables": {
+            "default": 0,
+            "type": "integer"
+          },
+          "metric_pg_stat_archiver_table": {
+            "default": 0,
+            "type": "integer"
+          },
+          "metric_pg_stat_database": {
+            "default": 0,
+            "type": "integer"
+          },
+          "metric_pg_stat_database_conflicts": {
+            "default": 0,
+            "type": "integer"
+          },
+          "metric_pg_statio_all_indexes": {
+            "default": 0,
+            "type": "integer"
+          },
+          "metric_pg_statio_all_tables": {
+            "default": 0,
+            "type": "integer"
+          },
+          "metrics_frequency": {
+            "default": 10,
+            "description": "Frequency of metrics being emitted in seconds",
+            "type": "integer"
+          },
+          "metrics_prefix": {
+            "description": "Depending on your graphite provider, you might need to prefix the metrics with a certain value, like an API key for example.",
+            "example": "my-prefix",
+            "type": "string"
+          },
+          "monitoring_instance_id": {
+            "type": "string"
+          },
+          "pg_log_min_error_statement": {
+            "default": "ERROR",
+            "enum": [
+              "DEBUG5",
+              "DEBUG4",
+              "DEBUG3",
+              "DEBUG2",
+              "DEBUG1",
+              "LOG",
+              "NOTICE",
+              "WARNING",
+              "ERROR",
+              "FATAL",
+              "PANIC"
+            ],
+            "type": "string"
+          },
+          "pg_log_min_messages": {
+            "default": "WARNING",
+            "enum": [
+              "DEBUG5",
+              "DEBUG4",
+              "DEBUG3",
+              "DEBUG2",
+              "DEBUG1",
+              "LOG",
+              "NOTICE",
+              "WARNING",
+              "ERROR",
+              "FATAL",
+              "PANIC"
+            ],
+            "type": "string"
+          },
+          "repmgr_loglevel": {
+            "default": "NOTICE",
+            "enum": [
+              "DEBUG",
+              "INFO",
+              "NOTICE",
+              "WARNING",
+              "ERR",
+              "ALERT",
+              "CRIT",
+              "EMERG"
+            ],
+            "type": "string"
+          },
+          "role_privileges": {
+            "items": {
+              "enum": [
+                "CREATEDB",
+                "CREATEROLE",
+                "REPLICATION"
+              ],
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "sgw_acl": {
+            "description": "Comma separated list of IP networks in CIDR notation which are allowed to access this instance.",
+            "example": "0.0.0.0/0",
+            "type": "string"
+          },
+          "shared_buffers": {
+            "description": "The units of the property are MB.",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "ssl_ciphers": {
+            "default": "HIGH:MEDIUM:+3DES:!aNULL",
+            "type": "string"
+          },
+          "ssl_min_protocol_version": {
+            "default": "TLSv1",
+            "enum": [
+              "TLSv1",
+              "TLSv1.1",
+              "TLSv1.2",
+              "TLSv1.3"
+            ],
+            "type": "string"
+          },
+          "statement_timeout": {
+            "default": 0,
+            "description": "The units of the property are milliseconds.",
+            "type": "integer"
+          },
+          "synchronous_commit": {
+            "default": "on",
+            "enum": [
+              "on",
+              "remote_write",
+              "remote_apply",
+              "local",
+              "off"
+            ],
+            "type": "string"
+          },
+          "syslog": {
+            "example": [
+              "logs4.your-syslog-endpoint.com:54321"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "temp_file_limit": {
+            "default": -1,
+            "description": "An integer value greater than 0 kilobytes is expected. Alternatively -1 means no limit.",
+            "type": "integer"
+          },
+          "temp_files": {
+            "default": -1,
+            "description": "The units of the property are kilobytes.",
+            "minimum": -1,
+            "type": "integer"
+          },
+          "track_io_timing": {
+            "default": "off",
+            "enum": [
+              "on",
+              "off"
+            ],
+            "type": "string"
+          },
+          "wal_level_logical": {
+            "default": false,
+            "type": "boolean"
+          },
+          "wal_writer_delay": {
+            "default": 200,
+            "maximum": 10000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "work_mem": {
+            "description": "The units of the property are kilobytes. Specifies the amount of memory to be used by internal sort operations and hash tables before writing to temporary disk files.",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "RabbitMQInstanceParameters": {
+        "properties": {
+          "consumer_timeout": {
+            "default": 1800000,
+            "description": "The unit is milliseconds.",
+            "minimum": 1800000,
+            "type": "integer"
+          },
+          "enable_monitoring": {
+            "default": false,
+            "type": "boolean"
+          },
+          "graphite": {
+            "description": "If you want to monitor your service with Graphite, you can set the custom parameter graphite. It expects the host and port where the Graphite metrics should be sent to.",
+            "example": "yourspace.your-graphite-endpoint.com:12345",
+            "type": "string"
+          },
+          "max_disk_threshold": {
+            "default": 80,
+            "description": "This component monitors ephemeral and persistent disk usage. If one of these disk usages reaches the default configured threshold of 80%, the a9s Parachute stops all processes on that node.",
+            "example": 90,
+            "type": "integer"
+          },
+          "metrics_frequency": {
+            "default": 10,
+            "description": "Frequency of metrics being emitted in seconds",
+            "type": "integer"
+          },
+          "metrics_prefix": {
+            "description": "Depending on your graphite provider, you might need to prefix the metrics with a certain value, like an API key for example.",
+            "example": "my-prefix",
+            "type": "string"
+          },
+          "monitoring_instance_id": {
+            "type": "string"
+          },
+          "plugins": {
+            "items": {
+              "enum": [
+                "rabbitmq_consistent_hash_exchange",
+                "rabbitmq_federation",
+                "rabbitmq_federation_management",
+                "rabbitmq_mqtt",
+                "rabbitmq_sharding",
+                "rabbitmq_shovel",
+                "rabbitmq_shovel_management",
+                "rabbitmq_stomp",
+                "rabbitmq_tracing",
+                "rabbitmq_event_exchange"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "roles": {
+            "example": [
+              "administrator",
+              "management"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "sgw_acl": {
+            "description": "Comma separated list of IP networks in CIDR notation which are allowed to access this instance.",
+            "example": "0.0.0.0/0",
+            "type": "string"
+          },
+          "syslog": {
+            "example": [
+              "logs4.your-syslog-endpoint.com:54321"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "tls-ciphers": {
+            "example": [
+              "ECDHE-ECDSA-AES256-GCM-SHA384",
+              "ECDHE-RSA-AES256-GCM-SHA384"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "tls-protocols": {
+            "enum": [
+              "tlsv1.2",
+              "tlsv1.3"
+            ],
+            "type": "string"
+          }
+        },
         "type": "object"
       },
       "RawCredentials": {
@@ -342,6 +1163,139 @@
         ],
         "type": "object"
       },
+      "RedisInstanceParameters": {
+        "properties": {
+          "down-after-milliseconds": {
+            "default": 10000,
+            "description": "The unit is milliseconds.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "enable_monitoring": {
+            "default": false,
+            "type": "boolean"
+          },
+          "failover-timeout": {
+            "default": 30000,
+            "description": "The unit is milliseconds.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "graphite": {
+            "description": "If you want to monitor your service with Graphite, you can set the custom parameter graphite. It expects the host and port where the Graphite metrics should be sent to.",
+            "example": "yourspace.your-graphite-endpoint.com:12345",
+            "type": "string"
+          },
+          "lazyfree-lazy-eviction": {
+            "default": "no",
+            "enum": [
+              "yes",
+              "no"
+            ],
+            "type": "string"
+          },
+          "lazyfree-lazy-expire": {
+            "default": "no",
+            "enum": [
+              "yes",
+              "no"
+            ],
+            "type": "string"
+          },
+          "lua-time-limit": {
+            "default": 5000,
+            "type": "integer"
+          },
+          "max_disk_threshold": {
+            "default": 80,
+            "description": "This component monitors ephemeral and persistent disk usage. If one of these disk usages reaches the default configured threshold of 80%, the a9s Parachute stops all processes on that node.",
+            "example": 90,
+            "type": "integer"
+          },
+          "maxclients": {
+            "default": 10000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "maxmemory-policy": {
+            "default": "volatile-lru",
+            "enum": [
+              "volatile-lru",
+              "allkeys-lru",
+              "volatile-random",
+              "allkeys-random",
+              "volatile-ttl",
+              "noeviction"
+            ],
+            "type": "string"
+          },
+          "maxmemory-samples": {
+            "default": 5,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "metrics_frequency": {
+            "default": 10,
+            "description": "Frequency of metrics being emitted in seconds",
+            "type": "integer"
+          },
+          "metrics_prefix": {
+            "description": "Depending on your graphite provider, you might need to prefix the metrics with a certain value, like an API key for example.",
+            "example": "my-prefix",
+            "type": "string"
+          },
+          "min_replicas_max_lag": {
+            "default": 10,
+            "description": "The unit is seconds.",
+            "type": "integer"
+          },
+          "monitoring_instance_id": {
+            "type": "string"
+          },
+          "notify-keyspace-events": {
+            "default": "",
+            "description": "The allowed value must include the following characters only: [K,E,g,$,l,s,h,z,x,e,A,t]",
+            "type": "string"
+          },
+          "sgw_acl": {
+            "description": "Comma separated list of IP networks in CIDR notation which are allowed to access this instance.",
+            "example": "0.0.0.0/0",
+            "type": "string"
+          },
+          "snapshot": {
+            "description": "This setting must follow the original Redis configuration for RDB.",
+            "example": "['save 900 1','save 300 10']",
+            "type": "string"
+          },
+          "syslog": {
+            "example": [
+              "logs4.your-syslog-endpoint.com:54321"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "tls-ciphers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "tls-ciphersuites": {
+            "example": "TLS_RSA_WITH_AES_128_CBC_SHA:TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+            "type": "string"
+          },
+          "tls-protocols": {
+            "enum": [
+              "TLSv1.2",
+              "TLSv1.3"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "Schema": {
         "properties": {
           "parameters": {
@@ -359,7 +1313,7 @@
             "type": "string"
           },
           "parameters": {
-            "$ref": "#/components/schemas/InstanceParameters"
+            "$ref": "#/components/schemas/OpenSearchInstanceParameters"
           },
           "planId": {
             "type": "string"
@@ -377,7 +1331,7 @@
             "type": "string"
           },
           "parameters": {
-            "$ref": "#/components/schemas/InstanceParameters"
+            "$ref": "#/components/schemas/OpenSearchInstanceParameters"
           },
           "planId": {
             "type": "string"

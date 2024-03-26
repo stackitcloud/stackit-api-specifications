@@ -43,6 +43,125 @@
         },
         "type": "object"
       },
+      "rrset.ImportSummary": {
+        "description": "ImportSummary is the summary of the import.",
+        "properties": {
+          "createdRRSets": {
+            "example": 0,
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "createdRecords": {
+            "example": 0,
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "deletedRRSets": {
+            "example": 10000,
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "deletedRecords": {
+            "example": 10000,
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "updatedRRSets": {
+            "example": 5,
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "updatedRecords": {
+            "example": 5,
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "rrset.ImportSummaryResponse": {
+        "description": "ImportSummaryResponse is the response of the import.",
+        "properties": {
+          "message": {
+            "example": "Success",
+            "type": "string"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/rrset.ImportSummary"
+          }
+        },
+        "required": [
+          "summary"
+        ],
+        "type": "object"
+      },
+      "zone_models.ExportParams": {
+        "properties": {
+          "exportAsFQDN": {
+            "default": true,
+            "example": true,
+            "type": "boolean"
+          },
+          "format": {
+            "default": "csv",
+            "enum": [
+              "csv",
+              "json",
+              "bind"
+            ],
+            "example": "csv",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "zone_models.ExportRecordModel": {
+        "properties": {
+          "comment": {
+            "example": "comment",
+            "type": "string"
+          },
+          "content": {
+            "example": [
+              "1.2.3.4"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "name": {
+            "example": "example.com",
+            "type": "string"
+          },
+          "ttl": {
+            "example": 3600,
+            "type": "integer"
+          },
+          "type": {
+            "example": "A",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "zone_models.ExportZoneJson": {
+        "properties": {
+          "rrSets": {
+            "items": {
+              "$ref": "#/components/schemas/zone_models.ExportRecordModel"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "CreateZonePayload": {
         "description": "Zone to create.",
         "properties": {
@@ -267,7 +386,8 @@
               "SSHFP",
               "TLSA",
               "URI",
-              "CERT"
+              "CERT",
+              "SVCB"
             ],
             "example": "A",
             "type": "string"
@@ -1784,7 +1904,8 @@
                 "SSHFP",
                 "TLSA",
                 "URI",
-                "CERT"
+                "CERT",
+                "SVCB"
               ],
               "type": "string"
             }

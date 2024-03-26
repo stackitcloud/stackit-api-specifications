@@ -1,6 +1,22 @@
 {
   "components": {
     "schemas": {
+      "AdminMoveResourcePayload": {
+        "properties": {
+          "destination": {
+            "$ref": "#/components/schemas/MoveDestination"
+          }
+        },
+        "type": "object"
+      },
+      "AdminMoveResourceResponse": {
+        "properties": {
+          "writtenAt": {
+            "$ref": "#/components/schemas/Zookie"
+          }
+        },
+        "type": "object"
+      },
       "Consistency": {
         "properties": {
           "atExactSnapshot": {
@@ -31,7 +47,7 @@
           },
           "parentId": {
             "example": "029527b4-a8c0-4f0b-8a70-516a24cd23045",
-            "pattern": "^([a-zA-Z0-9/_|\\-=+]{1,})$",
+            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
             "title": "The ID of the parent",
             "type": "string"
           },
@@ -43,13 +59,13 @@
           },
           "resourceAlias": {
             "example": "schwarz-it-kg-WJACUK1-alias",
-            "pattern": "^([a-zA-Z0-9/_|\\-=+]{1,})$",
+            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
             "title": "Resource alias (if exists)",
             "type": "string"
           },
           "resourceId": {
             "example": "029527b4-a8c0-4f0b-8a70-516a24cd23001",
-            "pattern": "^([a-zA-Z0-9/_|\\-=+]{1,})$",
+            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
             "title": "The ID of the resource, that should be created",
             "type": "string"
           }
@@ -72,7 +88,7 @@
           },
           "parentId": {
             "example": "029527b4-a8c0-4f0b-8a70-516a24cd23045",
-            "pattern": "^([a-zA-Z0-9/_|\\-=+]{1,})$",
+            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
             "title": "The ID of the parent",
             "type": "string"
           },
@@ -85,13 +101,13 @@
           },
           "resourceAlias": {
             "example": "schwarz-it-kg-WJACUK1-alias",
-            "pattern": "^([a-zA-Z0-9/_|\\-=+]{1,})$",
+            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
             "title": "Resource alias (if exists)",
             "type": "string"
           },
           "resourceId": {
             "example": "029527b4-a8c0-4f0b-8a70-516a24cd23001",
-            "pattern": "^([a-zA-Z0-9/_|\\-=+]{1,})$",
+            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
             "title": "The ID of the resource, that should be created",
             "type": "string"
           },
@@ -141,6 +157,80 @@
         },
         "required": [
           "deletedFromResourceIds"
+        ],
+        "type": "object"
+      },
+      "DomainFilter": {
+        "properties": {
+          "domains": {
+            "example": [
+              "mail.schwarz",
+              "example.com"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 200,
+            "type": "array"
+          },
+          "effective": {
+            "example": true,
+            "title": "If the filter is active or not",
+            "type": "boolean"
+          },
+          "resourceId": {
+            "example": "029527b4-a8c0-4f0b-8a70-516a24cd23001",
+            "pattern": "^([a-zA-Z0-9/_|\\-=+]{1,})$",
+            "title": "The ID of the resource",
+            "type": "string"
+          },
+          "resourceType": {
+            "example": "organization",
+            "pattern": "^[a-z](?:-?[a-z]){1,63}$",
+            "title": "Resource type",
+            "type": "string"
+          },
+          "updatedAt": {
+            "example": "2019-08-24T14:15:22Z",
+            "title": "The date the domain filter was last updated",
+            "type": "string"
+          }
+        },
+        "required": [
+          "resourceId",
+          "resourceType",
+          "effective"
+        ],
+        "type": "object"
+      },
+      "DomainFilterPayload": {
+        "properties": {
+          "domains": {
+            "example": [
+              "mail.schwarz",
+              "example.com"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 200,
+            "title": "The list of domains which should be added to the domain filter",
+            "type": "array"
+          }
+        },
+        "required": [
+          "domains"
+        ],
+        "type": "object"
+      },
+      "DomainFilterResponse": {
+        "properties": {
+          "domainFilter": {
+            "$ref": "#/components/schemas/DomainFilter"
+          }
+        },
+        "required": [
+          "domainFilter"
         ],
         "type": "object"
       },
@@ -221,6 +311,69 @@
           "subject",
           "role"
         ],
+        "type": "object"
+      },
+      "MoveDestination": {
+        "properties": {
+          "resourceId": {
+            "example": "schwarz-it-kg-WJACUK1",
+            "pattern": "^([a-zA-Z0-9/_|\\-=+]{1,})$",
+            "title": "The ID of the resource",
+            "type": "string"
+          },
+          "resourceType": {
+            "example": "organization",
+            "pattern": "^(organization|folder)$",
+            "title": "Resource type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "resourceId",
+          "resourceType"
+        ],
+        "type": "object"
+      },
+      "MoveInitiator": {
+        "properties": {
+          "email": {
+            "example": "user@mail.schwarz",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Subject email",
+            "type": "string"
+          },
+          "id": {
+            "example": "fea4e3d2-0710-4365-8dda-f54bfa2467e5",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Subject id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "id"
+        ],
+        "type": "object"
+      },
+      "MoveResourcePayload": {
+        "properties": {
+          "destination": {
+            "$ref": "#/components/schemas/MoveDestination"
+          },
+          "initiator": {
+            "$ref": "#/components/schemas/MoveInitiator"
+          }
+        },
+        "type": "object"
+      },
+      "MoveResourceResponse": {
+        "properties": {
+          "writtenAt": {
+            "$ref": "#/components/schemas/Zookie"
+          }
+        },
         "type": "object"
       },
       "Permission": {
@@ -333,7 +486,7 @@
           },
           "resourceId": {
             "example": "schwarz-it-kg-WJACUK1",
-            "pattern": "^([a-zA-Z0-9/_|\\-=+]{1,})$",
+            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
             "title": "The ID of the resource",
             "type": "string"
           },
@@ -383,7 +536,7 @@
         "properties": {
           "resourceId": {
             "example": "schwarz-it-kg-WJACUK1",
-            "pattern": "^([a-zA-Z0-9/_|\\-=+]{1,})$",
+            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
             "title": "The ID of the resource, where the members should be updated",
             "type": "string"
           },
@@ -444,7 +597,7 @@
         "properties": {
           "resourceId": {
             "example": "schwarz-it-kg-WJACUK1",
-            "pattern": "^([a-zA-Z0-9/_|\\-=+]{1,})$",
+            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
             "title": "The ID of the resource",
             "type": "string"
           },
@@ -484,7 +637,7 @@
           },
           "resourceId": {
             "example": "schwarz-it-kg-WJACUK1",
-            "pattern": "^([a-zA-Z0-9/_|\\-=+]{1,})$",
+            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
             "title": "The ID of the resource",
             "type": "string"
           },
@@ -663,7 +816,7 @@
           },
           "resourceId": {
             "example": "schwarz-it-kg-WJACUK1",
-            "pattern": "^([a-zA-Z0-9/_|\\-=+]{1,})$",
+            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
             "title": "The ID of the resource, where the members should be updated",
             "type": "string"
           },
@@ -701,7 +854,7 @@
             "$ref": "#/components/schemas/Consistency"
           },
           "resource": {
-            "example": "schwarz-it-kg-WJACUK1",
+            "example": "some-resource-HLVAEK1",
             "title": "Unique identifier of the resource",
             "type": "string"
           },
@@ -752,7 +905,7 @@
           },
           "resourceId": {
             "example": "schwarz-it-kg-WJACUK1",
-            "pattern": "^([a-zA-Z0-9/_|\\-=+]{1,})$",
+            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
             "title": "The ID of the resource, where the members should be updated",
             "type": "string"
           },
@@ -865,11 +1018,6 @@
     }
   },
   "info": {
-    "contact": {
-      "email": "SIT-STACKIT-Core-Platform-Security@mail.schwarz",
-      "name": "SIT-STACKIT-Core-Platform-Security",
-      "url": "https://developers.stackit.schwarz"
-    },
     "description": "The Membership API is used to manage memberships, roles and permissions of STACKIT resources, like projects, folders, organizations and other resources.",
     "title": "STACKIT Membership API",
     "version": "2.0"

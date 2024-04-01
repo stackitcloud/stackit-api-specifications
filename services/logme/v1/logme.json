@@ -337,131 +337,6 @@
         ],
         "type": "object"
       },
-      "LogMe2InstanceParameters": {
-        "properties": {
-          "enable_monitoring": {
-            "default": false,
-            "type": "boolean"
-          },
-          "fluentd-tcp": {
-            "default": 0,
-            "type": "integer"
-          },
-          "fluentd-tls": {
-            "default": 6514,
-            "type": "integer"
-          },
-          "fluentd-tls-ciphers": {
-            "type": "string"
-          },
-          "fluentd-tls-max-version": {
-            "type": "string"
-          },
-          "fluentd-tls-min-version": {
-            "type": "string"
-          },
-          "fluentd-tls-version": {
-            "type": "string"
-          },
-          "fluentd-udp": {
-            "default": 514,
-            "type": "integer"
-          },
-          "graphite": {
-            "description": "If you want to monitor your service with Graphite, you can set the custom parameter graphite. It expects the host and port where the Graphite metrics should be sent to.",
-            "example": "yourspace.your-graphite-endpoint.com:12345",
-            "type": "string"
-          },
-          "groks": {
-            "items": {
-              "type": "object"
-            },
-            "type": "array"
-          },
-          "ism_deletion_after": {
-            "default": "30d",
-            "description": "Combination of an integer and a timerange when an index will be considered 'd' and can be deleted from OpenSearch. Possible values for the timerange are s, m, h and d.",
-            "type": "string"
-          },
-          "ism_jitter": {
-            "default": 0.6,
-            "type": "number"
-          },
-          "ism_job_interval": {
-            "default": 5,
-            "type": "integer"
-          },
-          "java_heapspace": {
-            "description": "Default: not set, 46% of available memory will be used. The amount of memory (in MB) allocated as heap by the JVM for OpenSearch.",
-            "minimum": 256,
-            "type": "integer"
-          },
-          "java_maxmetaspace": {
-            "default": 512,
-            "description": "The amount of memory (in MB) used by the JVM to store metadata for OpenSearch.",
-            "maximum": 1024,
-            "minimum": 256,
-            "type": "integer"
-          },
-          "max_disk_threshold": {
-            "default": 80,
-            "description": "This component monitors ephemeral and persistent disk usage. If one of these disk usages reaches the default configured threshold of 80%, the a9s Parachute stops all processes on that node.",
-            "example": 90,
-            "type": "integer"
-          },
-          "metrics_frequency": {
-            "default": 10,
-            "description": "Frequency of metrics being emitted in seconds",
-            "type": "integer"
-          },
-          "metrics_prefix": {
-            "description": "Depending on your graphite provider, you might need to prefix the metrics with a certain value, like an API key for example.",
-            "example": "my-prefix",
-            "type": "string"
-          },
-          "monitoring_instance_id": {
-            "type": "string"
-          },
-          "opensearch-tls-ciphers": {
-            "items": {
-              "enum": [
-                "TLSv1.2",
-                "TLSv1.3"
-              ],
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "opensearch-tls-protocols": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "sgw_acl": {
-            "description": "Comma separated list of IP networks in CIDR notation which are allowed to access this instance.",
-            "example": "0.0.0.0/0",
-            "type": "string"
-          },
-          "syslog": {
-            "example": [
-              "logs4.your-syslog-endpoint.com:54321"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "syslog-use-udp": {
-            "enum": [
-              "yes",
-              "no"
-            ],
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "MariaDBInstanceParameters": {
         "properties": {
           "enable_monitoring": {
@@ -1313,7 +1188,7 @@
             "type": "string"
           },
           "parameters": {
-            "$ref": "#/components/schemas/LogMe2InstanceParameters"
+            "$ref": "#/components/schemas/InstanceParameters"
           },
           "planId": {
             "type": "string"
@@ -1331,7 +1206,7 @@
             "type": "string"
           },
           "parameters": {
-            "$ref": "#/components/schemas/LogMe2InstanceParameters"
+            "$ref": "#/components/schemas/InstanceParameters"
           },
           "planId": {
             "type": "string"
@@ -1502,6 +1377,131 @@
           "parachuteDiskEphemeralActivated",
           "cpuLoadPercent"
         ],
+        "type": "object"
+      },
+      "InstanceParameters": {
+        "properties": {
+          "enable_monitoring": {
+            "default": false,
+            "type": "boolean"
+          },
+          "fluentd-tcp": {
+            "default": 0,
+            "type": "integer"
+          },
+          "fluentd-tls": {
+            "default": 6514,
+            "type": "integer"
+          },
+          "fluentd-tls-ciphers": {
+            "type": "string"
+          },
+          "fluentd-tls-max-version": {
+            "type": "string"
+          },
+          "fluentd-tls-min-version": {
+            "type": "string"
+          },
+          "fluentd-tls-version": {
+            "type": "string"
+          },
+          "fluentd-udp": {
+            "default": 514,
+            "type": "integer"
+          },
+          "graphite": {
+            "description": "If you want to monitor your service with Graphite, you can set the custom parameter graphite. It expects the host and port where the Graphite metrics should be sent to.",
+            "example": "yourspace.your-graphite-endpoint.com:12345",
+            "type": "string"
+          },
+          "groks": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "ism_deletion_after": {
+            "default": "30d",
+            "description": "Combination of an integer and a timerange when an index will be considered 'd' and can be deleted from OpenSearch. Possible values for the timerange are s, m, h and d.",
+            "type": "string"
+          },
+          "ism_jitter": {
+            "default": 0.6,
+            "type": "number"
+          },
+          "ism_job_interval": {
+            "default": 5,
+            "type": "integer"
+          },
+          "java_heapspace": {
+            "description": "Default: not set, 46% of available memory will be used. The amount of memory (in MB) allocated as heap by the JVM for OpenSearch.",
+            "minimum": 256,
+            "type": "integer"
+          },
+          "java_maxmetaspace": {
+            "default": 512,
+            "description": "The amount of memory (in MB) used by the JVM to store metadata for OpenSearch.",
+            "maximum": 1024,
+            "minimum": 256,
+            "type": "integer"
+          },
+          "max_disk_threshold": {
+            "default": 80,
+            "description": "This component monitors ephemeral and persistent disk usage. If one of these disk usages reaches the default configured threshold of 80%, the a9s Parachute stops all processes on that node.",
+            "example": 90,
+            "type": "integer"
+          },
+          "metrics_frequency": {
+            "default": 10,
+            "description": "Frequency of metrics being emitted in seconds",
+            "type": "integer"
+          },
+          "metrics_prefix": {
+            "description": "Depending on your graphite provider, you might need to prefix the metrics with a certain value, like an API key for example.",
+            "example": "my-prefix",
+            "type": "string"
+          },
+          "monitoring_instance_id": {
+            "type": "string"
+          },
+          "opensearch-tls-ciphers": {
+            "items": {
+              "enum": [
+                "TLSv1.2",
+                "TLSv1.3"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "opensearch-tls-protocols": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "sgw_acl": {
+            "description": "Comma separated list of IP networks in CIDR notation which are allowed to access this instance.",
+            "example": "0.0.0.0/0",
+            "type": "string"
+          },
+          "syslog": {
+            "example": [
+              "logs4.your-syslog-endpoint.com:54321"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "syslog-use-udp": {
+            "enum": [
+              "yes",
+              "no"
+            ],
+            "type": "string"
+          }
+        },
         "type": "object"
       },
       "ListOfferingsResponse": {

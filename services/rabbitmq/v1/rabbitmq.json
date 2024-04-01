@@ -1040,104 +1040,6 @@
         },
         "type": "object"
       },
-      "RabbitMQInstanceParameters": {
-        "properties": {
-          "consumer_timeout": {
-            "default": 1800000,
-            "description": "The unit is milliseconds.",
-            "minimum": 1800000,
-            "type": "integer"
-          },
-          "enable_monitoring": {
-            "default": false,
-            "type": "boolean"
-          },
-          "graphite": {
-            "description": "If you want to monitor your service with Graphite, you can set the custom parameter graphite. It expects the host and port where the Graphite metrics should be sent to.",
-            "example": "yourspace.your-graphite-endpoint.com:12345",
-            "type": "string"
-          },
-          "max_disk_threshold": {
-            "default": 80,
-            "description": "This component monitors ephemeral and persistent disk usage. If one of these disk usages reaches the default configured threshold of 80%, the a9s Parachute stops all processes on that node.",
-            "example": 90,
-            "type": "integer"
-          },
-          "metrics_frequency": {
-            "default": 10,
-            "description": "Frequency of metrics being emitted in seconds",
-            "type": "integer"
-          },
-          "metrics_prefix": {
-            "description": "Depending on your graphite provider, you might need to prefix the metrics with a certain value, like an API key for example.",
-            "example": "my-prefix",
-            "type": "string"
-          },
-          "monitoring_instance_id": {
-            "type": "string"
-          },
-          "plugins": {
-            "items": {
-              "enum": [
-                "rabbitmq_consistent_hash_exchange",
-                "rabbitmq_federation",
-                "rabbitmq_federation_management",
-                "rabbitmq_mqtt",
-                "rabbitmq_sharding",
-                "rabbitmq_shovel",
-                "rabbitmq_shovel_management",
-                "rabbitmq_stomp",
-                "rabbitmq_tracing",
-                "rabbitmq_event_exchange"
-              ],
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "roles": {
-            "example": [
-              "administrator",
-              "management"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "sgw_acl": {
-            "description": "Comma separated list of IP networks in CIDR notation which are allowed to access this instance.",
-            "example": "0.0.0.0/0",
-            "type": "string"
-          },
-          "syslog": {
-            "example": [
-              "logs4.your-syslog-endpoint.com:54321"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "tls-ciphers": {
-            "example": [
-              "ECDHE-ECDSA-AES256-GCM-SHA384",
-              "ECDHE-RSA-AES256-GCM-SHA384"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "tls-protocols": {
-            "enum": [
-              "tlsv1.2",
-              "tlsv1.3"
-            ],
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "RawCredentials": {
         "properties": {
           "credentials": {
@@ -1313,7 +1215,7 @@
             "type": "string"
           },
           "parameters": {
-            "$ref": "#/components/schemas/RabbitMQInstanceParameters"
+            "$ref": "#/components/schemas/InstanceParameters"
           },
           "planId": {
             "type": "string"
@@ -1331,7 +1233,7 @@
             "type": "string"
           },
           "parameters": {
-            "$ref": "#/components/schemas/RabbitMQInstanceParameters"
+            "$ref": "#/components/schemas/InstanceParameters"
           },
           "planId": {
             "type": "string"
@@ -1516,6 +1418,104 @@
         "required": [
           "offerings"
         ],
+        "type": "object"
+      },
+      "InstanceParameters": {
+        "properties": {
+          "consumer_timeout": {
+            "default": 1800000,
+            "description": "The unit is milliseconds.",
+            "minimum": 1800000,
+            "type": "integer"
+          },
+          "enable_monitoring": {
+            "default": false,
+            "type": "boolean"
+          },
+          "graphite": {
+            "description": "If you want to monitor your service with Graphite, you can set the custom parameter graphite. It expects the host and port where the Graphite metrics should be sent to.",
+            "example": "yourspace.your-graphite-endpoint.com:12345",
+            "type": "string"
+          },
+          "max_disk_threshold": {
+            "default": 80,
+            "description": "This component monitors ephemeral and persistent disk usage. If one of these disk usages reaches the default configured threshold of 80%, the a9s Parachute stops all processes on that node.",
+            "example": 90,
+            "type": "integer"
+          },
+          "metrics_frequency": {
+            "default": 10,
+            "description": "Frequency of metrics being emitted in seconds",
+            "type": "integer"
+          },
+          "metrics_prefix": {
+            "description": "Depending on your graphite provider, you might need to prefix the metrics with a certain value, like an API key for example.",
+            "example": "my-prefix",
+            "type": "string"
+          },
+          "monitoring_instance_id": {
+            "type": "string"
+          },
+          "plugins": {
+            "items": {
+              "enum": [
+                "rabbitmq_consistent_hash_exchange",
+                "rabbitmq_federation",
+                "rabbitmq_federation_management",
+                "rabbitmq_mqtt",
+                "rabbitmq_sharding",
+                "rabbitmq_shovel",
+                "rabbitmq_shovel_management",
+                "rabbitmq_stomp",
+                "rabbitmq_tracing",
+                "rabbitmq_event_exchange"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "roles": {
+            "example": [
+              "administrator",
+              "management"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "sgw_acl": {
+            "description": "Comma separated list of IP networks in CIDR notation which are allowed to access this instance.",
+            "example": "0.0.0.0/0",
+            "type": "string"
+          },
+          "syslog": {
+            "example": [
+              "logs4.your-syslog-endpoint.com:54321"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "tls-ciphers": {
+            "example": [
+              "ECDHE-ECDSA-AES256-GCM-SHA384",
+              "ECDHE-RSA-AES256-GCM-SHA384"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "tls-protocols": {
+            "enum": [
+              "tlsv1.2",
+              "tlsv1.3"
+            ],
+            "type": "string"
+          }
+        },
         "type": "object"
       },
       "InstanceLastOperation": {

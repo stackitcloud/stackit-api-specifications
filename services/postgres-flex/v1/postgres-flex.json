@@ -1,12 +1,125 @@
 {
   "components": {
     "schemas": {
-      "instance.CreateDatabaseRequest": {
+      "api.Configuration": {
         "properties": {
-          "collation": {
-            "example": "SQL_Latin1_General_CP1_CI_AS",
+          "name": {
             "type": "string"
           },
+          "setting": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "api.ExtensionConfigLoadResponse": {
+        "properties": {
+          "configuration": {
+            "description": "Returns marshalled JSON of the new configuration of whatever extension is called",
+            "items": {
+              "$ref": "#/components/schemas/api.Configuration"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "api.ExtensionConfigureResponse": {
+        "properties": {
+          "configuration": {
+            "description": "Returns marshalled JSON of the new configuration of whatever extension is called",
+            "items": {
+              "$ref": "#/components/schemas/api.Configuration"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "api.ExtensionDeleteResponse": {
+        "properties": {
+          "isSucceded": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "api.ExtensionList": {
+        "properties": {
+          "ID": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "api.ExtensionLoadResponse": {
+        "properties": {
+          "extension": {
+            "$ref": "#/components/schemas/api.ExtensionList"
+          }
+        },
+        "type": "object"
+      },
+      "api.InstallResponse": {
+        "properties": {
+          "extension": {
+            "$ref": "#/components/schemas/api.ExtensionList"
+          }
+        },
+        "type": "object"
+      },
+      "api.InstalledListResponse": {
+        "properties": {
+          "installed": {
+            "items": {
+              "$ref": "#/components/schemas/api.ExtensionList"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "extensions.Configuration": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "setting": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "extensions.ExtensionListResponse": {
+        "properties": {
+          "list": {
+            "items": {
+              "$ref": "#/components/schemas/api.ExtensionList"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "extensions.NewConfig": {
+        "properties": {
+          "configuration": {
+            "items": {
+              "$ref": "#/components/schemas/extensions.Configuration"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "instance.CreateDatabaseRequest": {
+        "properties": {
           "name": {
             "example": "Test",
             "type": "string"
@@ -23,8 +136,8 @@
       },
       "instance.CreateDatabaseResponse": {
         "properties": {
-          "database": {
-            "$ref": "#/components/schemas/instance.Database"
+          "id": {
+            "type": "string"
           }
         },
         "type": "object"
@@ -42,14 +155,6 @@
       },
       "instance.Database": {
         "properties": {
-          "collation": {
-            "example": "SQL_Latin1_General_CP1_CI_AS",
-            "type": "string"
-          },
-          "createDate": {
-            "example": "2003-04-08T09:13:36.39Z",
-            "type": "string"
-          },
           "id": {
             "example": "1",
             "type": "string"
@@ -128,6 +233,83 @@
           "hosts": {
             "items": {
               "$ref": "#/components/schemas/instance.Host"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "postgres.DatabaseParameter": {
+        "properties": {
+          "context": {
+            "description": "Context of the parameter.",
+            "example": "user",
+            "type": "string"
+          },
+          "dataType": {
+            "description": "Datatype describes the type of data that is used in the Value field.",
+            "example": "integer",
+            "type": "string"
+          },
+          "defaultValue": {
+            "description": "DefaultValue for the value field.",
+            "example": "4096",
+            "type": "string"
+          },
+          "description": {
+            "description": "Description of the parameter.",
+            "example": "sets the maximum memory to be used for query workspace",
+            "type": "string"
+          },
+          "edit": {
+            "description": "Edit shows if the user can change this value.",
+            "example": false,
+            "type": "boolean"
+          },
+          "maxValue": {
+            "description": "MaxValue describes the highest possible value that can be set.",
+            "example": "2148473647",
+            "type": "string"
+          },
+          "minValue": {
+            "description": "MinValue describes the lowest possible value that can be set.",
+            "example": "64",
+            "type": "string"
+          },
+          "name": {
+            "description": "Name of the parameter.",
+            "example": "work_mem",
+            "type": "string"
+          },
+          "pendingRestart": {
+            "description": "PendingRestart describes if a parameter change requires a restart of the server.",
+            "example": false,
+            "type": "boolean"
+          },
+          "resetValue": {
+            "description": "ResetValue for the value field af.ter a reset.",
+            "example": "102400",
+            "type": "string"
+          },
+          "unit": {
+            "description": "Unit if the parameter has a unit if not empty.",
+            "example": "kB",
+            "type": "string"
+          },
+          "value": {
+            "description": "Value of this parameter.",
+            "example": "102400",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "postgres.DatabaseParameterResponse": {
+        "properties": {
+          "parameter": {
+            "description": "List of the parameter",
+            "items": {
+              "$ref": "#/components/schemas/postgres.DatabaseParameter"
             },
             "type": "array"
           }
@@ -903,8 +1085,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
+          "202": {
+            "description": "Accepted"
           },
           "400": {
             "content": {
@@ -916,10 +1098,27 @@
             },
             "description": "Bad Request"
           },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
           "405": {
             "description": "Method Not Allowed"
           },
           "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
             "description": "Internal Server Error"
           }
         },
@@ -1115,6 +1314,9 @@
             },
             "description": "Bad Request"
           },
+          "404": {
+            "description": "Not Found"
+          },
           "405": {
             "description": "Method Not Allowed"
           },
@@ -1183,6 +1385,9 @@
           },
           "403": {
             "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "405": {
             "description": "Method Not Allowed"
@@ -1258,6 +1463,9 @@
               }
             },
             "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "405": {
             "description": "Method Not Allowed"

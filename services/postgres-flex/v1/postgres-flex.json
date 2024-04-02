@@ -1558,6 +1558,70 @@
         "operationId": "CloneInstance"
       }
     },
+    "/v1/projects/{projectId}/instances/{instanceId}/force": {
+      "delete": {
+        "description": "Forces the deletion of an delayed deleted instance",
+        "parameters": [
+          {
+            "description": "Project ID",
+            "explode": false,
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Instance ID",
+            "explode": false,
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "405": {
+            "description": "Method Not Allowed"
+          },
+          "406": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Acceptable"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Force delete instance",
+        "operationId": "ForceDeleteInstance"
+      }
+    },
     "/v1/projects/{projectId}/instances/{instanceId}/users": {
       "get": {
         "description": "List available users for an instance",

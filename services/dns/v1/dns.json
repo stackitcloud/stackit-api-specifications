@@ -1,165 +1,104 @@
 {
   "components": {
     "schemas": {
-      "label.ResponseAllLabels": {
-        "description": "ResponseAllLabels.",
+      "CloneZonePayload": {
+        "description": "metadata to clone a zone.",
         "properties": {
-          "labels": {
-            "items": {
-              "$ref": "#/components/schemas/Label"
-            },
-            "type": "array"
-          },
-          "message": {
-            "example": "Success",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "label.ResponseDeleteLabel": {
-        "description": "ResponseDeleteLabel.",
-        "properties": {
-          "label": {
-            "$ref": "#/components/schemas/Label"
-          },
-          "message": {
-            "example": "Success",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "label.ResponseUpsertLabel": {
-        "description": "ResponseUpsertLabel.",
-        "properties": {
-          "label": {
-            "$ref": "#/components/schemas/Label"
-          },
-          "message": {
-            "example": "Success",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "rrset.ImportSummary": {
-        "description": "ImportSummary is the summary of the import.",
-        "properties": {
-          "createdRRSets": {
-            "example": 0,
-            "maximum": 10000,
-            "minimum": 0,
-            "type": "integer"
-          },
-          "createdRecords": {
-            "example": 0,
-            "maximum": 10000,
-            "minimum": 0,
-            "type": "integer"
-          },
-          "deletedRRSets": {
-            "example": 10000,
-            "maximum": 10000,
-            "minimum": 0,
-            "type": "integer"
-          },
-          "deletedRecords": {
-            "example": 10000,
-            "maximum": 10000,
-            "minimum": 0,
-            "type": "integer"
-          },
-          "updatedRRSets": {
-            "example": 5,
-            "maximum": 10000,
-            "minimum": 0,
-            "type": "integer"
-          },
-          "updatedRecords": {
-            "example": 5,
-            "maximum": 10000,
-            "minimum": 0,
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "rrset.ImportSummaryResponse": {
-        "description": "ImportSummaryResponse is the response of the import.",
-        "properties": {
-          "message": {
-            "example": "Success",
-            "type": "string"
-          },
-          "summary": {
-            "$ref": "#/components/schemas/rrset.ImportSummary"
-          }
-        },
-        "required": [
-          "summary"
-        ],
-        "type": "object"
-      },
-      "zone_models.ExportParams": {
-        "properties": {
-          "exportAsFQDN": {
-            "default": true,
+          "adjustRecords": {
+            "description": "Adjust record set content and replace the dns name of the original zone with the new dns name of the cloned zone",
             "example": true,
             "type": "boolean"
           },
-          "format": {
-            "default": "csv",
-            "enum": [
-              "csv",
-              "json",
-              "bind"
-            ],
-            "example": "csv",
+          "description": {
+            "description": "New Description for the cloned zone. Leave empty to use the same description as the original zone",
+            "example": "this is our example zone",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "dnsName": {
+            "description": "DnsName is the dns name of the zone to clone",
+            "example": "example.com",
+            "maxLength": 253,
+            "minLength": 1,
+            "type": "string"
+          },
+          "name": {
+            "description": "New Name for the cloned zone. Leave empty to use the same name as the original zone",
+            "example": "test",
+            "maxLength": 63,
+            "minLength": 1,
             "type": "string"
           }
         },
+        "required": [
+          "dnsName"
+        ],
         "type": "object"
       },
-      "zone_models.ExportRecordModel": {
+      "CreateRecordSetPayload": {
+        "description": "RRSetPost for rr set info.",
         "properties": {
           "comment": {
-            "example": "comment",
+            "description": "user comment",
+            "example": "this is our example comment",
+            "maxLength": 255,
             "type": "string"
           },
-          "content": {
-            "example": [
-              "1.2.3.4"
-            ],
+          "name": {
+            "description": "name of the record which should be a valid domain according to rfc1035 Section 2.3.4",
+            "example": "example.com.",
+            "maxLength": 63,
+            "minLength": 1,
+            "type": "string"
+          },
+          "records": {
+            "description": "records",
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/RecordPayload"
             },
             "type": "array"
           },
-          "name": {
-            "example": "example.com",
-            "type": "string"
-          },
           "ttl": {
+            "description": "time to live. If nothing provided we will set the zone ttl.",
             "example": 3600,
+            "maximum": 99999999,
+            "minimum": 60,
             "type": "integer"
           },
           "type": {
+            "description": "record set type",
+            "enum": [
+              "A",
+              "AAAA",
+              "SOA",
+              "CNAME",
+              "NS",
+              "MX",
+              "TXT",
+              "SRV",
+              "PTR",
+              "ALIAS",
+              "DNAME",
+              "CAA",
+              "DNSKEY",
+              "DS",
+              "LOC",
+              "NAPTR",
+              "SSHFP",
+              "TLSA",
+              "URI",
+              "CERT",
+              "SVCB"
+            ],
             "example": "A",
             "type": "string"
           }
         },
-        "type": "object"
-      },
-      "zone_models.ExportZoneJson": {
-        "properties": {
-          "rrSets": {
-            "items": {
-              "$ref": "#/components/schemas/zone_models.ExportRecordModel"
-            },
-            "type": "array"
-          }
-        },
+        "required": [
+          "name",
+          "records",
+          "type"
+        ],
         "type": "object"
       },
       "CreateZonePayload": {
@@ -262,6 +201,222 @@
         ],
         "type": "object"
       },
+      "ErrorMessage": {
+        "properties": {
+          "error": {
+            "example": "Error",
+            "type": "string"
+          },
+          "message": {
+            "example": "Error message",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Label": {
+        "properties": {
+          "key": {
+            "example": "stage",
+            "maxLength": 63,
+            "minLength": 1,
+            "type": "string"
+          },
+          "value": {
+            "example": "prod",
+            "maxLength": 63,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "value"
+        ],
+        "type": "object"
+      },
+      "ListRecordSetsResponse": {
+        "description": "ResponseRRSetAll.",
+        "properties": {
+          "itemsPerPage": {
+            "example": 1,
+            "type": "integer"
+          },
+          "message": {
+            "example": "Success",
+            "type": "string"
+          },
+          "rrSets": {
+            "items": {
+              "$ref": "#/components/schemas/RecordSet"
+            },
+            "type": "array"
+          },
+          "totalItems": {
+            "example": 1,
+            "type": "integer"
+          },
+          "totalPages": {
+            "example": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "itemsPerPage",
+          "rrSets",
+          "totalItems",
+          "totalPages"
+        ],
+        "type": "object"
+      },
+      "ListZonesResponse": {
+        "description": "ResponseZoneAll for filtered zones.",
+        "properties": {
+          "itemsPerPage": {
+            "example": 1,
+            "type": "integer"
+          },
+          "message": {
+            "example": "Success",
+            "type": "string"
+          },
+          "totalItems": {
+            "example": 1,
+            "type": "integer"
+          },
+          "totalPages": {
+            "example": 1,
+            "type": "integer"
+          },
+          "zones": {
+            "items": {
+              "$ref": "#/components/schemas/Zone"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "itemsPerPage",
+          "totalItems",
+          "totalPages",
+          "zones"
+        ],
+        "type": "object"
+      },
+      "Message": {
+        "properties": {
+          "message": {
+            "example": "Success",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "MoveCodeResponse": {
+        "properties": {
+          "code": {
+            "description": "code to move the zone. It is one time shown so better keep it.",
+            "example": "3sLuLCLpLEbbQ6GZ05tu2U56dmKx1uCdWquTHz6BK34=",
+            "type": "string"
+          },
+          "expiresAt": {
+            "description": "when the code expires",
+            "example": "2023-08-08T08:58:25Z",
+            "type": "string"
+          },
+          "message": {
+            "description": "human readable message",
+            "example": "successfully created code to move the zone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "expiresAt"
+        ],
+        "type": "object"
+      },
+      "MoveZonePayload": {
+        "description": "body to move zone from one project to another.",
+        "properties": {
+          "code": {
+            "description": "Code to move the zone. It must be valid, not expired and belong",
+            "example": "3sLuLCLpLEbbQ6GZ05tu2U56dmKx1uCdWquTHz6BK34=",
+            "maxLength": 1024,
+            "minLength": 1,
+            "type": "string"
+          },
+          "zoneDnsName": {
+            "description": "ZoneDnsName is the dns name of the zone to move",
+            "example": "example.com",
+            "maxLength": 253,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "zoneDnsName"
+        ],
+        "type": "object"
+      },
+      "PartialUpdateRecordPayload": {
+        "description": "RecordPatch for record patch in record set.",
+        "properties": {
+          "action": {
+            "enum": [
+              "add",
+              "delete"
+            ],
+            "type": "string"
+          },
+          "records": {
+            "description": "records",
+            "items": {
+              "$ref": "#/components/schemas/RecordPayload"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "action",
+          "records"
+        ],
+        "type": "object"
+      },
+      "PartialUpdateRecordSetPayload": {
+        "description": "RRSetPatch for rr patch set info.",
+        "properties": {
+          "comment": {
+            "description": "user comment",
+            "example": "this is our example comment",
+            "maxLength": 255,
+            "type": "string"
+          },
+          "name": {
+            "description": "rfc1035 Section 2.3.4",
+            "example": "example.com.",
+            "maxLength": 63,
+            "minLength": 1,
+            "type": "string"
+          },
+          "records": {
+            "description": "records",
+            "items": {
+              "$ref": "#/components/schemas/RecordPayload"
+            },
+            "type": "array"
+          },
+          "ttl": {
+            "description": "time to live",
+            "example": 3600,
+            "maximum": 99999999,
+            "minimum": 30,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
       "PartialUpdateZonePayload": {
         "properties": {
           "acl": {
@@ -334,181 +489,42 @@
         },
         "type": "object"
       },
-      "CreateRecordSetPayload": {
-        "description": "RRSetPost for rr set info.",
+      "Record": {
+        "description": "Record.",
         "properties": {
-          "comment": {
-            "description": "user comment",
-            "example": "this is our example comment",
-            "maxLength": 255,
-            "type": "string"
-          },
-          "name": {
-            "description": "name of the record which should be a valid domain according to rfc1035 Section 2.3.4",
-            "example": "example.com.",
-            "maxLength": 63,
+          "content": {
+            "description": "content of the record",
+            "example": "1.2.3.4",
+            "maxLength": 64000,
             "minLength": 1,
             "type": "string"
           },
-          "records": {
-            "description": "records",
-            "items": {
-              "$ref": "#/components/schemas/RecordPayload"
-            },
-            "type": "array"
-          },
-          "ttl": {
-            "description": "time to live. If nothing provided we will set the zone ttl.",
-            "example": 3600,
-            "maximum": 99999999,
-            "minimum": 60,
-            "type": "integer"
-          },
-          "type": {
-            "description": "record set type",
-            "enum": [
-              "A",
-              "AAAA",
-              "SOA",
-              "CNAME",
-              "NS",
-              "MX",
-              "TXT",
-              "SRV",
-              "PTR",
-              "ALIAS",
-              "DNAME",
-              "CAA",
-              "DNSKEY",
-              "DS",
-              "LOC",
-              "NAPTR",
-              "SSHFP",
-              "TLSA",
-              "URI",
-              "CERT",
-              "SVCB"
-            ],
-            "example": "A",
+          "id": {
+            "description": "rr set id",
+            "example": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
+            "minLength": 1,
             "type": "string"
           }
         },
         "required": [
-          "name",
-          "records",
-          "type"
+          "content",
+          "id"
         ],
         "type": "object"
       },
-      "PartialUpdateRecordSetPayload": {
-        "description": "RRSetPatch for rr patch set info.",
+      "RecordPayload": {
+        "description": "RecordPost for rr set info.",
         "properties": {
-          "comment": {
-            "description": "user comment",
-            "example": "this is our example comment",
-            "maxLength": 255,
-            "type": "string"
-          },
-          "name": {
-            "description": "rfc1035 Section 2.3.4",
-            "example": "example.com.",
-            "maxLength": 63,
-            "minLength": 1,
-            "type": "string"
-          },
-          "records": {
-            "description": "records",
-            "items": {
-              "$ref": "#/components/schemas/RecordPayload"
-            },
-            "type": "array"
-          },
-          "ttl": {
-            "description": "time to live",
-            "example": 3600,
-            "maximum": 99999999,
-            "minimum": 30,
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "PartialUpdateRecordPayload": {
-        "description": "RecordPatch for record patch in record set.",
-        "properties": {
-          "action": {
-            "enum": [
-              "add",
-              "delete"
-            ],
-            "type": "string"
-          },
-          "records": {
-            "description": "records",
-            "items": {
-              "$ref": "#/components/schemas/RecordPayload"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "action",
-          "records"
-        ],
-        "type": "object"
-      },
-      "CloneZonePayload": {
-        "description": "metadata to clone a zone.",
-        "properties": {
-          "adjustRecords": {
-            "description": "Adjust record set content and replace the dns name of the original zone with the new dns name of the cloned zone",
-            "example": true,
-            "type": "boolean"
-          },
-          "description": {
-            "description": "New Description for the cloned zone. Leave empty to use the same description as the original zone",
-            "example": "this is our example zone",
-            "maxLength": 1024,
-            "type": "string"
-          },
-          "dnsName": {
-            "description": "DnsName is the dns name of the zone to clone",
-            "example": "example.com",
-            "maxLength": 253,
-            "minLength": 1,
-            "type": "string"
-          },
-          "name": {
-            "description": "New Name for the cloned zone. Leave empty to use the same name as the original zone",
-            "example": "test",
-            "maxLength": 63,
+          "content": {
+            "description": "content of the record",
+            "example": "1.2.3.4",
+            "maxLength": 64000,
             "minLength": 1,
             "type": "string"
           }
         },
         "required": [
-          "dnsName"
-        ],
-        "type": "object"
-      },
-      "Label": {
-        "properties": {
-          "key": {
-            "example": "stage",
-            "maxLength": 63,
-            "minLength": 1,
-            "type": "string"
-          },
-          "value": {
-            "example": "prod",
-            "maxLength": 63,
-            "minLength": 1,
-            "type": "string"
-          }
-        },
-        "required": [
-          "key",
-          "value"
+          "content"
         ],
         "type": "object"
       },
@@ -629,26 +645,35 @@
         ],
         "type": "object"
       },
-      "Record": {
-        "description": "Record.",
+      "RecordSetResponse": {
+        "description": "ResponseRRSet for rr set info.",
         "properties": {
-          "content": {
-            "description": "content of the record",
-            "example": "1.2.3.4",
-            "maxLength": 64000,
-            "minLength": 1,
+          "message": {
+            "example": "Success",
             "type": "string"
           },
-          "id": {
-            "description": "rr set id",
-            "example": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
+          "rrset": {
+            "$ref": "#/components/schemas/RecordSet"
+          }
+        },
+        "required": [
+          "rrset"
+        ],
+        "type": "object"
+      },
+      "ValidateMoveCodePayload": {
+        "description": "PostValidateMoveCodeRequest body to validate move code request.",
+        "properties": {
+          "code": {
+            "description": "code that should be validated. It validates if it is valid, not expired and belongs to the zone.",
+            "example": "3sLuLCLpLEbbQ6GZ05tu2U56dmKx1uCdWquTHz6BK34=",
+            "maxLength": 1024,
             "minLength": 1,
             "type": "string"
           }
         },
         "required": [
-          "content",
-          "id"
+          "code"
         ],
         "type": "object"
       },
@@ -850,158 +875,6 @@
         ],
         "type": "object"
       },
-      "MoveZonePayload": {
-        "description": "body to move zone from one project to another.",
-        "properties": {
-          "code": {
-            "description": "Code to move the zone. It must be valid, not expired and belong",
-            "example": "3sLuLCLpLEbbQ6GZ05tu2U56dmKx1uCdWquTHz6BK34=",
-            "maxLength": 1024,
-            "minLength": 1,
-            "type": "string"
-          },
-          "zoneDnsName": {
-            "description": "ZoneDnsName is the dns name of the zone to move",
-            "example": "example.com",
-            "maxLength": 253,
-            "minLength": 1,
-            "type": "string"
-          }
-        },
-        "required": [
-          "code",
-          "zoneDnsName"
-        ],
-        "type": "object"
-      },
-      "RecordPayload": {
-        "description": "RecordPost for rr set info.",
-        "properties": {
-          "content": {
-            "description": "content of the record",
-            "example": "1.2.3.4",
-            "maxLength": 64000,
-            "minLength": 1,
-            "type": "string"
-          }
-        },
-        "required": [
-          "content"
-        ],
-        "type": "object"
-      },
-      "RecordSetResponse": {
-        "description": "ResponseRRSet for rr set info.",
-        "properties": {
-          "message": {
-            "example": "Success",
-            "type": "string"
-          },
-          "rrset": {
-            "$ref": "#/components/schemas/RecordSet"
-          }
-        },
-        "required": [
-          "rrset"
-        ],
-        "type": "object"
-      },
-      "ListRecordSetsResponse": {
-        "description": "ResponseRRSetAll.",
-        "properties": {
-          "itemsPerPage": {
-            "example": 1,
-            "type": "integer"
-          },
-          "message": {
-            "example": "Success",
-            "type": "string"
-          },
-          "rrSets": {
-            "items": {
-              "$ref": "#/components/schemas/RecordSet"
-            },
-            "type": "array"
-          },
-          "totalItems": {
-            "example": 1,
-            "type": "integer"
-          },
-          "totalPages": {
-            "example": 1,
-            "type": "integer"
-          }
-        },
-        "required": [
-          "itemsPerPage",
-          "rrSets",
-          "totalItems",
-          "totalPages"
-        ],
-        "type": "object"
-      },
-      "ErrorMessage": {
-        "properties": {
-          "error": {
-            "example": "Error",
-            "type": "string"
-          },
-          "message": {
-            "example": "Error message",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "Message": {
-        "properties": {
-          "message": {
-            "example": "Success",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "MoveCodeResponse": {
-        "properties": {
-          "code": {
-            "description": "code to move the zone. It is one time shown so better keep it.",
-            "example": "3sLuLCLpLEbbQ6GZ05tu2U56dmKx1uCdWquTHz6BK34=",
-            "type": "string"
-          },
-          "expiresAt": {
-            "description": "when the code expires",
-            "example": "2023-08-08T08:58:25Z",
-            "type": "string"
-          },
-          "message": {
-            "description": "human readable message",
-            "example": "successfully created code to move the zone",
-            "type": "string"
-          }
-        },
-        "required": [
-          "code",
-          "expiresAt"
-        ],
-        "type": "object"
-      },
-      "ValidateMoveCodePayload": {
-        "description": "PostValidateMoveCodeRequest body to validate move code request.",
-        "properties": {
-          "code": {
-            "description": "code that should be validated. It validates if it is valid, not expired and belongs to the zone.",
-            "example": "3sLuLCLpLEbbQ6GZ05tu2U56dmKx1uCdWquTHz6BK34=",
-            "maxLength": 1024,
-            "minLength": 1,
-            "type": "string"
-          }
-        },
-        "required": [
-          "code"
-        ],
-        "type": "object"
-      },
       "ZoneResponse": {
         "description": "ResponseZone for user info.",
         "properties": {
@@ -1018,38 +891,165 @@
         ],
         "type": "object"
       },
-      "ListZonesResponse": {
-        "description": "ResponseZoneAll for filtered zones.",
+      "label.ResponseAllLabels": {
+        "description": "ResponseAllLabels.",
         "properties": {
-          "itemsPerPage": {
-            "example": 1,
-            "type": "integer"
+          "labels": {
+            "items": {
+              "$ref": "#/components/schemas/Label"
+            },
+            "type": "array"
           },
           "message": {
             "example": "Success",
             "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "label.ResponseDeleteLabel": {
+        "description": "ResponseDeleteLabel.",
+        "properties": {
+          "label": {
+            "$ref": "#/components/schemas/Label"
           },
-          "totalItems": {
-            "example": 1,
+          "message": {
+            "example": "Success",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "label.ResponseUpsertLabel": {
+        "description": "ResponseUpsertLabel.",
+        "properties": {
+          "label": {
+            "$ref": "#/components/schemas/Label"
+          },
+          "message": {
+            "example": "Success",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "rrset.ImportSummary": {
+        "description": "ImportSummary is the summary of the import.",
+        "properties": {
+          "createdRRSets": {
+            "example": 0,
+            "maximum": 10000,
+            "minimum": 0,
             "type": "integer"
           },
-          "totalPages": {
-            "example": 1,
+          "createdRecords": {
+            "example": 0,
+            "maximum": 10000,
+            "minimum": 0,
             "type": "integer"
           },
-          "zones": {
+          "deletedRRSets": {
+            "example": 10000,
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "deletedRecords": {
+            "example": 10000,
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "updatedRRSets": {
+            "example": 5,
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "updatedRecords": {
+            "example": 5,
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "rrset.ImportSummaryResponse": {
+        "description": "ImportSummaryResponse is the response of the import.",
+        "properties": {
+          "message": {
+            "example": "Success",
+            "type": "string"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/rrset.ImportSummary"
+          }
+        },
+        "required": [
+          "summary"
+        ],
+        "type": "object"
+      },
+      "zone_models.ExportParams": {
+        "properties": {
+          "exportAsFQDN": {
+            "default": true,
+            "example": true,
+            "type": "boolean"
+          },
+          "format": {
+            "default": "csv",
+            "enum": [
+              "csv",
+              "json",
+              "bind"
+            ],
+            "example": "csv",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "zone_models.ExportRecordModel": {
+        "properties": {
+          "comment": {
+            "example": "comment",
+            "type": "string"
+          },
+          "content": {
+            "example": [
+              "1.2.3.4"
+            ],
             "items": {
-              "$ref": "#/components/schemas/Zone"
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "name": {
+            "example": "example.com",
+            "type": "string"
+          },
+          "ttl": {
+            "example": 3600,
+            "type": "integer"
+          },
+          "type": {
+            "example": "A",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "zone_models.ExportZoneJson": {
+        "properties": {
+          "rrSets": {
+            "items": {
+              "$ref": "#/components/schemas/zone_models.ExportRecordModel"
             },
             "type": "array"
           }
         },
-        "required": [
-          "itemsPerPage",
-          "totalItems",
-          "totalPages",
-          "zones"
-        ],
         "type": "object"
       }
     }
@@ -2641,10 +2641,10 @@
   ],
   "servers": [
     {
-      "url": "https://dns.api.{region}stackit.cloud",
+      "url": "https://dns.api.stackit.cloud",
       "variables": {
         "region": {
-          "default": ""
+          "default": "global"
         }
       }
     }

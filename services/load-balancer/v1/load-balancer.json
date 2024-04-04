@@ -86,12 +86,12 @@
             "type": "string"
           },
           "password": {
-            "description": "The password used for the ARGUS instance",
+            "description": "A valid password used for an existing ARGUS instance, which is used during basic auth.",
             "title": "Password",
             "type": "string"
           },
           "username": {
-            "description": "The username used for the ARGUS instance",
+            "description": "A valid username used for an existing ARGUS instance, which is used during basic auth.",
             "title": "Username",
             "type": "string"
           }
@@ -390,12 +390,12 @@
       "LoadbalancerOptionLogs": {
         "properties": {
           "credentialsRef": {
-            "description": "Credentials reference for metrics. Enables monitoring via logs for the Load Balancer.",
+            "description": "Credentials reference for logging. This reference is created via the observability create endpoint and the credential needs to contain the basic auth username and password for the logging solution the push URL points to. Then this enables monitoring via remote write for the Load Balancer.",
             "title": "Credentials reference",
             "type": "string"
           },
           "pushUrl": {
-            "description": "The ARGUS/Loki Push URL you want the logs to be send to.",
+            "description": "The ARGUS/Loki remote write Push URL you want the logs to be shipped to.",
             "example": "https://logs.stackit5.argus.eu01.stackit.cloud/instances/\u003cargus-instance-id\u003e/loki/api/v1/push",
             "title": "Push URL",
             "type": "string"
@@ -406,12 +406,12 @@
       "LoadbalancerOptionMetrics": {
         "properties": {
           "credentialsRef": {
-            "description": "Credentials reference for metrics. Enables monitoring via remote write for the Load Balancer.",
+            "description": "Credentials reference for metrics. This reference is created via the observability create endpoint and the credential needs to contain the basic auth username and password for the metrics solution the push URL points to. Then this enables monitoring via remote write for the Load Balancer.",
             "title": "Credentials reference",
             "type": "string"
           },
           "pushUrl": {
-            "description": "The ARGUS/Prometheus remote write Push URL you want the metrics to be send to.",
+            "description": "The ARGUS/Prometheus remote write Push URL you want the metrics to be shipped to.",
             "example": "https://push.metrics.stackit4.argus.eu01.stackit.cloud/instances/\u003cargus-instance-id\u003e/api/v1/receive",
             "title": "Push URL",
             "type": "string"
@@ -558,7 +558,8 @@
             "$ref": "#/components/schemas/SessionPersistence"
           },
           "targetPort": {
-            "description": "Identical port number where each target listens for traffic.",
+            "description": "The number identifying the port where each target listens for traffic.",
+            "example": 5732,
             "maximum": 65535,
             "minimum": 1,
             "type": "integer"
@@ -668,12 +669,12 @@
             "type": "string"
           },
           "password": {
-            "description": "The password used for the ARGUS instance",
+            "description": "A valid password used for an existing ARGUS instance, which is used during basic auth.",
             "title": "Password",
             "type": "string"
           },
           "username": {
-            "description": "The username used for the ARGUS instance",
+            "description": "A valid username used for an existing ARGUS instance, which is used during basic auth.",
             "title": "Username",
             "type": "string"
           }
@@ -837,7 +838,8 @@
             "$ref": "#/components/schemas/SessionPersistence"
           },
           "targetPort": {
-            "description": "Identical port number where each target listens for traffic.",
+            "description": "The number identifying the port where each target listens for traffic.",
+            "example": 5732,
             "maximum": 65535,
             "minimum": 1,
             "type": "integer"
@@ -884,13 +886,14 @@
   "info": {
     "description": "This API offers an interface to provision and manage load balancing servers in your STACKIT project. It also has the possibility of pooling target servers for load balancing purposes.\n\nFor each load balancer provided, two VMs are deployed in your OpenStack project subject to a fee.",
     "title": "Load Balancer API",
-    "version": "1.6.1"
+    "version": "1.6.2"
   },
   "openapi": "3.0.3",
   "paths": {
     "/v1/projects/{projectId}": {
       "delete": {
-        "description": "Disable will disable the load balancer functionality for the project specified.",
+        "deprecated": true,
+        "description": "DEPRECATED! Disabling the load balancer functionality is now automatic. The endpoint is kept for compatibility.\n Disable will disable the load balancer functionality for the project specified.",
         "operationId": "DisableService",
         "parameters": [
           {
@@ -929,7 +932,8 @@
         "summary": "Disables the functionality of load balancers for the project specified."
       },
       "get": {
-        "description": "Status will return the load balancer functionality status for the project specified.",
+        "deprecated": true,
+        "description": "DEPRECATED! Projects are auto-enabled on SE side, meaning status is always enabled.\n Status will return the load balancer functionality status for the project specified.",
         "operationId": "GetServiceStatus",
         "parameters": [
           {
@@ -1046,7 +1050,7 @@
         "summary": "List all credentials in a project."
       },
       "post": {
-        "description": "Create credentials will create credentials, which can be used for load balancer observability",
+        "description": "Create credentials can be used to store existing credentials, which are valid to be used for Load Balancer Observability.\n This means, e.g. when using ARGUS, that credentials first must be created for that ARGUS instance (by using their API) and\n then can be provided to the Load Balancer by storing them with this endpoint.",
         "operationId": "CreateCredentials",
         "parameters": [
           {

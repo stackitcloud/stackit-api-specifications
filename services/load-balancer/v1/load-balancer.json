@@ -45,38 +45,6 @@
         },
         "type": "object"
       },
-      "CreateMigrationBody": {
-        "properties": {
-          "loadBalancer": {
-            "$ref": "#/components/schemas/LoadBalancer"
-          },
-          "migrationParams": {
-            "$ref": "#/components/schemas/MigrationParams"
-          }
-        },
-        "type": "object"
-      },
-      "CreateMigrationResponse": {
-        "properties": {
-          "loadBalancer": {
-            "$ref": "#/components/schemas/LoadBalancer"
-          },
-          "migrationParams": {
-            "$ref": "#/components/schemas/MigrationParams"
-          },
-          "migrationState": {
-            "enum": [
-              "MIGRATION_STATE_UNSPECIFIED",
-              "MIGRATION_STATE_INITIALIZING",
-              "MIGRATION_STATE_PREPARE",
-              "MIGRATION_STATE_MIGRATE",
-              "MIGRATION_STATE_COMPLETE"
-            ],
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "Credentials": {
         "properties": {
           "displayName": {
@@ -134,27 +102,6 @@
         },
         "type": "object"
       },
-      "GetMigrationResponse": {
-        "properties": {
-          "loadBalancer": {
-            "$ref": "#/components/schemas/LoadBalancer"
-          },
-          "migrationParams": {
-            "$ref": "#/components/schemas/MigrationParams"
-          },
-          "migrationState": {
-            "enum": [
-              "MIGRATION_STATE_UNSPECIFIED",
-              "MIGRATION_STATE_INITIALIZING",
-              "MIGRATION_STATE_PREPARE",
-              "MIGRATION_STATE_MIGRATE",
-              "MIGRATION_STATE_COMPLETE"
-            ],
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "GetQuotaResponse": {
         "properties": {
           "maxLoadBalancers": {
@@ -170,18 +117,6 @@
             "format": "uuid",
             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
             "readOnly": true,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "HealthzResponse": {
-        "description": "Response to ping with projectId.",
-        "properties": {
-          "message": {
-            "description": "Human readable explanation about the response.",
-            "example": "healthy in the last line",
-            "format": "string",
             "type": "string"
           }
         },
@@ -431,23 +366,6 @@
         },
         "type": "object"
       },
-      "MigrationParams": {
-        "properties": {
-          "fipId": {
-            "type": "string"
-          },
-          "portId": {
-            "type": "string"
-          },
-          "secGroupId": {
-            "type": "string"
-          },
-          "secGroupName": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "Network": {
         "properties": {
           "networkId": {
@@ -489,19 +407,6 @@
             "example": "60s",
             "pattern": "^-?(?:0|[1-9][0-9]{0,11})(?:\\.[0-9]{1,9})?s$",
             "title": "Idle timeout",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "PingResponse": {
-        "description": "Response to ping with projectId.",
-        "properties": {
-          "projectId": {
-            "description": "Same project identifier as passed in on request.",
-            "example": "2438ac3c-37eb-4902-adef-ed16b4431030",
-            "format": "uuid",
-            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
             "type": "string"
           }
         },
@@ -578,84 +483,6 @@
         "properties": {
           "credential": {
             "$ref": "#/components/schemas/CredentialsResponse"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateMigrationBody": {
-        "properties": {
-          "state": {
-            "description": "The new migration state of the loadbalancer.\nAllowed transitions are:\n- MIGRATION_STATE_PREPARE → MIGRATION_STATE_MIGRATE\n- MIGRATION_STATE_MIGRATE → MIGRATION_STATE_PREPARE\n- MIGRATION_STATE_MIGRATE → MIGRATION_STATE_COMPLETE\nUpdates other than the migration state should be done by the regular update endpoints.Aborting a migration can be done by deleting the loadbalancer.",
-            "enum": [
-              "MIGRATION_STATE_UNSPECIFIED",
-              "MIGRATION_STATE_INITIALIZING",
-              "MIGRATION_STATE_PREPARE",
-              "MIGRATION_STATE_MIGRATE",
-              "MIGRATION_STATE_COMPLETE"
-            ],
-            "example": "MIGRATION_STATE_MIGRATE",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateMigrationResponse": {
-        "properties": {
-          "loadBalancer": {
-            "$ref": "#/components/schemas/LoadBalancer"
-          },
-          "migrationParams": {
-            "$ref": "#/components/schemas/MigrationParams"
-          },
-          "migrationState": {
-            "enum": [
-              "MIGRATION_STATE_UNSPECIFIED",
-              "MIGRATION_STATE_INITIALIZING",
-              "MIGRATION_STATE_PREPARE",
-              "MIGRATION_STATE_MIGRATE",
-              "MIGRATION_STATE_COMPLETE"
-            ],
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateQuotaRequest": {
-        "properties": {
-          "maxLoadBalancers": {
-            "description": "The maximum number of load balancing servers in this project. Unlimited if set to -1.",
-            "maximum": 999,
-            "minimum": -1,
-            "title": "Load Balancer quota",
-            "type": "integer"
-          },
-          "projectId": {
-            "description": "Project identifier",
-            "example": "2438ac3c-37eb-4902-adef-ed16b4431030",
-            "format": "uuid",
-            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
-            "readOnly": true,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateQuotaResponse": {
-        "properties": {
-          "maxLoadBalancers": {
-            "description": "The maximum number of load balancing servers in this project. Unlimited if set to -1.",
-            "maximum": 999,
-            "minimum": -1,
-            "title": "Load Balancer quota",
-            "type": "integer"
-          },
-          "projectId": {
-            "description": "Project identifier",
-            "example": "2438ac3c-37eb-4902-adef-ed16b4431030",
-            "format": "uuid",
-            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
-            "readOnly": true,
-            "type": "string"
           }
         },
         "type": "object"

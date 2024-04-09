@@ -53,47 +53,6 @@
       }
     },
     "schemas": {
-      "Credentials": {
-        "properties": {
-          "host": {
-            "type": "string"
-          },
-          "hosts": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "http_api_uri": {
-            "description": "for rabbitmq only",
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
-          },
-          "port": {
-            "type": "integer"
-          },
-          "protocols": {
-            "$ref": "#/components/schemas/Object"
-          },
-          "uri": {
-            "type": "string"
-          },
-          "username": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "host",
-          "username",
-          "password"
-        ],
-        "type": "object"
-      },
       "CredentialsListItem": {
         "properties": {
           "id": {
@@ -275,53 +234,6 @@
         ],
         "type": "object"
       },
-      "InstanceBaseParameters": {
-        "properties": {
-          "enable_monitoring": {
-            "default": false,
-            "type": "boolean"
-          },
-          "graphite": {
-            "description": "If you want to monitor your service with Graphite, you can set the custom parameter graphite. It expects the host and port where the Graphite metrics should be sent to.",
-            "example": "yourspace.your-graphite-endpoint.com:12345",
-            "type": "string"
-          },
-          "max_disk_threshold": {
-            "default": 80,
-            "description": "This component monitors ephemeral and persistent disk usage. If one of these disk usages reaches the default configured threshold of 80%, the a9s Parachute stops all processes on that node.",
-            "example": 90,
-            "type": "integer"
-          },
-          "metrics_frequency": {
-            "default": 10,
-            "description": "Frequency of metrics being emitted in seconds",
-            "type": "integer"
-          },
-          "metrics_prefix": {
-            "description": "Depending on your graphite provider, you might need to prefix the metrics with a certain value, like an API key for example.",
-            "example": "my-prefix",
-            "type": "string"
-          },
-          "monitoring_instance_id": {
-            "type": "string"
-          },
-          "sgw_acl": {
-            "description": "Comma separated list of IP networks in CIDR notation which are allowed to access this instance.",
-            "example": "0.0.0.0/0",
-            "type": "string"
-          },
-          "syslog": {
-            "example": [
-              "logs4.your-syslog-endpoint.com:54321"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
       "InstanceSchema": {
         "properties": {
           "create": {
@@ -462,6 +374,82 @@
         },
         "type": "object"
       },
+      "LogMeCredentials": {
+        "properties": {
+          "host": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "port": {
+            "type": "integer"
+          },
+          "syslog_drain_url": {
+            "type": "string"
+          },
+          "uri": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "host",
+          "username",
+          "password"
+        ],
+        "type": "object"
+      },
+      "MariaDBCredentials": {
+        "properties": {
+          "host": {
+            "type": "string"
+          },
+          "hosts": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "name": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "port": {
+            "type": "integer"
+          },
+          "uri": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "host",
+          "username",
+          "password"
+        ],
+        "type": "object"
+      },
+      "Metrics": {
+        "properties": {
+          "metrics": {
+            "items": {
+              "$ref": "#/components/schemas/ListMetricsResponse"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "metrics"
+        ],
+        "type": "object"
+      },
       "Object": {
         "type": "object"
       },
@@ -513,6 +501,40 @@
           "quotaCount",
           "imageUrl",
           "plans"
+        ],
+        "type": "object"
+      },
+      "OpenSearchCredentials": {
+        "properties": {
+          "host": {
+            "type": "string"
+          },
+          "hosts": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "password": {
+            "type": "string"
+          },
+          "port": {
+            "type": "integer"
+          },
+          "scheme": {
+            "type": "string"
+          },
+          "uri": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "host",
+          "username",
+          "password"
         ],
         "type": "object"
       },
@@ -993,6 +1015,90 @@
         },
         "type": "object"
       },
+      "PostgresQLCredentials": {
+        "properties": {
+          "host": {
+            "type": "string"
+          },
+          "hosts": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "name": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "port": {
+            "type": "integer"
+          },
+          "uri": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "host",
+          "username",
+          "password"
+        ],
+        "type": "object"
+      },
+      "RabbitMQCredentials": {
+        "properties": {
+          "host": {
+            "type": "string"
+          },
+          "hosts": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "http_api_uri": {
+            "description": "for rabbitmq only",
+            "type": "string"
+          },
+          "http_api_uris": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "management": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "port": {
+            "type": "integer"
+          },
+          "uri": {
+            "type": "string"
+          },
+          "uris": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "host",
+          "username",
+          "password"
+        ],
+        "type": "object"
+      },
       "RabbitMQInstanceParameters": {
         "properties": {
           "consumer_timeout": {
@@ -1094,25 +1200,45 @@
       "RawCredentials": {
         "properties": {
           "credentials": {
-            "$ref": "#/components/schemas/Credentials"
-          },
-          "routeServiceUrl": {
-            "type": "string"
-          },
-          "syslogDrainUrl": {
-            "type": "string"
-          },
-          "volumeMounts": {
-            "items": {
-              "$ref": "#/components/schemas/Object"
-            },
-            "type": "array"
+            "$ref": "#/components/schemas/MariaDBCredentials"
           }
         },
         "required": [
-          "credentials",
-          "syslogDrainUrl",
-          "routeServiceUrl"
+          "credentials"
+        ],
+        "type": "object"
+      },
+      "RedisCredentials": {
+        "properties": {
+          "host": {
+            "type": "string"
+          },
+          "hosts": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "load_balanced_host": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "port": {
+            "type": "integer"
+          },
+          "uri": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "host",
+          "username",
+          "password"
         ],
         "type": "object"
       },

@@ -137,38 +137,6 @@
         },
         "type": "object"
       },
-      "CreateMigrationBody": {
-        "properties": {
-          "loadBalancer": {
-            "$ref": "#/components/schemas/LoadBalancer"
-          },
-          "migrationParams": {
-            "$ref": "#/components/schemas/MigrationParams"
-          }
-        },
-        "type": "object"
-      },
-      "CreateMigrationResponse": {
-        "properties": {
-          "loadBalancer": {
-            "$ref": "#/components/schemas/LoadBalancer"
-          },
-          "migrationParams": {
-            "$ref": "#/components/schemas/MigrationParams"
-          },
-          "migrationState": {
-            "enum": [
-              "MIGRATION_STATE_UNSPECIFIED",
-              "MIGRATION_STATE_INITIALIZING",
-              "MIGRATION_STATE_PREPARE",
-              "MIGRATION_STATE_MIGRATE",
-              "MIGRATION_STATE_COMPLETE"
-            ],
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "CredentialsResponse": {
         "properties": {
           "credentialsRef": {
@@ -213,27 +181,6 @@
         },
         "type": "object"
       },
-      "GetMigrationResponse": {
-        "properties": {
-          "loadBalancer": {
-            "$ref": "#/components/schemas/LoadBalancer"
-          },
-          "migrationParams": {
-            "$ref": "#/components/schemas/MigrationParams"
-          },
-          "migrationState": {
-            "enum": [
-              "MIGRATION_STATE_UNSPECIFIED",
-              "MIGRATION_STATE_INITIALIZING",
-              "MIGRATION_STATE_PREPARE",
-              "MIGRATION_STATE_MIGRATE",
-              "MIGRATION_STATE_COMPLETE"
-            ],
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "GetQuotaResponse": {
         "properties": {
           "maxLoadBalancers": {
@@ -268,18 +215,6 @@
               "STATUS_DISABLED",
               "STATUS_PROJECT_UNKNOWN"
             ],
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "HealthzResponse": {
-        "description": "Response to ping with projectId.",
-        "properties": {
-          "message": {
-            "description": "Human readable explanation about the response.",
-            "example": "healthy in the last line",
-            "format": "string",
             "type": "string"
           }
         },
@@ -529,23 +464,6 @@
         },
         "type": "object"
       },
-      "MigrationParams": {
-        "properties": {
-          "fipId": {
-            "type": "string"
-          },
-          "portId": {
-            "type": "string"
-          },
-          "secGroupId": {
-            "type": "string"
-          },
-          "secGroupName": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "Network": {
         "properties": {
           "networkId": {
@@ -587,19 +505,6 @@
             "example": "60s",
             "pattern": "^-?(?:0|[1-9][0-9]{0,11})(?:\\.[0-9]{1,9})?s$",
             "title": "Idle timeout",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "PingResponse": {
-        "description": "Response to ping with projectId.",
-        "properties": {
-          "projectId": {
-            "description": "Same project identifier as passed in on request.",
-            "example": "2438ac3c-37eb-4902-adef-ed16b4431030",
-            "format": "uuid",
-            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
             "type": "string"
           }
         },
@@ -672,14 +577,6 @@
         },
         "type": "object"
       },
-      "UpdateCredentialsResponse": {
-        "properties": {
-          "credential": {
-            "$ref": "#/components/schemas/CredentialsResponse"
-          }
-        },
-        "type": "object"
-      },
       "UpdateLoadBalancerPayload": {
         "properties": {
           "errors": {
@@ -746,84 +643,6 @@
           "version": {
             "description": "Load balancer resource version.\nMust be empty or unset for creating load balancers, non-empty for updating load balancers. Semantics:\nWhile retrieving load balancers, this is the current version of this load balancer resource that changes during updates of the load balancers. On updates this field specified the load balancer version you calculated your update for instead of the future version to enable concurrency safe updates. Update calls will then report the new version in their result as you would see with a load balancer retrieval call later. There exist no total order of the version, so you can only compare it for equality, but not for less/greater than another version. Since the creation of load balancer is always intended to create the first version of it, there should be no existing version. That's why this field must by empty of not present in that case.",
             "example": "lb-238165323",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateMigrationBody": {
-        "properties": {
-          "state": {
-            "description": "The new migration state of the loadbalancer.\nAllowed transitions are:\n- MIGRATION_STATE_PREPARE → MIGRATION_STATE_MIGRATE\n- MIGRATION_STATE_MIGRATE → MIGRATION_STATE_PREPARE\n- MIGRATION_STATE_MIGRATE → MIGRATION_STATE_COMPLETE\nUpdates other than the migration state should be done by the regular update endpoints.Aborting a migration can be done by deleting the loadbalancer.",
-            "enum": [
-              "MIGRATION_STATE_UNSPECIFIED",
-              "MIGRATION_STATE_INITIALIZING",
-              "MIGRATION_STATE_PREPARE",
-              "MIGRATION_STATE_MIGRATE",
-              "MIGRATION_STATE_COMPLETE"
-            ],
-            "example": "MIGRATION_STATE_MIGRATE",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateMigrationResponse": {
-        "properties": {
-          "loadBalancer": {
-            "$ref": "#/components/schemas/LoadBalancer"
-          },
-          "migrationParams": {
-            "$ref": "#/components/schemas/MigrationParams"
-          },
-          "migrationState": {
-            "enum": [
-              "MIGRATION_STATE_UNSPECIFIED",
-              "MIGRATION_STATE_INITIALIZING",
-              "MIGRATION_STATE_PREPARE",
-              "MIGRATION_STATE_MIGRATE",
-              "MIGRATION_STATE_COMPLETE"
-            ],
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateQuotaRequest": {
-        "properties": {
-          "maxLoadBalancers": {
-            "description": "The maximum number of load balancing servers in this project. Unlimited if set to -1.",
-            "maximum": 999,
-            "minimum": -1,
-            "title": "Load Balancer quota",
-            "type": "integer"
-          },
-          "projectId": {
-            "description": "Project identifier",
-            "example": "2438ac3c-37eb-4902-adef-ed16b4431030",
-            "format": "uuid",
-            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
-            "readOnly": true,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateQuotaResponse": {
-        "properties": {
-          "maxLoadBalancers": {
-            "description": "The maximum number of load balancing servers in this project. Unlimited if set to -1.",
-            "maximum": 999,
-            "minimum": -1,
-            "title": "Load Balancer quota",
-            "type": "integer"
-          },
-          "projectId": {
-            "description": "Project identifier",
-            "example": "2438ac3c-37eb-4902-adef-ed16b4431030",
-            "format": "uuid",
-            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
-            "readOnly": true,
             "type": "string"
           }
         },
@@ -1584,20 +1403,6 @@
           ]
         }
       }
-    }
-  ],
-  "tags": [
-    {
-      "description": "All endpoints in the Load Balancer API",
-      "name": "APIService"
-    },
-    {
-      "description": "Only API calls to provision and manage load balancing servers",
-      "name": "Load Balancer"
-    },
-    {
-      "description": "Get the state of load balancing functionality in a project. To enable or disable load balancing functionality use service-enablement.",
-      "name": "Project"
     }
   ]
 }

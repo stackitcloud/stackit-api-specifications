@@ -1,71 +1,6 @@
 {
   "components": {
     "schemas": {
-      "MaintenanceAutoUpdate": {
-        "properties": {
-          "kubernetesVersion": {
-            "title": "Flag to enable/disable auto-updates of the Kubernetes version",
-            "type": "boolean"
-          },
-          "machineImageVersion": {
-            "title": "Flag to enable/disable auto-updates of the OS image version",
-            "type": "boolean"
-          }
-        },
-        "type": "object"
-      },
-      "v1Network": {
-        "properties": {
-          "id": {
-            "title": "ID of the SNA network into which the cluster will be deployed",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "CreateOrUpdateClusterPayload": {
-        "properties": {
-          "extensions": {
-            "$ref": "#/components/schemas/Extension"
-          },
-          "hibernation": {
-            "$ref": "#/components/schemas/Hibernation"
-          },
-          "kubernetes": {
-            "$ref": "#/components/schemas/Kubernetes"
-          },
-          "maintenance": {
-            "$ref": "#/components/schemas/Maintenance"
-          },
-          "network": {
-            "$ref": "#/components/schemas/v1Network"
-          },
-          "nodepools": {
-            "items": {
-              "$ref": "#/components/schemas/Nodepool"
-            },
-            "maxItems": 10,
-            "minItems": 1,
-            "type": "array"
-          },
-          "status": {
-            "$ref": "#/components/schemas/ClusterStatus"
-          }
-        },
-        "required": [
-          "kubernetes",
-          "nodepools"
-        ],
-        "type": "object"
-      },
-      "CreateKubeconfigPayload": {
-        "properties": {
-          "expirationSeconds": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "ACL": {
         "properties": {
           "allowedCidrs": {
@@ -202,15 +137,47 @@
         "title": "aggregated state of the cluster",
         "type": "string"
       },
-      "ListClustersResponse": {
+      "CreateKubeconfigPayload": {
         "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/Cluster"
-            },
-            "type": "array"
+          "expirationSeconds": {
+            "type": "string"
           }
         },
+        "type": "object"
+      },
+      "CreateOrUpdateClusterPayload": {
+        "properties": {
+          "extensions": {
+            "$ref": "#/components/schemas/Extension"
+          },
+          "hibernation": {
+            "$ref": "#/components/schemas/Hibernation"
+          },
+          "kubernetes": {
+            "$ref": "#/components/schemas/Kubernetes"
+          },
+          "maintenance": {
+            "$ref": "#/components/schemas/Maintenance"
+          },
+          "network": {
+            "$ref": "#/components/schemas/v1Network"
+          },
+          "nodepools": {
+            "items": {
+              "$ref": "#/components/schemas/Nodepool"
+            },
+            "maxItems": 10,
+            "minItems": 1,
+            "type": "array"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ClusterStatus"
+          }
+        },
+        "required": [
+          "kubernetes",
+          "nodepools"
+        ],
         "type": "object"
       },
       "Credentials": {
@@ -380,6 +347,17 @@
         },
         "type": "object"
       },
+      "ListClustersResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Cluster"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "Machine": {
         "properties": {
           "image": {
@@ -463,6 +441,19 @@
           "autoUpdate",
           "timeWindow"
         ],
+        "type": "object"
+      },
+      "MaintenanceAutoUpdate": {
+        "properties": {
+          "kubernetesVersion": {
+            "title": "Flag to enable/disable auto-updates of the Kubernetes version",
+            "type": "boolean"
+          },
+          "machineImageVersion": {
+            "title": "Flag to enable/disable auto-updates of the OS image version",
+            "type": "boolean"
+          }
+        },
         "type": "object"
       },
       "Nodepool": {
@@ -683,6 +674,15 @@
       "VolumeType": {
         "properties": {
           "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "v1Network": {
+        "properties": {
+          "id": {
+            "title": "ID of the SNA network into which the cluster will be deployed",
             "type": "string"
           }
         },
@@ -1695,28 +1695,6 @@
           ]
         }
       }
-    }
-  ],
-  "tags": [
-    {
-      "description": "Cluster related actions",
-      "name": "Cluster"
-    },
-    {
-      "description": "Endpoints for credentials. See [How to rotate SKE credentials](https://docs.stackit.cloud/display/STACKIT/How+to+rotate+SKE+credentials) for details.",
-      "name": "Credentials"
-    },
-    {
-      "description": "Cluster operations",
-      "name": "Operation"
-    },
-    {
-      "description": "Endpoints for provider-options",
-      "name": "ProviderOptions"
-    },
-    {
-      "description": "Project related actions",
-      "name": "Project"
     }
   ]
 }

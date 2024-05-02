@@ -53,6 +53,97 @@
       }
     },
     "schemas": {
+      "Backup": {
+        "properties": {
+          "downloadable": {
+            "type": "boolean"
+          },
+          "finished_at": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer"
+          },
+          "size": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "triggered_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "finished_at"
+        ],
+        "type": "object"
+      },
+      "CreateInstancePayload": {
+        "properties": {
+          "instanceName": {
+            "type": "string"
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/InstanceParameters"
+          },
+          "planId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "planId",
+          "instanceName"
+        ],
+        "type": "object"
+      },
+      "CreateInstanceResponse": {
+        "properties": {
+          "instanceId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "instanceId"
+        ],
+        "type": "object"
+      },
+      "Credentials": {
+        "properties": {
+          "host": {
+            "type": "string"
+          },
+          "hosts": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "password": {
+            "type": "string"
+          },
+          "port": {
+            "type": "integer"
+          },
+          "scheme": {
+            "type": "string"
+          },
+          "uri": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "host",
+          "username",
+          "password"
+        ],
+        "type": "object"
+      },
       "CredentialsListItem": {
         "properties": {
           "id": {
@@ -234,6 +325,133 @@
         ],
         "type": "object"
       },
+      "InstanceLastOperation": {
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "in progress",
+              "succeeded",
+              "failed"
+            ],
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "create",
+              "update",
+              "delete"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "state",
+          "type",
+          "description"
+        ],
+        "type": "object"
+      },
+      "InstanceParameters": {
+        "properties": {
+          "enable_monitoring": {
+            "default": false,
+            "type": "boolean"
+          },
+          "graphite": {
+            "description": "If you want to monitor your service with Graphite, you can set the custom parameter graphite. It expects the host and port where the Graphite metrics should be sent to.",
+            "example": "yourspace.your-graphite-endpoint.com:12345",
+            "type": "string"
+          },
+          "java_garbage_collector": {
+            "default": "UseG1GC",
+            "enum": [
+              "UseSerialGC",
+              "UseParallelGC",
+              "UseParallelOldGC",
+              "UseG1GC"
+            ],
+            "type": "string"
+          },
+          "java_heapspace": {
+            "description": "Default: not set, 46% of available memory will be used. The amount of memory (in MB) allocated as heap by the JVM for OpenSearch.",
+            "minimum": 256,
+            "type": "integer"
+          },
+          "java_maxmetaspace": {
+            "default": 512,
+            "description": "The amount of memory (in MB) used by the JVM to store metadata for OpenSearch.",
+            "maximum": 1024,
+            "minimum": 256,
+            "type": "integer"
+          },
+          "max_disk_threshold": {
+            "default": 80,
+            "description": "This component monitors ephemeral and persistent disk usage. If one of these disk usages reaches the default configured threshold of 80%, the a9s Parachute stops all processes on that node.",
+            "example": 90,
+            "type": "integer"
+          },
+          "metrics_frequency": {
+            "default": 10,
+            "description": "Frequency of metrics being emitted in seconds",
+            "type": "integer"
+          },
+          "metrics_prefix": {
+            "description": "Depending on your graphite provider, you might need to prefix the metrics with a certain value, like an API key for example.",
+            "example": "my-prefix",
+            "type": "string"
+          },
+          "monitoring_instance_id": {
+            "type": "string"
+          },
+          "plugins": {
+            "description": "The plugins repository-s3 and repository-azure are enabled by default and cannot be disabled.",
+            "example": [
+              "analysis-phonetic"
+            ],
+            "items": {
+              "enum": [
+                "repository-s3",
+                "repository-azure",
+                "analysis-phonetic"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "sgw_acl": {
+            "description": "Comma separated list of IP networks in CIDR notation which are allowed to access this instance.",
+            "example": "0.0.0.0/0",
+            "type": "string"
+          },
+          "syslog": {
+            "example": [
+              "logs4.your-syslog-endpoint.com:54321"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "tls-ciphers": {
+            "description": "Only Java format is supported.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "tls-protocols": {
+            "enum": [
+              "TLSv1.2",
+              "TLSv1.3"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "InstanceSchema": {
         "properties": {
           "create": {
@@ -246,6 +464,146 @@
         "required": [
           "create",
           "update"
+        ],
+        "type": "object"
+      },
+      "ListBackupsResponse": {
+        "properties": {
+          "instanceBackups": {
+            "items": {
+              "$ref": "#/components/schemas/Backup"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "instanceBackups"
+        ],
+        "type": "object"
+      },
+      "ListCredentialsResponse": {
+        "properties": {
+          "credentialsList": {
+            "items": {
+              "$ref": "#/components/schemas/CredentialsListItem"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "credentialsList"
+        ],
+        "type": "object"
+      },
+      "ListInstancesResponse": {
+        "properties": {
+          "instances": {
+            "items": {
+              "$ref": "#/components/schemas/Instance"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "instances"
+        ],
+        "type": "object"
+      },
+      "ListMetricsResponse": {
+        "properties": {
+          "cpuIdleTime": {
+            "type": "integer"
+          },
+          "cpuLoadPercent": {
+            "type": "integer"
+          },
+          "cpuSystemTime": {
+            "type": "integer"
+          },
+          "cpuUserTime": {
+            "type": "integer"
+          },
+          "diskEphemeralTotal": {
+            "type": "integer"
+          },
+          "diskEphemeralUsed": {
+            "type": "integer"
+          },
+          "diskPersistentTotal": {
+            "type": "integer"
+          },
+          "diskPersistentUsed": {
+            "type": "integer"
+          },
+          "memoryTotal": {
+            "type": "integer"
+          },
+          "memoryUsed": {
+            "type": "integer"
+          },
+          "parachuteDiskEphemeralActivated": {
+            "type": "integer"
+          },
+          "parachuteDiskEphemeralTotal": {
+            "type": "integer"
+          },
+          "parachuteDiskEphemeralUsed": {
+            "type": "integer"
+          },
+          "parachuteDiskEphemeralUsedPercent": {
+            "type": "integer"
+          },
+          "parachuteDiskEphemeralUsedThreshold": {
+            "type": "integer"
+          },
+          "parachuteDiskPersistentActivated": {
+            "type": "integer"
+          },
+          "parachuteDiskPersistentTotal": {
+            "type": "integer"
+          },
+          "parachuteDiskPersistentUsed": {
+            "type": "integer"
+          },
+          "parachuteDiskPersistentUsedPercent": {
+            "type": "integer"
+          },
+          "parachuteDiskPersistentUsedThreshold": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "memoryTotal",
+          "memoryUsed",
+          "diskPersistentTotal",
+          "diskPersistentUsed",
+          "parachuteDiskPersistentTotal",
+          "parachuteDiskPersistentUsed",
+          "parachuteDiskPersistentUsedPercent",
+          "parachuteDiskPersistentUsedThreshold",
+          "parachuteDiskPersistentActivated",
+          "diskEphemeralTotal",
+          "diskEphemeralUsed",
+          "parachuteDiskEphemeralTotal",
+          "parachuteDiskEphemeralUsed",
+          "parachuteDiskEphemeralUsedPercent",
+          "parachuteDiskEphemeralUsedThreshold",
+          "parachuteDiskEphemeralActivated",
+          "cpuLoadPercent"
+        ],
+        "type": "object"
+      },
+      "ListOfferingsResponse": {
+        "properties": {
+          "offerings": {
+            "items": {
+              "$ref": "#/components/schemas/Offering"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "offerings"
         ],
         "type": "object"
       },
@@ -549,6 +907,20 @@
           "imageUrl",
           "plans"
         ],
+        "type": "object"
+      },
+      "PartialUpdateInstancePayload": {
+        "properties": {
+          "instanceName": {
+            "type": "string"
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/InstanceParameters"
+          },
+          "planId": {
+            "type": "string"
+          }
+        },
         "type": "object"
       },
       "Plan": {
@@ -1300,378 +1672,6 @@
           "parameters"
         ],
         "type": "object"
-      },
-      "CreateInstancePayload": {
-        "properties": {
-          "instanceName": {
-            "type": "string"
-          },
-          "parameters": {
-            "$ref": "#/components/schemas/InstanceParameters"
-          },
-          "planId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "planId",
-          "instanceName"
-        ],
-        "type": "object"
-      },
-      "PartialUpdateInstancePayload": {
-        "properties": {
-          "instanceName": {
-            "type": "string"
-          },
-          "parameters": {
-            "$ref": "#/components/schemas/InstanceParameters"
-          },
-          "planId": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "ListCredentialsResponse": {
-        "properties": {
-          "credentialsList": {
-            "items": {
-              "$ref": "#/components/schemas/CredentialsListItem"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "credentialsList"
-        ],
-        "type": "object"
-      },
-      "Backup": {
-        "properties": {
-          "downloadable": {
-            "type": "boolean"
-          },
-          "finished_at": {
-            "type": "string"
-          },
-          "id": {
-            "type": "integer"
-          },
-          "size": {
-            "type": "integer"
-          },
-          "status": {
-            "type": "string"
-          },
-          "triggered_at": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "status",
-          "finished_at"
-        ],
-        "type": "object"
-      },
-      "ListBackupsResponse": {
-        "properties": {
-          "instanceBackups": {
-            "items": {
-              "$ref": "#/components/schemas/Backup"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "instanceBackups"
-        ],
-        "type": "object"
-      },
-      "CreateInstanceResponse": {
-        "properties": {
-          "instanceId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "instanceId"
-        ],
-        "type": "object"
-      },
-      "ListInstancesResponse": {
-        "properties": {
-          "instances": {
-            "items": {
-              "$ref": "#/components/schemas/Instance"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "instances"
-        ],
-        "type": "object"
-      },
-      "ListMetricsResponse": {
-        "properties": {
-          "cpuIdleTime": {
-            "type": "integer"
-          },
-          "cpuLoadPercent": {
-            "type": "integer"
-          },
-          "cpuSystemTime": {
-            "type": "integer"
-          },
-          "cpuUserTime": {
-            "type": "integer"
-          },
-          "diskEphemeralTotal": {
-            "type": "integer"
-          },
-          "diskEphemeralUsed": {
-            "type": "integer"
-          },
-          "diskPersistentTotal": {
-            "type": "integer"
-          },
-          "diskPersistentUsed": {
-            "type": "integer"
-          },
-          "memoryTotal": {
-            "type": "integer"
-          },
-          "memoryUsed": {
-            "type": "integer"
-          },
-          "parachuteDiskEphemeralActivated": {
-            "type": "integer"
-          },
-          "parachuteDiskEphemeralTotal": {
-            "type": "integer"
-          },
-          "parachuteDiskEphemeralUsed": {
-            "type": "integer"
-          },
-          "parachuteDiskEphemeralUsedPercent": {
-            "type": "integer"
-          },
-          "parachuteDiskEphemeralUsedThreshold": {
-            "type": "integer"
-          },
-          "parachuteDiskPersistentActivated": {
-            "type": "integer"
-          },
-          "parachuteDiskPersistentTotal": {
-            "type": "integer"
-          },
-          "parachuteDiskPersistentUsed": {
-            "type": "integer"
-          },
-          "parachuteDiskPersistentUsedPercent": {
-            "type": "integer"
-          },
-          "parachuteDiskPersistentUsedThreshold": {
-            "type": "integer"
-          }
-        },
-        "required": [
-          "memoryTotal",
-          "memoryUsed",
-          "diskPersistentTotal",
-          "diskPersistentUsed",
-          "parachuteDiskPersistentTotal",
-          "parachuteDiskPersistentUsed",
-          "parachuteDiskPersistentUsedPercent",
-          "parachuteDiskPersistentUsedThreshold",
-          "parachuteDiskPersistentActivated",
-          "diskEphemeralTotal",
-          "diskEphemeralUsed",
-          "parachuteDiskEphemeralTotal",
-          "parachuteDiskEphemeralUsed",
-          "parachuteDiskEphemeralUsedPercent",
-          "parachuteDiskEphemeralUsedThreshold",
-          "parachuteDiskEphemeralActivated",
-          "cpuLoadPercent"
-        ],
-        "type": "object"
-      },
-      "ListOfferingsResponse": {
-        "properties": {
-          "offerings": {
-            "items": {
-              "$ref": "#/components/schemas/Offering"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "offerings"
-        ],
-        "type": "object"
-      },
-      "Credentials": {
-        "properties": {
-          "host": {
-            "type": "string"
-          },
-          "hosts": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "password": {
-            "type": "string"
-          },
-          "port": {
-            "type": "integer"
-          },
-          "scheme": {
-            "type": "string"
-          },
-          "uri": {
-            "type": "string"
-          },
-          "username": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "host",
-          "username",
-          "password"
-        ],
-        "type": "object"
-      },
-      "InstanceParameters": {
-        "properties": {
-          "enable_monitoring": {
-            "default": false,
-            "type": "boolean"
-          },
-          "graphite": {
-            "description": "If you want to monitor your service with Graphite, you can set the custom parameter graphite. It expects the host and port where the Graphite metrics should be sent to.",
-            "example": "yourspace.your-graphite-endpoint.com:12345",
-            "type": "string"
-          },
-          "java_garbage_collector": {
-            "default": "UseG1GC",
-            "enum": [
-              "UseSerialGC",
-              "UseParallelGC",
-              "UseParallelOldGC",
-              "UseG1GC"
-            ],
-            "type": "string"
-          },
-          "java_heapspace": {
-            "description": "Default: not set, 46% of available memory will be used. The amount of memory (in MB) allocated as heap by the JVM for OpenSearch.",
-            "minimum": 256,
-            "type": "integer"
-          },
-          "java_maxmetaspace": {
-            "default": 512,
-            "description": "The amount of memory (in MB) used by the JVM to store metadata for OpenSearch.",
-            "maximum": 1024,
-            "minimum": 256,
-            "type": "integer"
-          },
-          "max_disk_threshold": {
-            "default": 80,
-            "description": "This component monitors ephemeral and persistent disk usage. If one of these disk usages reaches the default configured threshold of 80%, the a9s Parachute stops all processes on that node.",
-            "example": 90,
-            "type": "integer"
-          },
-          "metrics_frequency": {
-            "default": 10,
-            "description": "Frequency of metrics being emitted in seconds",
-            "type": "integer"
-          },
-          "metrics_prefix": {
-            "description": "Depending on your graphite provider, you might need to prefix the metrics with a certain value, like an API key for example.",
-            "example": "my-prefix",
-            "type": "string"
-          },
-          "monitoring_instance_id": {
-            "type": "string"
-          },
-          "plugins": {
-            "description": "The plugins repository-s3 and repository-azure are enabled by default and cannot be disabled.",
-            "example": [
-              "analysis-phonetic"
-            ],
-            "items": {
-              "enum": [
-                "repository-s3",
-                "repository-azure",
-                "analysis-phonetic"
-              ],
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "sgw_acl": {
-            "description": "Comma separated list of IP networks in CIDR notation which are allowed to access this instance.",
-            "example": "0.0.0.0/0",
-            "type": "string"
-          },
-          "syslog": {
-            "example": [
-              "logs4.your-syslog-endpoint.com:54321"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "tls-ciphers": {
-            "description": "Only Java format is supported.",
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "tls-protocols": {
-            "enum": [
-              "TLSv1.2",
-              "TLSv1.3"
-            ],
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "InstanceLastOperation": {
-        "properties": {
-          "description": {
-            "type": "string"
-          },
-          "state": {
-            "enum": [
-              "in progress",
-              "succeeded",
-              "failed"
-            ],
-            "type": "string"
-          },
-          "type": {
-            "enum": [
-              "create",
-              "update",
-              "delete"
-            ],
-            "type": "string"
-          }
-        },
-        "required": [
-          "state",
-          "type",
-          "description"
-        ],
-        "type": "object"
       }
     }
   },
@@ -1888,6 +1888,35 @@
         "summary": "update a service instance"
       }
     },
+    "/v1/projects/{projectId}/instances/{instanceId}/backups": {
+      "get": {
+        "operationId": "InstanceBackups.get",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListBackupsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "get latest backup information for provided instanceId"
+      }
+    },
     "/v1/projects/{projectId}/instances/{instanceId}/credentials": {
       "get": {
         "description": "get list all credentials ids for instance",
@@ -2035,6 +2064,35 @@
         "summary": "get credentials by id"
       }
     },
+    "/v1/projects/{projectId}/instances/{instanceId}/metrics": {
+      "get": {
+        "operationId": "InstanceMetrics.get",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListMetricsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "get latest metrics for cpu load, memory and disk usage"
+      }
+    },
     "/v1/projects/{projectId}/offerings": {
       "get": {
         "description": "Get the service offerings that the service broker offers.",
@@ -2076,20 +2134,6 @@
           ]
         }
       }
-    }
-  ],
-  "tags": [
-    {
-      "description": "Represents the request to use a Service Instance. Service Credentials contain the credentials that can then be used to communicate with the Service Instance.",
-      "name": "Credentials"
-    },
-    {
-      "description": "An instantiation of a Service Plan.",
-      "name": "Instances"
-    },
-    {
-      "description": "A list of all Offerings",
-      "name": "Offerings"
     }
   ]
 }

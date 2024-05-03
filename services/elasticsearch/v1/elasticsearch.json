@@ -121,33 +121,17 @@
             },
             "type": "array"
           },
-          "http_api_uri": {
-            "description": "for rabbitmq only",
-            "type": "string"
-          },
-          "http_api_uris": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "management": {
-            "type": "string"
-          },
           "password": {
             "type": "string"
           },
           "port": {
             "type": "integer"
           },
-          "uri": {
+          "scheme": {
             "type": "string"
           },
-          "uris": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
+          "uri": {
+            "type": "string"
           },
           "username": {
             "type": "string"
@@ -391,12 +375,6 @@
       },
       "InstanceParameters": {
         "properties": {
-          "consumer_timeout": {
-            "default": 1800000,
-            "description": "The unit is milliseconds.",
-            "minimum": 1800000,
-            "type": "integer"
-          },
           "enable_monitoring": {
             "default": false,
             "type": "boolean"
@@ -426,29 +404,13 @@
             "type": "string"
           },
           "plugins": {
+            "description": "The plugins repository-s3 and repository-azure are enabled by default and cannot be disabled.",
             "items": {
               "enum": [
-                "rabbitmq_consistent_hash_exchange",
-                "rabbitmq_federation",
-                "rabbitmq_federation_management",
-                "rabbitmq_mqtt",
-                "rabbitmq_sharding",
-                "rabbitmq_shovel",
-                "rabbitmq_shovel_management",
-                "rabbitmq_stomp",
-                "rabbitmq_tracing",
-                "rabbitmq_event_exchange"
+                "repository-s3",
+                "repository-azure",
+                "analysis-phonetic"
               ],
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "roles": {
-            "example": [
-              "administrator",
-              "management"
-            ],
-            "items": {
               "type": "string"
             },
             "type": "array"
@@ -456,6 +418,12 @@
           "sgw_acl": {
             "description": "Comma separated list of IP networks in CIDR notation which are allowed to access this instance.",
             "example": "0.0.0.0/0",
+            "type": "string"
+          },
+          "ssl_session_timeout": {
+            "default": "24h",
+            "description": "The content follows the nginx configuration file measurement units.",
+            "example": "4h",
             "type": "string"
           },
           "syslog": {
@@ -466,23 +434,6 @@
               "type": "string"
             },
             "type": "array"
-          },
-          "tls-ciphers": {
-            "example": [
-              "ECDHE-ECDSA-AES256-GCM-SHA384",
-              "ECDHE-RSA-AES256-GCM-SHA384"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "tls-protocols": {
-            "enum": [
-              "tlsv1.2",
-              "tlsv1.3"
-            ],
-            "type": "string"
           }
         },
         "type": "object"
@@ -692,9 +643,9 @@
     "contact": {
       "url": "https://docs.stackit.cloud/stackit/en/support-area-72063304.html"
     },
-    "description": "The STACKIT RabbitMQ API provides endpoints to list service offerings, manage service instances and service credentials within STACKIT portal projects.",
+    "description": "The STACKIT Elasticsearch API provides endpoints to list service offerings, manage service instances and service credentials within STACKIT portal projects.",
     "termsOfService": "https://www.stackit.de/en/general-terms-and-conditions/terms-of-use/",
-    "title": "STACKIT RabbitMQ API",
+    "title": "STACKIT Elasticsearch API",
     "version": "1.1.0"
   },
   "openapi": "3.0.3",
@@ -1138,7 +1089,7 @@
   },
   "servers": [
     {
-      "url": "https://rabbitmq.api.{region}stackit.cloud",
+      "url": "https://elasticsearch.api.{region}stackit.cloud",
       "variables": {
         "region": {
           "default": "eu01.",

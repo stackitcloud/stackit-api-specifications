@@ -1,0 +1,416 @@
+{
+  "components": {
+    "parameters": {
+      "v1OrganizationID": {
+        "description": "STACKIT Organization ID.",
+        "in": "path",
+        "name": "organizationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/v1UUID"
+        }
+      },
+      "v1ProjectID": {
+        "description": "STACKIT Project ID.",
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/v1UUID"
+        }
+      },
+      "v1RequestID": {
+        "description": "STACKIT Request ID.",
+        "in": "path",
+        "name": "requestId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/v1ReqID"
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "InvalidAffinityPolicy": {
+                "value": {
+                  "code": 400,
+                  "msg": "The server group policy is not supported"
+                }
+              },
+              "InvalidBootDeviceSize": {
+                "value": {
+                  "code": 400,
+                  "msg": "boot device size is not valid or missing"
+                }
+              },
+              "InvalidFlavor": {
+                "value": {
+                  "code": 400,
+                  "msg": "flavor is not valid"
+                }
+              },
+              "InvalidParameter": {
+                "value": {
+                  "code": 400,
+                  "msg": "request body has an error: doesn't match schema: Error at \"/name\": value must be a string"
+                }
+              },
+              "InvalidPublicKey": {
+                "value": {
+                  "code": 400,
+                  "msg": "invalid pubkey"
+                }
+              },
+              "InvalidUUID": {
+                "value": {
+                  "code": 400,
+                  "msg": "invalid uuid"
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/v1Error"
+            }
+          }
+        },
+        "description": "Bad request."
+      },
+      "Forbidden": {
+        "content": {
+          "application/json": {
+            "example": {
+              "code": 403,
+              "msg": "Forbidden"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/v1Error"
+            }
+          }
+        },
+        "description": "Forbidden Request."
+      },
+      "InternalServerError": {
+        "content": {
+          "application/json": {
+            "example": {
+              "code": 500,
+              "msg": "internal server error"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/v1Error"
+            }
+          }
+        },
+        "description": "Internal Server Error, returns a 500 if something is broken on IaaS API Side."
+      },
+      "NotFound": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "AreaNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "area not found"
+                }
+              },
+              "KeyPairNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "keypair not found"
+                }
+              },
+              "KeypairNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "keypair not found"
+                }
+              },
+              "NetworkNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "network not found"
+                }
+              },
+              "NetworkRangeNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "network range not found"
+                }
+              },
+              "OrganizationNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "organization not found"
+                }
+              },
+              "ProjectNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "project not found"
+                }
+              },
+              "RequestNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "request not found"
+                }
+              },
+              "RouteNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "route not found"
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/v1Error"
+            }
+          }
+        },
+        "description": "Object not found."
+      },
+      "Unauthorized": {
+        "content": {
+          "application/json": {
+            "example": {
+              "code": 401,
+              "msg": "Unauthorized"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/v1Error"
+            }
+          }
+        },
+        "description": "Unauthorized Request."
+      }
+    },
+    "schemas": {
+      "Request": {
+        "description": "Request.",
+        "properties": {
+          "details": {
+            "example": "This worked!",
+            "type": "string"
+          },
+          "requestAction": {
+            "$ref": "#/components/schemas/ResourceAction"
+          },
+          "requestId": {
+            "$ref": "#/components/schemas/v1ReqID"
+          },
+          "requestType": {
+            "$ref": "#/components/schemas/Resource"
+          },
+          "resources": {
+            "example": [
+              {
+                "id": "d61a8564-c8dd-4ffb-bc15-143e7d0c85ed",
+                "status": "CREATING",
+                "type": "SERVER"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/v1RequestResource"
+            },
+            "type": "array"
+          },
+          "status": {
+            "$ref": "#/components/schemas/v1ResourceState"
+          }
+        },
+        "required": [
+          "requestId",
+          "requestType",
+          "requestAction",
+          "resources",
+          "status"
+        ],
+        "type": "object"
+      },
+      "Resource": {
+        "description": "Resource type.",
+        "example": "SERVER",
+        "type": "string"
+      },
+      "ResourceAction": {
+        "description": "Resource action.",
+        "example": "CREATE",
+        "type": "string"
+      },
+      "v1Error": {
+        "description": "Error with HTTP error code and an error message.",
+        "properties": {
+          "code": {
+            "example": 404,
+            "type": "integer"
+          },
+          "msg": {
+            "example": "Project not found",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "msg"
+        ],
+        "type": "object"
+      },
+      "v1ReqID": {
+        "description": "ID representing a single API request.",
+        "example": "req-d61a8564c8dd4ffbbc15143e7d0c85ed",
+        "maxLength": 36,
+        "minLength": 36,
+        "pattern": "^req-[0-9a-f]{32}$",
+        "type": "string"
+      },
+      "v1RequestResource": {
+        "description": "A resource as part of a request.",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/v1UUID"
+          },
+          "status": {
+            "$ref": "#/components/schemas/v1ResourceState"
+          },
+          "type": {
+            "$ref": "#/components/schemas/Resource"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "status"
+        ],
+        "type": "object"
+      },
+      "v1ResourceState": {
+        "description": "The state of a resource object.",
+        "example": "CREATING",
+        "type": "string"
+      },
+      "v1UUID": {
+        "description": "Universally Unique Identifier (UUID).",
+        "example": "d61a8564-c8dd-4ffb-bc15-143e7d0c85ed",
+        "format": "uuid",
+        "maxLength": 36,
+        "minLength": 36,
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+        "type": "string"
+      }
+    }
+  },
+  "info": {
+    "contact": {
+      "email": "stackit-iaas@mail.schwarz",
+      "name": "STACKIT IaaS Teams",
+      "url": "https://support.stackit.cloud/servicedesk"
+    },
+    "description": "This API allows you to create and modify IaaS resources.",
+    "termsOfService": "https://stackit.de/en/imprint",
+    "title": "IaaS-API",
+    "version": "1beta1"
+  },
+  "openapi": "3.0.1",
+  "paths": {
+    "/v1beta1/organizations/{organizationId}/requests/{requestId}": {
+      "get": {
+        "description": "Lookup an organization request ID from a previous request. This allows to find resource IDs of resources generated during a organization request.",
+        "operationId": "GetOrganizationRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1OrganizationID"
+          },
+          {
+            "$ref": "#/components/parameters/v1RequestID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Request"
+                }
+              }
+            },
+            "description": "Show organization request details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Lookup an organization request ID."
+      }
+    },
+    "/v1beta1/projects/{projectId}/requests/{requestId}": {
+      "get": {
+        "description": "Lookup a project request ID from a previous request. This allows to find resource IDs of resources generated during a projects request.",
+        "operationId": "GetProjectRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1RequestID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Request"
+                }
+              }
+            },
+            "description": "Show project request details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Lookup a project request ID."
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://iaas.api.{region}stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "eu01.",
+          "enum": [
+            "eu01."
+          ]
+        }
+      }
+    }
+  ]
+}

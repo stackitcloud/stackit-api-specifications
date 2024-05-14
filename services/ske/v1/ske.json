@@ -685,6 +685,14 @@
         },
         "type": "object"
       },
+      "v1LoginKubeconfig": {
+        "properties": {
+          "kubeconfig": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "v1Network": {
         "properties": {
           "id": {
@@ -1377,6 +1385,53 @@
           }
         },
         "summary": "Create a kubeconfig"
+      }
+    },
+    "/v1/projects/{projectId}/clusters/{clusterName}/kubeconfig/login": {
+      "get": {
+        "description": "A kubeconfig retrieved using this endpoint does not contain any credentials and instead obtains valid credentials via the STACKIT CLI.",
+        "operationId": "GetLoginKubeconfig",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "clusterName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/v1LoginKubeconfig"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RuntimeError"
+                }
+              }
+            },
+            "description": "An unexpected error response."
+          }
+        },
+        "summary": "Get a kubeconfig for use with the STACKIT CLI"
       }
     },
     "/v1/projects/{projectId}/clusters/{clusterName}/maintenance": {

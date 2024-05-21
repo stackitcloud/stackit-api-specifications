@@ -1,317 +1,78 @@
 {
   "components": {
     "schemas": {
-      "api.Configuration": {
+      "ACL": {
         "properties": {
-          "name": {
+          "items": {
+            "example": [
+              "0.0.0.0/0"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "Backup": {
+        "properties": {
+          "endTime": {
             "type": "string"
           },
-          "setting": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "api.ExtensionConfigLoadResponse": {
-        "properties": {
-          "configuration": {
-            "description": "Returns marshalled JSON of the new configuration of whatever extension is called",
-            "items": {
-              "$ref": "#/components/schemas/api.Configuration"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "api.ExtensionConfigureResponse": {
-        "properties": {
-          "configuration": {
-            "description": "Returns marshalled JSON of the new configuration of whatever extension is called",
-            "items": {
-              "$ref": "#/components/schemas/api.Configuration"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "api.ExtensionDeleteResponse": {
-        "properties": {
-          "isSucceded": {
-            "type": "boolean"
-          }
-        },
-        "type": "object"
-      },
-      "api.ExtensionList": {
-        "properties": {
-          "ID": {
-            "type": "integer"
-          },
-          "description": {
+          "error": {
             "type": "string"
           },
-          "name": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "api.ExtensionLoadResponse": {
-        "properties": {
-          "extension": {
-            "$ref": "#/components/schemas/api.ExtensionList"
-          }
-        },
-        "type": "object"
-      },
-      "api.InstallResponse": {
-        "properties": {
-          "extension": {
-            "$ref": "#/components/schemas/api.ExtensionList"
-          }
-        },
-        "type": "object"
-      },
-      "api.InstalledListResponse": {
-        "properties": {
-          "installed": {
-            "items": {
-              "$ref": "#/components/schemas/api.ExtensionList"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "extensions.Configuration": {
-        "properties": {
-          "name": {
+          "id": {
             "type": "string"
           },
-          "setting": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "extensions.ExtensionListResponse": {
-        "properties": {
-          "list": {
+          "labels": {
             "items": {
-              "$ref": "#/components/schemas/api.ExtensionList"
+              "type": "string"
             },
             "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "extensions.NewConfig": {
-        "properties": {
-          "configuration": {
-            "items": {
-              "$ref": "#/components/schemas/extensions.Configuration"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "instance.CreateDatabaseRequest": {
-        "properties": {
+          },
           "name": {
-            "example": "Test",
             "type": "string"
           },
           "options": {
             "additionalProperties": {
               "type": "string"
             },
-            "description": "Database specific options",
             "type": "object"
-          }
-        },
-        "type": "object"
-      },
-      "instance.CreateDatabaseResponse": {
-        "properties": {
-          "id": {
+          },
+          "size": {
+            "type": "integer"
+          },
+          "startTime": {
             "type": "string"
           }
         },
         "type": "object"
       },
-      "instance.DataPoint": {
+      "CloneInstancePayload": {
         "properties": {
+          "class": {
+            "example": "premium-perf6-stackit",
+            "type": "string"
+          },
+          "size": {
+            "example": 10,
+            "type": "integer"
+          },
           "timestamp": {
-            "type": "string"
-          },
-          "value": {
-            "type": "number"
-          }
-        },
-        "type": "object"
-      },
-      "instance.Database": {
-        "properties": {
-          "id": {
-            "example": "1",
-            "type": "string"
-          },
-          "name": {
-            "example": "Peter_pan",
-            "type": "string"
-          },
-          "options": {
-            "description": "Database specific options",
-            "type": "object"
-          }
-        },
-        "type": "object"
-      },
-      "instance.Host": {
-        "properties": {
-          "hostMetrics": {
-            "items": {
-              "$ref": "#/components/schemas/instance.HostMetric"
-            },
-            "type": "array"
-          },
-          "id": {
+            "description": "The timestamp should be specified in UTC time following the format provided in the example.",
+            "example": "2023-04-17T09:28:00+00:00",
             "type": "string"
           }
         },
         "type": "object"
       },
-      "instance.HostMetric": {
+      "CloneInstanceResponse": {
         "properties": {
-          "datapoints": {
-            "items": {
-              "$ref": "#/components/schemas/instance.DataPoint"
-            },
-            "type": "array"
-          },
-          "name": {
-            "type": "string"
-          },
-          "units": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "instance.ListDatabasesResponse": {
-        "properties": {
-          "databases": {
-            "items": {
-              "$ref": "#/components/schemas/instance.Database"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "instance.ListInstance": {
-        "properties": {
-          "id": {
+          "instanceId": {
             "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
             "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "status": {
-            "example": "RUNNING",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "instance.MetricsResponse": {
-        "properties": {
-          "hosts": {
-            "items": {
-              "$ref": "#/components/schemas/instance.Host"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "postgres.DatabaseParameter": {
-        "properties": {
-          "context": {
-            "description": "Context of the parameter.",
-            "example": "user",
-            "type": "string"
-          },
-          "dataType": {
-            "description": "Datatype describes the type of data that is used in the Value field.",
-            "example": "integer",
-            "type": "string"
-          },
-          "defaultValue": {
-            "description": "DefaultValue for the value field.",
-            "example": "4096",
-            "type": "string"
-          },
-          "description": {
-            "description": "Description of the parameter.",
-            "example": "sets the maximum memory to be used for query workspace",
-            "type": "string"
-          },
-          "edit": {
-            "description": "Edit shows if the user can change this value.",
-            "example": false,
-            "type": "boolean"
-          },
-          "maxValue": {
-            "description": "MaxValue describes the highest possible value that can be set.",
-            "example": "2148473647",
-            "type": "string"
-          },
-          "minValue": {
-            "description": "MinValue describes the lowest possible value that can be set.",
-            "example": "64",
-            "type": "string"
-          },
-          "name": {
-            "description": "Name of the parameter.",
-            "example": "work_mem",
-            "type": "string"
-          },
-          "pendingRestart": {
-            "description": "PendingRestart describes if a parameter change requires a restart of the server.",
-            "example": false,
-            "type": "boolean"
-          },
-          "resetValue": {
-            "description": "ResetValue for the value field af.ter a reset.",
-            "example": "102400",
-            "type": "string"
-          },
-          "unit": {
-            "description": "Unit if the parameter has a unit if not empty.",
-            "example": "kB",
-            "type": "string"
-          },
-          "value": {
-            "description": "Value of this parameter.",
-            "example": "102400",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "postgres.DatabaseParameterResponse": {
-        "properties": {
-          "parameter": {
-            "description": "List of the parameter",
-            "items": {
-              "$ref": "#/components/schemas/postgres.DatabaseParameter"
-            },
-            "type": "array"
           }
         },
         "type": "object"
@@ -369,74 +130,10 @@
         ],
         "type": "object"
       },
-      "PartialUpdateInstancePayload": {
+      "CreateInstanceResponse": {
         "properties": {
-          "acl": {
-            "$ref": "#/components/schemas/ACL"
-          },
-          "backupSchedule": {
-            "example": "6 6 * * *",
-            "type": "string"
-          },
-          "flavorId": {
-            "example": "1.1",
-            "type": "string"
-          },
-          "labels": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "description": "Labels field is not certain/clear",
-            "type": "object"
-          },
-          "name": {
-            "type": "string"
-          },
-          "options": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "type": "object"
-          },
-          "replicas": {
-            "example": 3,
-            "type": "integer"
-          },
-          "storage": {
-            "$ref": "#/components/schemas/Storage"
-          },
-          "version": {
-            "example": "1.0",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateBackupSchedulePayload": {
-        "properties": {
-          "backupSchedule": {
-            "example": "6 6 * * *",
-            "type": "string"
-          }
-        },
-        "required": [
-          "backupSchedule"
-        ],
-        "type": "object"
-      },
-      "CloneInstancePayload": {
-        "properties": {
-          "class": {
-            "example": "premium-perf6-stackit",
-            "type": "string"
-          },
-          "size": {
-            "example": 10,
-            "type": "integer"
-          },
-          "timestamp": {
-            "description": "The timestamp should be specified in UTC time following the format provided in the example.",
-            "example": "2023-04-17T09:28:00+00:00",
+          "id": {
+            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
             "type": "string"
           }
         },
@@ -451,101 +148,6 @@
             "type": "array"
           },
           "username": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateUserPayload": {
-        "properties": {
-          "database": {
-            "type": "string"
-          },
-          "roles": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "PartialUpdateUserPayload": {
-        "properties": {
-          "database": {
-            "type": "string"
-          },
-          "roles": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "ACL": {
-        "properties": {
-          "items": {
-            "example": [
-              "0.0.0.0/0"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "Backup": {
-        "properties": {
-          "endTime": {
-            "type": "string"
-          },
-          "error": {
-            "type": "string"
-          },
-          "id": {
-            "type": "string"
-          },
-          "labels": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "name": {
-            "type": "string"
-          },
-          "options": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "type": "object"
-          },
-          "size": {
-            "type": "integer"
-          },
-          "startTime": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "CloneInstanceResponse": {
-        "properties": {
-          "instanceId": {
-            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "CreateInstanceResponse": {
-        "properties": {
-          "id": {
-            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
             "type": "string"
           }
         },
@@ -613,110 +215,10 @@
         },
         "type": "object"
       },
-      "ListStoragesResponse": {
-        "properties": {
-          "storageClasses": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "storageRange": {
-            "$ref": "#/components/schemas/StorageRange"
-          }
-        },
-        "type": "object"
-      },
-      "ListFlavorsResponse": {
-        "properties": {
-          "flavors": {
-            "items": {
-              "$ref": "#/components/schemas/Flavor"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "InstanceResponse": {
+      "GetUserResponse": {
         "properties": {
           "item": {
-            "$ref": "#/components/schemas/Instance"
-          }
-        },
-        "type": "object"
-      },
-      "ListVersionsResponse": {
-        "properties": {
-          "versions": {
-            "example": [
-              "1.0"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "ListBackupsResponse": {
-        "properties": {
-          "count": {
-            "type": "integer"
-          },
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/Backup"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "ListInstancesResponse": {
-        "properties": {
-          "count": {
-            "type": "integer"
-          },
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/instance.ListInstance"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "ListUsersResponseItem": {
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "username": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "ListUsersResponse": {
-        "properties": {
-          "count": {
-            "type": "integer"
-          },
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/ListUsersResponseItem"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "ResetUserResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/User"
+            "$ref": "#/components/schemas/UserResponse"
           }
         },
         "type": "object"
@@ -764,6 +266,179 @@
         },
         "type": "object"
       },
+      "InstanceResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/Instance"
+          }
+        },
+        "type": "object"
+      },
+      "ListBackupsResponse": {
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Backup"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ListFlavorsResponse": {
+        "properties": {
+          "flavors": {
+            "items": {
+              "$ref": "#/components/schemas/Flavor"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ListInstancesResponse": {
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/instance.ListInstance"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ListStoragesResponse": {
+        "properties": {
+          "storageClasses": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "storageRange": {
+            "$ref": "#/components/schemas/StorageRange"
+          }
+        },
+        "type": "object"
+      },
+      "ListUsersResponse": {
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ListUsersResponseItem"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ListUsersResponseItem": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ListVersionsResponse": {
+        "properties": {
+          "versions": {
+            "example": [
+              "1.0"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "PartialUpdateInstancePayload": {
+        "properties": {
+          "acl": {
+            "$ref": "#/components/schemas/ACL"
+          },
+          "backupSchedule": {
+            "example": "6 6 * * *",
+            "type": "string"
+          },
+          "flavorId": {
+            "example": "1.1",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Labels field is not certain/clear",
+            "type": "object"
+          },
+          "name": {
+            "type": "string"
+          },
+          "options": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "replicas": {
+            "example": 3,
+            "type": "integer"
+          },
+          "storage": {
+            "$ref": "#/components/schemas/Storage"
+          },
+          "version": {
+            "example": "1.0",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PartialUpdateInstanceResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/Instance"
+          }
+        },
+        "type": "object"
+      },
+      "PartialUpdateUserPayload": {
+        "properties": {
+          "database": {
+            "type": "string"
+          },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ResetUserResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "type": "object"
+      },
       "Storage": {
         "properties": {
           "class": {
@@ -789,10 +464,28 @@
         },
         "type": "object"
       },
-      "PartialUpdateInstanceResponse": {
+      "UpdateBackupSchedulePayload": {
         "properties": {
-          "item": {
-            "$ref": "#/components/schemas/Instance"
+          "backupSchedule": {
+            "example": "6 6 * * *",
+            "type": "string"
+          }
+        },
+        "required": [
+          "backupSchedule"
+        ],
+        "type": "object"
+      },
+      "UpdateUserPayload": {
+        "properties": {
+          "database": {
+            "type": "string"
+          },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
           }
         },
         "type": "object"
@@ -829,28 +522,6 @@
         },
         "type": "object"
       },
-      "CreateUserRequest": {
-        "properties": {
-          "roles": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "username": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "GetUserResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/UserResponse"
-          }
-        },
-        "type": "object"
-      },
       "UserResponse": {
         "properties": {
           "host": {
@@ -873,6 +544,22 @@
           }
         },
         "type": "object"
+      },
+      "instance.ListInstance": {
+        "properties": {
+          "id": {
+            "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "example": "RUNNING",
+            "type": "string"
+          }
+        },
+        "type": "object"
       }
     }
   },
@@ -885,13 +572,15 @@
     "description": "This is the documentation for the STACKIT postgres service",
     "termsOfService": "https://www.stackit.de/en/general-terms-and-conditions/",
     "title": "STACKIT PostgreSQL Flex API",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "x-stackit-timeout": "10m"
   },
   "openapi": "3.0.1",
   "paths": {
     "/v1/projects/{projectId}/flavors": {
       "get": {
         "description": "Get available flavors for a specific projectID",
+        "operationId": "ListFlavors",
         "parameters": [
           {
             "description": "Project ID",
@@ -938,13 +627,13 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Get Flavors",
-        "operationId": "ListFlavors"
+        "summary": "Get Flavors"
       }
     },
     "/v1/projects/{projectId}/instances": {
       "get": {
         "description": "List available instances",
+        "operationId": "ListInstances",
         "parameters": [
           {
             "description": "Project ID",
@@ -991,11 +680,11 @@
             "BearerAuth": []
           }
         ],
-        "summary": "List Instances",
-        "operationId": "ListInstances"
+        "summary": "List Instances"
       },
       "post": {
         "description": "Create a new instance of a postgres database",
+        "operationId": "CreateInstance",
         "parameters": [
           {
             "description": "Project ID",
@@ -1053,13 +742,13 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Create Instance",
-        "operationId": "CreateInstance"
+        "summary": "Create Instance"
       }
     },
     "/v1/projects/{projectId}/instances/{instanceId}": {
       "delete": {
         "description": "Delete available instance",
+        "operationId": "DeleteInstance",
         "parameters": [
           {
             "description": "Project ID",
@@ -1127,11 +816,11 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Delete Instance",
-        "operationId": "DeleteInstance"
+        "summary": "Delete Instance"
       },
       "get": {
         "description": "Get specific available instances",
+        "operationId": "GetInstance",
         "parameters": [
           {
             "description": "Project ID",
@@ -1189,11 +878,11 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Get specific instance",
-        "operationId": "GetInstance"
+        "summary": "Get specific instance"
       },
       "patch": {
         "description": "Update available instance of a postgres database. Supported Versions are 12, 13, 14, 15 -- only upgrades are allowed!",
+        "operationId": "PartialUpdateInstance",
         "parameters": [
           {
             "description": "Project ID",
@@ -1262,13 +951,13 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Update Instance",
-        "operationId": "PartialUpdateInstance"
+        "summary": "Update Instance"
       }
     },
     "/v1/projects/{projectId}/instances/{instanceId}/backups": {
       "get": {
         "description": "List all backups which are available for a specific instance",
+        "operationId": "ListBackups",
         "parameters": [
           {
             "description": "Project ID",
@@ -1329,11 +1018,11 @@
             "BearerAuth": []
           }
         ],
-        "summary": "List backups",
-        "operationId": "ListBackups"
+        "summary": "List backups"
       },
       "put": {
         "description": "Update backup schedule",
+        "operationId": "UpdateBackupSchedule",
         "parameters": [
           {
             "description": "Project ID",
@@ -1401,13 +1090,13 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Update Backup Schedule",
-        "operationId": "UpdateBackupSchedule"
+        "summary": "Update Backup Schedule"
       }
     },
     "/v1/projects/{projectId}/instances/{instanceId}/backups/{backupId}": {
       "get": {
         "description": "Get specific available backup",
+        "operationId": "GetBackup",
         "parameters": [
           {
             "description": "Project ID",
@@ -1479,13 +1168,13 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Get specific backup",
-        "operationId": "GetBackup"
+        "summary": "Get specific backup"
       }
     },
     "/v1/projects/{projectId}/instances/{instanceId}/clone": {
       "post": {
         "description": "Clone an existing instance of a postgres database to a new destination instance",
+        "operationId": "CloneInstance",
         "parameters": [
           {
             "description": "Project ID",
@@ -1554,13 +1243,13 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Clone Instance",
-        "operationId": "CloneInstance"
+        "summary": "Clone Instance"
       }
     },
     "/v1/projects/{projectId}/instances/{instanceId}/force": {
       "delete": {
         "description": "Forces the deletion of an delayed deleted instance",
+        "operationId": "ForceDeleteInstance",
         "parameters": [
           {
             "description": "Project ID",
@@ -1618,13 +1307,13 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Force delete instance",
-        "operationId": "ForceDeleteInstance"
+        "summary": "Force delete instance"
       }
     },
     "/v1/projects/{projectId}/instances/{instanceId}/users": {
       "get": {
         "description": "List available users for an instance",
+        "operationId": "ListUsers",
         "parameters": [
           {
             "description": "Project ID",
@@ -1682,11 +1371,11 @@
             "BearerAuth": []
           }
         ],
-        "summary": "List Users",
-        "operationId": "ListUsers"
+        "summary": "List Users"
       },
       "post": {
         "description": "Create user for an instance",
+        "operationId": "CreateUser",
         "parameters": [
           {
             "description": "Project ID",
@@ -1755,13 +1444,13 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Create User",
-        "operationId": "CreateUser"
+        "summary": "Create User"
       }
     },
     "/v1/projects/{projectId}/instances/{instanceId}/users/{userId}": {
       "delete": {
         "description": "Delete user for an instance",
+        "operationId": "DeleteUser",
         "parameters": [
           {
             "description": "Project ID",
@@ -1823,11 +1512,11 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Delete User",
-        "operationId": "DeleteUser"
+        "summary": "Delete User"
       },
       "get": {
         "description": "Get specific available user for an instance",
+        "operationId": "GetUser",
         "parameters": [
           {
             "description": "Project ID",
@@ -1896,11 +1585,11 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Get User",
-        "operationId": "GetUser"
+        "summary": "Get User"
       },
       "patch": {
         "description": "Update user for an instance. Only the roles are updatable.",
+        "operationId": "PartialUpdateUser",
         "parameters": [
           {
             "description": "The ID of the project",
@@ -1979,11 +1668,11 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Update User",
-        "operationId": "PartialUpdateUser"
+        "summary": "Update User"
       },
       "put": {
         "description": "Update user for an instance. Only the roles are updatable.",
+        "operationId": "UpdateUser",
         "parameters": [
           {
             "description": "The ID of the project",
@@ -2062,13 +1751,13 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Update User",
-        "operationId": "UpdateUser"
+        "summary": "Update User"
       }
     },
     "/v1/projects/{projectId}/instances/{instanceId}/users/{userId}/reset": {
       "post": {
         "description": "Reset user password for a postgres instance",
+        "operationId": "ResetUser",
         "parameters": [
           {
             "description": "Project ID",
@@ -2154,13 +1843,13 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Reset User",
-        "operationId": "ResetUser"
+        "summary": "Reset User"
       }
     },
     "/v1/projects/{projectId}/storages/{flavorId}": {
       "get": {
         "description": "Get available storages for a specific flavor",
+        "operationId": "ListStorages",
         "parameters": [
           {
             "description": "Project ID",
@@ -2218,13 +1907,13 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Get Storages",
-        "operationId": "ListStorages"
+        "summary": "Get Storages"
       }
     },
     "/v1/projects/{projectId}/versions": {
       "get": {
         "description": "Get available versions for postgres database",
+        "operationId": "ListVersions",
         "parameters": [
           {
             "description": "Project ID",
@@ -2281,14 +1970,13 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Get Versions",
-        "operationId": "ListVersions"
+        "summary": "Get Versions"
       }
     }
   },
   "servers": [
     {
-      "url": "https://postgres-flex-service.api.{region}stackit.cloud",
+      "url": "https://postgres-flex.api.{region}stackit.cloud",
       "variables": {
         "region": {
           "default": "eu01.",

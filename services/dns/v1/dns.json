@@ -1,6 +1,74 @@
 {
   "components": {
     "schemas": {
+      "CloneZonePayload": {
+        "description": "metadata to clone a zone.",
+        "properties": {
+          "adjustRecords": {
+            "description": "Adjust record set content and replace the dns name of the original zone with the new dns name of the cloned zone",
+            "example": true,
+            "type": "boolean"
+          },
+          "description": {
+            "description": "New Description for the cloned zone. Leave empty to use the same description as the original zone",
+            "example": "this is our example zone",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "dnsName": {
+            "description": "DnsName is the dns name of the zone to clone",
+            "example": "example.com",
+            "maxLength": 253,
+            "minLength": 1,
+            "type": "string"
+          },
+          "name": {
+            "description": "New Name for the cloned zone. Leave empty to use the same name as the original zone",
+            "example": "test",
+            "maxLength": 63,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "dnsName"
+        ],
+        "type": "object"
+      },
+      "CreateLabelPayload": {
+        "properties": {
+          "key": {
+            "example": "stage",
+            "maxLength": 63,
+            "minLength": 1,
+            "type": "string"
+          },
+          "value": {
+            "example": "prod",
+            "maxLength": 63,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CreateLabelResponse": {
+        "description": "ResponseUpsertLabel.",
+        "properties": {
+          "label": {
+            "$ref": "#/components/schemas/Label"
+          },
+          "message": {
+            "example": "Success",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "CreateRecordSetPayload": {
         "description": "RRSetPost for rr set info.",
         "properties": {
@@ -167,6 +235,121 @@
         ],
         "type": "object"
       },
+      "DeleteLabelResponse": {
+        "description": "ResponseDeleteLabel.",
+        "properties": {
+          "label": {
+            "$ref": "#/components/schemas/Label"
+          },
+          "message": {
+            "example": "Success",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ErrorMessage": {
+        "properties": {
+          "error": {
+            "example": "Error",
+            "type": "string"
+          },
+          "message": {
+            "example": "Error message",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ExportRecordSetsPayload": {
+        "properties": {
+          "exportAsFQDN": {
+            "default": true,
+            "example": true,
+            "type": "boolean"
+          },
+          "format": {
+            "default": "csv",
+            "enum": [
+              "csv",
+              "json",
+              "bind"
+            ],
+            "example": "csv",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ImportRecordSetsPayload": {
+        "properties": {
+          "rrSets": {
+            "items": {
+              "$ref": "#/components/schemas/RecordDataExchange"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ImportRecordSetsResponse": {
+        "description": "ImportSummaryResponse is the response of the import.",
+        "properties": {
+          "message": {
+            "example": "Success",
+            "type": "string"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/ImportSummary"
+          }
+        },
+        "required": [
+          "summary"
+        ],
+        "type": "object"
+      },
+      "ImportSummary": {
+        "description": "ImportSummary is the summary of the import.",
+        "properties": {
+          "createdRRSets": {
+            "example": 0,
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "createdRecords": {
+            "example": 0,
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "deletedRRSets": {
+            "example": 10000,
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "deletedRecords": {
+            "example": 10000,
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "updatedRRSets": {
+            "example": 5,
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "updatedRecords": {
+            "example": 5,
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
       "Label": {
         "properties": {
           "key": {
@@ -186,6 +369,22 @@
           "key",
           "value"
         ],
+        "type": "object"
+      },
+      "ListLabelsResponse": {
+        "description": "ResponseAllLabels.",
+        "properties": {
+          "labels": {
+            "items": {
+              "$ref": "#/components/schemas/Label"
+            },
+            "type": "array"
+          },
+          "message": {
+            "example": "Success",
+            "type": "string"
+          }
+        },
         "type": "object"
       },
       "ListRecordSetsResponse": {
@@ -263,6 +462,54 @@
             "type": "string"
           }
         },
+        "type": "object"
+      },
+      "MoveCodeResponse": {
+        "properties": {
+          "code": {
+            "description": "code to move the zone. It is one time shown so better keep it.",
+            "example": "3sLuLCLpLEbbQ6GZ05tu2U56dmKx1uCdWquTHz6BK34=",
+            "type": "string"
+          },
+          "expiresAt": {
+            "description": "when the code expires",
+            "example": "2023-08-08 08:58:25+00:00",
+            "type": "string"
+          },
+          "message": {
+            "description": "human readable message",
+            "example": "successfully created code to move the zone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "expiresAt"
+        ],
+        "type": "object"
+      },
+      "MoveZonePayload": {
+        "description": "body to move zone from one project to another.",
+        "properties": {
+          "code": {
+            "description": "Code to move the zone. It must be valid, not expired and belong",
+            "example": "3sLuLCLpLEbbQ6GZ05tu2U56dmKx1uCdWquTHz6BK34=",
+            "maxLength": 1024,
+            "minLength": 1,
+            "type": "string"
+          },
+          "zoneDnsName": {
+            "description": "ZoneDnsName is the dns name of the zone to move",
+            "example": "example.com",
+            "maxLength": 253,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "zoneDnsName"
+        ],
         "type": "object"
       },
       "PartialUpdateRecordPayload": {
@@ -417,6 +664,36 @@
         ],
         "type": "object"
       },
+      "RecordDataExchange": {
+        "properties": {
+          "comment": {
+            "example": "comment",
+            "type": "string"
+          },
+          "content": {
+            "example": [
+              "1.2.3.4"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "name": {
+            "example": "example.com",
+            "type": "string"
+          },
+          "ttl": {
+            "example": 3600,
+            "type": "integer"
+          },
+          "type": {
+            "example": "A",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "RecordPayload": {
         "description": "RecordPost for rr set info.",
         "properties": {
@@ -563,6 +840,22 @@
         },
         "required": [
           "rrset"
+        ],
+        "type": "object"
+      },
+      "ValidateMoveCodePayload": {
+        "description": "PostValidateMoveCodeRequest body to validate move code request.",
+        "properties": {
+          "code": {
+            "description": "code that should be validated. It validates if it is valid, not expired and belongs to the zone.",
+            "example": "3sLuLCLpLEbbQ6GZ05tu2U56dmKx1uCdWquTHz6BK34=",
+            "maxLength": 1024,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
         ],
         "type": "object"
       },
@@ -764,6 +1057,17 @@
         ],
         "type": "object"
       },
+      "ZoneDataExchange": {
+        "properties": {
+          "rrSets": {
+            "items": {
+              "$ref": "#/components/schemas/RecordDataExchange"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "ZoneResponse": {
         "description": "ResponseZone for user info.",
         "properties": {
@@ -794,6 +1098,77 @@
   },
   "openapi": "3.0.1",
   "paths": {
+    "/v1/projects/{projectId}/move-zone": {
+      "post": {
+        "description": "move zone from one project to another",
+        "operationId": "MoveZone",
+        "parameters": [
+          {
+            "description": "project id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoveZonePayload"
+              }
+            }
+          },
+          "description": "information about the move",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        },
+        "summary": "move zone from one project to another"
+      }
+    },
     "/v1/projects/{projectId}/zones": {
       "get": {
         "description": "All zone",
@@ -1554,6 +1929,844 @@
           }
         },
         "summary": "Patch update an existing zone"
+      }
+    },
+    "/v1/projects/{projectId}/zones/{zoneId}/clone": {
+      "post": {
+        "description": "Clone an existing zone with all record sets to a new zone with a different name",
+        "operationId": "CloneZone",
+        "parameters": [
+          {
+            "description": "project id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "zone id",
+            "in": "path",
+            "name": "zoneId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CloneZonePayload"
+              }
+            }
+          },
+          "description": "zone to clone",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZoneResponse"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        },
+        "summary": "Clone an existing zone with all record sets to a new zone with a different name"
+      }
+    },
+    "/v1/projects/{projectId}/zones/{zoneId}/export": {
+      "post": {
+        "description": "Export Zone",
+        "operationId": "ExportRecordSets",
+        "parameters": [
+          {
+            "description": "project id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "zone id",
+            "in": "path",
+            "name": "zoneId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportRecordSetsPayload"
+              }
+            }
+          },
+          "description": "export configuration",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZoneDataExchange"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZoneDataExchange"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZoneDataExchange"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Forbidden"
+          }
+        },
+        "summary": "Export all records in a single zone"
+      }
+    },
+    "/v1/projects/{projectId}/zones/{zoneId}/import": {
+      "post": {
+        "description": "Imports a zone and overwrites/deletes/inserts all desired records",
+        "operationId": "ImportRecordSets",
+        "parameters": [
+          {
+            "description": "project id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "zone id",
+            "in": "path",
+            "name": "zoneId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "format of the data to import",
+            "in": "query",
+            "name": "format",
+            "schema": {
+              "default": "csv",
+              "enum": [
+                "json",
+                "csv",
+                "bind"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "type of the zone import",
+            "in": "query",
+            "name": "importType",
+            "schema": {
+              "default": "restore",
+              "enum": [
+                "restore",
+                "delete",
+                "update",
+                "upsert"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportRecordSetsPayload"
+              }
+            },
+            "text/csv": {
+              "schema": {
+                "$ref": "#/components/schemas/ZoneDataExchange"
+              }
+            },
+            "text/plain": {
+              "schema": {
+                "$ref": "#/components/schemas/ZoneDataExchange"
+              }
+            }
+          },
+          "description": "accepts all response bodies for the export endpoint",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportRecordSetsResponse"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        },
+        "summary": "Imports a zone"
+      }
+    },
+    "/v1/projects/{projectId}/zones/{zoneId}/labels": {
+      "get": {
+        "description": "All Labels",
+        "operationId": "ListLabels",
+        "parameters": [
+          {
+            "description": "project id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "zone id",
+            "in": "path",
+            "name": "zoneId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListLabelsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        },
+        "summary": "Get all labels"
+      },
+      "put": {
+        "description": "Create or update label",
+        "operationId": "CreateLabel",
+        "parameters": [
+          {
+            "description": "project id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "zone id",
+            "in": "path",
+            "name": "zoneId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLabelPayload"
+              }
+            }
+          },
+          "description": "record set to create",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateLabelResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        },
+        "summary": "Create or update label"
+      }
+    },
+    "/v1/projects/{projectId}/zones/{zoneId}/labels/{key}": {
+      "delete": {
+        "description": "Delete a label",
+        "operationId": "DeleteLabel",
+        "parameters": [
+          {
+            "description": "project id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "zone id",
+            "in": "path",
+            "name": "zoneId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "key of the label",
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteLabelResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        },
+        "summary": "Delete a label"
+      }
+    },
+    "/v1/projects/{projectId}/zones/{zoneId}/move-code": {
+      "delete": {
+        "description": "delete/invalidate a move code",
+        "operationId": "DeleteMoveCode",
+        "parameters": [
+          {
+            "description": "project id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "zone id",
+            "in": "path",
+            "name": "zoneId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        },
+        "summary": "delete/invalidate a move code"
+      },
+      "post": {
+        "description": "move zone from one project to another",
+        "operationId": "CreateMoveCode",
+        "parameters": [
+          {
+            "description": "project id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "zone id",
+            "in": "path",
+            "name": "zoneId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MoveCodeResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        },
+        "summary": "request a move code to move zone to another project"
+      }
+    },
+    "/v1/projects/{projectId}/zones/{zoneId}/move-code-validation": {
+      "post": {
+        "description": "validate the move code is still valid for the zone",
+        "operationId": "ValidateMoveCode",
+        "parameters": [
+          {
+            "description": "project id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "zone id",
+            "in": "path",
+            "name": "zoneId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateMoveCodePayload"
+              }
+            }
+          },
+          "description": "information about the move",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        },
+        "summary": "validate the move code is still valid for the zone"
+      }
+    },
+    "/v1/projects/{projectId}/zones/{zoneId}/restores": {
+      "post": {
+        "description": "Restore  an inactive zone",
+        "operationId": "RestoreZone",
+        "parameters": [
+          {
+            "description": "project id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "zone id",
+            "in": "path",
+            "name": "zoneId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        },
+        "summary": "Restore  an inactive zone"
+      }
+    },
+    "/v1/projects/{projectId}/zones/{zoneId}/retrieve": {
+      "post": {
+        "description": "The zone transfer will usually be performed within a few seconds, and will be tried only once by randomly choosing one of the configured primary name servers. If that single attempt fails, no further attempt will be performed. The zone will be transferred to our inbound name server regardless of its serial, but the internal zone distribution is only reliable if the zone's serial on the customer's primary name server is higher than on the STACKIT name server. \u003cbr\u003eNOTE: As said above, this endpoint is not a reliable way to decrease a zone's serial. To guarantee consistent zones over all STACKIT location, the zone's serial MUST always be increased on zone changes.",
+        "operationId": "RetrieveZone",
+        "parameters": [
+          {
+            "description": "project id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "zone id",
+            "in": "path",
+            "name": "zoneId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        },
+        "summary": "Queue secondary zone for a zone transfer request."
       }
     },
     "/v1/projects/{projectId}/zones/{zoneId}/rrsets": {
@@ -2359,6 +3572,74 @@
           }
         },
         "summary": "PatchRecords updates a record in a rrset"
+      }
+    },
+    "/v1/projects/{projectId}/zones/{zoneId}/rrsets/{rrSetId}/restores": {
+      "post": {
+        "description": "Restore record set",
+        "operationId": "RestoreRecordSet",
+        "parameters": [
+          {
+            "description": "project id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "zone id",
+            "in": "path",
+            "name": "zoneId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "record set id",
+            "in": "path",
+            "name": "rrSetId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        },
+        "summary": "Restore record set"
       }
     }
   },

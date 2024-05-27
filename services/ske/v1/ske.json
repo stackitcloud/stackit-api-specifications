@@ -78,7 +78,7 @@
             "type": "string"
           },
           "network": {
-            "$ref": "#/components/schemas/v1Network"
+            "$ref": "#/components/schemas/Network"
           },
           "nodepools": {
             "items": {
@@ -160,7 +160,7 @@
             "$ref": "#/components/schemas/Maintenance"
           },
           "network": {
-            "$ref": "#/components/schemas/v1Network"
+            "$ref": "#/components/schemas/Network"
           },
           "nodepools": {
             "items": {
@@ -289,6 +289,7 @@
           }
         },
         "required": [
+          "name",
           "version"
         ],
         "type": "object"
@@ -354,6 +355,14 @@
               "$ref": "#/components/schemas/Cluster"
             },
             "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "LoginKubeconfig": {
+        "properties": {
+          "kubeconfig": {
+            "type": "string"
           }
         },
         "type": "object"
@@ -460,6 +469,15 @@
           "machineImageVersion": {
             "title": "Flag to enable/disable auto-updates of the OS image version",
             "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "Network": {
+        "properties": {
+          "id": {
+            "title": "ID of the SNA network into which the cluster will be deployed",
+            "type": "string"
           }
         },
         "type": "object"
@@ -680,23 +698,6 @@
       "VolumeType": {
         "properties": {
           "name": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "v1LoginKubeconfig": {
-        "properties": {
-          "kubeconfig": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "v1Network": {
-        "properties": {
-          "id": {
-            "title": "ID of the SNA network into which the cluster will be deployed",
             "type": "string"
           }
         },
@@ -1414,7 +1415,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/v1LoginKubeconfig"
+                  "$ref": "#/components/schemas/LoginKubeconfig"
                 }
               }
             },

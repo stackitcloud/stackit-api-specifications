@@ -1,6 +1,28 @@
 {
   "components": {
     "schemas": {
+      "AddMembersPayload": {
+        "properties": {
+          "members": {
+            "items": {
+              "$ref": "#/components/schemas/Member"
+            },
+            "title": "The list of members",
+            "type": "array"
+          },
+          "resourceType": {
+            "example": "organization",
+            "pattern": "^[a-z](?:-?[a-z]){1,63}$",
+            "title": "Resource type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "resourceType",
+          "members"
+        ],
+        "type": "object"
+      },
       "ErrorResponse": {
         "example": {
           "error": "Bad Request",
@@ -58,6 +80,78 @@
         ],
         "type": "object"
       },
+      "ListMembersResponse": {
+        "properties": {
+          "members": {
+            "items": {
+              "$ref": "#/components/schemas/Member"
+            },
+            "title": "The list of members who should be added to this resource",
+            "type": "array"
+          },
+          "resourceId": {
+            "example": "schwarz-it-kg-WJACUK1",
+            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
+            "title": "The ID of the resource, where the members should be updated",
+            "type": "string"
+          },
+          "resourceType": {
+            "example": "organization",
+            "pattern": "^[a-z](?:-?[a-z]){1,63}$",
+            "title": "Resource type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "resourceId",
+          "resourceType",
+          "members"
+        ],
+        "type": "object"
+      },
+      "ListPermissionsResponse": {
+        "properties": {
+          "permissions": {
+            "items": {
+              "$ref": "#/components/schemas/Permission"
+            },
+            "title": "List of permissions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "permissions"
+        ],
+        "type": "object"
+      },
+      "ListUserMembershipsResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/UserMembership"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "ListUserPermissionsResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/UserPermission"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
       "Member": {
         "properties": {
           "role": {
@@ -77,6 +171,38 @@
         "required": [
           "subject",
           "role"
+        ],
+        "type": "object"
+      },
+      "MembersResponse": {
+        "properties": {
+          "members": {
+            "items": {
+              "$ref": "#/components/schemas/Member"
+            },
+            "title": "The list of members who should be added to this resource",
+            "type": "array"
+          },
+          "resourceId": {
+            "example": "schwarz-it-kg-WJACUK1",
+            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
+            "title": "The ID of the resource, where the members should be updated",
+            "type": "string"
+          },
+          "resourceType": {
+            "example": "organization",
+            "pattern": "^[a-z](?:-?[a-z]){1,63}$",
+            "title": "Resource type",
+            "type": "string"
+          },
+          "writtenAt": {
+            "$ref": "#/components/schemas/Zookie"
+          }
+        },
+        "required": [
+          "resourceId",
+          "resourceType",
+          "members"
         ],
         "type": "object"
       },
@@ -262,132 +388,6 @@
           }
         },
         "type": "object"
-      },
-      "AddMembersPayload": {
-        "properties": {
-          "members": {
-            "items": {
-              "$ref": "#/components/schemas/Member"
-            },
-            "title": "The list of members",
-            "type": "array"
-          },
-          "resourceType": {
-            "example": "organization",
-            "pattern": "^[a-z](?:-?[a-z]){1,63}$",
-            "title": "Resource type",
-            "type": "string"
-          }
-        },
-        "required": [
-          "resourceType",
-          "members"
-        ],
-        "type": "object"
-      },
-      "MembersResponse": {
-        "properties": {
-          "members": {
-            "items": {
-              "$ref": "#/components/schemas/Member"
-            },
-            "title": "The list of members who should be added to this resource",
-            "type": "array"
-          },
-          "resourceId": {
-            "example": "schwarz-it-kg-WJACUK1",
-            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
-            "title": "The ID of the resource, where the members should be updated",
-            "type": "string"
-          },
-          "resourceType": {
-            "example": "organization",
-            "pattern": "^[a-z](?:-?[a-z]){1,63}$",
-            "title": "Resource type",
-            "type": "string"
-          },
-          "writtenAt": {
-            "$ref": "#/components/schemas/Zookie"
-          }
-        },
-        "required": [
-          "resourceId",
-          "resourceType",
-          "members"
-        ],
-        "type": "object"
-      },
-      "ListPermissionsResponse": {
-        "properties": {
-          "permissions": {
-            "items": {
-              "$ref": "#/components/schemas/Permission"
-            },
-            "title": "List of permissions",
-            "type": "array"
-          }
-        },
-        "required": [
-          "permissions"
-        ],
-        "type": "object"
-      },
-      "ListMembersResponse": {
-        "properties": {
-          "members": {
-            "items": {
-              "$ref": "#/components/schemas/Member"
-            },
-            "title": "The list of members who should be added to this resource",
-            "type": "array"
-          },
-          "resourceId": {
-            "example": "schwarz-it-kg-WJACUK1",
-            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
-            "title": "The ID of the resource, where the members should be updated",
-            "type": "string"
-          },
-          "resourceType": {
-            "example": "organization",
-            "pattern": "^[a-z](?:-?[a-z]){1,63}$",
-            "title": "Resource type",
-            "type": "string"
-          }
-        },
-        "required": [
-          "resourceId",
-          "resourceType",
-          "members"
-        ],
-        "type": "object"
-      },
-      "ListUserMembershipsResponse": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/UserMembership"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "items"
-        ],
-        "type": "object"
-      },
-      "ListUserPermissionsResponse": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/UserPermission"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "items"
-        ],
-        "type": "object"
       }
     }
   },
@@ -534,6 +534,89 @@
           }
         },
         "summary": "List memberships of a user"
+      }
+    },
+    "/v2/users/{email}/permissions": {
+      "get": {
+        "description": "List permissions of a user. An administrative access is needed to list any user's permissions, while the user can do it on his/her own email. Lists every resource of the given type where the user has any effective permissions. When requested, also lists why the permission is present.",
+        "operationId": "ListUserPermissions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "email",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "resource",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "resourceType",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "permissions",
+            "schema": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListUserPermissionsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Malformed input"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          }
+        },
+        "summary": "List permissions of a user"
       }
     },
     "/v2/{resourceId}/members": {
@@ -818,17 +901,12 @@
   },
   "servers": [
     {
-      "url": "https://authorization.api.{region}stackit.cloud",
+      "url": "https://authorization.api.stackit.cloud",
       "variables": {
         "region": {
-          "default": ""
+          "default": "global"
         }
       }
-    }
-  ],
-  "tags": [
-    {
-      "name": "Membership"
     }
   ]
 }

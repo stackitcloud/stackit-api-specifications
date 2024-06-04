@@ -1,3 +1,9 @@
+<br>
+<p align="center">
+  <img src=".github/images/stackit-logo.png" alt="STACKIT logo" width="50%"/>
+</p>
+<br>
+
 ## Overview
 
 This repository is the source for STACKIT REST API specifications in the [OpenAPI Specification](https://github.com/OAI/OpenAPI-Specification) format (OAS), which are used for the STACKIT Developer Tools:

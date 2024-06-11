@@ -62,6 +62,19 @@
         "title": "Bucket",
         "type": "object"
       },
+      "CreateAccessKeyPayload": {
+        "properties": {
+          "expires": {
+            "description": "Expiration date. Null means never expires.",
+            "example": "2020-09-04T00:00:00.000Z",
+            "format": "date-time",
+            "title": "Expires",
+            "type": "string"
+          }
+        },
+        "title": "CreateAccessKeyRequest",
+        "type": "object"
+      },
       "CreateAccessKeyResponse": {
         "properties": {
           "accessKey": {
@@ -134,6 +147,23 @@
         "title": "CreateBucketResponse",
         "type": "object"
       },
+      "CreateCredentialsGroupPayload": {
+        "properties": {
+          "displayName": {
+            "description": "Name of the group holding credentials",
+            "example": "group-name-1",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Credentials group name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName"
+        ],
+        "title": "CreateCredentialsGroupRequest",
+        "type": "object"
+      },
       "CreateCredentialsGroupResponse": {
         "properties": {
           "credentialsGroup": {
@@ -151,29 +181,6 @@
           "credentialsGroup"
         ],
         "title": "CreateCredentialsGroupResponse",
-        "type": "object"
-      },
-      "CreateServiceAccountResponse": {
-        "properties": {
-          "accessKey": {
-            "$ref": "#/components/schemas/CreateAccessKeyResponse"
-          },
-          "project": {
-            "description": "Project ID",
-            "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
-            "title": "Project",
-            "type": "string"
-          },
-          "serviceAccounts": {
-            "$ref": "#/components/schemas/ServiceAccount"
-          }
-        },
-        "required": [
-          "project",
-          "serviceAccounts",
-          "accessKey"
-        ],
-        "title": "CreateServiceAccountResponse",
         "type": "object"
       },
       "CredentialsGroup": {
@@ -271,28 +278,6 @@
         "title": "DeleteCredentialsGroupResponse",
         "type": "object"
       },
-      "DeleteServiceAccountResponse": {
-        "properties": {
-          "project": {
-            "description": "Project ID",
-            "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
-            "title": "Project",
-            "type": "string"
-          },
-          "serviceAccountId": {
-            "description": "The ID of the service account",
-            "example": "svc-3969597f-d2f3-4c07-8533-1a4bf8159c0e",
-            "title": "Service account ID",
-            "type": "string"
-          }
-        },
-        "required": [
-          "project",
-          "serviceAccountId"
-        ],
-        "title": "DeleteServiceAccountResponse",
-        "type": "object"
-      },
       "DetailedError": {
         "properties": {
           "key": {
@@ -348,29 +333,6 @@
         "title": "GetBucketResponse",
         "type": "object"
       },
-      "GetServiceAccountsResponse": {
-        "properties": {
-          "project": {
-            "description": "Project ID",
-            "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
-            "title": "Project",
-            "type": "string"
-          },
-          "serviceAccounts": {
-            "items": {
-              "$ref": "#/components/schemas/ServiceAccount"
-            },
-            "title": "Serviceaccounts",
-            "type": "array"
-          }
-        },
-        "required": [
-          "project",
-          "serviceAccounts"
-        ],
-        "title": "GetServiceAccountsResponse",
-        "type": "object"
-      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -382,106 +344,6 @@
           }
         },
         "title": "HTTPValidationError",
-        "type": "object"
-      },
-      "ProjectScope": {
-        "description": "The scope of a STACKIT project can be public (default) or\ncan have client specific special requirements.",
-        "enum": [
-          "PUBLIC",
-          "SCHWARZ"
-        ],
-        "title": "ProjectScope"
-      },
-      "ServiceAccount": {
-        "properties": {
-          "ServiceAccountId": {
-            "description": "The ID of the service account",
-            "example": "3969597f-d2f3-4c07-8533-1a4bf8159c0e",
-            "title": "Service account ID",
-            "type": "string"
-          },
-          "displayName": {
-            "description": "Name of the Service Account",
-            "example": "service-account-1",
-            "title": "Service Account name",
-            "type": "string"
-          },
-          "urn": {
-            "description": "Service account URN",
-            "example": "urn:sgws:identity::12345678901234567890:user/service-account-1",
-            "title": "Urn",
-            "type": "string"
-          }
-        },
-        "required": [
-          "ServiceAccountId",
-          "urn",
-          "displayName"
-        ],
-        "title": "ServiceAccount",
-        "type": "object"
-      },
-      "ValidationError": {
-        "properties": {
-          "loc": {
-            "items": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "integer"
-                }
-              ]
-            },
-            "title": "Location",
-            "type": "array"
-          },
-          "msg": {
-            "title": "Message",
-            "type": "string"
-          },
-          "type": {
-            "title": "Error Type",
-            "type": "string"
-          }
-        },
-        "required": [
-          "loc",
-          "msg",
-          "type"
-        ],
-        "title": "ValidationError",
-        "type": "object"
-      },
-      "CreateAccessKeyPayload": {
-        "properties": {
-          "expires": {
-            "description": "Expiration date. Null means never expires.",
-            "example": "2020-09-04T00:00:00.000Z",
-            "format": "date-time",
-            "title": "Expires",
-            "type": "string"
-          }
-        },
-        "title": "CreateAccessKeyRequest",
-        "type": "object"
-      },
-      "CreateCredentialsGroupPayload": {
-        "properties": {
-          "displayName": {
-            "description": "Name of the group holding credentials",
-            "example": "group-name-1",
-            "maxLength": 32,
-            "minLength": 1,
-            "title": "Credentials group name",
-            "type": "string"
-          }
-        },
-        "required": [
-          "displayName"
-        ],
-        "title": "CreateCredentialsGroupRequest",
         "type": "object"
       },
       "ListAccessKeysResponse": {
@@ -553,6 +415,14 @@
         "title": "GetCredentialsGroupsResponse",
         "type": "object"
       },
+      "ProjectScope": {
+        "description": "The scope of a STACKIT project can be public (default) or\ncan have client specific special requirements.",
+        "enum": [
+          "PUBLIC",
+          "SCHWARZ"
+        ],
+        "title": "ProjectScope"
+      },
       "ProjectStatus": {
         "properties": {
           "project": {
@@ -576,6 +446,39 @@
           "scope"
         ],
         "title": "ProjectResponse",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
         "type": "object"
       }
     }
@@ -1666,24 +1569,6 @@
           ]
         }
       }
-    }
-  ],
-  "tags": [
-    {
-      "description": "Manage access keys.",
-      "name": "access-key"
-    },
-    {
-      "description": "Manage buckets.",
-      "name": "bucket"
-    },
-    {
-      "description": "Manage groups that hold access credentials",
-      "name": "credentials-group"
-    },
-    {
-      "description": "Manage projects.",
-      "name": "project"
     }
   ]
 }

@@ -1,6 +1,15 @@
 {
   "components": {
     "parameters": {
+      "backupId": {
+        "description": "Backup id",
+        "in": "path",
+        "name": "backupId",
+        "required": true,
+        "schema": {
+          "type": "integer"
+        }
+      },
       "instanceId": {
         "description": "Instance id",
         "in": "path",
@@ -79,6 +88,27 @@
           "id",
           "status",
           "finished_at"
+        ],
+        "type": "object"
+      },
+      "CreateBackupResponse": {
+        "items": {
+          "$ref": "#/components/schemas/CreateBackupResponseItem"
+        },
+        "type": "array"
+      },
+      "CreateBackupResponseItem": {
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "message"
         ],
         "type": "object"
       },
@@ -590,6 +620,20 @@
         ],
         "type": "object"
       },
+      "ListRestoresResponse": {
+        "properties": {
+          "instanceRestores": {
+            "items": {
+              "$ref": "#/components/schemas/Restore"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "instanceRestores"
+        ],
+        "type": "object"
+      },
       "Object": {
         "type": "object"
       },
@@ -693,6 +737,32 @@
         ],
         "type": "object"
       },
+      "Restore": {
+        "properties": {
+          "backup_id": {
+            "type": "integer"
+          },
+          "finished_at": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "triggered_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "backup_id",
+          "status",
+          "finished_at"
+        ],
+        "type": "object"
+      },
       "Schema": {
         "properties": {
           "parameters": {
@@ -701,6 +771,36 @@
         },
         "required": [
           "parameters"
+        ],
+        "type": "object"
+      },
+      "TriggerRestoreResponse": {
+        "properties": {
+          "id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "UpdateBackupsConfigPayload": {
+        "properties": {
+          "encryption_key": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateBackupsConfigResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
         ],
         "type": "object"
       }
@@ -946,6 +1046,148 @@
           }
         },
         "summary": "get latest backup information for provided instanceId"
+      },
+      "post": {
+        "operationId": "CreateBackup",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateBackupResponse"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "create a backup"
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/backups-config": {
+      "patch": {
+        "description": "Update the configuration for backups for your instance.",
+        "operationId": "UpdateBackupsConfig",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBackupsConfigPayload"
+              }
+            }
+          },
+          "description": "Parameters for the requested backup configuration update",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateBackupsConfigResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "backups configuration update"
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/backups/{backupId}/download": {
+      "get": {
+        "operationId": "DownloadBackup",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/backupId"
+          },
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "download backup"
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/backups/{backupId}/restore": {
+      "post": {
+        "operationId": "TriggerRestore",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "$ref": "#/components/parameters/projectId"
+          },
+          {
+            "$ref": "#/components/parameters/backupId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TriggerRestoreResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "trigger a restore"
       }
     },
     "/v1/projects/{projectId}/instances/{instanceId}/credentials": {
@@ -1122,6 +1364,99 @@
           }
         },
         "summary": "get latest metrics for cpu load, memory and disk usage"
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/recreate": {
+      "patch": {
+        "operationId": "TriggerRecreate",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateInstanceResponse"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "trigger a recreate"
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/restart": {
+      "patch": {
+        "operationId": "TriggerRestart",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateInstanceResponse"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "trigger a restart"
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/restores": {
+      "get": {
+        "operationId": "ListRestores",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListRestoresResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "get latest restore information for provided instanceId"
       }
     },
     "/v1/projects/{projectId}/offerings": {

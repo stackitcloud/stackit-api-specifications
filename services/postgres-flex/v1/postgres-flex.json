@@ -77,6 +77,22 @@
         },
         "type": "object"
       },
+      "CreateDatabasePayload": {
+        "properties": {
+          "name": {
+            "example": "Test",
+            "type": "string"
+          },
+          "options": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Database specific options",
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
       "CreateInstancePayload": {
         "properties": {
           "acl": {
@@ -476,6 +492,49 @@
         ],
         "type": "object"
       },
+      "UpdateInstancePayload": {
+        "properties": {
+          "acl": {
+            "$ref": "#/components/schemas/ACL"
+          },
+          "backupSchedule": {
+            "example": "6 6 * * *",
+            "type": "string"
+          },
+          "flavorId": {
+            "example": "1.1",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Labels field is not certain/clear",
+            "type": "object"
+          },
+          "name": {
+            "type": "string"
+          },
+          "options": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "replicas": {
+            "example": 3,
+            "type": "integer"
+          },
+          "storage": {
+            "$ref": "#/components/schemas/Storage"
+          },
+          "version": {
+            "example": "1.0",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "UpdateUserPayload": {
         "properties": {
           "database": {
@@ -662,6 +721,84 @@
         },
         "type": "object"
       },
+      "instance.CreateDatabaseResponse": {
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "instance.DataPoint": {
+        "properties": {
+          "timestamp": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "instance.Database": {
+        "properties": {
+          "id": {
+            "example": "1",
+            "type": "string"
+          },
+          "name": {
+            "example": "Peter_pan",
+            "type": "string"
+          },
+          "options": {
+            "description": "Database specific options",
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "instance.Host": {
+        "properties": {
+          "hostMetrics": {
+            "items": {
+              "$ref": "#/components/schemas/instance.HostMetric"
+            },
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "instance.HostMetric": {
+        "properties": {
+          "datapoints": {
+            "items": {
+              "$ref": "#/components/schemas/instance.DataPoint"
+            },
+            "type": "array"
+          },
+          "name": {
+            "type": "string"
+          },
+          "units": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "instance.ListDatabasesResponse": {
+        "properties": {
+          "databases": {
+            "items": {
+              "$ref": "#/components/schemas/instance.Database"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "instance.ListInstance": {
         "properties": {
           "id": {
@@ -674,6 +811,94 @@
           "status": {
             "example": "RUNNING",
             "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "instance.MetricsResponse": {
+        "properties": {
+          "hosts": {
+            "items": {
+              "$ref": "#/components/schemas/instance.Host"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "postgres.DatabaseParameter": {
+        "properties": {
+          "context": {
+            "description": "Context of the parameter.",
+            "example": "user",
+            "type": "string"
+          },
+          "dataType": {
+            "description": "Datatype describes the type of data that is used in the Value field.",
+            "example": "integer",
+            "type": "string"
+          },
+          "defaultValue": {
+            "description": "DefaultValue for the value field.",
+            "example": "4096",
+            "type": "string"
+          },
+          "description": {
+            "description": "Description of the parameter.",
+            "example": "sets the maximum memory to be used for query workspace",
+            "type": "string"
+          },
+          "edit": {
+            "description": "Edit shows if the user can change this value.",
+            "example": false,
+            "type": "boolean"
+          },
+          "maxValue": {
+            "description": "MaxValue describes the highest possible value that can be set.",
+            "example": "2148473647",
+            "type": "string"
+          },
+          "minValue": {
+            "description": "MinValue describes the lowest possible value that can be set.",
+            "example": "64",
+            "type": "string"
+          },
+          "name": {
+            "description": "Name of the parameter.",
+            "example": "work_mem",
+            "type": "string"
+          },
+          "pendingRestart": {
+            "description": "PendingRestart describes if a parameter change requires a restart of the server.",
+            "example": false,
+            "type": "boolean"
+          },
+          "resetValue": {
+            "description": "ResetValue for the value field af.ter a reset.",
+            "example": "102400",
+            "type": "string"
+          },
+          "unit": {
+            "description": "Unit if the parameter has a unit if not empty.",
+            "example": "kB",
+            "type": "string"
+          },
+          "value": {
+            "description": "Value of this parameter.",
+            "example": "102400",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "postgres.DatabaseParameterResponse": {
+        "properties": {
+          "parameter": {
+            "description": "List of the parameter",
+            "items": {
+              "$ref": "#/components/schemas/postgres.DatabaseParameter"
+            },
+            "type": "array"
           }
         },
         "type": "object"
@@ -693,6 +918,59 @@
   },
   "openapi": "3.0.1",
   "paths": {
+    "/v1/projects/{projectId}": {
+      "delete": {
+        "description": "Termination is the deletion of a whole project which causes the deletion of all instances for this project. Only System with permission system.databases-project.remove is able to call this resource",
+        "operationId": "DisableService",
+        "parameters": [
+          {
+            "description": "Project ID",
+            "explode": false,
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "405": {
+            "description": "Method Not Allowed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Terminate the Project"
+      }
+    },
     "/v1/projects/{projectId}/flavors": {
       "get": {
         "description": "Get available flavors for a specific projectID",
@@ -1068,6 +1346,79 @@
           }
         ],
         "summary": "Update Instance"
+      },
+      "put": {
+        "description": "Update available instance of a postgres database. Supported Versions are 12, 13, 14, 15 -- only upgrades are allowed!",
+        "operationId": "UpdateInstance",
+        "parameters": [
+          {
+            "description": "Project ID",
+            "explode": false,
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Instance ID",
+            "explode": false,
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInstancePayload"
+              }
+            }
+          },
+          "description": "Body",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartialUpdateInstanceResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "405": {
+            "description": "Method Not Allowed"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Update Instance"
       }
     },
     "/v1/projects/{projectId}/instances/{instanceId}/backups": {
@@ -1362,6 +1713,211 @@
         "summary": "Clone Instance"
       }
     },
+    "/v1/projects/{projectId}/instances/{instanceId}/databases": {
+      "get": {
+        "description": "List available databases for an instance",
+        "operationId": "ListDatabases",
+        "parameters": [
+          {
+            "description": "Project ID",
+            "explode": false,
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Instance ID",
+            "explode": false,
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/instance.ListDatabasesResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "405": {
+            "description": "Method Not Allowed"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "List Databases"
+      },
+      "post": {
+        "description": "Create database for a user\nNote: The name of a valid user must be provided in the \"options\" map field using the key \"owner\"",
+        "operationId": "CreateDatabase",
+        "parameters": [
+          {
+            "description": "Project ID",
+            "explode": false,
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Instance ID",
+            "explode": false,
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDatabasePayload"
+              }
+            }
+          },
+          "description": "body",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/instance.CreateDatabaseResponse"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "405": {
+            "description": "Method Not Allowed"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Create Database"
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/databases/{databaseId}": {
+      "delete": {
+        "description": "Delete database for an instance",
+        "operationId": "DeleteDatabase",
+        "parameters": [
+          {
+            "description": "Project ID",
+            "explode": false,
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Instance ID",
+            "explode": false,
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Database ID",
+            "explode": false,
+            "in": "path",
+            "name": "databaseId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "405": {
+            "description": "Method Not Allowed"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Delete Database"
+      }
+    },
     "/v1/projects/{projectId}/instances/{instanceId}/force": {
       "delete": {
         "description": "Forces the deletion of an delayed deleted instance",
@@ -1424,6 +1980,200 @@
           }
         ],
         "summary": "Force delete instance"
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/metrics/{metric}": {
+      "get": {
+        "description": "Returns a metric for an instance. The metric will only be for the master pod if needed. Granularity parameter is always needed. If start and end time is provided, period is not considered in max-connections and disk-use. If you provide start time, you have to provide end time as well and vice versa.",
+        "operationId": "ListMetrics",
+        "parameters": [
+          {
+            "description": "The UUID of the project.",
+            "explode": false,
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "The UUID of the instance.",
+            "explode": false,
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "The name of the metric. Valid metrics are 'cpu', 'memory', 'max-connections', 'connections' and 'disk-use'.",
+            "explode": false,
+            "in": "path",
+            "name": "metric",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "The granularity in ISO8601 e.g. 5 minutes are 'PT5M'.",
+            "explode": true,
+            "in": "query",
+            "name": "granularity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "form"
+          },
+          {
+            "description": "The period in ISO8601 format e.g. 5 minutes are 'PT5M'. If no period is provided, the standard value of 5 minutes is used.",
+            "explode": true,
+            "in": "query",
+            "name": "period",
+            "schema": {
+              "type": "string"
+            },
+            "style": "form"
+          },
+          {
+            "description": "The start of the timeframe as timestamp in ISO8601 (RFC3339) e.g. '2023-08-28T07:10:52.536Z'. If no start time is provided, current server time as UTC is used.",
+            "explode": true,
+            "in": "query",
+            "name": "start",
+            "schema": {
+              "type": "string"
+            },
+            "style": "form"
+          },
+          {
+            "description": "The end of the timeframe as timestamp in ISO8601 (RFC3339) e.g. '2023-08-28T07:10:52.536Z'.",
+            "explode": true,
+            "in": "query",
+            "name": "end",
+            "schema": {
+              "type": "string"
+            },
+            "style": "form"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/instance.MetricsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get Metric"
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/parameter": {
+      "get": {
+        "description": "List available databases parameter",
+        "operationId": "ListDatabaseParameters",
+        "parameters": [
+          {
+            "description": "Project ID",
+            "explode": false,
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Instance ID",
+            "explode": false,
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postgres.DatabaseParameterResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "405": {
+            "description": "Method Not Allowed"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "List Databases parameter"
       }
     },
     "/v1/projects/{projectId}/instances/{instanceId}/users": {

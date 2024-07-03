@@ -1,0 +1,529 @@
+{
+  "components": {
+    "parameters": {
+      "instanceId": {
+        "description": "Instance id",
+        "in": "path",
+        "name": "instanceId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "projectId": {
+        "description": "Project id on which user has permissions",
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Bad Request"
+      },
+      "NotFound": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Not Found"
+      },
+      "ServerError": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Internal Server Error"
+      },
+      "Unauthorized": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Unauthorized"
+      }
+    },
+    "schemas": {
+      "CreateInstancePayload": {
+        "properties": {
+          "parameters": {
+            "$ref": "#/components/schemas/InstanceParameters"
+          }
+        },
+        "required": [
+          "parameters"
+        ],
+        "type": "object"
+      },
+      "Error": {
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error",
+          "description"
+        ],
+        "type": "object"
+      },
+      "Instance": {
+        "properties": {
+          "instanceId": {
+            "type": "string"
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/InstanceParameters"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "failed",
+              "creating",
+              "deleting",
+              "updating"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "instanceId",
+          "parameters"
+        ],
+        "type": "object"
+      },
+      "InstanceParameters": {
+        "properties": {
+          "billingAddress": {
+            "description": "Billing address for Service",
+            "type": "string"
+          },
+          "createdAt": {
+            "description": "Date of instance creation",
+            "type": "string"
+          },
+          "fiscalYearEnd": {
+            "$ref": "#/components/schemas/InstanceParametersFiscalYearEnd"
+          },
+          "kind": {
+            "enum": [
+              "NEAS",
+              "NEDBSAP",
+              "NEDBSAPILM"
+            ],
+            "type": "string"
+          },
+          "serviceName": {
+            "description": "Service name",
+            "maxLength": 28,
+            "type": "string"
+          },
+          "system": {
+            "$ref": "#/components/schemas/InstanceParametersSystem"
+          },
+          "version": {
+            "description": "Version of operator kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "billingAddress",
+          "serviceName",
+          "system"
+        ],
+        "type": "object"
+      },
+      "InstanceParametersFiscalYearEnd": {
+        "description": "Day and month that mark the end of fiscal year",
+        "properties": {
+          "day": {
+            "default": 31,
+            "description": "Day that marks the end of fiscal year.",
+            "format": "int32",
+            "maximum": 31,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "month": {
+            "default": 12,
+            "description": "Month that marks the end of fiscal year.",
+            "format": "int32",
+            "maximum": 12,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "InstanceParametersSystem": {
+        "description": "The system to be archived.",
+        "properties": {
+          "authId": {
+            "description": "The Auth. ID is used to check signed requests and must be the same as the file name of the generated certificate. The Auth. ID should be specified without spaces. Only for SAP Archive Link",
+            "type": "string"
+          },
+          "repositories": {
+            "description": "Repositories of connected system.",
+            "items": {
+              "properties": {
+                "name": {
+                  "description": "The name of the connected repository.",
+                  "type": "string"
+                },
+                "storageRetentionOffset": {
+                  "description": "Retention date and offset",
+                  "properties": {
+                    "retentionDays": {
+                      "default": "31",
+                      "description": "Day component of the retention date. A '+' or '-' prefix indicates an offset from the current date.",
+                      "pattern": "[+-]?\\d{1,2}",
+                      "type": "string"
+                    },
+                    "retentionMonths": {
+                      "default": "12",
+                      "description": "Month component of the retention date. A '+' or '-' prefix indicates an offset from the current date.",
+                      "pattern": "[+-]?\\d{1,2}",
+                      "type": "string"
+                    },
+                    "retentionYears": {
+                      "default": "0",
+                      "description": "Year component of the retention date. A '+' or '-' prefix indicates an offset from the current date.",
+                      "pattern": "[+-]?\\d{1,4}",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "sapName": {
+            "description": "The name of the SAP system is used in the URL that is stored in SAP in the content repository. Only for SAP Archive Link",
+            "type": "string"
+          }
+        },
+        "required": [
+          "repositories"
+        ],
+        "type": "object"
+      },
+      "InstanceProvision": {
+        "properties": {
+          "archivingURI": {
+            "description": "Archiving endpoint for archiving instance",
+            "type": "string"
+          },
+          "archivingUserPassword": {
+            "description": "Technical user password for archiving instance",
+            "type": "string"
+          },
+          "archivingUsername": {
+            "description": "Technical user name for archiving instance",
+            "type": "string"
+          },
+          "instanceId": {
+            "type": "string"
+          },
+          "sapAdminPassword": {
+            "description": "Password for SAP Archive Link administration UI",
+            "type": "string"
+          },
+          "sapAdminURL": {
+            "description": "URL for accessing SAP Archive Link administration UI",
+            "type": "string"
+          },
+          "sapAdminUsername": {
+            "description": "Username for SAP Archive Link administration UI",
+            "type": "string"
+          }
+        },
+        "required": [
+          "instanceId",
+          "archivingURI",
+          "archivingUsername",
+          "archivingUserPassword"
+        ],
+        "type": "object"
+      },
+      "InstanceUpdateParameters": {
+        "properties": {
+          "billingAddress": {
+            "description": "Billing address for Service",
+            "type": "string"
+          },
+          "fiscalYearEnd": {
+            "$ref": "#/components/schemas/InstanceParametersFiscalYearEnd"
+          },
+          "serviceName": {
+            "description": "Service name",
+            "maxLength": 28,
+            "type": "string"
+          },
+          "system": {
+            "$ref": "#/components/schemas/InstanceParametersSystem"
+          }
+        },
+        "required": [
+          "billingAddress",
+          "serviceName",
+          "system"
+        ],
+        "type": "object"
+      },
+      "ListInstancesResponse": {
+        "properties": {
+          "instances": {
+            "items": {
+              "$ref": "#/components/schemas/Instance"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "instances"
+        ],
+        "type": "object"
+      },
+      "PartialUpdateInstancePayload": {
+        "properties": {
+          "instanceId": {
+            "type": "string"
+          },
+          "instanceName": {
+            "type": "string"
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/InstanceUpdateParameters"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "contact": {
+      "url": "https://docs.stackit.cloud/stackit/en/support-area-72063304.html"
+    },
+    "description": "The STACKIT Archiving Service (SAS) offers archiving endpoints for SAP Archive Link, SAP-ILM and non-SAP archiving scenarios.",
+    "termsOfService": "https://www.stackit.de/en/general-terms-and-conditions/terms-of-use/",
+    "title": "STACKIT Archiving Service API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1/projects/{projectId}/instances": {
+      "get": {
+        "description": "Get a list of available instances",
+        "operationId": "ListInstances",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListInstancesResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "get service instances list"
+      },
+      "post": {
+        "description": "Provision a service instance.",
+        "operationId": "CreateInstance",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInstancePayload"
+              }
+            }
+          },
+          "description": "Parameters for the requested service instance provision",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstanceProvision"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "summary": "provision a service instance"
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}": {
+      "delete": {
+        "description": "Deprovision a service instance.",
+        "operationId": "DeleteInstance",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          },
+          {
+            "$ref": "#/components/parameters/instanceId"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Instance deletion is started"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "delete service instance"
+      },
+      "get": {
+        "description": "get a service instance",
+        "operationId": "GetInstance",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          },
+          {
+            "$ref": "#/components/parameters/instanceId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Instance"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "get a service instance"
+      },
+      "patch": {
+        "description": "Update a service instance. This could be a repository update.",
+        "operationId": "PartialUpdateInstance",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          },
+          {
+            "$ref": "#/components/parameters/instanceId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartialUpdateInstancePayload"
+              }
+            }
+          },
+          "description": "Parameters for the requested update operation on service instance.\n",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Instance update is started"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "update a service instance"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://archiving-service.api.{region}stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "eu01.",
+          "enum": [
+            "eu01."
+          ]
+        }
+      }
+    }
+  ]
+}

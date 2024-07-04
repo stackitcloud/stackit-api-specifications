@@ -224,6 +224,17 @@
         },
         "type": "object"
       },
+      "GoogleProtobufAny": {
+        "additionalProperties": true,
+        "description": "Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.",
+        "properties": {
+          "@type": {
+            "description": "The type of the serialized message.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "ListCredentialsResponse": {
         "properties": {
           "credentials": {
@@ -538,6 +549,28 @@
         },
         "type": "object"
       },
+      "Status": {
+        "description": "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
+        "properties": {
+          "code": {
+            "description": "The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].",
+            "format": "int32",
+            "type": "integer"
+          },
+          "details": {
+            "description": "A list of messages that carry the error details.  There is a common set of message types for APIs to use.",
+            "items": {
+              "$ref": "#/components/schemas/GoogleProtobufAny"
+            },
+            "type": "array"
+          },
+          "message": {
+            "description": "A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "Target": {
         "properties": {
           "displayName": {
@@ -766,6 +799,16 @@
           },
           "500": {
             "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
           }
         },
         "summary": "Disables the functionality of load balancers for the project specified."
@@ -806,6 +849,16 @@
           },
           "500": {
             "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
           }
         },
         "summary": "Return the status of load balancer functionality for the project specified."
@@ -856,6 +909,16 @@
           },
           "500": {
             "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
           }
         },
         "summary": "Enables the functionality of load balancers for the project specified."
@@ -894,6 +957,16 @@
           },
           "500": {
             "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
           }
         },
         "summary": "List all credentials in a project."
@@ -953,6 +1026,16 @@
           },
           "500": {
             "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
           }
         },
         "summary": "Create credentials for observability of the Load Balancer"
@@ -1002,6 +1085,16 @@
           },
           "500": {
             "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
           }
         },
         "summary": "Delete a single credential in a project."
@@ -1052,6 +1145,16 @@
           },
           "500": {
             "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
           }
         },
         "summary": "Get a single credential reference in a project."
@@ -1112,6 +1215,16 @@
           },
           "500": {
             "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
           }
         },
         "summary": "Update credentials for observability in a project."
@@ -1153,6 +1266,16 @@
           },
           "500": {
             "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
           }
         },
         "summary": "List load balancers in a project."
@@ -1215,6 +1338,16 @@
           },
           "500": {
             "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
           }
         },
         "summary": "Create a load balancer in a project"
@@ -1264,6 +1397,16 @@
           },
           "500": {
             "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
           }
         },
         "summary": "Delete a given load balancer in a project."
@@ -1314,6 +1457,16 @@
           },
           "500": {
             "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
           }
         },
         "summary": "Get a single load balancer in a project."
@@ -1374,6 +1527,16 @@
           },
           "500": {
             "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
           }
         },
         "summary": "Update a load balancer in a project."
@@ -1441,6 +1604,16 @@
           },
           "500": {
             "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
           }
         },
         "summary": "Update a single target pool of a load balancer in a project."
@@ -1482,6 +1655,16 @@
           },
           "500": {
             "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
           }
         },
         "summary": "Get the quota of Load Balancers and Target Pools in a project."

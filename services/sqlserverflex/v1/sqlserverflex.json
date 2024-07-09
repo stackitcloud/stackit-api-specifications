@@ -5,7 +5,8 @@
         "properties": {
           "items": {
             "example": [
-              "0.0.0.0/0"
+              "193.148.160.0/19",
+              "45.129.40.0/21"
             ],
             "items": {
               "type": "string"
@@ -57,13 +58,13 @@
             "type": "string"
           },
           "options": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "description": "Database specific options",
-            "type": "object"
+            "$ref": "#/components/schemas/database.DocumentationCreateDatabaseRequestOptions"
           }
         },
+        "required": [
+          "name",
+          "options"
+        ],
         "type": "object"
       },
       "CreateDatabaseResponse": {
@@ -86,7 +87,7 @@
             "type": "object"
           },
           "backupSchedule": {
-            "description": "Cronjob for the daily full backup if not provided a job will generated between 0000 and 0459",
+            "description": "Cronjob for the daily full backup if not provided a job will generated between 00:00 and 04:59",
             "example": "6 6 * * *",
             "type": "string"
           },
@@ -151,12 +152,12 @@
       },
       "CreateUserPayload": {
         "properties": {
-          "database": {
+          "default_database": {
             "type": "string"
           },
           "roles": {
             "items": {
-              "$ref": "#/components/schemas/Role"
+              "type": "string"
             },
             "type": "array"
           },
@@ -165,7 +166,7 @@
           }
         },
         "required": [
-          "database",
+          "default_database",
           "roles"
         ],
         "type": "object"
@@ -173,7 +174,7 @@
       "CreateUserResponse": {
         "properties": {
           "item": {
-            "$ref": "#/components/schemas/User"
+            "$ref": "#/components/schemas/SingleUser"
           }
         },
         "type": "object"
@@ -207,7 +208,7 @@
             "example": false,
             "type": "boolean"
           },
-          "ownerName": {
+          "owner": {
             "description": "Name of the owner of the database.",
             "example": "Peter",
             "type": "string"
@@ -256,30 +257,8 @@
       },
       "GetDatabaseResponse": {
         "properties": {
-          "collation": {
-            "example": "SQL_Latin1_General_CP1_CI_AS",
-            "type": "string"
-          },
-          "createDate": {
-            "example": "2003-04-08T09:13:36.39Z",
-            "type": "string"
-          },
-          "id": {
-            "example": "1",
-            "type": "string"
-          },
-          "name": {
-            "example": "Peter_pan",
-            "type": "string"
-          },
-          "options": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/DatabaseOptions"
-              }
-            ],
-            "description": "Database specific options",
-            "type": "object"
+          "database": {
+            "$ref": "#/components/schemas/SingleDatabase"
           }
         },
         "type": "object"
@@ -295,7 +274,7 @@
       "GetUserResponse": {
         "properties": {
           "item": {
-            "$ref": "#/components/schemas/instance.ResponseUser"
+            "$ref": "#/components/schemas/user.ResponseUser"
           }
         },
         "type": "object"
@@ -491,7 +470,7 @@
             "type": "object"
           },
           "backupSchedule": {
-            "description": "Cronjob for the daily full backup if not provided a job will generated between 0000 and 0459",
+            "description": "Cronjob for the daily full backup if not provided a job will generated between 00:00 and 04:59",
             "example": "6 6 * * *",
             "type": "string"
           },
@@ -531,24 +510,67 @@
         },
         "type": "object"
       },
-      "Role": {
-        "enum": [
-          "SELECT",
-          "INSERT",
-          "UPDATE",
-          "DELETE",
-          "TRUNCATE",
-          "TRIGGER",
-          "CREATE",
-          "CONNECT",
-          "TEMPORARY",
-          "EXECUTE",
-          "USAGE",
-          "read",
-          "readWrite",
-          "readWriteAnyDatabase"
-        ],
-        "type": "string"
+      "SingleDatabase": {
+        "properties": {
+          "collation": {
+            "example": "SQL_Latin1_General_CP1_CI_AS",
+            "type": "string"
+          },
+          "createDate": {
+            "example": "2003-04-08T09:13:36.39Z",
+            "type": "string"
+          },
+          "id": {
+            "example": "1",
+            "type": "string"
+          },
+          "name": {
+            "example": "Peter_pan",
+            "type": "string"
+          },
+          "options": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DatabaseOptions"
+              }
+            ],
+            "description": "Database specific options",
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "SingleUser": {
+        "properties": {
+          "default_database": {
+            "type": "string"
+          },
+          "host": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "port": {
+            "type": "integer"
+          },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "uri": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "type": "object"
       },
       "Storage": {
         "properties": {
@@ -588,6 +610,10 @@
             "type": "string"
           }
         },
+        "required": [
+          "name",
+          "restoreDateTime"
+        ],
         "type": "object"
       },
       "Type": {
@@ -613,7 +639,7 @@
             "type": "object"
           },
           "backupSchedule": {
-            "description": "Cronjob for the daily full backup if not provided a job will generated between 0000 and 0459",
+            "description": "Cronjob for the daily full backup if not provided a job will generated between 00:00 and 04:59",
             "example": "6 6 * * *",
             "type": "string"
           },
@@ -643,6 +669,14 @@
             "type": "string"
           }
         },
+        "required": [
+          "acl",
+          "backupSchedule",
+          "flavorId",
+          "labels",
+          "name",
+          "version"
+        ],
         "type": "object"
       },
       "UpdateInstanceResponse": {
@@ -685,12 +719,36 @@
         },
         "type": "object"
       },
+      "database.DocumentationCreateDatabaseRequestOptions": {
+        "properties": {
+          "collation": {
+            "description": "Collation of the database",
+            "example": "Latin1_General_100_CI_AS_KS_WS",
+            "type": "string"
+          },
+          "compatibilityLevel": {
+            "description": "CompatibilityLevel of the Database.",
+            "example": "160",
+            "type": "string"
+          },
+          "owner": {
+            "description": "Name of the owner of the database.",
+            "example": "Herbert",
+            "type": "string"
+          }
+        },
+        "required": [
+          "owner"
+        ],
+        "type": "object"
+      },
       "instance.DocumentationACL": {
         "properties": {
           "items": {
             "description": "a simple list with IP addresses with CIDR.",
             "example": [
-              "0.0.0.0/0"
+              "193.148.160.0/19",
+              "45.129.40.0/21"
             ],
             "items": {
               "type": "string"
@@ -813,32 +871,6 @@
         },
         "type": "object"
       },
-      "instance.ResponseUser": {
-        "properties": {
-          "database": {
-            "type": "string"
-          },
-          "host": {
-            "type": "string"
-          },
-          "id": {
-            "type": "string"
-          },
-          "port": {
-            "type": "integer"
-          },
-          "roles": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "username": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "mssql.DatabaseCollation": {
         "properties": {
           "collation_name": {
@@ -885,6 +917,32 @@
           },
           "start_time": {
             "example": "2023-09-25T12:14:48",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "user.ResponseUser": {
+        "properties": {
+          "default_database": {
+            "type": "string"
+          },
+          "host": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "port": {
+            "type": "integer"
+          },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "username": {
             "type": "string"
           }
         },
@@ -2361,7 +2419,7 @@
               }
             }
           },
-          "description": "body",
+          "description": "The request body contains a username, a list of roles and database. The possible roles  can be fetched from the ListRoles endpoint.",
           "required": true
         },
         "responses": {

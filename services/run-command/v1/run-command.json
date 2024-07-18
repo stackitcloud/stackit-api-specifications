@@ -1,0 +1,747 @@
+{
+  "components": {
+    "examples": {
+      "RunShellScriptCommandRequestExample": {
+        "summary": "Run Shell Script",
+        "value": {
+          "commandTemplateName": "RunShellScript",
+          "parameters": {
+            "script": "echo hello-world"
+          }
+        }
+      },
+      "commandDetailsResponseExample": {
+        "value": {
+          "commandTemplateName": "RunShellScript",
+          "commandTemplateTitle": "Run Shell Script",
+          "exitCode": 0,
+          "finishedAt": "",
+          "id": 1,
+          "output": "",
+          "script": "echo hello",
+          "startedAt": "2023-06-14T09:54:57Z",
+          "status": "pending"
+        }
+      },
+      "commandTemplatesResponseExample": {
+        "value": {
+          "items": [
+            {
+              "name": "RunShellScript",
+              "osType": [
+                "linux"
+              ],
+              "title": "Run Shell Script"
+            }
+          ]
+        }
+      },
+      "commandsResponseExample": {
+        "value": {
+          "items": [
+            {
+              "commandTemplateName": "RunShellScript",
+              "commandTemplateTitle": "Run Shell Script",
+              "finishedAt": "",
+              "id": 1,
+              "startedAt": "2023-06-14T09:54:57Z",
+              "status": "pending"
+            }
+          ]
+        }
+      },
+      "runShellTemplateResponseExample": {
+        "value": {
+          "description": "Run Custom Shell Script",
+          "name": "RunShellScript",
+          "osType": [
+            "linux"
+          ],
+          "parametersSchema": {
+            "properties": {
+              "script": {
+                "title": "Script",
+                "type": "string"
+              }
+            }
+          },
+          "title": "Run Shell Script"
+        }
+      },
+      "winResetPassCommandRequestExample": {
+        "summary": "Windows Reset Password",
+        "value": {
+          "commandTemplateName": "ResetPassword",
+          "parameters": {
+            "password": "********",
+            "username": "username"
+          }
+        }
+      }
+    },
+    "schemas": {
+      "CommandDetails": {
+        "properties": {
+          "commandTemplateName": {
+            "type": "string"
+          },
+          "commandTemplateTitle": {
+            "type": "string"
+          },
+          "exitCode": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "finishedAt": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "output": {
+            "type": "string"
+          },
+          "script": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "running",
+              "completed",
+              "failed"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CommandTemplate": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "osType": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CommandTemplateResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CommandTemplate"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "CommandTemplateSchema": {
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "osType": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "parameterSchema": {
+            "$ref": "#/components/schemas/ParametersSchema"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Commands": {
+        "properties": {
+          "commandTemplateName": {
+            "type": "string"
+          },
+          "commandTemplateTitle": {
+            "type": "string"
+          },
+          "finishedAt": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "startedAt": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "running",
+              "completed",
+              "failed"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CreateCommandPayload": {
+        "properties": {
+          "commandTemplateName": {
+            "type": "string"
+          },
+          "parameters": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "commandTemplateName"
+        ],
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "message": {
+            "description": "Details about the error",
+            "type": "string"
+          },
+          "status": {
+            "description": "The string representation of the http status code (i.e. Not Found, Bad Request, etc)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "message"
+        ],
+        "type": "object"
+      },
+      "Field": {
+        "properties": {
+          "default": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "maxLen": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "minLen": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "readOnly": {
+            "type": "boolean"
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GetCommandsResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Commands"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "NewCommandResponse": {
+        "properties": {
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "ParametersSchema": {
+        "properties": {
+          "properties": {
+            "$ref": "#/components/schemas/Properties"
+          }
+        },
+        "type": "object"
+      },
+      "Properties": {
+        "properties": {
+          "ConfirmPassword": {
+            "$ref": "#/components/schemas/Field"
+          },
+          "Password": {
+            "$ref": "#/components/schemas/Field"
+          },
+          "Script": {
+            "$ref": "#/components/schemas/Field"
+          },
+          "Username": {
+            "$ref": "#/components/schemas/Field"
+          },
+          "required": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "contact": {
+      "email": "support@stackit.de"
+    },
+    "description": "API endpoints for the STACKIT Run Commands Service API",
+    "termsOfService": "https://stackit.de/en/imprint",
+    "title": "STACKIT Run Commands Service API",
+    "version": "1.0"
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/v1/command-templates": {
+      "get": {
+        "description": "Returns a list of command templates",
+        "operationId": "ListCommandTemplates",
+        "parameters": [
+          {
+            "description": "The type of the Operating System (windows or linux). If not provided will return data for all OS types.",
+            "in": "query",
+            "name": "osType",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "commandTemplatesExample": {
+                    "$ref": "#/components/examples/commandTemplatesResponseExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/CommandTemplateResponse"
+                }
+              }
+            },
+            "description": "response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/projects/{projectId}/servers/{serverId}/command-templates/{commandTemplateName}": {
+      "get": {
+        "description": "Returns details about a command template",
+        "operationId": "GetCommandTemplate",
+        "parameters": [
+          {
+            "description": "ID of the project",
+            "explode": false,
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Server ID of the machine",
+            "explode": false,
+            "in": "path",
+            "name": "serverId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Name of the template",
+            "explode": false,
+            "in": "path",
+            "name": "commandTemplateName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "runShellTemplateExample": {
+                    "$ref": "#/components/examples/runShellTemplateResponseExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/CommandTemplateSchema"
+                }
+              }
+            },
+            "description": "response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v1/projects/{projectId}/servers/{serverId}/commands": {
+      "get": {
+        "description": "Returns a list of commands",
+        "operationId": "ListCommands",
+        "parameters": [
+          {
+            "description": "ID of the project",
+            "explode": false,
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Server ID of the machine",
+            "explode": false,
+            "in": "path",
+            "name": "serverId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "commandsResponseExample": {
+                    "$ref": "#/components/examples/commandsResponseExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GetCommandsResponse"
+                }
+              }
+            },
+            "description": "response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          }
+        }
+      },
+      "post": {
+        "description": "Creates a new command for execution",
+        "operationId": "CreateCommand",
+        "parameters": [
+          {
+            "description": "ID of the project",
+            "explode": false,
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Server ID of the machine",
+            "explode": false,
+            "in": "path",
+            "name": "serverId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "RunShellScript": {
+                  "$ref": "#/components/examples/RunShellScriptCommandRequestExample"
+                },
+                "winResetPass": {
+                  "$ref": "#/components/examples/winResetPassCommandRequestExample"
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/CreateCommandPayload"
+              }
+            }
+          },
+          "description": "Command to post"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewCommandResponse"
+                }
+              }
+            },
+            "description": "ok"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v1/projects/{projectId}/servers/{serverId}/commands/{commandId}": {
+      "get": {
+        "description": "Returns details about a command",
+        "operationId": "GetCommand",
+        "parameters": [
+          {
+            "description": "ID of the project",
+            "explode": false,
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Server ID of the machine",
+            "explode": false,
+            "in": "path",
+            "name": "serverId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "ID of the command",
+            "explode": false,
+            "in": "path",
+            "name": "commandId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "commandDetailsResponseExample": {
+                    "$ref": "#/components/examples/commandDetailsResponseExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/CommandDetails"
+                }
+              }
+            },
+            "description": "response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://run-command.api.{region}stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "eu01.",
+          "enum": [
+            "eu01."
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -2,7 +2,7 @@
   "components": {
     "parameters": {
       "v1NetworkAreaID": {
-        "description": "STACKIT Network Area ID.",
+        "description": "The identifier (ID) of a STACKIT Network Area.",
         "in": "path",
         "name": "areaId",
         "required": true,
@@ -11,7 +11,7 @@
         }
       },
       "v1NetworkID": {
-        "description": "STACKIT Network ID.",
+        "description": "The identifier (ID) of a STACKIT Network.",
         "in": "path",
         "name": "networkId",
         "required": true,
@@ -20,7 +20,7 @@
         }
       },
       "v1NetworkRangeID": {
-        "description": "STACKIT Network Range ID.",
+        "description": "The identifier (ID) of a STACKIT Network Range.",
         "in": "path",
         "name": "networkRangeId",
         "required": true,
@@ -29,7 +29,7 @@
         }
       },
       "v1OrganizationID": {
-        "description": "STACKIT Organization ID.",
+        "description": "The identifier (ID) of a STACKIT Organization.",
         "in": "path",
         "name": "organizationId",
         "required": true,
@@ -38,7 +38,7 @@
         }
       },
       "v1ProjectID": {
-        "description": "STACKIT Project ID.",
+        "description": "The identifier (ID) of a STACKIT Project.",
         "in": "path",
         "name": "projectId",
         "required": true,
@@ -47,7 +47,7 @@
         }
       },
       "v1RequestID": {
-        "description": "STACKIT Request ID.",
+        "description": "The identifier (ID) of a STACKIT Request.",
         "in": "path",
         "name": "requestId",
         "required": true,
@@ -56,7 +56,7 @@
         }
       },
       "v1RouteID": {
-        "description": "STACKI Route ID.",
+        "description": "The identifier (ID) of a STACKIT Route.",
         "in": "path",
         "name": "routeId",
         "required": true,
@@ -82,10 +82,10 @@
                   "msg": "boot device size is not valid or missing"
                 }
               },
-              "InvalidFlavor": {
+              "InvalidMachineType": {
                 "value": {
                   "code": 400,
-                  "msg": "flavor is not valid"
+                  "msg": "machine type is not valid"
                 }
               },
               "InvalidParameter": {
@@ -112,7 +112,7 @@
             }
           }
         },
-        "description": "Bad request."
+        "description": "A bad request."
       },
       "Forbidden": {
         "content": {
@@ -126,7 +126,7 @@
             }
           }
         },
-        "description": "Forbidden Request."
+        "description": "A request which was forbidden."
       },
       "InternalServerError": {
         "content": {
@@ -206,7 +206,7 @@
             }
           }
         },
-        "description": "Object not found."
+        "description": "The object was not found."
       },
       "Unauthorized": {
         "content": {
@@ -220,10 +220,10 @@
             }
           }
         },
-        "description": "Unauthorized Request."
+        "description": "A request which was not authorized."
       },
       "UpdateAccepted": {
-        "description": "Update accepted."
+        "description": "An update was accepted."
       }
     },
     "schemas": {
@@ -250,7 +250,7 @@
         "properties": {
           "defaultNameservers": {
             "items": {
-              "$ref": "#/components/schemas/IP"
+              "$ref": "#/components/schemas/IPv4"
             },
             "maxItems": 3,
             "type": "array"
@@ -355,6 +355,9 @@
         "properties": {
           "ipv4": {
             "$ref": "#/components/schemas/CreateNetworkIPv4"
+          },
+          "ipv6": {
+            "$ref": "#/components/schemas/v1CreateNetworkIPv6"
           }
         },
         "type": "object"
@@ -445,26 +448,44 @@
         "pattern": "^[A-Za-z0-9]+((-|_|\\s|\\.)[A-Za-z0-9]+)*$",
         "type": "string"
       },
-      "IP": {
-        "description": "An IP address.",
+      "IPv4": {
+        "description": "Object that represents an IPv4 address.",
         "example": "10.1.2.10",
         "pattern": "((^\\s*((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))\\s*$)|(^\\s*((([0-9a-f]{1,4}:){7}([0-9a-f]{1,4}|:))|(([0-9a-f]{1,4}:){6}(:[0-9a-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){5}(((:[0-9a-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){4}(((:[0-9a-f]{1,4}){1,3})|((:[0-9a-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){3}(((:[0-9a-f]{1,4}){1,4})|((:[0-9a-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){2}(((:[0-9a-f]{1,4}){1,5})|((:[0-9a-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){1}(((:[0-9a-f]{1,4}){1,6})|((:[0-9a-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9a-f]{1,4}){1,7})|((:[0-9a-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))(%.+)?\\s*$))",
         "type": "string"
       },
+      "IPv6": {
+        "description": "Object that represents an IPv6 address.",
+        "example": "2001:db8:0:8d3:0:8a2e:70:7344",
+        "pattern": "^\\s*((([0-9a-f]{1,4}:){7}([0-9a-f]{1,4}|:))|(([0-9a-f]{1,4}:){6}(:[0-9a-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){5}(((:[0-9a-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){4}(((:[0-9a-f]{1,4}){1,3})|((:[0-9a-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){3}(((:[0-9a-f]{1,4}){1,4})|((:[0-9a-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){2}(((:[0-9a-f]{1,4}){1,5})|((:[0-9a-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){1}(((:[0-9a-f]{1,4}){1,6})|((:[0-9a-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9a-f]{1,4}){1,7})|((:[0-9a-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))(%.+)?\\s*$",
+        "type": "string"
+      },
       "Nameserver": {
-        "description": "List of DNS Servers/Nameservers.",
+        "description": "A list containing DNS Servers/Nameservers for IPv4.",
         "example": [
           "10.20.30.40",
           "50.60.70.80"
         ],
         "items": {
-          "$ref": "#/components/schemas/IP"
+          "$ref": "#/components/schemas/IPv4"
+        },
+        "maxItems": 3,
+        "type": "array"
+      },
+      "Nameserverv6": {
+        "description": "A list containing DNS Servers/Nameservers for IPv6.",
+        "example": [
+          "2001:4860:4860::8888",
+          "2001:4860:4860::8844"
+        ],
+        "items": {
+          "$ref": "#/components/schemas/IPv6"
         },
         "maxItems": 3,
         "type": "array"
       },
       "Network": {
-        "description": "Object represents a network.",
+        "description": "Object that represents a network.",
         "properties": {
           "name": {
             "example": "My network",
@@ -472,6 +493,9 @@
           },
           "nameservers": {
             "$ref": "#/components/schemas/Nameserver"
+          },
+          "nameserversV6": {
+            "$ref": "#/components/schemas/Nameserverv6"
           },
           "networkId": {
             "$ref": "#/components/schemas/UUID"
@@ -485,8 +509,17 @@
             },
             "type": "array"
           },
+          "prefixesV6": {
+            "example": [
+              "10.1.2.0/24"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CIDR"
+            },
+            "type": "array"
+          },
           "publicIp": {
-            "$ref": "#/components/schemas/IP"
+            "$ref": "#/components/schemas/IPv4"
           },
           "state": {
             "$ref": "#/components/schemas/ResourceState"
@@ -500,7 +533,7 @@
         "type": "object"
       },
       "NetworkArea": {
-        "description": "Object represents a network area.",
+        "description": "Object that represents a network area.",
         "properties": {
           "areaId": {
             "$ref": "#/components/schemas/UUID"
@@ -539,7 +572,7 @@
         "description": "The IPv4 properties of a network area."
       },
       "NetworkAreaList": {
-        "description": "A list of Network areas.",
+        "description": "A list of network areas.",
         "items": {
           "$ref": "#/components/schemas/NetworkArea"
         },
@@ -558,7 +591,7 @@
         "type": "object"
       },
       "NetworkList": {
-        "description": "List of Networks.",
+        "description": "A list of networks.",
         "items": {
           "$ref": "#/components/schemas/Network"
         },
@@ -577,7 +610,7 @@
         "type": "object"
       },
       "NetworkRange": {
-        "description": "Object representate a network range.",
+        "description": "Object that represents a network range.",
         "properties": {
           "networkRangeId": {
             "allOf": [
@@ -597,7 +630,7 @@
         "type": "object"
       },
       "NetworkRangeList": {
-        "description": "A list of Network ranges.",
+        "description": "A list of network ranges.",
         "items": {
           "$ref": "#/components/schemas/NetworkRange"
         },
@@ -640,13 +673,13 @@
         "type": "object"
       },
       "ProjectCount": {
-        "description": "The amount of projects currently referencing this area.",
+        "description": "The amount of projects currently referencing a specific area.",
         "example": 10,
         "minimum": 0,
         "type": "integer"
       },
       "ProjectList": {
-        "description": "List of STACKIT projects.",
+        "description": "A list of STACKIT projects.",
         "items": {
           "$ref": "#/components/schemas/UUID"
         },
@@ -665,7 +698,7 @@
         "type": "object"
       },
       "ReqId": {
-        "description": "ID representing a single API request.",
+        "description": "Identifier (ID) representing a single API request.",
         "example": "req-d61a8564c8dd4ffbbc15143e7d0c85ed",
         "maxLength": 36,
         "minLength": 36,
@@ -673,7 +706,7 @@
         "type": "string"
       },
       "Request": {
-        "description": "Request.",
+        "description": "Object that represents a request.",
         "properties": {
           "details": {
             "example": "This worked!",
@@ -715,7 +748,7 @@
         "type": "object"
       },
       "RequestResource": {
-        "description": "A resource as part of a request.",
+        "description": "Object that represents a resource as part of a request.",
         "properties": {
           "id": {
             "$ref": "#/components/schemas/UUID"
@@ -735,12 +768,12 @@
         "type": "object"
       },
       "Resource": {
-        "description": "Resource type.",
+        "description": "Object that represents a resource type.",
         "example": "SERVER",
         "type": "string"
       },
       "ResourceAction": {
-        "description": "Resource action.",
+        "description": "Object that represents a resource action.",
         "example": "CREATE",
         "type": "string"
       },
@@ -753,7 +786,7 @@
         "description": "Object represents a network route.",
         "properties": {
           "nexthop": {
-            "$ref": "#/components/schemas/IP"
+            "$ref": "#/components/schemas/IPv4"
           },
           "prefix": {
             "$ref": "#/components/schemas/CIDR"
@@ -774,7 +807,7 @@
         "type": "object"
       },
       "RouteList": {
-        "description": "List of routes.",
+        "description": "A list of routes.",
         "items": {
           "$ref": "#/components/schemas/Route"
         },
@@ -816,7 +849,7 @@
         "properties": {
           "defaultNameservers": {
             "items": {
-              "$ref": "#/components/schemas/IP"
+              "$ref": "#/components/schemas/IPv4"
             },
             "maxItems": 3,
             "type": "array"
@@ -839,6 +872,9 @@
         "properties": {
           "ipv4": {
             "$ref": "#/components/schemas/UpdateNetworkIPv4"
+          },
+          "ipv6": {
+            "$ref": "#/components/schemas/v1UpdateNetworkIPv6"
           }
         },
         "type": "object"
@@ -848,6 +884,31 @@
         "properties": {
           "nameservers": {
             "$ref": "#/components/schemas/Nameserver"
+          }
+        },
+        "type": "object"
+      },
+      "v1CreateNetworkIPv6": {
+        "description": "The config object for a IPv6 network.",
+        "properties": {
+          "nameservers": {
+            "$ref": "#/components/schemas/Nameserverv6"
+          },
+          "prefixLength": {
+            "default": 64,
+            "example": 64,
+            "maximum": 128,
+            "minimum": 56,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "v1UpdateNetworkIPv6": {
+        "description": "The config object for a IPv6 network update.",
+        "properties": {
+          "nameservers": {
+            "$ref": "#/components/schemas/Nameserverv6"
           }
         },
         "type": "object"
@@ -885,7 +946,7 @@
                 }
               }
             },
-            "description": "Get a list of network areas."
+            "description": "Get a list of all network areas."
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -946,7 +1007,7 @@
               }
             }
           },
-          "description": "Area creation request.",
+          "description": "Request an Area creation.",
           "required": true
         },
         "responses": {
@@ -958,7 +1019,7 @@
                 }
               }
             },
-            "description": "Area has been created."
+            "description": "Area has been successfully created."
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -993,7 +1054,7 @@
         ],
         "responses": {
           "202": {
-            "description": "Delete request for area accepted."
+            "description": "Delete request for area has been accepted."
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -1099,7 +1160,7 @@
               }
             }
           },
-          "description": "Area update request.",
+          "description": "Request to update an Area.",
           "required": true
         },
         "responses": {
@@ -1153,7 +1214,7 @@
                 }
               }
             },
-            "description": "List network ranges."
+            "description": "List all network ranges."
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -1199,7 +1260,7 @@
               }
             }
           },
-          "description": "Add network ranges to an area request.",
+          "description": "Request an addition of network ranges to an area.",
           "required": true
         },
         "responses": {
@@ -1248,7 +1309,7 @@
     },
     "/v1beta1/organizations/{organizationId}/network-areas/{areaId}/network-ranges/{networkRangeId}": {
       "delete": {
-        "description": "Delete a network range of a network area.",
+        "description": "Delete a network range of a network area. The deletion will fail if the network range is still used.",
         "operationId": "DeleteNetworkAreaRange",
         "parameters": [
           {
@@ -1451,7 +1512,7 @@
               }
             }
           },
-          "description": "Add routes to an area request.",
+          "description": "Request an addition of routes to an area.",
           "required": true
         },
         "responses": {
@@ -1515,7 +1576,7 @@
         ],
         "responses": {
           "202": {
-            "description": "Delete request for network route accepted."
+            "description": "Delete request for the network route has been accepted."
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -1686,7 +1747,7 @@
               }
             }
           },
-          "description": "Create network request.",
+          "description": "Request a network creation.",
           "required": true
         },
         "responses": {
@@ -1698,7 +1759,7 @@
                 }
               }
             },
-            "description": "Create accepted."
+            "description": "Network create has been accepted."
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -1735,7 +1796,7 @@
     },
     "/v1beta1/projects/{projectId}/networks/{networkId}": {
       "delete": {
-        "description": "Delete a network.",
+        "description": "Delete a network. If the network is still in use, the deletion will fail.",
         "operationId": "DeleteNetwork",
         "parameters": [
           {
@@ -1747,7 +1808,7 @@
         ],
         "responses": {
           "202": {
-            "description": "Delete request for network accepted."
+            "description": "Delete request for network has been accepted."
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -1782,7 +1843,7 @@
         "summary": "Delete network."
       },
       "get": {
-        "description": "Get details about a network.",
+        "description": "Get details about a network of a project.",
         "operationId": "GetNetwork",
         "parameters": [
           {
@@ -1822,7 +1883,7 @@
         "summary": "Get network details."
       },
       "patch": {
-        "description": "Update the settings of a network.",
+        "description": "Update the settings of a network inside a project.",
         "operationId": "PartialUpdateNetwork",
         "parameters": [
           {
@@ -1850,7 +1911,7 @@
               }
             }
           },
-          "description": "Update network request.",
+          "description": "Request an update of a network.",
           "required": true
         },
         "responses": {

@@ -199,6 +199,7 @@
       "DatabaseOptions": {
         "properties": {
           "collationName": {
+            "description": "Name of the collation of the database",
             "example": "SQL_Latin1_General_CP1_CI_AS",
             "type": "string"
           },
@@ -232,14 +233,6 @@
           "memory": {
             "example": 1,
             "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "GetBackupResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/Backup"
           }
         },
         "type": "object"
@@ -502,10 +495,12 @@
       "SingleDatabase": {
         "properties": {
           "id": {
+            "description": "Database id",
             "example": "1",
             "type": "string"
           },
           "name": {
+            "description": "Database name",
             "example": "Peter_pan",
             "type": "string"
           },
@@ -695,6 +690,49 @@
             "type": "string"
           },
           "username": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "backup.DocumentationGetBackupResponse": {
+        "properties": {
+          "endTime": {
+            "description": "Backup end time in UTC",
+            "type": "string"
+          },
+          "error": {
+            "description": "Backup error",
+            "type": "string"
+          },
+          "id": {
+            "description": "Backup id",
+            "type": "string"
+          },
+          "labels": {
+            "description": "Backup labels",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "name": {
+            "description": "Backup name",
+            "type": "string"
+          },
+          "options": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Backup specific options",
+            "type": "object"
+          },
+          "size": {
+            "description": "Backup size in byte",
+            "type": "integer"
+          },
+          "startTime": {
+            "description": "Backup start time in UTC",
             "type": "string"
           }
         },
@@ -1709,7 +1747,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetBackupResponse"
+                  "$ref": "#/components/schemas/backup.DocumentationGetBackupResponse"
                 }
               }
             },

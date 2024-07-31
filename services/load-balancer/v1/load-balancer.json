@@ -257,6 +257,17 @@
         },
         "type": "object"
       },
+      "ListPlansResponse": {
+        "properties": {
+          "validPlans": {
+            "items": {
+              "$ref": "#/components/schemas/PlanDetails"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "Listener": {
         "properties": {
           "displayName": {
@@ -529,6 +540,36 @@
         },
         "type": "object"
       },
+      "PlanDetails": {
+        "properties": {
+          "description": {
+            "description": "Description",
+            "example": "Description for p10",
+            "type": "string"
+          },
+          "flavorName": {
+            "description": "Flavor Name",
+            "example": "t1.2",
+            "type": "string"
+          },
+          "maxConnections": {
+            "description": "Maximum number of concurrent connections per load balancer VM instance.",
+            "title": "Load Balancer max supported connections",
+            "type": "integer"
+          },
+          "name": {
+            "description": "Service Plan Name",
+            "example": "Essential-Network-Load-Balancer-10-EU01",
+            "type": "string"
+          },
+          "planId": {
+            "description": "Service Plan Identifier",
+            "example": "p10",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "ServerNameIndicator": {
         "properties": {
           "name": {
@@ -758,10 +799,51 @@
   "info": {
     "description": "This API offers an interface to provision and manage load balancing servers in your STACKIT project. It also has the possibility of pooling target servers for load balancing purposes.\n\nFor each load balancer provided, two VMs are deployed in your OpenStack project subject to a fee.",
     "title": "Load Balancer API",
-    "version": "1.7.0"
+    "version": "1.7.1"
   },
   "openapi": "3.0.3",
   "paths": {
+    "/v1/plans": {
+      "get": {
+        "description": "ListPlans returns for the configured service plans for a project.",
+        "operationId": "ListPlans",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListPlansResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "description": "One or more fields are invalid."
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "this projectId is not allowed to try this API"
+          },
+          "500": {
+            "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "List available service plans."
+      }
+    },
     "/v1/projects/{projectId}": {
       "delete": {
         "deprecated": true,

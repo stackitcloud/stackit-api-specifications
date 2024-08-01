@@ -114,6 +114,20 @@
         },
         "description": "A bad request."
       },
+      "Conflict": {
+        "content": {
+          "application/json": {
+            "example": {
+              "code": 409,
+              "msg": "Conflict"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "A conflict has occurred."
+      },
       "Forbidden": {
         "content": {
           "application/json": {
@@ -250,7 +264,7 @@
         "properties": {
           "defaultNameservers": {
             "items": {
-              "$ref": "#/components/schemas/IPv4"
+              "$ref": "#/components/schemas/IP"
             },
             "maxItems": 3,
             "type": "array"
@@ -354,10 +368,10 @@
         "minProperties": 1,
         "properties": {
           "ipv4": {
-            "$ref": "#/components/schemas/CreateNetworkIPv4"
+            "$ref": "#/components/schemas/CreateNetworkIPv4Body"
           },
           "ipv6": {
-            "$ref": "#/components/schemas/v1CreateNetworkIPv6"
+            "$ref": "#/components/schemas/CreateNetworkIPv6Body"
           }
         },
         "type": "object"
@@ -393,9 +407,12 @@
         },
         "type": "object"
       },
-      "CreateNetworkIPv4": {
+      "CreateNetworkIPv4Body": {
         "description": "The config object for a IPv4 network.",
         "properties": {
+          "gateway": {
+            "$ref": "#/components/schemas/v1NetworkGateway"
+          },
           "nameservers": {
             "$ref": "#/components/schemas/Nameserver"
           },
@@ -409,13 +426,36 @@
         },
         "type": "object"
       },
+      "CreateNetworkIPv6Body": {
+        "description": "The config object for a IPv6 network.",
+        "properties": {
+          "gateway": {
+            "$ref": "#/components/schemas/v1NetworkGateway"
+          },
+          "nameservers": {
+            "$ref": "#/components/schemas/Nameserverv6"
+          },
+          "prefixLength": {
+            "default": 64,
+            "example": 64,
+            "maximum": 128,
+            "minimum": 56,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
       "CreateNetworkPayload": {
+        "description": "Object that represents the request body for a network create.",
         "properties": {
           "addressFamily": {
             "$ref": "#/components/schemas/CreateNetworkAddressFamily"
           },
           "name": {
             "$ref": "#/components/schemas/GenericName"
+          },
+          "routed": {
+            "$ref": "#/components/schemas/v1Routed"
           }
         },
         "required": [
@@ -448,8 +488,8 @@
         "pattern": "^[A-Za-z0-9]+((-|_|\\s|\\.)[A-Za-z0-9]+)*$",
         "type": "string"
       },
-      "IPv4": {
-        "description": "Object that represents an IPv4 address.",
+      "IP": {
+        "description": "Object that represents an IP address.",
         "example": "10.1.2.10",
         "pattern": "((^\\s*((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))\\s*$)|(^\\s*((([0-9a-f]{1,4}:){7}([0-9a-f]{1,4}|:))|(([0-9a-f]{1,4}:){6}(:[0-9a-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){5}(((:[0-9a-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){4}(((:[0-9a-f]{1,4}){1,3})|((:[0-9a-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){3}(((:[0-9a-f]{1,4}){1,4})|((:[0-9a-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){2}(((:[0-9a-f]{1,4}){1,5})|((:[0-9a-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){1}(((:[0-9a-f]{1,4}){1,6})|((:[0-9a-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9a-f]{1,4}){1,7})|((:[0-9a-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))(%.+)?\\s*$))",
         "type": "string"
@@ -467,7 +507,7 @@
           "50.60.70.80"
         ],
         "items": {
-          "$ref": "#/components/schemas/IPv4"
+          "$ref": "#/components/schemas/IP"
         },
         "maxItems": 3,
         "type": "array"
@@ -487,6 +527,9 @@
       "Network": {
         "description": "Object that represents a network.",
         "properties": {
+          "gateway": {
+            "$ref": "#/components/schemas/v1NetworkGateway"
+          },
           "name": {
             "example": "My network",
             "type": "string"
@@ -519,7 +562,10 @@
             "type": "array"
           },
           "publicIp": {
-            "$ref": "#/components/schemas/IPv4"
+            "$ref": "#/components/schemas/IP"
+          },
+          "routed": {
+            "$ref": "#/components/schemas/v1Routed"
           },
           "state": {
             "$ref": "#/components/schemas/ResourceState"
@@ -662,12 +708,16 @@
         "type": "object"
       },
       "PartialUpdateNetworkPayload": {
+        "description": "Object that represents the request body for a network update.",
         "properties": {
           "addressFamily": {
             "$ref": "#/components/schemas/UpdateNetworkAddressFamily"
           },
           "name": {
             "$ref": "#/components/schemas/GenericName"
+          },
+          "routed": {
+            "$ref": "#/components/schemas/v1Routed"
           }
         },
         "type": "object"
@@ -786,7 +836,7 @@
         "description": "Object represents a network route.",
         "properties": {
           "nexthop": {
-            "$ref": "#/components/schemas/IPv4"
+            "$ref": "#/components/schemas/IP"
           },
           "prefix": {
             "$ref": "#/components/schemas/CIDR"
@@ -849,7 +899,7 @@
         "properties": {
           "defaultNameservers": {
             "items": {
-              "$ref": "#/components/schemas/IPv4"
+              "$ref": "#/components/schemas/IP"
             },
             "maxItems": 3,
             "type": "array"
@@ -871,47 +921,52 @@
         "minProperties": 1,
         "properties": {
           "ipv4": {
-            "$ref": "#/components/schemas/UpdateNetworkIPv4"
+            "$ref": "#/components/schemas/UpdateNetworkIPv4Body"
           },
           "ipv6": {
-            "$ref": "#/components/schemas/v1UpdateNetworkIPv6"
+            "$ref": "#/components/schemas/UpdateNetworkIPv6Body"
           }
         },
         "type": "object"
       },
-      "UpdateNetworkIPv4": {
+      "UpdateNetworkIPv4Body": {
         "description": "The config object for a IPv4 network update.",
         "properties": {
+          "gateway": {
+            "$ref": "#/components/schemas/v1NetworkGateway"
+          },
           "nameservers": {
             "$ref": "#/components/schemas/Nameserver"
           }
         },
         "type": "object"
       },
-      "v1CreateNetworkIPv6": {
-        "description": "The config object for a IPv6 network.",
+      "UpdateNetworkIPv6Body": {
+        "description": "The config object for a IPv6 network update.",
         "properties": {
+          "gateway": {
+            "$ref": "#/components/schemas/v1NetworkGateway"
+          },
           "nameservers": {
             "$ref": "#/components/schemas/Nameserverv6"
-          },
-          "prefixLength": {
-            "default": 64,
-            "example": 64,
-            "maximum": 128,
-            "minimum": 56,
-            "type": "integer"
           }
         },
         "type": "object"
       },
-      "v1UpdateNetworkIPv6": {
-        "description": "The config object for a IPv6 network update.",
-        "properties": {
-          "nameservers": {
-            "$ref": "#/components/schemas/Nameserverv6"
+      "v1NetworkGateway": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IP"
           }
-        },
-        "type": "object"
+        ],
+        "description": "The gateway of a network. If not specified the first ip of the network will be assigned as the gateway. If 'null' is sent, then the network doesn't have a gateway.",
+        "nullable": true
+      },
+      "v1Routed": {
+        "default": true,
+        "description": "Shows if the network is routed and therefore accessible from other networks.",
+        "example": true,
+        "type": "boolean"
       }
     }
   },
@@ -1069,18 +1124,7 @@
             "$ref": "#/components/responses/NotFound"
           },
           "409": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "code": 409,
-                  "msg": "Areas must no longer be referenced by any project to be deleted"
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Tried to delete an area that was still in use by a project."
+            "$ref": "#/components/responses/Conflict"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -1287,18 +1331,7 @@
             "$ref": "#/components/responses/NotFound"
           },
           "409": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "code": 409,
-                  "msg": "Network ranges must not overlap with other network ranges or transfer networks"
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Tried to add a network range that conflicts with an existing network range or transfer range."
+            "$ref": "#/components/responses/Conflict"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -1339,18 +1372,7 @@
             "$ref": "#/components/responses/NotFound"
           },
           "409": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "code": 409,
-                  "msg": "Network ranges must no longer be used to be deleted"
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Tried to delete a network range that is still in use."
+            "$ref": "#/components/responses/Conflict"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -1539,18 +1561,7 @@
             "$ref": "#/components/responses/NotFound"
           },
           "409": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "code": 409,
-                  "msg": "routes must not overlap with other network ranges or transfer networks"
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Tried to add a route that conflicts with an existing network range or transfer range."
+            "$ref": "#/components/responses/Conflict"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -1774,18 +1785,7 @@
             "$ref": "#/components/responses/NotFound"
           },
           "409": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "code": 409,
-                  "msg": "Can not allocate prefixes for network. Ensure the area has sufficient space in the configured network ranges"
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Can not allocate prefixes for network."
+            "$ref": "#/components/responses/Conflict"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -1823,18 +1823,7 @@
             "$ref": "#/components/responses/NotFound"
           },
           "409": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "code": 409,
-                  "msg": "Can not delete network. It is still has systems connected to it."
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Can not delete network that is still in use."
+            "$ref": "#/components/responses/Conflict"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"

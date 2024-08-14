@@ -799,6 +799,37 @@
         },
         "type": "object"
       },
+      "handlers_instances.SlowQueriesResponse": {
+        "properties": {
+          "slowQueries": {
+            "description": "A list of documents with information about slow queries as detected by the Performance Advisor.",
+            "items": {
+              "$ref": "#/components/schemas/mongodbatlas.SlowQuery"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "handlers_instances.SuggestedIndexesResponse": {
+        "properties": {
+          "shapes": {
+            "description": "Documents with information about the query shapes that are served by the suggested indexes.",
+            "items": {
+              "$ref": "#/components/schemas/mongodbatlas.Shape"
+            },
+            "type": "array"
+          },
+          "suggestedIndexes": {
+            "description": "Documents with information about the indexes suggested by the Performance Advisor.",
+            "items": {
+              "$ref": "#/components/schemas/mongodbatlas.SuggestedIndex"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "instance.ListInstance": {
         "properties": {
           "id": {
@@ -837,6 +868,131 @@
           },
           "username": {
             "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "mongodbatlas.Operation": {
+        "properties": {
+          "predicates": {
+            "description": "Documents containing the search criteria used by the query.",
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "raw": {
+            "description": "Raw log line produced by the query.",
+            "type": "string"
+          },
+          "stats": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/mongodbatlas.Stats"
+              }
+            ],
+            "description": "Query statistics.",
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "mongodbatlas.Shape": {
+        "properties": {
+          "avgMs": {
+            "description": "Average duration in milliseconds for the queries examined that match this shape.",
+            "type": "number"
+          },
+          "count": {
+            "description": "Number of queries examined that match this shape.",
+            "type": "integer"
+          },
+          "id": {
+            "description": "Unique id for this shape. Exists only for the duration of the API request.",
+            "type": "string"
+          },
+          "inefficiencyScore": {
+            "description": "Average number of documents read for every document returned by the query.",
+            "type": "integer"
+          },
+          "namespace": {
+            "description": "The namespace in which the slow query ran.",
+            "type": "string"
+          },
+          "operations": {
+            "description": "It represents documents with specific information and log lines for individual queries.",
+            "items": {
+              "$ref": "#/components/schemas/mongodbatlas.Operation"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "mongodbatlas.SlowQuery": {
+        "properties": {
+          "line": {
+            "description": "The raw log line pertaining to the slow query.",
+            "type": "string"
+          },
+          "namespace": {
+            "description": "The namespace in which the slow query ran.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "mongodbatlas.Stats": {
+        "properties": {
+          "ms": {
+            "description": "Duration in milliseconds of the query.",
+            "type": "number"
+          },
+          "nReturned": {
+            "description": "Number of results returned by the query.",
+            "type": "integer"
+          },
+          "nScanned": {
+            "description": "Number of documents read by the query.",
+            "type": "integer"
+          },
+          "ts": {
+            "description": "Query timestamp, in seconds since epoch.",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "mongodbatlas.SuggestedIndex": {
+        "properties": {
+          "id": {
+            "description": "Unique id for this suggested index.",
+            "type": "string"
+          },
+          "impact": {
+            "description": "List of unique identifiers which correspond the query shapes in this response which pertain to this suggested index.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "index": {
+            "description": "Array of documents that specifies a key in the index and its sort order, ascending or descending.",
+            "items": {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "namespace": {
+            "description": "Namespace of the suggested index.",
+            "type": "string"
+          },
+          "weight": {
+            "description": "Estimated percentage performance improvement that the suggested index would provide.",
+            "type": "number"
           }
         },
         "type": "object"
@@ -1459,6 +1615,160 @@
           }
         ],
         "summary": "Put endpoint"
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/advisor/slow-queries": {
+      "get": {
+        "description": "gets slow queries from the Opsmanager performance advisor",
+        "parameters": [
+          {
+            "description": "project id",
+            "explode": false,
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "instance id",
+            "explode": false,
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handlers_instances.SlowQueriesResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get slow queries"
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/advisor/suggested-indexes": {
+      "get": {
+        "description": "gets suggested indexes from the Opsmanager performance advisor",
+        "parameters": [
+          {
+            "description": "project id",
+            "explode": false,
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "instance id",
+            "explode": false,
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handlers_instances.SuggestedIndexesResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get suggested indexes"
       }
     },
     "/v1/projects/{projectId}/instances/{instanceId}/backups": {

@@ -395,11 +395,11 @@
       "LoadBalancerError": {
         "properties": {
           "description": {
-            "description": "The error description contains additional helpful user information to fix the error state of the load balancer. For example the IP 45.135.247.139 does not exist in the project, then the description will report: Floating IP \"45.135.247.139\" could not be found.",
+            "description": "The error description contains additional helpful user information to fix the error state of the load balancer. For example the IP 45.135.247.139 does not exist in the project, then the description will report: Floating IP \"45.135.247.139\" could not be found or if the IP was deleted then you will get a proper error message.",
             "type": "string"
           },
           "type": {
-            "description": "The error type specifies which part of the load balancer encountered the error. I.e. the API will not check if a provided public IP is actually available in the project. Instead the load balancer with try to use the provided IP and if not available reports TYPE_FIP_NOT_CONFIGURED error.",
+            "description": "The error type specifies which part of the load balancer encountered the error. I.e. the API will not check if a provided public IP is actually available in the project. Instead the load balancer with try to use the provided IP and if not available reports TYPE_FIP_NOT_CONFIGURED error or TYPE_FIP_NOT_FOUND if the IP was deleted.",
             "enum": [
               "TYPE_UNSPECIFIED",
               "TYPE_INTERNAL",
@@ -409,7 +409,8 @@
               "TYPE_FIP_NOT_CONFIGURED",
               "TYPE_TARGET_NOT_ACTIVE",
               "TYPE_METRICS_MISCONFIGURED",
-              "TYPE_LOGS_MISCONFIGURED"
+              "TYPE_LOGS_MISCONFIGURED",
+              "TYPE_FIP_NOT_FOUND"
             ],
             "type": "string"
           }
@@ -799,7 +800,7 @@
   "info": {
     "description": "This API offers an interface to provision and manage load balancing servers in your STACKIT project. It also has the possibility of pooling target servers for load balancing purposes.\n\nFor each load balancer provided, two VMs are deployed in your OpenStack project subject to a fee.",
     "title": "Load Balancer API",
-    "version": "1.7.1"
+    "version": "1.7.2"
   },
   "openapi": "3.0.3",
   "paths": {

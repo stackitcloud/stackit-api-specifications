@@ -1,0 +1,3431 @@
+{
+  "components": {
+    "parameters": {
+      "v1KeypairName": {
+        "description": "The name of a key pair.",
+        "example": "keypair-123",
+        "in": "path",
+        "name": "keypairName",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/GenericName"
+        }
+      },
+      "v1LabelSelector": {
+        "description": "Filter resources by labels.",
+        "in": "query",
+        "name": "label_selector",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "v1NICID": {
+        "description": "The identifier (ID) of a network interface.",
+        "in": "path",
+        "name": "nicId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v1NetworkAreaID": {
+        "description": "The identifier (ID) of a STACKIT Network Area.",
+        "in": "path",
+        "name": "areaId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v1NetworkID": {
+        "description": "The identifier (ID) of a STACKIT Network.",
+        "in": "path",
+        "name": "networkId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v1OrganizationID": {
+        "description": "The identifier (ID) of a STACKIT Organization.",
+        "in": "path",
+        "name": "organizationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v1ProjectID": {
+        "description": "The identifier (ID) of a STACKIT Project.",
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v1RequestID": {
+        "description": "The identifier (ID) of a STACKIT Request.",
+        "in": "path",
+        "name": "requestId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/ReqId"
+        }
+      },
+      "v1SecurityGroupID": {
+        "description": "The identifier (ID) of a STACKIT Security Group.",
+        "in": "path",
+        "name": "securityGroupId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v1SecurityGroupRuleID": {
+        "description": "The identifier (ID) of a STACKIT Security Group Rule.",
+        "in": "path",
+        "name": "securityGroupRuleId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v1VolumeID": {
+        "description": "The identifier (ID) of a STACKIT Volume.",
+        "in": "path",
+        "name": "volumeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v1VolumePerformanceClassName": {
+        "description": "The name of a STACKIT Volume performance class.",
+        "example": "storage_premium_perf6",
+        "in": "path",
+        "name": "volumePerformanceClass",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/GenericName"
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "InvalidAffinityPolicy": {
+                "value": {
+                  "code": 400,
+                  "msg": "The server group policy is not supported"
+                }
+              },
+              "InvalidBootDeviceSize": {
+                "value": {
+                  "code": 400,
+                  "msg": "boot device size is not valid or missing"
+                }
+              },
+              "InvalidMachineType": {
+                "value": {
+                  "code": 400,
+                  "msg": "machine type is not valid"
+                }
+              },
+              "InvalidParameter": {
+                "value": {
+                  "code": 400,
+                  "msg": "request body has an error: doesn't match schema: Error at \"/name\": value must be a string"
+                }
+              },
+              "InvalidPublicKey": {
+                "value": {
+                  "code": 400,
+                  "msg": "invalid pubkey"
+                }
+              },
+              "InvalidUUID": {
+                "value": {
+                  "code": 400,
+                  "msg": "invalid uuid"
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "A bad request."
+      },
+      "Conflict": {
+        "content": {
+          "application/json": {
+            "example": {
+              "code": 409,
+              "msg": "Conflict"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "A conflict has occurred."
+      },
+      "Forbidden": {
+        "content": {
+          "application/json": {
+            "example": {
+              "code": 403,
+              "msg": "Forbidden"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "A request which was forbidden."
+      },
+      "InternalServerError": {
+        "content": {
+          "application/json": {
+            "example": {
+              "code": 500,
+              "msg": "internal server error"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Internal Server Error, returns a 500 if something is broken on IaaS API Side."
+      },
+      "NotFound": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "AreaNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "area not found"
+                }
+              },
+              "KeyPairNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "keypair not found"
+                }
+              },
+              "KeypairNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "keypair not found"
+                }
+              },
+              "NetworkNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "network not found"
+                }
+              },
+              "NetworkRangeNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "network range not found"
+                }
+              },
+              "OrganizationNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "organization not found"
+                }
+              },
+              "ProjectNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "project not found"
+                }
+              },
+              "RequestNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "request not found"
+                }
+              },
+              "RouteNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "route not found"
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "The object was not found."
+      },
+      "TooManyRequests": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Too Many Requests."
+      },
+      "Unauthorized": {
+        "content": {
+          "application/json": {
+            "example": {
+              "code": 401,
+              "msg": "Unauthorized"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "A request which was not authorized."
+      }
+    },
+    "schemas": {
+      "AllowedAddresses": {
+        "description": "A list of IPs or CIDR notations.",
+        "items": {
+          "oneOf": [
+            {
+              "$ref": "#/components/schemas/IP"
+            },
+            {
+              "$ref": "#/components/schemas/CIDR"
+            }
+          ]
+        },
+        "type": "array"
+      },
+      "Area": {
+        "description": "The basic properties of a network area.",
+        "properties": {
+          "defaultNameservers": {
+            "$ref": "#/components/schemas/Nameserver"
+          },
+          "networkRanges": {
+            "$ref": "#/components/schemas/NetworkRangeList"
+          },
+          "routes": {
+            "$ref": "#/components/schemas/RouteList"
+          },
+          "transferNetwork": {
+            "$ref": "#/components/schemas/CIDR"
+          }
+        },
+        "type": "object"
+      },
+      "AreaConfig": {
+        "description": "The basic network area object.",
+        "properties": {
+          "defaultNameservers": {
+            "items": {
+              "$ref": "#/components/schemas/IP"
+            },
+            "maxItems": 3,
+            "type": "array"
+          },
+          "networkRanges": {
+            "$ref": "#/components/schemas/NetworkRangeList"
+          },
+          "routes": {
+            "$ref": "#/components/schemas/RouteList"
+          },
+          "transferNetwork": {
+            "$ref": "#/components/schemas/CIDR"
+          }
+        },
+        "required": [
+          "transferNetwork",
+          "networkRanges"
+        ],
+        "type": "object"
+      },
+      "AreaDefaultPrefixLengthIPv4": {
+        "description": "The default prefix length for networks in the network area.",
+        "example": 24,
+        "maximum": 29,
+        "minimum": 24,
+        "type": "integer"
+      },
+      "AreaId": {
+        "description": "The identifier (ID) of an area.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/UUID"
+          },
+          {
+            "$ref": "#/components/schemas/StaticAreaID"
+          }
+        ]
+      },
+      "AreaMaxPrefixLengthIPv4": {
+        "description": "The maximal prefix length for networks in the network area.",
+        "example": 29,
+        "maximum": 29,
+        "minimum": 24,
+        "type": "integer"
+      },
+      "AreaMinPrefixLengthIPv4": {
+        "description": "The minimal prefix length for networks in the network area.",
+        "example": 24,
+        "maximum": 29,
+        "minimum": 22,
+        "type": "integer"
+      },
+      "AreaPrefixConfigIPv4": {
+        "description": "The IPv4 prefix config for a network area.",
+        "properties": {
+          "defaultPrefixLen": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AreaDefaultPrefixLengthIPv4"
+              }
+            ],
+            "default": 25
+          },
+          "maxPrefixLen": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AreaMaxPrefixLengthIPv4"
+              }
+            ],
+            "default": 29
+          },
+          "minPrefixLen": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AreaMinPrefixLengthIPv4"
+              }
+            ],
+            "default": 24
+          }
+        },
+        "type": "object"
+      },
+      "AvailabilityZone": {
+        "description": "Object that represents an availability zone.",
+        "example": "eu01-1",
+        "type": "string"
+      },
+      "CIDR": {
+        "description": "Classless Inter-Domain Routing (CIDR).",
+        "example": "192.168.0.0/24",
+        "pattern": "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\/(3[0-2]|2[0-9]|1[0-9]|[0-9]))$|^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))(\\/((1(1[0-9]|2[0-8]))|([0-9][0-9])|([0-9])))?$",
+        "type": "string"
+      },
+      "CreateAreaAddressFamily": {
+        "description": "The addressFamily object for a area create request.",
+        "minProperties": 1,
+        "properties": {
+          "ipv4": {
+            "$ref": "#/components/schemas/CreateAreaIPv4"
+          }
+        },
+        "type": "object"
+      },
+      "CreateAreaIPv4": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AreaConfig"
+          },
+          {
+            "$ref": "#/components/schemas/AreaPrefixConfigIPv4"
+          }
+        ],
+        "description": "The config object for a IPv4 network area."
+      },
+      "CreateNICPayload": {
+        "description": "Object that represents a network interface.",
+        "properties": {
+          "allowedAddresses": {
+            "$ref": "#/components/schemas/AllowedAddresses"
+          },
+          "device": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "ipv4": {
+            "$ref": "#/components/schemas/IP"
+          },
+          "ipv6": {
+            "$ref": "#/components/schemas/IPv6"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "mac": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MAC"
+              }
+            ],
+            "readOnly": true
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "networkId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "nicSecurity": {
+            "default": true,
+            "description": "If this is set to false, then no security groups will apply to this network interface.",
+            "type": "boolean"
+          },
+          "securityGroups": {
+            "$ref": "#/components/schemas/UUIDList"
+          },
+          "status": {
+            "readOnly": true,
+            "type": "string",
+            "x-extensible-enum": [
+              "active",
+              "down"
+            ]
+          },
+          "type": {
+            "readOnly": true,
+            "type": "string",
+            "x-extensible-enum": [
+              "server",
+              "metadata",
+              "gateway"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "mac",
+          "networkId",
+          "type",
+          "device",
+          "status"
+        ],
+        "type": "object"
+      },
+      "CreateSecurityGroupPayload": {
+        "description": "Object that represents a security group.",
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "rules": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SecurityGroupRuleList"
+              }
+            ],
+            "readOnly": true
+          },
+          "stateful": {
+            "$ref": "#/components/schemas/Stateful"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "rules"
+        ],
+        "type": "object"
+      },
+      "CreateSecurityGroupRulePayload": {
+        "description": "Object that represents a security group rule.",
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "direction": {
+            "description": "The direction of the traffic which the rule should match.",
+            "type": "string",
+            "x-extensible-enum": [
+              "ingress",
+              "egress"
+            ]
+          },
+          "ethertype": {
+            "default": "IPv4",
+            "description": "The ethertype which the rule should match.",
+            "type": "string",
+            "x-extensible-enum": [
+              "IPv4",
+              "IPv6"
+            ]
+          },
+          "icmpParameters": {
+            "$ref": "#/components/schemas/ICMPParameters"
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "ipRange": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CIDR"
+              }
+            ],
+            "description": "The remote IP range which the rule should match."
+          },
+          "portRange": {
+            "$ref": "#/components/schemas/PortRange"
+          },
+          "protocol": {
+            "$ref": "#/components/schemas/v1SecurityGroupRuleProtocol"
+          },
+          "remoteSecurityGroupId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "description": "The remote security group which the rule should match."
+          },
+          "securityGroupId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "id",
+          "securityGroupId",
+          "direction"
+        ],
+        "type": "object"
+      },
+      "CreateVolumePayload": {
+        "description": "Object that represents a volume and its parameters. Used for Creating and returning (get/list).",
+        "properties": {
+          "availabilityZone": {
+            "$ref": "#/components/schemas/AvailabilityZone"
+          },
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "performanceClass": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "serverId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "size": {
+            "$ref": "#/components/schemas/SizeInGB"
+          },
+          "source": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/VolumeSourceImage"
+              },
+              {
+                "$ref": "#/components/schemas/VolumeSourceVolume"
+              },
+              {
+                "$ref": "#/components/schemas/VolumeSourceSnapshot"
+              },
+              {
+                "$ref": "#/components/schemas/VolumeSourceBackup"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VolumeStatus"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "id",
+          "availabilityZone",
+          "status"
+        ],
+        "type": "object"
+      },
+      "Description": {
+        "description": "Description Object. Allows string up to 127 Characters.",
+        "example": "cool description dude. Wanna play some Snakeybus?",
+        "maxLength": 127,
+        "type": "string"
+      },
+      "Error": {
+        "description": "Error with HTTP error code and an error message.",
+        "properties": {
+          "code": {
+            "example": 404,
+            "type": "integer"
+          },
+          "msg": {
+            "example": "Project not found",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "msg"
+        ],
+        "type": "object"
+      },
+      "GenericName": {
+        "description": "The name for a General Object. Matches Names and also UUIDs.",
+        "example": "objectName26",
+        "maxLength": 63,
+        "pattern": "^[A-Za-z0-9]+((-|_|\\s|\\.)[A-Za-z0-9]+)*$",
+        "type": "string"
+      },
+      "ICMPParameters": {
+        "description": "Object that represents ICMP parameters.",
+        "properties": {
+          "code": {
+            "description": "ICMP code. Can be set if the protocol is ICMP.",
+            "example": 0,
+            "maximum": 255,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "type": {
+            "description": "ICMP type. Can be set if the protocol is ICMP.",
+            "example": 8,
+            "maximum": 255,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "type",
+          "code"
+        ],
+        "type": "object"
+      },
+      "IP": {
+        "description": "Object that represents an IP address.",
+        "example": "10.1.2.10",
+        "pattern": "((^\\s*((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))\\s*$)|(^\\s*((([0-9a-f]{1,4}:){7}([0-9a-f]{1,4}|:))|(([0-9a-f]{1,4}:){6}(:[0-9a-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){5}(((:[0-9a-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){4}(((:[0-9a-f]{1,4}){1,3})|((:[0-9a-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){3}(((:[0-9a-f]{1,4}){1,4})|((:[0-9a-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){2}(((:[0-9a-f]{1,4}){1,5})|((:[0-9a-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){1}(((:[0-9a-f]{1,4}){1,6})|((:[0-9a-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9a-f]{1,4}){1,7})|((:[0-9a-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))(%.+)?\\s*$))",
+        "type": "string"
+      },
+      "IPv6": {
+        "description": "Object that represents an IPv6 address.",
+        "example": "2001:db8:0:8d3:0:8a2e:70:7344",
+        "pattern": "^\\s*((([0-9a-f]{1,4}:){7}([0-9a-f]{1,4}|:))|(([0-9a-f]{1,4}:){6}(:[0-9a-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){5}(((:[0-9a-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){4}(((:[0-9a-f]{1,4}){1,3})|((:[0-9a-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){3}(((:[0-9a-f]{1,4}){1,4})|((:[0-9a-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){2}(((:[0-9a-f]{1,4}){1,5})|((:[0-9a-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){1}(((:[0-9a-f]{1,4}){1,6})|((:[0-9a-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9a-f]{1,4}){1,7})|((:[0-9a-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))(%.+)?\\s*$",
+        "type": "string"
+      },
+      "KeyPairList": {
+        "description": "A list of key pairs.",
+        "items": {
+          "$ref": "#/components/schemas/Keypair"
+        },
+        "type": "array"
+      },
+      "KeyPairListResponse": {
+        "description": "Key pair list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/KeyPairList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "Keypair": {
+        "description": "Object that represents the public key of a SSH key pair and its name.",
+        "properties": {
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "publicKey": {
+            "$ref": "#/components/schemas/SSHPublicKey"
+          }
+        },
+        "required": [
+          "publicKey"
+        ],
+        "type": "object"
+      },
+      "Labels": {
+        "description": "Object that represents the labels of an object.",
+        "example": {
+          "foo": "Foo Value"
+        },
+        "format": "json",
+        "type": "object"
+      },
+      "MAC": {
+        "description": "Object that represents an MAC address.",
+        "example": "00:80:41:ae:fd:7e",
+        "pattern": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$",
+        "type": "string"
+      },
+      "NIC": {
+        "description": "Object that represents a network interface.",
+        "properties": {
+          "allowedAddresses": {
+            "$ref": "#/components/schemas/AllowedAddresses"
+          },
+          "device": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "ipv4": {
+            "$ref": "#/components/schemas/IP"
+          },
+          "ipv6": {
+            "$ref": "#/components/schemas/IPv6"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "mac": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MAC"
+              }
+            ],
+            "readOnly": true
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "networkId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "nicSecurity": {
+            "default": true,
+            "description": "If this is set to false, then no security groups will apply to this network interface.",
+            "type": "boolean"
+          },
+          "securityGroups": {
+            "$ref": "#/components/schemas/UUIDList"
+          },
+          "status": {
+            "readOnly": true,
+            "type": "string",
+            "x-extensible-enum": [
+              "active",
+              "down"
+            ]
+          },
+          "type": {
+            "readOnly": true,
+            "type": "string",
+            "x-extensible-enum": [
+              "server",
+              "metadata",
+              "gateway"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "mac",
+          "networkId",
+          "type",
+          "device",
+          "status"
+        ],
+        "type": "object"
+      },
+      "NICList": {
+        "description": "A list of network interfaces.",
+        "items": {
+          "$ref": "#/components/schemas/NIC"
+        },
+        "type": "array"
+      },
+      "NICListResponse": {
+        "description": "NIC list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/NICList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "Nameserver": {
+        "description": "A list containing DNS Servers/Nameservers for IPv4.",
+        "example": [
+          "10.20.30.40",
+          "50.60.70.80"
+        ],
+        "items": {
+          "$ref": "#/components/schemas/IP"
+        },
+        "maxItems": 3,
+        "type": "array"
+      },
+      "Nameserverv6": {
+        "description": "A list containing DNS Servers/Nameservers for IPv6.",
+        "example": [
+          "2001:4860:4860::8888",
+          "2001:4860:4860::8844"
+        ],
+        "items": {
+          "$ref": "#/components/schemas/IPv6"
+        },
+        "maxItems": 3,
+        "type": "array"
+      },
+      "Network": {
+        "description": "Object that represents a network.",
+        "properties": {
+          "gateway": {
+            "$ref": "#/components/schemas/v1NetworkGateway"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "example": "My network",
+            "type": "string"
+          },
+          "nameservers": {
+            "$ref": "#/components/schemas/Nameserver"
+          },
+          "nameserversV6": {
+            "$ref": "#/components/schemas/Nameserverv6"
+          },
+          "networkId": {
+            "$ref": "#/components/schemas/UUID"
+          },
+          "prefixes": {
+            "example": [
+              "10.1.2.0/24"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CIDR"
+            },
+            "type": "array"
+          },
+          "prefixesV6": {
+            "example": [
+              "10.1.2.0/24"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CIDR"
+            },
+            "type": "array"
+          },
+          "publicIp": {
+            "$ref": "#/components/schemas/IP"
+          },
+          "routed": {
+            "$ref": "#/components/schemas/v1Routed"
+          },
+          "state": {
+            "$ref": "#/components/schemas/ResourceState"
+          }
+        },
+        "required": [
+          "networkId",
+          "name",
+          "state"
+        ],
+        "type": "object"
+      },
+      "NetworkArea": {
+        "description": "Object that represents a network area.",
+        "properties": {
+          "areaId": {
+            "$ref": "#/components/schemas/UUID"
+          },
+          "ipv4": {
+            "$ref": "#/components/schemas/NetworkAreaIPv4"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "example": "My network area",
+            "type": "string"
+          },
+          "projectCount": {
+            "$ref": "#/components/schemas/ProjectCount"
+          },
+          "state": {
+            "$ref": "#/components/schemas/ResourceState"
+          }
+        },
+        "required": [
+          "areaId",
+          "name",
+          "projectCount",
+          "state"
+        ],
+        "type": "object"
+      },
+      "NetworkAreaIPv4": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Area"
+          },
+          {
+            "$ref": "#/components/schemas/AreaPrefixConfigIPv4"
+          }
+        ],
+        "description": "The IPv4 properties of a network area."
+      },
+      "NetworkAreaList": {
+        "description": "A list of network areas.",
+        "items": {
+          "$ref": "#/components/schemas/NetworkArea"
+        },
+        "type": "array"
+      },
+      "NetworkAreaListResponse": {
+        "description": "Network area list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/NetworkAreaList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "NetworkList": {
+        "description": "A list of networks.",
+        "items": {
+          "$ref": "#/components/schemas/Network"
+        },
+        "type": "array"
+      },
+      "NetworkListResponse": {
+        "description": "Network list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/NetworkList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "NetworkRange": {
+        "description": "Object that represents a network range.",
+        "properties": {
+          "networkRangeId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "prefix": {
+            "$ref": "#/components/schemas/CIDR"
+          }
+        },
+        "required": [
+          "networkRangeId",
+          "prefix"
+        ],
+        "type": "object"
+      },
+      "NetworkRangeList": {
+        "description": "A list of network ranges.",
+        "items": {
+          "$ref": "#/components/schemas/NetworkRange"
+        },
+        "maxItems": 64,
+        "minItems": 1,
+        "type": "array"
+      },
+      "OpenStackNetwork": {
+        "description": "Object that represents a network in OpenStack.",
+        "properties": {
+          "cidr": {
+            "$ref": "#/components/schemas/CIDR"
+          },
+          "openstackNetworkID": {
+            "$ref": "#/components/schemas/UUID"
+          },
+          "openstackRouterID": {
+            "$ref": "#/components/schemas/UUID"
+          },
+          "openstackSubnetID": {
+            "$ref": "#/components/schemas/UUID"
+          }
+        },
+        "required": [
+          "openstackRouterID",
+          "openstackNetworkID",
+          "openstackSubnetID",
+          "cidr"
+        ],
+        "type": "object"
+      },
+      "OpenStackProjectId": {
+        "description": "The identifier (ID) of an OpenStack project.",
+        "example": "d61a8564c8dd4ffbbc15143e7d0c85ed",
+        "maxLength": 32,
+        "minLength": 32,
+        "pattern": "^[0-9a-f]{32}$",
+        "type": "string"
+      },
+      "PortRange": {
+        "description": "Object that represents a range of ports.",
+        "properties": {
+          "max": {
+            "description": "The maximum port number. Should be greater or equal to the minimum.",
+            "example": 22,
+            "maximum": 65535,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "min": {
+            "description": "The minimum port number. Should be less or equal to the minimum.",
+            "example": 22,
+            "maximum": 65535,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "min",
+          "max"
+        ],
+        "type": "object"
+      },
+      "Project": {
+        "description": "Object that represents a STACKIT project.",
+        "properties": {
+          "areaId": {
+            "$ref": "#/components/schemas/AreaId"
+          },
+          "internetAccess": {
+            "example": false,
+            "type": "boolean"
+          },
+          "openstackProjectId": {
+            "$ref": "#/components/schemas/OpenStackProjectId"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/UUID"
+          },
+          "state": {
+            "$ref": "#/components/schemas/ResourceState"
+          }
+        },
+        "required": [
+          "projectId",
+          "areaId",
+          "state"
+        ],
+        "type": "object"
+      },
+      "ProjectCount": {
+        "description": "The amount of projects currently referencing a specific area.",
+        "example": 10,
+        "minimum": 0,
+        "type": "integer"
+      },
+      "ProjectList": {
+        "description": "A list of STACKIT projects.",
+        "items": {
+          "$ref": "#/components/schemas/UUID"
+        },
+        "type": "array"
+      },
+      "ProjectListResponse": {
+        "description": "Project list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/ProjectList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "Protocol": {
+        "description": "The protocol number which the rule should match.",
+        "example": 1,
+        "maximum": 255,
+        "minimum": 0,
+        "type": "integer"
+      },
+      "ProtocolName": {
+        "description": "The protocol name which the rule should match.",
+        "type": "string"
+      },
+      "ReqId": {
+        "description": "Identifier (ID) representing a single API request.",
+        "example": "req-d61a8564c8dd4ffbbc15143e7d0c85ed",
+        "maxLength": 36,
+        "minLength": 36,
+        "pattern": "^req-[0-9a-f]{32}$",
+        "type": "string"
+      },
+      "Request": {
+        "description": "Object that represents a request.",
+        "properties": {
+          "details": {
+            "example": "This worked!",
+            "type": "string"
+          },
+          "requestAction": {
+            "$ref": "#/components/schemas/ResourceAction"
+          },
+          "requestId": {
+            "$ref": "#/components/schemas/ReqId"
+          },
+          "requestType": {
+            "$ref": "#/components/schemas/Resource"
+          },
+          "resources": {
+            "example": [
+              {
+                "id": "d61a8564-c8dd-4ffb-bc15-143e7d0c85ed",
+                "status": "CREATING",
+                "type": "SERVER"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/RequestResource"
+            },
+            "type": "array"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ResourceState"
+          }
+        },
+        "required": [
+          "requestId",
+          "requestType",
+          "requestAction",
+          "resources",
+          "status"
+        ],
+        "type": "object"
+      },
+      "RequestResource": {
+        "description": "Object that represents a resource as part of a request.",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/UUID"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ResourceState"
+          },
+          "type": {
+            "$ref": "#/components/schemas/Resource"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "status"
+        ],
+        "type": "object"
+      },
+      "ResizeVolumePayload": {
+        "properties": {
+          "size": {
+            "$ref": "#/components/schemas/SizeInGB"
+          }
+        },
+        "required": [
+          "size"
+        ],
+        "type": "object"
+      },
+      "Resource": {
+        "description": "Object that represents a resource type.",
+        "example": "SERVER",
+        "type": "string"
+      },
+      "ResourceAction": {
+        "description": "Object that represents a resource action.",
+        "example": "CREATE",
+        "type": "string"
+      },
+      "ResourceState": {
+        "description": "The state of a resource object.",
+        "example": "CREATING",
+        "type": "string"
+      },
+      "Route": {
+        "description": "Object represents a network route.",
+        "properties": {
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "nexthop": {
+            "$ref": "#/components/schemas/IP"
+          },
+          "prefix": {
+            "$ref": "#/components/schemas/CIDR"
+          },
+          "routeId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "routeId",
+          "prefix",
+          "nexthop"
+        ],
+        "type": "object"
+      },
+      "RouteList": {
+        "description": "A list of routes.",
+        "items": {
+          "$ref": "#/components/schemas/Route"
+        },
+        "type": "array"
+      },
+      "SSHPublicKey": {
+        "description": "Object that represents a public SSH key.",
+        "example": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIDsPd27M449akqCtdFg2+AmRVJz6eWio0oMP9dVg7Xe",
+        "pattern": "^(ssh-rsa|ssh-ed25519)\\s+[A-Za-z0-9+/]+[=]{0,3}(\\s+.+)?\\s*$",
+        "type": "string"
+      },
+      "SecurityGroup": {
+        "description": "Object that represents a security group.",
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "rules": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SecurityGroupRuleList"
+              }
+            ],
+            "readOnly": true
+          },
+          "stateful": {
+            "$ref": "#/components/schemas/Stateful"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "rules"
+        ],
+        "type": "object"
+      },
+      "SecurityGroupList": {
+        "description": "A list containing security group objects.",
+        "items": {
+          "$ref": "#/components/schemas/SecurityGroup"
+        },
+        "type": "array"
+      },
+      "SecurityGroupListResponse": {
+        "description": "Security group list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/SecurityGroupList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "SecurityGroupRule": {
+        "description": "Object that represents a security group rule.",
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "direction": {
+            "description": "The direction of the traffic which the rule should match.",
+            "type": "string",
+            "x-extensible-enum": [
+              "ingress",
+              "egress"
+            ]
+          },
+          "ethertype": {
+            "default": "IPv4",
+            "description": "The ethertype which the rule should match.",
+            "type": "string",
+            "x-extensible-enum": [
+              "IPv4",
+              "IPv6"
+            ]
+          },
+          "icmpParameters": {
+            "$ref": "#/components/schemas/ICMPParameters"
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "ipRange": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CIDR"
+              }
+            ],
+            "description": "The remote IP range which the rule should match."
+          },
+          "portRange": {
+            "$ref": "#/components/schemas/PortRange"
+          },
+          "protocol": {
+            "$ref": "#/components/schemas/v1SecurityGroupRuleProtocol"
+          },
+          "remoteSecurityGroupId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "description": "The remote security group which the rule should match."
+          },
+          "securityGroupId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "id",
+          "securityGroupId",
+          "direction"
+        ],
+        "type": "object"
+      },
+      "SecurityGroupRuleList": {
+        "description": "A list containing security group rule objects.",
+        "items": {
+          "$ref": "#/components/schemas/SecurityGroupRule"
+        },
+        "type": "array"
+      },
+      "SecurityGroupRuleListResponse": {
+        "description": "Security group rule list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/SecurityGroupRuleList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "SizeInGB": {
+        "description": "Size in Gigabyte.",
+        "example": 1337,
+        "type": "integer"
+      },
+      "Stateful": {
+        "default": true,
+        "description": "Shows if a security group is stateful or stateless. You can only have one type of security groups per network interface/server.",
+        "type": "boolean"
+      },
+      "StaticAreaID": {
+        "description": "The identifier (ID) of a static area.",
+        "enum": [
+          "PUBLIC",
+          "SCHWARZ"
+        ],
+        "example": "PUBLIC",
+        "type": "string"
+      },
+      "UUID": {
+        "description": "Universally Unique Identifier (UUID).",
+        "example": "d61a8564-c8dd-4ffb-bc15-143e7d0c85ed",
+        "format": "uuid",
+        "maxLength": 36,
+        "minLength": 36,
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+        "type": "string"
+      },
+      "UUIDList": {
+        "description": "A list of UUIDs.",
+        "items": {
+          "$ref": "#/components/schemas/UUID"
+        },
+        "type": "array"
+      },
+      "UpdateAreaAddressFamily": {
+        "description": "The addressFamily object for a area update request.",
+        "minProperties": 1,
+        "properties": {
+          "ipv4": {
+            "$ref": "#/components/schemas/UpdateAreaIPv4"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateAreaIPv4": {
+        "description": "The update object for a IPv4 network area.",
+        "properties": {
+          "defaultNameservers": {
+            "items": {
+              "$ref": "#/components/schemas/IP"
+            },
+            "maxItems": 3,
+            "type": "array"
+          },
+          "defaultPrefixLen": {
+            "$ref": "#/components/schemas/AreaDefaultPrefixLengthIPv4"
+          },
+          "maxPrefixLen": {
+            "$ref": "#/components/schemas/AreaMaxPrefixLengthIPv4"
+          },
+          "minPrefixLen": {
+            "$ref": "#/components/schemas/AreaMinPrefixLengthIPv4"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateNICPayload": {
+        "description": "Object that represents a network interface.",
+        "properties": {
+          "allowedAddresses": {
+            "$ref": "#/components/schemas/AllowedAddresses"
+          },
+          "device": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "ipv4": {
+            "$ref": "#/components/schemas/IP"
+          },
+          "ipv6": {
+            "$ref": "#/components/schemas/IPv6"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "mac": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MAC"
+              }
+            ],
+            "readOnly": true
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "networkId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "nicSecurity": {
+            "default": true,
+            "description": "If this is set to false, then no security groups will apply to this network interface.",
+            "type": "boolean"
+          },
+          "securityGroups": {
+            "$ref": "#/components/schemas/UUIDList"
+          },
+          "status": {
+            "readOnly": true,
+            "type": "string",
+            "x-extensible-enum": [
+              "active",
+              "down"
+            ]
+          },
+          "type": {
+            "readOnly": true,
+            "type": "string",
+            "x-extensible-enum": [
+              "server",
+              "metadata",
+              "gateway"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "mac",
+          "networkId",
+          "type",
+          "device",
+          "status"
+        ],
+        "type": "object"
+      },
+      "UpdateVolumePayload": {
+        "description": "Object that represents an update request body of a  volume.",
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          }
+        },
+        "type": "object"
+      },
+      "Volume": {
+        "description": "Object that represents a volume and its parameters. Used for Creating and returning (get/list).",
+        "properties": {
+          "availabilityZone": {
+            "$ref": "#/components/schemas/AvailabilityZone"
+          },
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "performanceClass": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "serverId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "size": {
+            "$ref": "#/components/schemas/SizeInGB"
+          },
+          "source": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/VolumeSourceImage"
+              },
+              {
+                "$ref": "#/components/schemas/VolumeSourceVolume"
+              },
+              {
+                "$ref": "#/components/schemas/VolumeSourceSnapshot"
+              },
+              {
+                "$ref": "#/components/schemas/VolumeSourceBackup"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VolumeStatus"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "id",
+          "availabilityZone",
+          "status"
+        ],
+        "type": "object"
+      },
+      "VolumeList": {
+        "description": "A list containing volume objects.",
+        "items": {
+          "$ref": "#/components/schemas/Volume"
+        },
+        "type": "array"
+      },
+      "VolumeListResponse": {
+        "description": "Volume list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/VolumeList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "VolumePerformanceClass": {
+        "description": "Object that represents a Volume performance class.",
+        "example": {
+          "description": "Performance Class 6 - 5000 IOPS; 200MB throughput.",
+          "labels": {
+            "vendor_name": "NetApp"
+          },
+          "name": "storage_premium_perf6"
+        },
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "VolumePerformanceClassList": {
+        "description": "A list containing Volume performance classes.",
+        "items": {
+          "$ref": "#/components/schemas/VolumePerformanceClass"
+        },
+        "type": "array"
+      },
+      "VolumePerformanceClassListResponse": {
+        "description": "Volume performance class list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/VolumePerformanceClassList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "VolumeSourceBackup": {
+        "description": "The volume source type to generate a new volume based on a existing Backup.",
+        "properties": {
+          "backupId": {
+            "$ref": "#/components/schemas/UUID"
+          }
+        },
+        "required": [
+          "backupId"
+        ],
+        "type": "object"
+      },
+      "VolumeSourceImage": {
+        "description": "The volume source type to generate a new volume based on an image.",
+        "properties": {
+          "imageId": {
+            "$ref": "#/components/schemas/UUID"
+          }
+        },
+        "required": [
+          "imageId"
+        ],
+        "type": "object"
+      },
+      "VolumeSourceSnapshot": {
+        "description": "The volume source type to generate a new volume based on a existing Snapshot.",
+        "properties": {
+          "snapshotId": {
+            "$ref": "#/components/schemas/UUID"
+          }
+        },
+        "required": [
+          "snapshotId"
+        ],
+        "type": "object"
+      },
+      "VolumeSourceVolume": {
+        "description": "The volume source type to generate a new volume by cloning an existing one.",
+        "properties": {
+          "volumeId": {
+            "$ref": "#/components/schemas/UUID"
+          }
+        },
+        "required": [
+          "volumeId"
+        ],
+        "type": "object"
+      },
+      "VolumeStatus": {
+        "description": "The status of a volume object.",
+        "example": "ATTACHED",
+        "type": "string"
+      },
+      "v1NetworkGateway": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IP"
+          }
+        ],
+        "description": "The gateway of a network. If not specified the first ip of the network will be assigned as the gateway. If 'null' is sent, then the network doesn't have a gateway.",
+        "nullable": true
+      },
+      "v1Routed": {
+        "default": true,
+        "description": "Shows if the network is routed and therefore accessible from other networks.",
+        "example": true,
+        "type": "boolean"
+      },
+      "v1SecurityGroupRuleProtocol": {
+        "description": "The internet protocol which the rule should match.",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/ProtocolName"
+          },
+          "protocol": {
+            "$ref": "#/components/schemas/Protocol"
+          }
+        },
+        "type": "object"
+      },
+      "v1alpha1UpdateSecurityGroupPayload": {
+        "description": "Object that represents an update request body of a security group.",
+        "properties": {
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "contact": {
+      "email": "stackit-iaas@mail.schwarz",
+      "name": "STACKIT IaaS Teams",
+      "url": "https://support.stackit.cloud/servicedesk"
+    },
+    "description": "This API allows you to create and modify IaaS resources.",
+    "termsOfService": "https://stackit.de/en/imprint",
+    "title": "IaaS-API",
+    "version": "1alpha1"
+  },
+  "openapi": "3.0.1",
+  "paths": {
+    "/v1alpha1/organizations/{organizationId}/network-areas": {
+      "get": {
+        "description": "Get a list of all visible network areas defined in an organization.",
+        "operationId": "ListNetworkAreas",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1OrganizationID"
+          },
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkAreaListResponse"
+                }
+              }
+            },
+            "description": "Get a list of all network areas."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all network areas in an organization."
+      }
+    },
+    "/v1alpha1/organizations/{organizationId}/network-areas/{areaId}": {
+      "get": {
+        "description": "Get details about a network area in an organization.",
+        "operationId": "GetNetworkArea",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1OrganizationID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NetworkAreaID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkArea"
+                }
+              }
+            },
+            "description": "Show network area details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get details about a network area."
+      }
+    },
+    "/v1alpha1/organizations/{organizationId}/network-areas/{areaId}/projects": {
+      "get": {
+        "description": "Get a list of all projects using a network area.",
+        "operationId": "ListNetworkAreaProjects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1OrganizationID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NetworkAreaID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectListResponse"
+                }
+              }
+            },
+            "description": "List projects for a network area."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all projects using a network area."
+      }
+    },
+    "/v1alpha1/organizations/{organizationId}/requests/{requestId}": {
+      "get": {
+        "description": "Lookup an organization request ID from a previous request. This allows to find resource IDs of resources generated during a organization request.",
+        "operationId": "GetOrganizationRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1OrganizationID"
+          },
+          {
+            "$ref": "#/components/parameters/v1RequestID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Request"
+                }
+              }
+            },
+            "description": "Show organization request details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Lookup an organization request ID."
+      }
+    },
+    "/v1alpha1/projects/{projectId}": {
+      "get": {
+        "description": "Get details about a STACKIT project.",
+        "operationId": "GetProjectDetails",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            },
+            "description": "Show project details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get project details."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/keypairs": {
+      "get": {
+        "description": "Get a list of all key pairs in a project.",
+        "operationId": "ListKeyPairs",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KeyPairListResponse"
+                }
+              }
+            },
+            "description": "List key pairs."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all key pairs in a project."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/keypairs/{keypairName}": {
+      "get": {
+        "description": "Get details about a key pair.",
+        "operationId": "GetKeyPair",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1KeypairName"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Keypair"
+                }
+              }
+            },
+            "description": "Show key pair details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get key pair details."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/networks": {
+      "get": {
+        "description": "Get a list of all networks inside a project.",
+        "operationId": "ListNetworks",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkListResponse"
+                }
+              }
+            },
+            "description": "List all networks of a project."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all networks inside a project."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/networks/{networkId}": {
+      "get": {
+        "description": "Get details about a network of a project.",
+        "operationId": "GetNetwork",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NetworkID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Network"
+                }
+              }
+            },
+            "description": "Show network details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get network details."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/networks/{networkId}/nics": {
+      "get": {
+        "description": "Get a list of all network interfaces inside a network.",
+        "operationId": "ListNICs",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NetworkID"
+          },
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NICListResponse"
+                }
+              }
+            },
+            "description": "List project network interfaces."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all network interfaces inside a network."
+      },
+      "post": {
+        "description": "Create a new network interface in a project.",
+        "operationId": "CreateNIC",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NetworkID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateNICPayload"
+              }
+            }
+          },
+          "description": "Request a network interface creation.",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NIC"
+                }
+              }
+            },
+            "description": "Create request for a network interface has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create new network interface."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/networks/{networkId}/nics/{nicId}": {
+      "delete": {
+        "description": "Delete a network interface that is part of the project.",
+        "operationId": "DeleteNIC",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NetworkID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NICID"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Network interface delete request has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete a network interface."
+      },
+      "get": {
+        "description": "Get details about a network interface inside a network.",
+        "operationId": "GetNIC",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NetworkID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NICID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NIC"
+                }
+              }
+            },
+            "description": "Show network interface details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get details about a network interface."
+      },
+      "put": {
+        "description": "Update the properties of an existing network interface inside a network.",
+        "operationId": "UpdateNIC",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NetworkID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NICID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateNICPayload"
+              }
+            }
+          },
+          "description": "Request an Update of a network interface.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NIC"
+                }
+              }
+            },
+            "description": "Network interface has been updated."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update a network interface."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/openstack-networks/{networkId}": {
+      "get": {
+        "deprecated": true,
+        "description": "Get OpenStack details about a network (DEPRECATED).",
+        "operationId": "v1alpha1GetOpenStackNetworkDetails",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NetworkID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenStackNetwork"
+                }
+              }
+            },
+            "description": "Show OpenStack network details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get OpenStack network details (DEPRECATED)."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/requests/{requestId}": {
+      "get": {
+        "description": "Lookup a project request ID from a previous request. This allows to find resource IDs of resources generated during a projects request.",
+        "operationId": "GetProjectRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1RequestID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Request"
+                }
+              }
+            },
+            "description": "Show project request details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Lookup a project request ID."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/security-groups": {
+      "get": {
+        "description": "Get a list of all security groups inside a project.",
+        "operationId": "ListSecurityGroups",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityGroupListResponse"
+                }
+              }
+            },
+            "description": "List all security groups of a project."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all security groups inside a project."
+      },
+      "post": {
+        "description": "Create a new security group in a project.",
+        "operationId": "CreateSecurityGroup",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSecurityGroupPayload"
+              }
+            }
+          },
+          "description": "Request a security group creation.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityGroup"
+                }
+              }
+            },
+            "description": "Security group create has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create new security group."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/security-groups/{securityGroupId}": {
+      "delete": {
+        "description": "Delete a security group.",
+        "operationId": "DeleteSecurityGroup",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1SecurityGroupID"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Delete request for security group has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete security group."
+      },
+      "get": {
+        "description": "Get details about a security group of a project.",
+        "operationId": "GetSecurityGroup",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1SecurityGroupID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityGroup"
+                }
+              }
+            },
+            "description": "Show security group details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get security group details."
+      },
+      "patch": {
+        "description": "Update labels of the security group.",
+        "operationId": "v1alpha1UpdateSecurityGroup",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1SecurityGroupID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/v1alpha1UpdateSecurityGroupPayload"
+              }
+            }
+          },
+          "description": "Request an update of a security group.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityGroup"
+                }
+              }
+            },
+            "description": "Updating security group successful."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update information of a security group."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/security-groups/{securityGroupId}/rules": {
+      "get": {
+        "description": "Get a list of all rules inside a security group.",
+        "operationId": "ListSecurityGroupRules",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1SecurityGroupID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityGroupRuleListResponse"
+                }
+              }
+            },
+            "description": "List all rules of a security group."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all rules for a security group."
+      },
+      "post": {
+        "description": "Create a new security group rule in a project.",
+        "operationId": "CreateSecurityGroupRule",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1SecurityGroupID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSecurityGroupRulePayload"
+              }
+            }
+          },
+          "description": "Request for a security group rule creation.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityGroupRule"
+                }
+              }
+            },
+            "description": "Security group rule create has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create new security group rule."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/security-groups/{securityGroupId}/rules/{securityGroupRuleId}": {
+      "delete": {
+        "description": "Delete a security group rule.",
+        "operationId": "DeleteSecurityGroupRule",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1SecurityGroupID"
+          },
+          {
+            "$ref": "#/components/parameters/v1SecurityGroupRuleID"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Delete request for security group rule has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete security group rule."
+      },
+      "get": {
+        "description": "Get details about a security group rule of a project.",
+        "operationId": "GetSecurityGroupRule",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1SecurityGroupID"
+          },
+          {
+            "$ref": "#/components/parameters/v1SecurityGroupRuleID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityGroupRule"
+                }
+              }
+            },
+            "description": "Show security group rule details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get security group rule details."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/volume-performance-classes": {
+      "get": {
+        "description": "Get a list of all volume performance classes available inside a project.",
+        "operationId": "ListVolumePerformanceClasses",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VolumePerformanceClassListResponse"
+                }
+              }
+            },
+            "description": "List volume performance classes."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all volume performance classes available for a project."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/volume-performance-classes/{volumePerformanceClass}": {
+      "get": {
+        "description": "Get details about a specific volume performance class.",
+        "operationId": "GetVolumePerformanceClass",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1VolumePerformanceClassName"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VolumePerformanceClass"
+                }
+              }
+            },
+            "description": "Show volume performance-class details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get details about a volume performance class."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/volumes": {
+      "get": {
+        "description": "Get a list of all volumes inside a project.",
+        "operationId": "ListVolumes",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VolumeListResponse"
+                }
+              }
+            },
+            "description": "List project volumes."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all volumes inside a project."
+      },
+      "post": {
+        "description": "Create a new volume in a project. If a volume source is not provided, an empty volume will be created. The size property is required if no source or an image source is provided.",
+        "operationId": "CreateVolume",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "EmptyVolume": {
+                  "value": {
+                    "availabilityZone": "eu01-1",
+                    "size": 10
+                  }
+                },
+                "Full": {
+                  "value": {
+                    "availabilityZone": "eu01-1",
+                    "description": "A cool Volume description.",
+                    "name": "VolumeName",
+                    "performanceClass": "storage_premium_perf6",
+                    "size": 40,
+                    "source": {
+                      "imageId": "d61a8564-c8dd-4ffb-bc15-143e7d0c85ed"
+                    }
+                  }
+                },
+                "VolumeFromImage": {
+                  "value": {
+                    "availabilityZone": "eu01-1",
+                    "size": 10,
+                    "source": {
+                      "imageId": "d61a8564-c8dd-4ffb-bc15-143e7d0c85ed"
+                    }
+                  }
+                },
+                "VolumeFromVolume": {
+                  "value": {
+                    "availabilityZone": "eu01-1",
+                    "source": {
+                      "volumeId": "d61a8564-c8dd-4ffb-bc15-143e7d0c85ed"
+                    }
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/CreateVolumePayload"
+              }
+            }
+          },
+          "description": "Request a volume creation.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Volume"
+                }
+              }
+            },
+            "description": "Create request for volume accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create new volume."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/volumes/{volumeId}": {
+      "delete": {
+        "description": "Delete a volume inside a project. The deletion will fail if the volume is still in use.",
+        "operationId": "DeleteVolume",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1VolumeID"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Volume delete request has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete a volume."
+      },
+      "get": {
+        "description": "Get details about a block device volume.",
+        "operationId": "GetVolume",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1VolumeID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Volume"
+                }
+              }
+            },
+            "description": "Show volume details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get details about a volume."
+      },
+      "patch": {
+        "description": "Update name, description or labels of the volume.",
+        "operationId": "UpdateVolume",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1VolumeID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVolumePayload"
+              }
+            }
+          },
+          "description": "Request an update of a volume.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Volume"
+                }
+              }
+            },
+            "description": "Update request for volume accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update information of a volume."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/volumes/{volumeId}/resize": {
+      "post": {
+        "description": "Update the size of a block device volume. The new volume size must be larger than the current size.",
+        "operationId": "ResizeVolume",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1VolumeID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResizeVolumePayload"
+              }
+            }
+          },
+          "description": "Request a volume resize."
+        },
+        "responses": {
+          "202": {
+            "description": "Resize request accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update the size of a volume."
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://iaas.api.{region}stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "eu01.",
+          "enum": [
+            "eu01.",
+            "sx-stoi01."
+          ]
+        }
+      }
+    }
+  ]
+}

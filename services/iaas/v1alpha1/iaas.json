@@ -64,6 +64,15 @@
           "$ref": "#/components/schemas/UUID"
         }
       },
+      "v1PublicIPID": {
+        "description": "The identifier (ID) of a Public IP.",
+        "in": "path",
+        "name": "publicIpId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
       "v1RequestID": {
         "description": "The identifier (ID) of a STACKIT Request.",
         "in": "path",
@@ -89,6 +98,34 @@
         "required": true,
         "schema": {
           "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v1ServerDetail": {
+        "description": "Show detailed information about server.",
+        "in": "query",
+        "name": "details",
+        "schema": {
+          "default": false,
+          "example": true,
+          "type": "boolean"
+        }
+      },
+      "v1ServerID": {
+        "description": "The identifier (ID) of a STACKIT Server.",
+        "in": "path",
+        "name": "serverId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v1ServiceAccountMail": {
+        "description": "The e-mail address of a service account.",
+        "in": "path",
+        "name": "serviceAccountMail",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/ServiceAccountMail"
         }
       },
       "v1VolumeID": {
@@ -268,6 +305,20 @@
         },
         "description": "The object was not found."
       },
+      "ServerOrPublicIPNotFound": {
+        "content": {
+          "application/json": {
+            "example": {
+              "code": 404,
+              "msg": "ServerOrPublicIPNotFound"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "The server or public IP was not found."
+      },
       "TooManyRequests": {
         "content": {
           "application/json": {
@@ -294,6 +345,35 @@
       }
     },
     "schemas": {
+      "AddVolumeToServerPayload": {
+        "description": "Object that represents a Volume attachment to a server.",
+        "properties": {
+          "deleteOnTermination": {
+            "$ref": "#/components/schemas/DeleteOnTermination"
+          },
+          "serverId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "volumeId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "volumeId",
+          "serverId"
+        ],
+        "type": "object"
+      },
       "AllowedAddresses": {
         "description": "A list of IPs or CIDR notations.",
         "items": {
@@ -419,6 +499,54 @@
         "example": "eu01-1",
         "type": "string"
       },
+      "BootVolume": {
+        "description": "The boot device for the server.",
+        "properties": {
+          "deleteOnTermination": {
+            "$ref": "#/components/schemas/DeleteOnTermination"
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "performanceClass": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GenericName"
+              }
+            ],
+            "writeOnly": true
+          },
+          "size": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SizeInGB"
+              }
+            ],
+            "writeOnly": true
+          },
+          "source": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/VolumeSourceImage"
+              },
+              {
+                "$ref": "#/components/schemas/VolumeSourceVolume"
+              }
+            ],
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "id",
+          "source"
+        ],
+        "type": "object"
+      },
       "CIDR": {
         "description": "Classless Inter-Domain Routing (CIDR).",
         "example": "192.168.0.0/24",
@@ -508,8 +636,8 @@
             "readOnly": true,
             "type": "string",
             "x-extensible-enum": [
-              "active",
-              "down"
+              "ACTIVE",
+              "DOWN"
             ]
           },
           "type": {
@@ -532,9 +660,55 @@
         ],
         "type": "object"
       },
+      "CreatePublicIPPayload": {
+        "description": "Object that represents a public IP.",
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "ip": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IP"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "networkInterface": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "description": "Associate the public IP with a network interface or a virtual IP (ID).",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "ip"
+        ],
+        "type": "object"
+      },
       "CreateSecurityGroupPayload": {
         "description": "Object that represents a security group.",
         "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
           "description": {
             "$ref": "#/components/schemas/Description"
           },
@@ -562,6 +736,14 @@
           },
           "stateful": {
             "$ref": "#/components/schemas/Stateful"
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
           }
         },
         "required": [
@@ -643,11 +825,207 @@
         ],
         "type": "object"
       },
+      "CreateServerNetworking": {
+        "additionalProperties": false,
+        "description": "The initial networking setup for the server creation with a network.",
+        "properties": {
+          "networkId": {
+            "$ref": "#/components/schemas/UUID"
+          }
+        },
+        "type": "object"
+      },
+      "CreateServerNetworkingWithNics": {
+        "additionalProperties": false,
+        "description": "The initial networking setup for the server creation with a network interface.",
+        "properties": {
+          "nicIds": {
+            "$ref": "#/components/schemas/UUIDList"
+          }
+        },
+        "type": "object"
+      },
+      "CreateServerPayload": {
+        "description": "Representation of a single server object.",
+        "properties": {
+          "availabilityZone": {
+            "$ref": "#/components/schemas/AvailabilityZone"
+          },
+          "bootVolume": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BootVolume"
+              }
+            ],
+            "writeOnly": true
+          },
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "image": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ]
+          },
+          "keypair": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GenericName"
+              }
+            ],
+            "description": "The key pair used during the server creation."
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "launchedAt": {
+            "example": "2023-09-22T11:39:48.205Z",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "machineType": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GenericName"
+              }
+            ],
+            "description": "Name of the machine-type the server shall belong to.",
+            "example": "t1.1"
+          },
+          "maintenanceWindow": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ServerMaintenance"
+              }
+            ],
+            "readOnly": true
+          },
+          "name": {
+            "$ref": "#/components/schemas/ServerName"
+          },
+          "networking": {
+            "description": "The initial networking setup for the server creation. A network, a nic or nothing can be given.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CreateServerNetworking"
+              },
+              {
+                "$ref": "#/components/schemas/CreateServerNetworkingWithNics"
+              }
+            ]
+          },
+          "nics": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ServerNICList"
+              }
+            ],
+            "description": "The list of network interfaces (NICs) attached to the server. Only shown when detailed information is requested.",
+            "readOnly": true
+          },
+          "powerStatus": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ServerPowerStatus"
+              }
+            ],
+            "readOnly": true
+          },
+          "securityGroups": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GenericNameList"
+              }
+            ],
+            "description": "The initial security groups for the server creation.",
+            "writeOnly": true
+          },
+          "serverGroup": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "description": "The server group the server is assigned to."
+          },
+          "serviceAccountMails": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ServiceAccountMailList"
+              }
+            ],
+            "description": "A list of service account mails. Only shown when detailed information is requested."
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ServerStatus"
+              }
+            ],
+            "readOnly": true
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "userData": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ServerUserData"
+              }
+            ],
+            "description": "User Data that is provided to the server. Must be base64 encoded and is passed via cloud-init to the server. Only shown when detailed information is requested."
+          },
+          "volumes": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUIDList"
+              }
+            ],
+            "description": "The list of volumes attached to the server."
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "name",
+          "machineType"
+        ],
+        "type": "object"
+      },
       "CreateVolumePayload": {
         "description": "Object that represents a volume and its parameters. Used for Creating and returning (get/list).",
         "properties": {
           "availabilityZone": {
             "$ref": "#/components/schemas/AvailabilityZone"
+          },
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
           },
           "description": {
             "$ref": "#/components/schemas/Description"
@@ -703,6 +1081,14 @@
               }
             ],
             "readOnly": true
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
           }
         },
         "required": [
@@ -711,6 +1097,17 @@
           "status"
         ],
         "type": "object"
+      },
+      "CreatedAt": {
+        "description": "Date-time when resource was created.",
+        "example": "2017-07-21T17:32:28Z",
+        "format": "date-time",
+        "type": "string"
+      },
+      "DeleteOnTermination": {
+        "default": false,
+        "description": "Delete the volume during the termination of the server. Defaults to false.",
+        "type": "boolean"
       },
       "Description": {
         "description": "Description Object. Allows string up to 127 Characters.",
@@ -742,6 +1139,13 @@
         "maxLength": 63,
         "pattern": "^[A-Za-z0-9]+((-|_|\\s|\\.)[A-Za-z0-9]+)*$",
         "type": "string"
+      },
+      "GenericNameList": {
+        "description": "A list of General Objects.",
+        "items": {
+          "$ref": "#/components/schemas/GenericName"
+        },
+        "type": "array"
       },
       "ICMPParameters": {
         "description": "Object that represents ICMP parameters.",
@@ -892,8 +1296,8 @@
             "readOnly": true,
             "type": "string",
             "x-extensible-enum": [
-              "active",
-              "down"
+              "ACTIVE",
+              "DOWN"
             ]
           },
           "type": {
@@ -962,6 +1366,14 @@
       "Network": {
         "description": "Object that represents a network.",
         "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
           "gateway": {
             "$ref": "#/components/schemas/v1NetworkGateway"
           },
@@ -1007,6 +1419,14 @@
           },
           "state": {
             "$ref": "#/components/schemas/ResourceState"
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
           }
         },
         "required": [
@@ -1021,6 +1441,14 @@
         "properties": {
           "areaId": {
             "$ref": "#/components/schemas/UUID"
+          },
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
           },
           "ipv4": {
             "$ref": "#/components/schemas/NetworkAreaIPv4"
@@ -1037,6 +1465,14 @@
           },
           "state": {
             "$ref": "#/components/schemas/ResourceState"
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
           }
         },
         "required": [
@@ -1099,6 +1535,14 @@
       "NetworkRange": {
         "description": "Object that represents a network range.",
         "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
           "networkRangeId": {
             "allOf": [
               {
@@ -1109,6 +1553,14 @@
           },
           "prefix": {
             "$ref": "#/components/schemas/CIDR"
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
           }
         },
         "required": [
@@ -1188,6 +1640,14 @@
           "areaId": {
             "$ref": "#/components/schemas/AreaId"
           },
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
           "internetAccess": {
             "example": false,
             "type": "boolean"
@@ -1200,6 +1660,14 @@
           },
           "state": {
             "$ref": "#/components/schemas/ResourceState"
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
           }
         },
         "required": [
@@ -1244,6 +1712,63 @@
       "ProtocolName": {
         "description": "The protocol name which the rule should match.",
         "type": "string"
+      },
+      "PublicIp": {
+        "description": "Object that represents a public IP.",
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "ip": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IP"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "networkInterface": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "description": "Associate the public IP with a network interface or a virtual IP (ID).",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "ip"
+        ],
+        "type": "object"
+      },
+      "PublicIpList": {
+        "description": "A list of public ips.",
+        "items": {
+          "$ref": "#/components/schemas/PublicIp"
+        },
+        "type": "array"
+      },
+      "PublicIpListResponse": {
+        "description": "Public IP list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/PublicIpList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
       },
       "ReqId": {
         "description": "Identifier (ID) representing a single API request.",
@@ -1315,6 +1840,28 @@
         ],
         "type": "object"
       },
+      "RescueServerPayload": {
+        "properties": {
+          "image": {
+            "$ref": "#/components/schemas/UUID"
+          }
+        },
+        "required": [
+          "image"
+        ],
+        "type": "object"
+      },
+      "ResizeServerPayload": {
+        "properties": {
+          "machineType": {
+            "$ref": "#/components/schemas/GenericName"
+          }
+        },
+        "required": [
+          "machineType"
+        ],
+        "type": "object"
+      },
       "ResizeVolumePayload": {
         "properties": {
           "size": {
@@ -1344,6 +1891,14 @@
       "Route": {
         "description": "Object represents a network route.",
         "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
           "labels": {
             "$ref": "#/components/schemas/Labels"
           },
@@ -1357,6 +1912,14 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
               }
             ],
             "readOnly": true
@@ -1385,6 +1948,14 @@
       "SecurityGroup": {
         "description": "Object that represents a security group.",
         "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
           "description": {
             "$ref": "#/components/schemas/Description"
           },
@@ -1412,6 +1983,14 @@
           },
           "stateful": {
             "$ref": "#/components/schemas/Stateful"
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
           }
         },
         "required": [
@@ -1531,6 +2110,354 @@
         ],
         "type": "object"
       },
+      "Server": {
+        "description": "Representation of a single server object.",
+        "properties": {
+          "availabilityZone": {
+            "$ref": "#/components/schemas/AvailabilityZone"
+          },
+          "bootVolume": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BootVolume"
+              }
+            ],
+            "writeOnly": true
+          },
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "image": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ]
+          },
+          "keypair": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GenericName"
+              }
+            ],
+            "description": "The key pair used during the server creation."
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "launchedAt": {
+            "example": "2023-09-22T11:39:48.205Z",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "machineType": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GenericName"
+              }
+            ],
+            "description": "Name of the machine-type the server shall belong to.",
+            "example": "t1.1"
+          },
+          "maintenanceWindow": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ServerMaintenance"
+              }
+            ],
+            "readOnly": true
+          },
+          "name": {
+            "$ref": "#/components/schemas/ServerName"
+          },
+          "networking": {
+            "description": "The initial networking setup for the server creation. A network, a nic or nothing can be given.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CreateServerNetworking"
+              },
+              {
+                "$ref": "#/components/schemas/CreateServerNetworkingWithNics"
+              }
+            ]
+          },
+          "nics": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ServerNICList"
+              }
+            ],
+            "description": "The list of network interfaces (NICs) attached to the server. Only shown when detailed information is requested.",
+            "readOnly": true
+          },
+          "powerStatus": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ServerPowerStatus"
+              }
+            ],
+            "readOnly": true
+          },
+          "securityGroups": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GenericNameList"
+              }
+            ],
+            "description": "The initial security groups for the server creation.",
+            "writeOnly": true
+          },
+          "serverGroup": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "description": "The server group the server is assigned to."
+          },
+          "serviceAccountMails": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ServiceAccountMailList"
+              }
+            ],
+            "description": "A list of service account mails. Only shown when detailed information is requested."
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ServerStatus"
+              }
+            ],
+            "readOnly": true
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "userData": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ServerUserData"
+              }
+            ],
+            "description": "User Data that is provided to the server. Must be base64 encoded and is passed via cloud-init to the server. Only shown when detailed information is requested."
+          },
+          "volumes": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUIDList"
+              }
+            ],
+            "description": "The list of volumes attached to the server."
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "name",
+          "machineType"
+        ],
+        "type": "object"
+      },
+      "ServerConsoleUrl": {
+        "description": "Object that represents a server console URL.",
+        "example": {
+          "url": "https://foo.bar"
+        },
+        "properties": {
+          "url": {
+            "example": "https://foo.bar",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "type": "object"
+      },
+      "ServerList": {
+        "description": "A list of servers.",
+        "items": {
+          "$ref": "#/components/schemas/Server"
+        },
+        "type": "array"
+      },
+      "ServerListResponse": {
+        "description": "Response object for server list request.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/ServerList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "ServerMaintenance": {
+        "description": "Object that represents the information about the next planned server maintenance window.",
+        "properties": {
+          "details": {
+            "example": "cve-1234-0815",
+            "type": "string"
+          },
+          "endsAt": {
+            "description": "End of the maintenance window.",
+            "example": "2023-09-23T11:39:48.205Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "startsAt": {
+            "description": "Start of the maintenance window.",
+            "example": "2023-09-22T11:39:48.205Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "x-extensible-enum": [
+              "PLANNED",
+              "ONGOING"
+            ]
+          }
+        },
+        "required": [
+          "endsAt",
+          "startsAt",
+          "status"
+        ],
+        "type": "object"
+      },
+      "ServerNICList": {
+        "description": "A list of networks attached to a server.",
+        "items": {
+          "$ref": "#/components/schemas/ServerNetwork"
+        },
+        "type": "array"
+      },
+      "ServerName": {
+        "description": "The name for a Server.",
+        "example": "server1",
+        "maxLength": 63,
+        "pattern": "^[A-Za-z0-9]+((-|\\.)[A-Za-z0-9]+)*$",
+        "type": "string"
+      },
+      "ServerNetwork": {
+        "description": "Describes the object that matches servers to its networks.",
+        "example": {
+          "ipv4": "10.0.0.1",
+          "mac": "f4:43:dd:5a:90:c0",
+          "networkId": "997ee3ee-e17e-48dd-bf25-34fe5c0bff18",
+          "networkName": "My network",
+          "nicId": "0507bb7e-9612-40a5-9d5f-bb6aedbce880",
+          "nicSecurity": true,
+          "publicIp": "192.0.2.1"
+        },
+        "properties": {
+          "allowedAddresses": {
+            "$ref": "#/components/schemas/AllowedAddresses"
+          },
+          "ipv4": {
+            "$ref": "#/components/schemas/IP"
+          },
+          "ipv6": {
+            "$ref": "#/components/schemas/IPv6"
+          },
+          "mac": {
+            "$ref": "#/components/schemas/MAC"
+          },
+          "networkId": {
+            "$ref": "#/components/schemas/UUID"
+          },
+          "networkName": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "nicId": {
+            "$ref": "#/components/schemas/UUID"
+          },
+          "nicSecurity": {
+            "default": true,
+            "description": "If this is set to false, then no security groups will apply to this server network interface.",
+            "type": "boolean"
+          },
+          "publicIp": {
+            "$ref": "#/components/schemas/IP"
+          },
+          "securityGroups": {
+            "$ref": "#/components/schemas/UUIDList"
+          }
+        },
+        "required": [
+          "nicId",
+          "networkId",
+          "networkName",
+          "mac",
+          "nicSecurity"
+        ],
+        "type": "object"
+      },
+      "ServerPowerStatus": {
+        "description": "The power status of a server.",
+        "example": "RUNNING",
+        "type": "string"
+      },
+      "ServerStatus": {
+        "description": "The status of a server object.",
+        "example": "ACTIVE",
+        "type": "string"
+      },
+      "ServerUserData": {
+        "description": "User Data that is provided to the server. Must be base64 encoded and is passed via cloud-init to the server.",
+        "example": "IyEvYmluL2Jhc2gKL2Jpbi9zdQplY2hvICJJIGFtIGluIHlvdSEiCg==",
+        "format": "byte",
+        "type": "string"
+      },
+      "ServiceAccountMail": {
+        "description": "Object that represents an e-mail address of a service account.",
+        "example": "example@compute.sa.stackit.cloud",
+        "format": "email",
+        "pattern": "[a-z0-9-]+(?:\\.[a-z0-9]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
+        "type": "string"
+      },
+      "ServiceAccountMailList": {
+        "description": "A list of service account mails.",
+        "items": {
+          "$ref": "#/components/schemas/ServiceAccountMail"
+        },
+        "maxItems": 1,
+        "type": "array"
+      },
+      "ServiceAccountMailListResponse": {
+        "description": "Service account mail list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/ServiceAccountMailList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
       "SizeInGB": {
         "description": "Size in Gigabyte.",
         "example": 1337,
@@ -1598,6 +2525,35 @@
         },
         "type": "object"
       },
+      "UpdateAttachedVolumePayload": {
+        "description": "Object that represents a Volume attachment to a server.",
+        "properties": {
+          "deleteOnTermination": {
+            "$ref": "#/components/schemas/DeleteOnTermination"
+          },
+          "serverId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "volumeId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "volumeId",
+          "serverId"
+        ],
+        "type": "object"
+      },
       "UpdateNICPayload": {
         "description": "Object that represents a network interface.",
         "properties": {
@@ -1660,8 +2616,8 @@
             "readOnly": true,
             "type": "string",
             "x-extensible-enum": [
-              "active",
-              "down"
+              "ACTIVE",
+              "DOWN"
             ]
           },
           "type": {
@@ -1684,6 +2640,44 @@
         ],
         "type": "object"
       },
+      "UpdatePublicIPPayload": {
+        "description": "Object that represents a public IP.",
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "ip": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IP"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "networkInterface": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "description": "Associate the public IP with a network interface or a virtual IP (ID).",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "ip"
+        ],
+        "type": "object"
+      },
       "UpdateVolumePayload": {
         "description": "Object that represents an update request body of a  volume.",
         "properties": {
@@ -1699,11 +2693,25 @@
         },
         "type": "object"
       },
+      "UpdatedAt": {
+        "description": "Date-time when resource was last updated.",
+        "example": "2017-07-21T17:32:28Z",
+        "format": "date-time",
+        "type": "string"
+      },
       "Volume": {
         "description": "Object that represents a volume and its parameters. Used for Creating and returning (get/list).",
         "properties": {
           "availabilityZone": {
             "$ref": "#/components/schemas/AvailabilityZone"
+          },
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
           },
           "description": {
             "$ref": "#/components/schemas/Description"
@@ -1759,12 +2767,49 @@
               }
             ],
             "readOnly": true
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
           }
         },
         "required": [
           "id",
           "availabilityZone",
           "status"
+        ],
+        "type": "object"
+      },
+      "VolumeAttachment": {
+        "description": "Object that represents a Volume attachment to a server.",
+        "properties": {
+          "deleteOnTermination": {
+            "$ref": "#/components/schemas/DeleteOnTermination"
+          },
+          "serverId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "volumeId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "volumeId",
+          "serverId"
         ],
         "type": "object"
       },
@@ -1911,11 +2956,48 @@
         },
         "type": "object"
       },
+      "v1VolumeAttachmentList": {
+        "description": "A list containing Volume attachments of a server.",
+        "items": {
+          "$ref": "#/components/schemas/VolumeAttachment"
+        },
+        "type": "array"
+      },
+      "v1VolumeAttachmentListResponse": {
+        "description": "Volume attachment list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/v1VolumeAttachmentList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
       "v1alpha1UpdateSecurityGroupPayload": {
         "description": "Object that represents an update request body of a security group.",
         "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
           "labels": {
             "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          }
+        },
+        "type": "object"
+      },
+      "v1alpha1UpdateServerPayload": {
+        "description": "Object that represents an update request body of a server.",
+        "properties": {
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
           }
         },
         "type": "object"
@@ -2489,7 +3571,7 @@
         },
         "summary": "Get details about a network interface."
       },
-      "put": {
+      "patch": {
         "description": "Update the properties of an existing network interface inside a network.",
         "operationId": "UpdateNIC",
         "parameters": [
@@ -2588,6 +3670,225 @@
           }
         },
         "summary": "Get OpenStack network details (DEPRECATED)."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/public-ips": {
+      "get": {
+        "description": "Get a list of all public ips inside a project.",
+        "operationId": "ListPublicIPs",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicIpListResponse"
+                }
+              }
+            },
+            "description": "List project public ips."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all public ips inside a project."
+      },
+      "post": {
+        "description": "Create a new public ip in a project.",
+        "operationId": "CreatePublicIP",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePublicIPPayload"
+              }
+            }
+          },
+          "description": "Request a public ip creation.",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicIp"
+                }
+              }
+            },
+            "description": "The public IP has been created."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create new public ip."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/public-ips/{publicIpId}": {
+      "delete": {
+        "description": "Delete a public ip that is part of the project.",
+        "operationId": "DeletePublicIP",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1PublicIPID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The public IP has been deleted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete a public ip."
+      },
+      "get": {
+        "description": "Get details about a public ip inside a project.",
+        "operationId": "GetPublicIP",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1PublicIPID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicIp"
+                }
+              }
+            },
+            "description": "Show public ip details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get details about a public ip."
+      },
+      "patch": {
+        "description": "Update the properties of an existing public ip inside a project.",
+        "operationId": "UpdatePublicIP",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1PublicIPID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePublicIPPayload"
+              }
+            }
+          },
+          "description": "Request an Update of a public IP.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicIp"
+                }
+              }
+            },
+            "description": "Public IP has been updated."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update a public ip."
       }
     },
     "/v1alpha1/projects/{projectId}/requests/{requestId}": {
@@ -3023,6 +4324,1457 @@
           }
         },
         "summary": "Get security group rule details."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers": {
+      "get": {
+        "description": "Get a list of all servers inside a project.",
+        "operationId": "ListServers",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerDetail"
+          },
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerListResponse"
+                }
+              }
+            },
+            "description": "List all servers of a project."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all servers inside a project."
+      },
+      "post": {
+        "description": "Create a new server in a project.",
+        "operationId": "CreateServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "BootFromExistingVolume": {
+                  "value": {
+                    "bootVolume": {
+                      "source": {
+                        "volumeId": "70bb02f3-c11b-4321-bd78-8f8f4460f1b3"
+                      }
+                    },
+                    "machineType": "t1.1",
+                    "name": "bootFromExistingVolume",
+                    "network": "ef018b02-74e9-4f70-87bb-ce1a9742afb9"
+                  }
+                },
+                "BootFromImage": {
+                  "value": {
+                    "image": "e24b1440-8d9c-431b-8da4-02916720fab5",
+                    "machineType": "t1.1",
+                    "name": "bootFromImage",
+                    "network": "ef018b02-74e9-4f70-87bb-ce1a9742afb9"
+                  }
+                },
+                "BootImageFromVolume": {
+                  "value": {
+                    "bootVolume": {
+                      "size": 10,
+                      "source": {
+                        "imageId": "e24b1440-8d9c-431b-8da4-02916720fab5"
+                      }
+                    },
+                    "machineType": "t1.1",
+                    "name": "bootImageFromVolume",
+                    "network": "ef018b02-74e9-4f70-87bb-ce1a9742afb9"
+                  }
+                },
+                "FullExample": {
+                  "value": {
+                    "availabilityZone": "eu01-1",
+                    "bootVolume": {
+                      "deleteOnTermination": false,
+                      "performanceClass": "storage_premium_perf6",
+                      "size": 40,
+                      "source": {
+                        "imageId": "e24b1440-8d9c-431b-8da4-02916720fab5"
+                      }
+                    },
+                    "keypair": "keypair-517e9448-1cf1-4b36-9f29-6e66d669a6d2",
+                    "labels": {
+                      "foo": "Foo Value"
+                    },
+                    "machineType": "t1.1",
+                    "name": "server1",
+                    "network": "ef018b02-74e9-4f70-87bb-ce1a9742afb9",
+                    "securityGroups": [
+                      "188de165-5767-4fc2-8710-a4d2017249e7"
+                    ],
+                    "serverGroup": "6cccce46-8a28-4320-89e7-a7636ef03b75",
+                    "serviceAccountMails": [
+                      "example@compute.sa.stackit.cloud"
+                    ],
+                    "userData": "IyEvYmluL2Jhc2gKL2Jpbi9zdQplY2hvICJJIGFtIGluIHlvdSEiCg==",
+                    "volumes": [
+                      "70bb02f3-c11b-4321-bd78-8f8f4460f1b3"
+                    ]
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/CreateServerPayload"
+              }
+            }
+          },
+          "description": "Request a server creation.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Server"
+                }
+              }
+            },
+            "description": "Create request for server accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create new server."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers/{serverId}": {
+      "delete": {
+        "description": "Delete a server. Volumes won't be deleted.",
+        "operationId": "DeleteServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Delete request for server accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete a server."
+      },
+      "get": {
+        "description": "Get details about a server by its ID.",
+        "operationId": "GetServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerDetail"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Server"
+                }
+              }
+            },
+            "description": "Show server details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get server details."
+      },
+      "patch": {
+        "description": "Update name or labels of the server.",
+        "operationId": "v1alpha1UpdateServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "ServerLabel": {
+                  "value": {
+                    "labels": {
+                      "foo": "foobar"
+                    }
+                  }
+                },
+                "ServerName": {
+                  "value": {
+                    "name": "abfahrt"
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/v1alpha1UpdateServerPayload"
+              }
+            }
+          },
+          "description": "Request an update of a server.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Server"
+                }
+              }
+            },
+            "description": "Update request for Server accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update information of a server."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers/{serverId}/console": {
+      "get": {
+        "description": "Get a URL for server remote console.",
+        "operationId": "GetServerConsole",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerConsoleUrl"
+                }
+              }
+            },
+            "description": "Show server console URL."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get server console."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers/{serverId}/deallocate": {
+      "post": {
+        "description": "Deallocate an existing server. The server will be removed from the hypervisor so only the volume will be billed.",
+        "operationId": "DeallocateServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Server deallocation request accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Deallocate an existing server."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers/{serverId}/log": {
+      "get": {
+        "description": "Get server console log.",
+        "operationId": "GetServerLog",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "length": 5000
+              },
+              "schema": {
+                "properties": {
+                  "length": {
+                    "default": 2000,
+                    "description": "Set to 0 to retrieve the complete log.",
+                    "minimum": 0,
+                    "type": "integer"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "description": "Request the server log. By default the length is limited to 2000 lines."
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "output": "Server Console log\nwith multiple lines"
+                  },
+                  "properties": {
+                    "output": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Show server console log."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get server log."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers/{serverId}/networks/{networkId}": {
+      "delete": {
+        "description": "Detach and delete all network interfaces associated with the specified network from the server.",
+        "operationId": "RemoveNetworkFromServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NetworkID"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Detach and delete network interface was accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Detach and delete all network interfaces associated with the specified network."
+      },
+      "post": {
+        "description": "Create and attach a network interface from the specified network to the server.",
+        "operationId": "AddNetworkToServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NetworkID"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Create and attach network interface was accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create and attach a network interface from the specified network."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers/{serverId}/nics": {
+      "get": {
+        "description": "Get all network interfaces attached to the server.",
+        "operationId": "ListServerNICs",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NICListResponse"
+                }
+              }
+            },
+            "description": "List network interfaces."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get all network interfaces."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers/{serverId}/nics/{nicId}": {
+      "delete": {
+        "description": "Detach a network interface from a server.",
+        "operationId": "RemoveNICFromServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NICID"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Network interface detachment request was accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Detach a network interface."
+      },
+      "put": {
+        "description": "Attach an existing network interface to a server.",
+        "operationId": "AddNICToServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NICID"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Network interface attachment request was accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Attach an existing network interface."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers/{serverId}/public-ips/{publicIpId}": {
+      "delete": {
+        "description": "Dissociate a public IP on an existing server.",
+        "operationId": "RemovePublicIpFromServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          },
+          {
+            "$ref": "#/components/parameters/v1PublicIPID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Public IP detached from Server."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/ServerOrPublicIPNotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Dissociate a public IP from a server."
+      },
+      "put": {
+        "description": "Associate a public IP to a server.",
+        "operationId": "AddPublicIpToServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          },
+          {
+            "$ref": "#/components/parameters/v1PublicIPID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Public IP attached to Server."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Associate a public IP to the server."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers/{serverId}/reboot": {
+      "post": {
+        "description": "Reboot the server. A soft reboot will attempt to gracefully shut down the server by passing the command to the operating system. A hard reboot will power cycle the server without waiting for the operating system to shutdown properly.",
+        "operationId": "RebootServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          },
+          {
+            "description": "Defines if it is a soft or a hard reboot.",
+            "example": "soft",
+            "in": "query",
+            "name": "action",
+            "schema": {
+              "default": "soft",
+              "type": "string",
+              "x-extensible-enum": [
+                "soft",
+                "hard"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Server reboot request accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Reboot the server."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers/{serverId}/rescue": {
+      "post": {
+        "description": "Rescue an existing server. It is shutdown and the initial image is attached as the boot volume, while the boot volume is attached as secondary volume and the server is booted.",
+        "operationId": "RescueServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "image": "d61a8564-c8dd-4ffb-bc15-143e7d0c85ed"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/RescueServerPayload"
+              }
+            }
+          },
+          "description": "Request a server rescue.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Server rescue request accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Rescue an existing server."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers/{serverId}/resize": {
+      "post": {
+        "description": "Resize the server to the given machine type.",
+        "operationId": "ResizeServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "machineType": "t1.1"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/ResizeServerPayload"
+              }
+            }
+          },
+          "description": "Request a resize of a server.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Server resize was successful."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Resize a server."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers/{serverId}/security-groups/{securityGroupId}": {
+      "delete": {
+        "description": "Remove a server from a attached security group.",
+        "operationId": "RemoveSecurityGroupFromServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          },
+          {
+            "$ref": "#/components/parameters/v1SecurityGroupID"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Security group detachment request was accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Remove a server from a security group."
+      },
+      "put": {
+        "description": "Add an existing server to an existing security group.",
+        "operationId": "AddSecurityGroupToServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          },
+          {
+            "$ref": "#/components/parameters/v1SecurityGroupID"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Security group attachment request was accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Add a server to a security group."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers/{serverId}/service-accounts": {
+      "get": {
+        "description": "Get the list of the service accounts of the server.",
+        "operationId": "ListServerServiceAccounts",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceAccountMailListResponse"
+                }
+              }
+            },
+            "description": "List service accounts."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all service accounts of the Server."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers/{serverId}/service-accounts/{serviceAccountMail}": {
+      "delete": {
+        "description": "Detach an additional service account from the server.",
+        "operationId": "RemoveServiceAccountFromServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServiceAccountMail"
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceAccountMailListResponse"
+                }
+              }
+            },
+            "description": "Service account detached from the server."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Detach a service account from a server."
+      },
+      "put": {
+        "description": "Attach an additional service account to the server.",
+        "operationId": "AddServiceAccountToServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServiceAccountMail"
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceAccountMailListResponse"
+                }
+              }
+            },
+            "description": "Service account attached to the server."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Attach service account to a server."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers/{serverId}/start": {
+      "post": {
+        "description": "Start an existing server or allocates the server if deallocated.",
+        "operationId": "StartServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Server start request accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Boot up a server."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers/{serverId}/stop": {
+      "post": {
+        "description": "Stops an existing server. The server will remain on the Hypervisor and will be charged full price for all resources attached to it. The attached resources will remain reserved. Useful particularly for vGPU servers.",
+        "operationId": "StopServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Server stop request accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Stop an existing server."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers/{serverId}/unrescue": {
+      "post": {
+        "description": "Unrescue an existing server. The original boot volume is attached as boot volume of the server and the server is booted up.",
+        "operationId": "UnrescueServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Server unrescue request accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Unrescue an existing server."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers/{serverId}/volume-attachments": {
+      "get": {
+        "description": "Get a list of all volume attachments of a server.",
+        "operationId": "ListAttachedVolumes",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/v1VolumeAttachmentListResponse"
+                }
+              }
+            },
+            "description": "List volume attachments."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all volume attachments of a server."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/servers/{serverId}/volume-attachments/{volumeId}": {
+      "delete": {
+        "description": "Detach an existing volume from an existing server.",
+        "operationId": "RemoveVolumeFromServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          },
+          {
+            "$ref": "#/components/parameters/v1VolumeID"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Volume detachment request was accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Detach a volume from a server."
+      },
+      "get": {
+        "description": "Get the details of an existing Volume Attachment.",
+        "operationId": "GetAttachedVolume",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          },
+          {
+            "$ref": "#/components/parameters/v1VolumeID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VolumeAttachment"
+                }
+              }
+            },
+            "description": "Get details about a volume attachment."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get Volume Attachment details."
+      },
+      "patch": {
+        "description": "Update the properties of an existing Volume Attachment.",
+        "operationId": "UpdateAttachedVolume",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          },
+          {
+            "$ref": "#/components/parameters/v1VolumeID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "deleteOnTermination": true
+              },
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAttachedVolumePayload"
+              }
+            }
+          },
+          "description": "Request a volume attachment Update.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VolumeAttachment"
+                }
+              }
+            },
+            "description": "Response to update call. Provide the updated volume attachment object."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update Volume Attachment Parameters."
+      },
+      "put": {
+        "description": "Attach an existing volume to an existing server.",
+        "operationId": "AddVolumeToServer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerID"
+          },
+          {
+            "$ref": "#/components/parameters/v1VolumeID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddVolumeToServerPayload"
+              }
+            }
+          },
+          "description": "Request a volume attachment creation."
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VolumeAttachment"
+                }
+              }
+            },
+            "description": "Volume attachment request was accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Attach a volume to a server."
       }
     },
     "/v1alpha1/projects/{projectId}/volume-performance-classes": {

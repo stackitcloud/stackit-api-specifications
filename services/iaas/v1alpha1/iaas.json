@@ -530,12 +530,9 @@
             "writeOnly": true
           },
           "source": {
-            "oneOf": [
+            "allOf": [
               {
-                "$ref": "#/components/schemas/VolumeSourceImage"
-              },
-              {
-                "$ref": "#/components/schemas/VolumeSourceVolume"
+                "$ref": "#/components/schemas/BootVolumeSource"
               }
             ],
             "writeOnly": true
@@ -546,6 +543,26 @@
           "source"
         ],
         "type": "object"
+      },
+      "BootVolumeSource": {
+        "description": "The source object of a boot volume.",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/UUID"
+          },
+          "type": {
+            "$ref": "#/components/schemas/BootVolumeSourceTypes"
+          }
+        },
+        "required": [
+          "type",
+          "id"
+        ],
+        "type": "object"
+      },
+      "BootVolumeSourceTypes": {
+        "description": "The source types of a boot volume.",
+        "type": "string"
       },
       "CIDR": {
         "description": "Classless Inter-Domain Routing (CIDR).",
@@ -867,6 +884,14 @@
             ],
             "readOnly": true
           },
+          "errorMessage": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/errorMessage"
+              }
+            ],
+            "readOnly": true
+          },
           "id": {
             "allOf": [
               {
@@ -894,10 +919,12 @@
             "$ref": "#/components/schemas/Labels"
           },
           "launchedAt": {
-            "example": "2023-09-22T11:39:48.205Z",
-            "format": "date-time",
-            "readOnly": true,
-            "type": "string"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LaunchedAt"
+              }
+            ],
+            "readOnly": true
           },
           "machineType": {
             "allOf": [
@@ -1059,20 +1086,7 @@
             "$ref": "#/components/schemas/SizeInGB"
           },
           "source": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/VolumeSourceImage"
-              },
-              {
-                "$ref": "#/components/schemas/VolumeSourceVolume"
-              },
-              {
-                "$ref": "#/components/schemas/VolumeSourceSnapshot"
-              },
-              {
-                "$ref": "#/components/schemas/VolumeSourceBackup"
-              }
-            ]
+            "$ref": "#/components/schemas/VolumeSource"
           },
           "status": {
             "allOf": [
@@ -1123,8 +1137,7 @@
             "type": "integer"
           },
           "msg": {
-            "example": "Project not found",
-            "type": "string"
+            "$ref": "#/components/schemas/errorMessage"
           }
         },
         "required": [
@@ -1153,6 +1166,7 @@
           "code": {
             "description": "ICMP code. Can be set if the protocol is ICMP.",
             "example": 0,
+            "format": "int64",
             "maximum": 255,
             "minimum": 0,
             "type": "integer"
@@ -1160,6 +1174,7 @@
           "type": {
             "description": "ICMP type. Can be set if the protocol is ICMP.",
             "example": 8,
+            "format": "int64",
             "maximum": 255,
             "minimum": 0,
             "type": "integer"
@@ -1227,6 +1242,12 @@
         },
         "format": "json",
         "type": "object"
+      },
+      "LaunchedAt": {
+        "description": "Date-time when resource was launched.",
+        "example": "2023-09-22T11:39:48Z",
+        "format": "date-time",
+        "type": "string"
       },
       "MAC": {
         "description": "Object that represents an MAC address.",
@@ -1616,6 +1637,7 @@
           "max": {
             "description": "The maximum port number. Should be greater or equal to the minimum.",
             "example": 22,
+            "format": "int64",
             "maximum": 65535,
             "minimum": 0,
             "type": "integer"
@@ -1623,6 +1645,7 @@
           "min": {
             "description": "The minimum port number. Should be less or equal to the minimum.",
             "example": 22,
+            "format": "int64",
             "maximum": 65535,
             "minimum": 0,
             "type": "integer"
@@ -1705,6 +1728,7 @@
       "Protocol": {
         "description": "The protocol number which the rule should match.",
         "example": 1,
+        "format": "int64",
         "maximum": 255,
         "minimum": 0,
         "type": "integer"
@@ -2132,6 +2156,14 @@
             ],
             "readOnly": true
           },
+          "errorMessage": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/errorMessage"
+              }
+            ],
+            "readOnly": true
+          },
           "id": {
             "allOf": [
               {
@@ -2159,10 +2191,12 @@
             "$ref": "#/components/schemas/Labels"
           },
           "launchedAt": {
-            "example": "2023-09-22T11:39:48.205Z",
-            "format": "date-time",
-            "readOnly": true,
-            "type": "string"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LaunchedAt"
+              }
+            ],
+            "readOnly": true
           },
           "machineType": {
             "allOf": [
@@ -2461,6 +2495,7 @@
       "SizeInGB": {
         "description": "Size in Gigabyte.",
         "example": 1337,
+        "format": "int64",
         "type": "integer"
       },
       "Stateful": {
@@ -2745,20 +2780,7 @@
             "$ref": "#/components/schemas/SizeInGB"
           },
           "source": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/VolumeSourceImage"
-              },
-              {
-                "$ref": "#/components/schemas/VolumeSourceVolume"
-              },
-              {
-                "$ref": "#/components/schemas/VolumeSourceSnapshot"
-              },
-              {
-                "$ref": "#/components/schemas/VolumeSourceBackup"
-              }
-            ]
+            "$ref": "#/components/schemas/VolumeSource"
           },
           "status": {
             "allOf": [
@@ -2876,57 +2898,34 @@
         ],
         "type": "object"
       },
-      "VolumeSourceBackup": {
-        "description": "The volume source type to generate a new volume based on a existing Backup.",
+      "VolumeSource": {
+        "description": "The source object of a volume.",
         "properties": {
-          "backupId": {
+          "id": {
             "$ref": "#/components/schemas/UUID"
+          },
+          "type": {
+            "$ref": "#/components/schemas/VolumeSourceTypes"
           }
         },
         "required": [
-          "backupId"
+          "type",
+          "id"
         ],
         "type": "object"
       },
-      "VolumeSourceImage": {
-        "description": "The volume source type to generate a new volume based on an image.",
-        "properties": {
-          "imageId": {
-            "$ref": "#/components/schemas/UUID"
-          }
-        },
-        "required": [
-          "imageId"
-        ],
-        "type": "object"
-      },
-      "VolumeSourceSnapshot": {
-        "description": "The volume source type to generate a new volume based on a existing Snapshot.",
-        "properties": {
-          "snapshotId": {
-            "$ref": "#/components/schemas/UUID"
-          }
-        },
-        "required": [
-          "snapshotId"
-        ],
-        "type": "object"
-      },
-      "VolumeSourceVolume": {
-        "description": "The volume source type to generate a new volume by cloning an existing one.",
-        "properties": {
-          "volumeId": {
-            "$ref": "#/components/schemas/UUID"
-          }
-        },
-        "required": [
-          "volumeId"
-        ],
-        "type": "object"
+      "VolumeSourceTypes": {
+        "description": "The source types of a volume.",
+        "type": "string"
       },
       "VolumeStatus": {
         "description": "The status of a volume object.",
         "example": "ATTACHED",
+        "type": "string"
+      },
+      "errorMessage": {
+        "description": "An error message.",
+        "example": "Project not found",
         "type": "string"
       },
       "v1NetworkGateway": {
@@ -4731,6 +4730,7 @@
                   "length": {
                     "default": 2000,
                     "description": "Set to 0 to retrieve the complete log.",
+                    "format": "int64",
                     "minimum": 0,
                     "type": "integer"
                   }

@@ -254,6 +254,13 @@
               "$ref": "#/components/schemas/LoadBalancer"
             },
             "type": "array"
+          },
+          "nextPageId": {
+            "description": "Continue token from the ListLoadBalancerResponse with Limit option",
+            "example": "eyJ2IjoibWV0YS5rOHMuaW8vdjEiLCJydiI6NTQ1Njk3ODA2LCJzdGFydCI6Im15LWFsYi1uZXdcdTAwMDAifQ",
+            "format": "string",
+            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
+            "type": "string"
           }
         },
         "type": "object"
@@ -1393,6 +1400,22 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "description": "page_size specifies how many load balancers should be returned on this page. Must be a positive number \u003c= 1000",
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "page_id is a page identifier returned by the previous response and is used to request the next page",
+            "in": "query",
+            "name": "pageId",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1421,6 +1444,9 @@
           },
           "403": {
             "description": "this project_id is not allowed to try this API"
+          },
+          "410": {
+            "description": "page_id is expired"
           },
           "500": {
             "description": "internal error - please retry again later or contact support if the issue persists"

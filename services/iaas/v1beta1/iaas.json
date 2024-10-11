@@ -1,6 +1,14 @@
 {
   "components": {
     "parameters": {
+      "v1LabelSelector": {
+        "description": "Filter resources by labels.",
+        "in": "query",
+        "name": "label_selector",
+        "schema": {
+          "type": "string"
+        }
+      },
       "v1NetworkAreaID": {
         "description": "The identifier (ID) of a STACKIT Network Area.",
         "in": "path",
@@ -164,12 +172,6 @@
                 "value": {
                   "code": 404,
                   "msg": "area not found"
-                }
-              },
-              "KeyPairNotFound": {
-                "value": {
-                  "code": 404,
-                  "msg": "keypair not found"
                 }
               },
               "KeypairNotFound": {
@@ -565,6 +567,9 @@
             "readOnly": true
           },
           "gateway": {
+            "$ref": "#/components/schemas/v1NetworkGateway"
+          },
+          "gatewayv6": {
             "$ref": "#/components/schemas/v1NetworkGateway"
           },
           "labels": {
@@ -1082,7 +1087,6 @@
         "nullable": true
       },
       "v1Routed": {
-        "default": true,
         "description": "Shows if the network is routed and therefore accessible from other networks.",
         "example": true,
         "type": "boolean"
@@ -1825,6 +1829,9 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
           }
         ],
         "responses": {

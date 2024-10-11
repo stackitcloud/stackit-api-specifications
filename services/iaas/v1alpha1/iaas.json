@@ -2,13 +2,13 @@
   "components": {
     "parameters": {
       "v1KeypairName": {
-        "description": "The name of a key pair.",
+        "description": "The name of an SSH keypair.",
         "example": "keypair-123",
         "in": "path",
         "name": "keypairName",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/GenericName"
+          "$ref": "#/components/schemas/KeyPairName"
         }
       },
       "v1LabelSelector": {
@@ -108,6 +108,15 @@
           "default": false,
           "example": true,
           "type": "boolean"
+        }
+      },
+      "v1ServerGroupID": {
+        "description": "The identifier (ID) of a STACKIT Server Group.",
+        "in": "path",
+        "name": "serverGroupId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
         }
       },
       "v1ServerID": {
@@ -247,12 +256,6 @@
                 "value": {
                   "code": 404,
                   "msg": "area not found"
-                }
-              },
-              "KeyPairNotFound": {
-                "value": {
-                  "code": 404,
-                  "msg": "keypair not found"
                 }
               },
               "KeypairNotFound": {
@@ -583,6 +586,27 @@
         ],
         "description": "The config object for a IPv4 network area."
       },
+      "CreateKeyPairPayload": {
+        "description": "Object that represents the public key of an SSH keypair and its name.",
+        "properties": {
+          "fingerprint": {
+            "$ref": "#/components/schemas/KeyPairFingerprint"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/KeyPairName"
+          },
+          "publicKey": {
+            "$ref": "#/components/schemas/SSHPublicKey"
+          }
+        },
+        "required": [
+          "publicKey"
+        ],
+        "type": "object"
+      },
       "CreateNICPayload": {
         "description": "Object that represents a network interface.",
         "properties": {
@@ -634,9 +658,12 @@
             "readOnly": true
           },
           "nicSecurity": {
-            "default": true,
-            "description": "If this is set to false, then no security groups will apply to this network interface.",
-            "type": "boolean"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NICSecurity"
+              }
+            ],
+            "default": true
           },
           "securityGroups": {
             "$ref": "#/components/schemas/UUIDList"
@@ -818,6 +845,41 @@
         ],
         "type": "object"
       },
+      "CreateServerGroupPayload": {
+        "description": "Definition of a server group.",
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "members": {
+            "description": "The servers that are part of the server group.",
+            "example": [
+              "d61a8564-c8dd-4ffb-bc15-143e7d0c85ed"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/UUID"
+            },
+            "readOnly": true,
+            "type": "array"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "policy": {
+            "$ref": "#/components/schemas/ServerGroupPolicy"
+          }
+        },
+        "required": [
+          "name",
+          "policy"
+        ],
+        "type": "object"
+      },
       "CreateServerNetworking": {
         "additionalProperties": false,
         "description": "The initial networking setup for the server creation with a network.",
@@ -842,7 +904,12 @@
         "description": "Representation of a single server object.",
         "properties": {
           "availabilityZone": {
-            "$ref": "#/components/schemas/AvailabilityZone"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AvailabilityZone"
+              }
+            ],
+            "description": "This is the availability zone requested during server creation. If none is provided during the creation request and an existing volume will be used as boot volume it will be set to the same availability zone as the volume. For requests with no volumes involved it will be set to the metro availability zone."
           },
           "bootVolume": {
             "allOf": [
@@ -876,20 +943,20 @@
             ],
             "readOnly": true
           },
-          "image": {
+          "imageId": {
             "allOf": [
               {
                 "$ref": "#/components/schemas/UUID"
               }
             ]
           },
-          "keypair": {
+          "keypairName": {
             "allOf": [
               {
                 "$ref": "#/components/schemas/GenericName"
               }
             ],
-            "description": "The key pair used during the server creation."
+            "description": "The SSH keypair used during the server creation."
           },
           "labels": {
             "$ref": "#/components/schemas/Labels"
@@ -1170,15 +1237,23 @@
         "pattern": "^\\s*((([0-9a-f]{1,4}:){7}([0-9a-f]{1,4}|:))|(([0-9a-f]{1,4}:){6}(:[0-9a-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){5}(((:[0-9a-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){4}(((:[0-9a-f]{1,4}){1,3})|((:[0-9a-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){3}(((:[0-9a-f]{1,4}){1,4})|((:[0-9a-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){2}(((:[0-9a-f]{1,4}){1,5})|((:[0-9a-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){1}(((:[0-9a-f]{1,4}){1,6})|((:[0-9a-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9a-f]{1,4}){1,7})|((:[0-9a-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))(%.+)?\\s*$",
         "type": "string"
       },
+      "KeyPairFingerprint": {
+        "description": "Object that represents an SSH keypair MD5 fingerprint.",
+        "example": "de:ad:be:ef:de:ad:be:ef:de:ad:be:ef:de:ad:be:ef",
+        "maxLength": 47,
+        "minLength": 47,
+        "pattern": "^([0-9A-Fa-f]{2}[:-]){15}([0-9A-Fa-f]{2})$",
+        "type": "string"
+      },
       "KeyPairList": {
-        "description": "A list of key pairs.",
+        "description": "A list of SSH keypairs.",
         "items": {
           "$ref": "#/components/schemas/Keypair"
         },
         "type": "array"
       },
       "KeyPairListResponse": {
-        "description": "Key pair list response.",
+        "description": "SSH keypair list response.",
         "properties": {
           "items": {
             "$ref": "#/components/schemas/KeyPairList"
@@ -1189,14 +1264,24 @@
         ],
         "type": "object"
       },
+      "KeyPairName": {
+        "description": "The name of an SSH keypair. Allowed characters are letters [a-zA-Z], digits [0-9] and the following special characters: [@._-].",
+        "example": "schluesselbaer26",
+        "maxLength": 127,
+        "pattern": "^[A-Za-z0-9@._-]*$",
+        "type": "string"
+      },
       "Keypair": {
-        "description": "Object that represents the public key of a SSH key pair and its name.",
+        "description": "Object that represents the public key of an SSH keypair and its name.",
         "properties": {
+          "fingerprint": {
+            "$ref": "#/components/schemas/KeyPairFingerprint"
+          },
           "labels": {
             "$ref": "#/components/schemas/Labels"
           },
           "name": {
-            "$ref": "#/components/schemas/GenericName"
+            "$ref": "#/components/schemas/KeyPairName"
           },
           "publicKey": {
             "$ref": "#/components/schemas/SSHPublicKey"
@@ -1278,9 +1363,12 @@
             "readOnly": true
           },
           "nicSecurity": {
-            "default": true,
-            "description": "If this is set to false, then no security groups will apply to this network interface.",
-            "type": "boolean"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NICSecurity"
+              }
+            ],
+            "default": true
           },
           "securityGroups": {
             "$ref": "#/components/schemas/UUIDList"
@@ -1324,6 +1412,10 @@
         ],
         "type": "object"
       },
+      "NICSecurity": {
+        "description": "If this is set to false, then no security groups will apply to this network interface.",
+        "type": "boolean"
+      },
       "Nameserver": {
         "description": "A list containing DNS Servers/Nameservers for IPv4.",
         "example": [
@@ -1360,6 +1452,9 @@
             "readOnly": true
           },
           "gateway": {
+            "$ref": "#/components/schemas/v1NetworkGateway"
+          },
+          "gatewayv6": {
             "$ref": "#/components/schemas/v1NetworkGateway"
           },
           "labels": {
@@ -1562,30 +1657,6 @@
         "minItems": 1,
         "type": "array"
       },
-      "OpenStackNetwork": {
-        "description": "Object that represents a network in OpenStack.",
-        "properties": {
-          "cidr": {
-            "$ref": "#/components/schemas/CIDR"
-          },
-          "openstackNetworkID": {
-            "$ref": "#/components/schemas/UUID"
-          },
-          "openstackRouterID": {
-            "$ref": "#/components/schemas/UUID"
-          },
-          "openstackSubnetID": {
-            "$ref": "#/components/schemas/UUID"
-          }
-        },
-        "required": [
-          "openstackRouterID",
-          "openstackNetworkID",
-          "openstackSubnetID",
-          "cidr"
-        ],
-        "type": "object"
-      },
       "OpenStackProjectId": {
         "description": "The identifier (ID) of an OpenStack project.",
         "example": "d61a8564c8dd4ffbbc15143e7d0c85ed",
@@ -1746,6 +1817,18 @@
         "properties": {
           "items": {
             "$ref": "#/components/schemas/PublicIpList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "PublicNetworkListResponse": {
+        "description": "Public network list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/v1PublicNetworkList"
           }
         },
         "required": [
@@ -2092,7 +2175,12 @@
         "description": "Representation of a single server object.",
         "properties": {
           "availabilityZone": {
-            "$ref": "#/components/schemas/AvailabilityZone"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AvailabilityZone"
+              }
+            ],
+            "description": "This is the availability zone requested during server creation. If none is provided during the creation request and an existing volume will be used as boot volume it will be set to the same availability zone as the volume. For requests with no volumes involved it will be set to the metro availability zone."
           },
           "bootVolume": {
             "allOf": [
@@ -2126,20 +2214,20 @@
             ],
             "readOnly": true
           },
-          "image": {
+          "imageId": {
             "allOf": [
               {
                 "$ref": "#/components/schemas/UUID"
               }
             ]
           },
-          "keypair": {
+          "keypairName": {
             "allOf": [
               {
                 "$ref": "#/components/schemas/GenericName"
               }
             ],
-            "description": "The key pair used during the server creation."
+            "description": "The SSH keypair used during the server creation."
           },
           "labels": {
             "$ref": "#/components/schemas/Labels"
@@ -2279,6 +2367,65 @@
           "url"
         ],
         "type": "object"
+      },
+      "ServerGroup": {
+        "description": "Definition of a server group.",
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "members": {
+            "description": "The servers that are part of the server group.",
+            "example": [
+              "d61a8564-c8dd-4ffb-bc15-143e7d0c85ed"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/UUID"
+            },
+            "readOnly": true,
+            "type": "array"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "policy": {
+            "$ref": "#/components/schemas/ServerGroupPolicy"
+          }
+        },
+        "required": [
+          "name",
+          "policy"
+        ],
+        "type": "object"
+      },
+      "ServerGroupList": {
+        "description": "A list of servers-groups.",
+        "items": {
+          "$ref": "#/components/schemas/ServerGroup"
+        },
+        "type": "array"
+      },
+      "ServerGroupListResponse": {
+        "description": "Response object for server-group list request.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/ServerGroupList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "ServerGroupPolicy": {
+        "description": "The server group policy.",
+        "example": "anti-affinity",
+        "type": "string"
       },
       "ServerList": {
         "description": "A list of servers.",
@@ -2421,6 +2568,7 @@
         "description": "Object that represents an e-mail address of a service account.",
         "example": "example@compute.sa.stackit.cloud",
         "format": "email",
+        "maxLength": 255,
         "pattern": "[a-z0-9-]+(?:\\.[a-z0-9]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
         "type": "string"
       },
@@ -2537,80 +2685,32 @@
         },
         "type": "object"
       },
+      "UpdateKeyPairPayload": {
+        "description": "Object that represents an update request body of a public key of an SSH keypair.",
+        "properties": {
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          }
+        },
+        "type": "object"
+      },
       "UpdateNICPayload": {
-        "description": "Object that represents a network interface.",
+        "description": "Object that represents a network interface update.",
         "properties": {
           "allowedAddresses": {
             "$ref": "#/components/schemas/AllowedAddresses"
           },
-          "device": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UUID"
-              }
-            ],
-            "readOnly": true
-          },
-          "id": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UUID"
-              }
-            ],
-            "readOnly": true
-          },
-          "ipv4": {
-            "$ref": "#/components/schemas/IP"
-          },
-          "ipv6": {
-            "$ref": "#/components/schemas/IPv6"
-          },
           "labels": {
             "$ref": "#/components/schemas/Labels"
-          },
-          "mac": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/MAC"
-              }
-            ],
-            "readOnly": true
           },
           "name": {
             "$ref": "#/components/schemas/GenericName"
           },
-          "networkId": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UUID"
-              }
-            ],
-            "readOnly": true
-          },
           "nicSecurity": {
-            "default": true,
-            "description": "If this is set to false, then no security groups will apply to this network interface.",
-            "type": "boolean"
+            "$ref": "#/components/schemas/NICSecurity"
           },
           "securityGroups": {
             "$ref": "#/components/schemas/UUIDList"
-          },
-          "status": {
-            "readOnly": true,
-            "type": "string",
-            "x-extensible-enum": [
-              "ACTIVE",
-              "DOWN"
-            ]
-          },
-          "type": {
-            "readOnly": true,
-            "type": "string",
-            "x-extensible-enum": [
-              "server",
-              "metadata",
-              "gateway"
-            ]
           }
         },
         "type": "object"
@@ -2645,6 +2745,33 @@
             ],
             "description": "Associate the public IP with a network interface or a virtual IP (ID).",
             "nullable": true
+          }
+        },
+        "type": "object"
+      },
+      "UpdateSecurityGroupPayload": {
+        "description": "Object that represents an update request body of a security group.",
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateServerPayload": {
+        "description": "Object that represents an update request body of a server.",
+        "properties": {
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
           }
         },
         "type": "object"
@@ -2867,8 +2994,26 @@
         "description": "The gateway of a network. If not specified the first ip of the network will be assigned as the gateway. If 'null' is sent, then the network doesn't have a gateway.",
         "nullable": true
       },
+      "v1PublicNetwork": {
+        "description": "Public network.",
+        "properties": {
+          "cidr": {
+            "$ref": "#/components/schemas/CIDR"
+          }
+        },
+        "required": [
+          "cidr"
+        ],
+        "type": "object"
+      },
+      "v1PublicNetworkList": {
+        "description": "A list of public networks.",
+        "items": {
+          "$ref": "#/components/schemas/v1PublicNetwork"
+        },
+        "type": "array"
+      },
       "v1Routed": {
-        "default": true,
         "description": "Shows if the network is routed and therefore accessible from other networks.",
         "example": true,
         "type": "boolean"
@@ -2903,33 +3048,6 @@
           "items"
         ],
         "type": "object"
-      },
-      "v1alpha1UpdateSecurityGroupPayload": {
-        "description": "Object that represents an update request body of a security group.",
-        "properties": {
-          "description": {
-            "$ref": "#/components/schemas/Description"
-          },
-          "labels": {
-            "$ref": "#/components/schemas/Labels"
-          },
-          "name": {
-            "$ref": "#/components/schemas/GenericName"
-          }
-        },
-        "type": "object"
-      },
-      "v1alpha1UpdateServerPayload": {
-        "description": "Object that represents an update request body of a server.",
-        "properties": {
-          "labels": {
-            "$ref": "#/components/schemas/Labels"
-          },
-          "name": {
-            "$ref": "#/components/schemas/GenericName"
-          }
-        },
-        "type": "object"
       }
     }
   },
@@ -2946,6 +3064,242 @@
   },
   "openapi": "3.0.1",
   "paths": {
+    "/v1alpha1/keypairs": {
+      "get": {
+        "description": "Get a list of all SSH keypairs assigned to the requesting user.",
+        "operationId": "ListKeyPairs",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KeyPairListResponse"
+                }
+              }
+            },
+            "description": "List SSH keypairs."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all SSH keypairs for the requesting user."
+      },
+      "post": {
+        "description": "Import a new public key for the requesting user based on provided public key material. The creation will fail if an SSH keypair with the same name already exists. If a name is not provided it is autogenerated form the ssh-pubkey comment section. If that is also not present it will be the the MD5 fingerprint of the key. For autogenerated names invalid characters will be removed.",
+        "operationId": "CreateKeyPair",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateKeyPairPayload"
+              }
+            }
+          },
+          "description": "Request a public key import.",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Keypair"
+                }
+              }
+            },
+            "description": "Import of the public key was successful."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Import a public key."
+      }
+    },
+    "/v1alpha1/keypairs/{keypairName}": {
+      "delete": {
+        "description": "Delete an SSH keypair from a user.",
+        "operationId": "DeleteKeyPair",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1KeypairName"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Delete request for an SSH keypair was accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete an SSH keypair."
+      },
+      "get": {
+        "description": "Get details about an SSH keypair.",
+        "operationId": "GetKeyPair",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1KeypairName"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Keypair"
+                }
+              }
+            },
+            "description": "Show SSH keypair details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get SSH keypair details."
+      },
+      "patch": {
+        "description": "Update labels of the SSH keypair.",
+        "operationId": "UpdateKeyPair",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1KeypairName"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateKeyPairPayload"
+              }
+            }
+          },
+          "description": "Request an update of an SSH keypair.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Keypair"
+                }
+              }
+            },
+            "description": "Update request for SSH keypair accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update information of an SSH keypair."
+      }
+    },
+    "/v1alpha1/networks/public-ip-ranges": {
+      "get": {
+        "description": "Get a list of all public ip ranges that STACKIT uses.",
+        "operationId": "ListPublicIPRanges",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicNetworkListResponse"
+                }
+              }
+            },
+            "description": "List public ip ranges."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all public ip ranges."
+      }
+    },
     "/v1alpha1/organizations/{organizationId}/network-areas": {
       "get": {
         "description": "Get a list of all visible network areas defined in an organization.",
@@ -3153,87 +3507,6 @@
         "summary": "Get project details."
       }
     },
-    "/v1alpha1/projects/{projectId}/keypairs": {
-      "get": {
-        "description": "Get a list of all key pairs in a project.",
-        "operationId": "ListKeyPairs",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/KeyPairListResponse"
-                }
-              }
-            },
-            "description": "List key pairs."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "summary": "List all key pairs in a project."
-      }
-    },
-    "/v1alpha1/projects/{projectId}/keypairs/{keypairName}": {
-      "get": {
-        "description": "Get details about a key pair.",
-        "operationId": "GetKeyPair",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1KeypairName"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Keypair"
-                }
-              }
-            },
-            "description": "Show key pair details."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "summary": "Get key pair details."
-      }
-    },
     "/v1alpha1/projects/{projectId}/networks": {
       "get": {
         "description": "Get a list of all networks inside a project.",
@@ -3393,7 +3666,7 @@
                 }
               }
             },
-            "description": "Create request for a network interface has been accepted."
+            "description": "Network interface was created successfully."
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -3556,49 +3829,6 @@
           }
         },
         "summary": "Update a network interface."
-      }
-    },
-    "/v1alpha1/projects/{projectId}/openstack-networks/{networkId}": {
-      "get": {
-        "deprecated": true,
-        "description": "Get OpenStack details about a network (DEPRECATED).",
-        "operationId": "v1alpha1GetOpenStackNetworkDetails",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OpenStackNetwork"
-                }
-              }
-            },
-            "description": "Show OpenStack network details."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "summary": "Get OpenStack network details (DEPRECATED)."
       }
     },
     "/v1alpha1/projects/{projectId}/public-ips": {
@@ -4031,7 +4261,7 @@
       },
       "patch": {
         "description": "Update labels of the security group.",
-        "operationId": "v1alpha1UpdateSecurityGroup",
+        "operationId": "UpdateSecurityGroup",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1ProjectID"
@@ -4044,7 +4274,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/v1alpha1UpdateSecurityGroupPayload"
+                "$ref": "#/components/schemas/UpdateSecurityGroupPayload"
               }
             }
           },
@@ -4255,6 +4485,175 @@
         "summary": "Get security group rule details."
       }
     },
+    "/v1alpha1/projects/{projectId}/server-groups": {
+      "get": {
+        "description": "Get the server groups created in a project. Server groups are an indication of locality of a server relative to another group of servers. They can be either running on the same host (affinity) or on different ones (anti-affinity).",
+        "operationId": "ListServerGroups",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerGroupListResponse"
+                }
+              }
+            },
+            "description": "List server groups."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get the server groups setup for a project."
+      },
+      "post": {
+        "description": "Create a new server server group in the given project ID.",
+        "operationId": "CreateServerGroup",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "name": "MyServerGroup",
+                "policy": "anti-affinity"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/CreateServerGroupPayload"
+              }
+            }
+          },
+          "description": "Request a server group creation.",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerGroup"
+                }
+              }
+            },
+            "description": "Server group was created successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create a new server group in a project."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/server-groups/{serverGroupId}": {
+      "delete": {
+        "description": "Delete a server group in the given project.",
+        "operationId": "DeleteServerGroup",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerGroupID"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "A server deletion job was created."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete a server group in a project."
+      },
+      "get": {
+        "description": "Get the server group created in a project.",
+        "operationId": "GetServerGroup",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ServerGroupID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerGroup"
+                }
+              }
+            },
+            "description": "Show server group details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get the server group."
+      }
+    },
     "/v1alpha1/projects/{projectId}/servers": {
       "get": {
         "description": "Get a list of all servers inside a project.",
@@ -4315,7 +4714,8 @@
                   "value": {
                     "bootVolume": {
                       "source": {
-                        "volumeId": "70bb02f3-c11b-4321-bd78-8f8f4460f1b3"
+                        "id": "70bb02f3-c11b-4321-bd78-8f8f4460f1b3",
+                        "type": "volume"
                       }
                     },
                     "machineType": "t1.1",
@@ -4336,7 +4736,8 @@
                     "bootVolume": {
                       "size": 10,
                       "source": {
-                        "imageId": "e24b1440-8d9c-431b-8da4-02916720fab5"
+                        "id": "e24b1440-8d9c-431b-8da4-02916720fab5",
+                        "type": "image"
                       }
                     },
                     "machineType": "t1.1",
@@ -4352,7 +4753,8 @@
                       "performanceClass": "storage_premium_perf6",
                       "size": 40,
                       "source": {
-                        "imageId": "e24b1440-8d9c-431b-8da4-02916720fab5"
+                        "id": "e24b1440-8d9c-431b-8da4-02916720fab5",
+                        "type": "image"
                       }
                     },
                     "keypair": "keypair-517e9448-1cf1-4b36-9f29-6e66d669a6d2",
@@ -4493,7 +4895,7 @@
       },
       "patch": {
         "description": "Update name or labels of the server.",
-        "operationId": "v1alpha1UpdateServer",
+        "operationId": "UpdateServer",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1ProjectID"
@@ -4520,7 +4922,7 @@
                 }
               },
               "schema": {
-                "$ref": "#/components/schemas/v1alpha1UpdateServerPayload"
+                "$ref": "#/components/schemas/UpdateServerPayload"
               }
             }
           },
@@ -4918,8 +5320,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Public IP detached from Server."
+          "202": {
+            "description": "Detach Public IP from server was accepted."
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -4957,8 +5359,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Public IP attached to Server."
+          "202": {
+            "description": "Attach Public IP to server was accepted."
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -5850,7 +6252,7 @@
                     "size": 10
                   }
                 },
-                "Full": {
+                "FullExample": {
                   "value": {
                     "availabilityZone": "eu01-1",
                     "description": "A cool Volume description.",
@@ -5858,7 +6260,17 @@
                     "performanceClass": "storage_premium_perf6",
                     "size": 40,
                     "source": {
-                      "imageId": "d61a8564-c8dd-4ffb-bc15-143e7d0c85ed"
+                      "id": "6e344916-d5d5-46dd-a00b-351cd7f293e6",
+                      "type": "image"
+                    }
+                  }
+                },
+                "VolumeFromBackup": {
+                  "value": {
+                    "availabilityZone": "eu01-1",
+                    "source": {
+                      "id": "cebeebb7-b984-4f0c-bc25-5ff124fe333b",
+                      "type": "backup"
                     }
                   }
                 },
@@ -5867,7 +6279,17 @@
                     "availabilityZone": "eu01-1",
                     "size": 10,
                     "source": {
-                      "imageId": "d61a8564-c8dd-4ffb-bc15-143e7d0c85ed"
+                      "id": "6e344916-d5d5-46dd-a00b-351cd7f293e6",
+                      "type": "image"
+                    }
+                  }
+                },
+                "VolumeFromSnapshot": {
+                  "value": {
+                    "availabilityZone": "eu01-1",
+                    "source": {
+                      "id": "40644648-4c6a-464e-bded-2a44c5b63e4a",
+                      "type": "snapshot"
                     }
                   }
                 },
@@ -5875,7 +6297,8 @@
                   "value": {
                     "availabilityZone": "eu01-1",
                     "source": {
-                      "volumeId": "d61a8564-c8dd-4ffb-bc15-143e7d0c85ed"
+                      "id": "8e96409e-077e-4324-9866-251912738c0f",
+                      "type": "volume"
                     }
                   }
                 }

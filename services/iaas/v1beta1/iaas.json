@@ -2626,6 +2626,15 @@
         },
         "type": "object"
       },
+      "UpdateNetworkAreaRoutePayload": {
+        "description": "Object that represents the request body for a route update.",
+        "properties": {
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          }
+        },
+        "type": "object"
+      },
       "UpdateNetworkIPv4Body": {
         "description": "The config object for a IPv4 network update.",
         "properties": {
@@ -2917,6 +2926,9 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/v1OrganizationID"
+          },
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
           }
         ],
         "responses": {
@@ -3409,6 +3421,9 @@
           },
           {
             "$ref": "#/components/parameters/v1NetworkAreaID"
+          },
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
           }
         ],
         "responses": {
@@ -3582,6 +3597,60 @@
           }
         },
         "summary": "Get details about a network route."
+      },
+      "patch": {
+        "description": "Update a network route defined in a network area.",
+        "operationId": "UpdateNetworkAreaRoute",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1OrganizationID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NetworkAreaID"
+          },
+          {
+            "$ref": "#/components/parameters/v1RouteID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateNetworkAreaRoutePayload"
+              }
+            }
+          },
+          "description": "Request an update of a network route.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Route"
+                }
+              }
+            },
+            "description": "Update request for network successful."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update a network route."
       }
     },
     "/v1beta1/organizations/{organizationId}/requests/{requestId}": {

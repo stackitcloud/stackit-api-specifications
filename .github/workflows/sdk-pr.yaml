@@ -11,8 +11,8 @@ env:
   JAVA_VERSION: "11"
 
 jobs:
-  main:
-    name: Update SDK Repo
+  main-go:
+    name: Update Go SDK Repo
     runs-on: ubuntu-latest
     steps:
       - name: Install SSH Key
@@ -49,4 +49,54 @@ jobs:
           GH_REPO: "stackitcloud/stackit-sdk-go"
           GH_TOKEN: ${{ secrets.SDK_PR_TOKEN }}
         run: |
-          scripts/sdk-create-pr.sh "oas-bot-${{ github.run_id }}" "Generated from GitHub run [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+          scripts/sdk-create-pr.sh "oas-bot-${{ github.run_id }}" "Generated from GitHub run [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"      
+  main-python:
+    name: Update Go SDK Repo
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ vars.SSH_KNOWN_HOSTS }}
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: Checkout generator repo
+        uses: actions/checkout@v3
+        with:
+          repository: "stackitcloud/stackit-sdk-generator"
+          ref: "main"
+      - name: Build
+        uses: ./.github/actions/build
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - name: Download OAS
+        run: make download-oas              
+      - name: Generate SDK
+        run: make generate-sdk LANGUAGE=python
+      - uses: actions/checkout@v3
+        with:    
+          repository: "stackitcloud/stackit-sdk-python-core"
+          ref: "main"
+          path: 'python-core'
+      - name: Install Python SDK Core
+        working-directory: 'python-core'
+        run: make install
+      - name: Install Python SDK
+        working-directory: ./sdk-repo-updated
+        run: make install-dev
+      - name: Lint Python
+        working-directory: ./sdk-repo-updated
+        run: make lint 
+      - name: Test Python
+        working-directory: ./sdk-repo-updated
+        run: make test
+      - name: Push Python SDK
+        env:
+          GH_REPO: "stackitcloud/stackit-sdk-python"
+          GH_TOKEN: ${{ secrets.SDK_PR_TOKEN }}
+        run: |
+          scripts/sdk-create-pr.sh "generator-bot-${{ github.run_id }}" "Generated from GitHub run [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" "git@github.com:stackitcloud/stackit-sdk-python.git" "python"

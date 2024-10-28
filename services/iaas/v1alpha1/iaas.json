@@ -128,6 +128,15 @@
           "$ref": "#/components/schemas/ServiceAccountMail"
         }
       },
+      "v1VirtualIPID": {
+        "description": "The identifier (ID) of a Virtual IP.",
+        "in": "path",
+        "name": "virtualIpId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
       "v1VolumeID": {
         "description": "The identifier (ID) of a STACKIT Volume.",
         "in": "path",
@@ -339,6 +348,18 @@
       }
     },
     "schemas": {
+      "AddMemberToVirtualIPPayload": {
+        "description": "Object that represents a virtual IP member.",
+        "properties": {
+          "member": {
+            "$ref": "#/components/schemas/UUID"
+          }
+        },
+        "required": [
+          "member"
+        ],
+        "type": "object"
+      },
       "AddVolumeToServerPayload": {
         "description": "Object that represents a Volume attachment to a server.",
         "properties": {
@@ -647,6 +668,14 @@
       "CreateKeyPairPayload": {
         "description": "Object that represents the public key of an SSH keypair and its name.",
         "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
           "fingerprint": {
             "allOf": [
               {
@@ -663,6 +692,14 @@
           },
           "publicKey": {
             "$ref": "#/components/schemas/SSHPublicKey"
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
           }
         },
         "required": [
@@ -1070,6 +1107,48 @@
         ],
         "type": "object"
       },
+      "CreateVirtualIPPayload": {
+        "description": "Object that represents a virtual IP.",
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "ip": {
+            "$ref": "#/components/schemas/IP"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "members": {
+            "$ref": "#/components/schemas/UUIDList"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "network": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourceState"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "type": "object"
+      },
       "CreateVolumePayload": {
         "description": "Object that represents a volume and its parameters. Used for Creating and returning (get/list).",
         "properties": {
@@ -1263,6 +1342,14 @@
       "Keypair": {
         "description": "Object that represents the public key of an SSH keypair and its name.",
         "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
           "fingerprint": {
             "allOf": [
               {
@@ -1279,6 +1366,14 @@
           },
           "publicKey": {
             "$ref": "#/components/schemas/SSHPublicKey"
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
           }
         },
         "required": [
@@ -1678,7 +1773,7 @@
             "type": "integer"
           },
           "min": {
-            "description": "The minimum port number. Should be less or equal to the minimum.",
+            "description": "The minimum port number. Should be less or equal to the maximum.",
             "example": 22,
             "format": "int64",
             "maximum": 65535,
@@ -1865,6 +1960,18 @@
         },
         "required": [
           "items"
+        ],
+        "type": "object"
+      },
+      "RemoveMemberFromVirtualIPPayload": {
+        "description": "Object that represents a virtual IP member.",
+        "properties": {
+          "member": {
+            "$ref": "#/components/schemas/UUID"
+          }
+        },
+        "required": [
+          "member"
         ],
         "type": "object"
       },
@@ -2383,13 +2490,13 @@
           },
           "endsAt": {
             "description": "End of the maintenance window.",
-            "example": "2023-09-23T11:39:48.205Z",
+            "example": "2023-09-23T11:39:48Z",
             "format": "date-time",
             "type": "string"
           },
           "startsAt": {
             "description": "Start of the maintenance window.",
-            "example": "2023-09-22T11:39:48.205Z",
+            "example": "2023-09-22T11:39:48Z",
             "format": "date-time",
             "type": "string"
           },
@@ -2704,6 +2811,26 @@
         },
         "type": "object"
       },
+      "UpdateVirtualIPPayload": {
+        "description": "Object that represents a virtual IP update request body.",
+        "properties": {
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "members": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUIDList"
+              }
+            ],
+            "nullable": true
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          }
+        },
+        "type": "object"
+      },
       "UpdateVolumePayload": {
         "description": "Object that represents an update request body of a  volume.",
         "properties": {
@@ -2724,6 +2851,67 @@
         "example": "2017-07-21T17:32:28Z",
         "format": "date-time",
         "type": "string"
+      },
+      "VirtualIp": {
+        "description": "Object that represents a virtual IP.",
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "ip": {
+            "$ref": "#/components/schemas/IP"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "members": {
+            "$ref": "#/components/schemas/UUIDList"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "network": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourceState"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "type": "object"
+      },
+      "VirtualIpList": {
+        "description": "A list of virtual IPs.",
+        "items": {
+          "$ref": "#/components/schemas/VirtualIp"
+        },
+        "type": "array"
+      },
+      "VirtualIpListResponse": {
+        "description": "Virtual IPs list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/VirtualIpList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
       },
       "Volume": {
         "description": "Object that represents a volume and its parameters. Used for Creating and returning (get/list).",
@@ -3712,6 +3900,345 @@
           }
         },
         "summary": "Update a network interface."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/networks/{networkId}/virtual-ips": {
+      "get": {
+        "description": "Get a list of all virtual IPs inside a project.",
+        "operationId": "ListVirtualIPs",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NetworkID"
+          },
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VirtualIpListResponse"
+                }
+              }
+            },
+            "description": "List project virtual IPs."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all virtual IPs inside a project."
+      },
+      "post": {
+        "description": "Create a new virtual IP in a project.",
+        "operationId": "CreateVirtualIP",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NetworkID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVirtualIPPayload"
+              }
+            }
+          },
+          "description": "Request a virtual IP creation.",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VirtualIp"
+                }
+              }
+            },
+            "description": "Virtual IP create request accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create new virtual IP."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/networks/{networkId}/virtual-ips/{virtualIpId}": {
+      "delete": {
+        "description": "Delete a virtual IP that is part of the project.",
+        "operationId": "DeleteVirtualIP",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NetworkID"
+          },
+          {
+            "$ref": "#/components/parameters/v1VirtualIPID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Virtual IP delete request accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete a virtual IP."
+      },
+      "get": {
+        "description": "Get details about a virtual IP inside a project.",
+        "operationId": "GetVirtualIP",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NetworkID"
+          },
+          {
+            "$ref": "#/components/parameters/v1VirtualIPID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VirtualIp"
+                }
+              }
+            },
+            "description": "Show virtual IP details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get details about a virtual IP."
+      },
+      "patch": {
+        "description": "Update the properties of an existing virtual IP inside a project.",
+        "operationId": "UpdateVirtualIP",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NetworkID"
+          },
+          {
+            "$ref": "#/components/parameters/v1VirtualIPID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVirtualIPPayload"
+              }
+            }
+          },
+          "description": "Request an update of a virtual IP.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Virtual IP update request accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update a virtual IP."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/networks/{networkId}/virtual-ips/{virtualIpId}/add-member": {
+      "put": {
+        "description": "Atomically add a member to the virtual IP.",
+        "operationId": "AddMemberToVirtualIP",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NetworkID"
+          },
+          {
+            "$ref": "#/components/parameters/v1VirtualIPID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddMemberToVirtualIPPayload"
+              }
+            }
+          },
+          "description": "Request to add a member to a virtual IP.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VirtualIp"
+                }
+              }
+            },
+            "description": "Member has been added to the virtual IP."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Add a member to the virtual IP."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/networks/{networkId}/virtual-ips/{virtualIpId}/remove-member": {
+      "put": {
+        "description": "Atomically remove a member from the virtual IP.",
+        "operationId": "RemoveMemberFromVirtualIP",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1NetworkID"
+          },
+          {
+            "$ref": "#/components/parameters/v1VirtualIPID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoveMemberFromVirtualIPPayload"
+              }
+            }
+          },
+          "description": "Request to remove a member from a virtual IP.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VirtualIp"
+                }
+              }
+            },
+            "description": "Member has been removed from the virtual IP."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Remove a member from the virtual IP."
       }
     },
     "/v1alpha1/projects/{projectId}/public-ips": {
@@ -4980,7 +5507,7 @@
       },
       "put": {
         "description": "Attach an existing network interface to a server.",
-        "operationId": "AddNICToServer",
+        "operationId": "AddNicToServer",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1ProjectID"

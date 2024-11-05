@@ -78,17 +78,6 @@ jobs:
         run: make download-oas              
       - name: Generate SDK
         run: make generate-sdk LANGUAGE=python
-      - uses: actions/checkout@v3
-        with:    
-          repository: "stackitcloud/stackit-sdk-python-core"
-          ref: "main"
-          path: 'python-core'
-      - name: Install Python SDK Core
-        working-directory: 'python-core'
-        run: |
-          pip install poetry
-          poetry config virtualenvs.create false
-          make install
       - name: Install Python SDK
         working-directory: ./sdk-repo-updated
         run: |

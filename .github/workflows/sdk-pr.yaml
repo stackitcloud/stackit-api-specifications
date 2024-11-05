@@ -82,16 +82,13 @@ jobs:
         with:    
           repository: "stackitcloud/stackit-sdk-python-core"
           ref: "main"
-          path: 'python-core'
-      - name: Install Python SDK Core
-        working-directory: 'python-core'
+          path: 'python-core'      
+      - name: Install Python SDK
+        working-directory: ./sdk-repo-updated
         run: |
           pip install poetry
           poetry config virtualenvs.create false
-          make install
-      - name: Install Python SDK
-        working-directory: ./sdk-repo-updated
-        run: make install-dev
+          make install-dev
       - name: Lint Python
         working-directory: ./sdk-repo-updated
         run: make lint 

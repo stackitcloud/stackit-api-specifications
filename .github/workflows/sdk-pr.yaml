@@ -12,11 +12,9 @@ env:
 
 jobs:
   main-go:
-    name: [Go] Update SDK Repo
+    name: "[Go] Update SDK Repo"
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
         with:
@@ -32,7 +30,6 @@ jobs:
         with:
           repository: "stackitcloud/stackit-sdk-generator"
           ref: "main"
-          path: 'generator-repo'
       - name: Build
         uses: ./.github/actions/build
         with:
@@ -53,13 +50,11 @@ jobs:
           GH_TOKEN: ${{ secrets.SDK_PR_TOKEN }}
         run: |
           scripts/sdk-create-pr.sh "oas-bot-${{ github.run_id }}" "Generated from GitHub run [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"      
-  
+
   main-python:
-    name: [Python] Update SDK Repo
+    name: "[Python] Update SDK Repo"
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
         with:
@@ -75,7 +70,6 @@ jobs:
         with:
           repository: "stackitcloud/stackit-sdk-generator"
           ref: "main"
-          path: 'generator-repo'
       - name: Build
         uses: ./.github/actions/build
         with:
@@ -84,8 +78,7 @@ jobs:
         run: make download-oas              
       - name: Generate SDK
         run: make generate-sdk LANGUAGE=python
-      - name: Checkout Python SDK Core
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:    
           repository: "stackitcloud/stackit-sdk-python-core"
           ref: "main"

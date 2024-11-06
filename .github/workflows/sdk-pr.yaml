@@ -83,13 +83,19 @@ jobs:
         run: |
           pip install poetry
           poetry config virtualenvs.create false
+          python -m venv ${{ runner.temp }}/.venv
+          source ${{ runner.temp }}/.venv/bin/activate
           make install-dev
       - name: Lint Python
         working-directory: ./sdk-repo-updated
-        run: make lint 
+        run: |
+          source ${{ runner.temp }}/.venv/bin/activate
+          make lint           
       - name: Test Python
         working-directory: ./sdk-repo-updated
-        run: make test
+        run: |
+          source ${{ runner.temp }}/.venv/bin/activate
+          make test                    
       - name: Push Python SDK
         env:
           GH_REPO: "stackitcloud/stackit-sdk-python"

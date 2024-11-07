@@ -285,7 +285,7 @@
         "properties": {
           "rrSets": {
             "items": {
-              "$ref": "#/components/schemas/RecordDataExchange"
+              "$ref": "#/components/schemas/zone_models.ImportRecordModel"
             },
             "type": "array"
           }
@@ -1082,6 +1082,47 @@
         "required": [
           "zone"
         ],
+        "type": "object"
+      },
+      "zone_models.ImportRecordModel": {
+        "properties": {
+          "comment": {
+            "example": "comment",
+            "type": "string"
+          },
+          "content": {
+            "example": [
+              "1.2.3.4"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "name": {
+            "example": "example.com",
+            "type": "string"
+          },
+          "ttl": {
+            "example": 3600,
+            "type": "integer"
+          },
+          "type": {
+            "example": "A",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "zone_models.ImportZoneJson": {
+        "properties": {
+          "rrSets": {
+            "items": {
+              "$ref": "#/components/schemas/zone_models.ImportRecordModel"
+            },
+            "type": "array"
+          }
+        },
         "type": "object"
       }
     }
@@ -2183,12 +2224,12 @@
             },
             "text/csv": {
               "schema": {
-                "$ref": "#/components/schemas/ZoneDataExchange"
+                "$ref": "#/components/schemas/zone_models.ImportZoneJson"
               }
             },
             "text/plain": {
               "schema": {
-                "$ref": "#/components/schemas/ZoneDataExchange"
+                "$ref": "#/components/schemas/zone_models.ImportZoneJson"
               }
             }
           },

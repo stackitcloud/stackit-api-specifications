@@ -1,6 +1,15 @@
 {
   "components": {
     "parameters": {
+      "v1ImageID": {
+        "description": "The identifier (ID) of a STACKIT Image.",
+        "in": "path",
+        "name": "imageId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
       "v1KeypairName": {
         "description": "The name of an SSH keypair.",
         "example": "keypair-123",
@@ -17,6 +26,16 @@
         "name": "label_selector",
         "schema": {
           "type": "string"
+        }
+      },
+      "v1MachineTypeName": {
+        "description": "STACKIT machine type Name.",
+        "example": "t1.1",
+        "in": "path",
+        "name": "machineType",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/GenericName"
         }
       },
       "v1NICID": {
@@ -472,7 +491,7 @@
         "description": "The minimal prefix length for networks in the network area.",
         "example": 24,
         "maximum": 29,
-        "minimum": 22,
+        "minimum": 8,
         "type": "integer"
       },
       "AreaPrefixConfigIPv4": {
@@ -665,6 +684,70 @@
         ],
         "description": "The config object for a IPv4 network area."
       },
+      "CreateImagePayload": {
+        "description": "Object that represents an Image and its parameters. Used for Creating and returning (get/list).",
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/ImageConfig"
+          },
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "diskFormat": {
+            "$ref": "#/components/schemas/DiskFormat"
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "minDiskSize": {
+            "$ref": "#/components/schemas/SizeInGB"
+          },
+          "minRam": {
+            "$ref": "#/components/schemas/SizeInMB"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "protected": {
+            "example": false,
+            "type": "boolean"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ImageStatus"
+              }
+            ],
+            "readOnly": true
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "name",
+          "diskFormat"
+        ],
+        "type": "object"
+      },
       "CreateKeyPairPayload": {
         "description": "Object that represents the public key of an SSH keypair and its name.",
         "properties": {
@@ -707,7 +790,7 @@
         ],
         "type": "object"
       },
-      "CreateNICPayload": {
+      "CreateNicPayload": {
         "description": "Object that represents a network interface.",
         "properties": {
           "allowedAddresses": {
@@ -950,8 +1033,7 @@
               {
                 "$ref": "#/components/schemas/BootVolume"
               }
-            ],
-            "writeOnly": true
+            ]
           },
           "createdAt": {
             "allOf": [
@@ -1155,6 +1237,13 @@
           "availabilityZone": {
             "$ref": "#/components/schemas/AvailabilityZone"
           },
+          "bootable": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VolumeBootable"
+              }
+            ]
+          },
           "createdAt": {
             "allOf": [
               {
@@ -1236,6 +1325,10 @@
         "maxLength": 127,
         "type": "string"
       },
+      "DiskFormat": {
+        "description": "Object that represents a disk format.",
+        "type": "string"
+      },
       "Error": {
         "description": "Error with HTTP error code and an error message.",
         "properties": {
@@ -1251,6 +1344,14 @@
           "code",
           "msg"
         ],
+        "type": "object"
+      },
+      "ExtraSpecs": {
+        "description": "Properties to control certain aspects or scheduling behavior for an object.",
+        "example": {
+          "os_distro": "arch"
+        },
+        "format": "json",
         "type": "object"
       },
       "GenericName": {
@@ -1293,6 +1394,12 @@
         ],
         "type": "object"
       },
+      "IOPS": {
+        "description": "Input/Output Operations per second.",
+        "example": 5000,
+        "format": "int64",
+        "type": "integer"
+      },
       "IP": {
         "description": "Object that represents an IP address.",
         "example": "10.1.2.10",
@@ -1303,6 +1410,224 @@
         "description": "Object that represents an IPv6 address.",
         "example": "2001:db8:0:8d3:0:8a2e:70:7344",
         "pattern": "^\\s*((([0-9a-f]{1,4}:){7}([0-9a-f]{1,4}|:))|(([0-9a-f]{1,4}:){6}(:[0-9a-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){5}(((:[0-9a-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){4}(((:[0-9a-f]{1,4}){1,3})|((:[0-9a-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){3}(((:[0-9a-f]{1,4}){1,4})|((:[0-9a-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){2}(((:[0-9a-f]{1,4}){1,5})|((:[0-9a-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){1}(((:[0-9a-f]{1,4}){1,6})|((:[0-9a-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9a-f]{1,4}){1,7})|((:[0-9a-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))(%.+)?\\s*$",
+        "type": "string"
+      },
+      "Image": {
+        "description": "Object that represents an Image and its parameters. Used for Creating and returning (get/list).",
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/ImageConfig"
+          },
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "diskFormat": {
+            "$ref": "#/components/schemas/DiskFormat"
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "minDiskSize": {
+            "$ref": "#/components/schemas/SizeInGB"
+          },
+          "minRam": {
+            "$ref": "#/components/schemas/SizeInMB"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "protected": {
+            "example": false,
+            "type": "boolean"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ImageStatus"
+              }
+            ],
+            "readOnly": true
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "name",
+          "diskFormat"
+        ],
+        "type": "object"
+      },
+      "ImageConfig": {
+        "description": "Properties to set hardware and scheduling settings for an Image.",
+        "properties": {
+          "bootMenu": {
+            "default": false,
+            "description": "Enables the BIOS bootmenu.",
+            "type": "boolean"
+          },
+          "cdromBus": {
+            "description": "Sets CDROM bus controller type.",
+            "nullable": true,
+            "type": "string",
+            "x-extensible-enum": [
+              "scsi",
+              "virtio",
+              "ide",
+              "usb"
+            ]
+          },
+          "diskBus": {
+            "description": "Sets Disk bus controller type.",
+            "nullable": true,
+            "type": "string",
+            "x-extensible-enum": [
+              "scsi",
+              "virtio",
+              "ide",
+              "usb"
+            ]
+          },
+          "nicModel": {
+            "description": "Sets virtual nic model.",
+            "nullable": true,
+            "type": "string",
+            "x-extensible-enum": [
+              "e1000",
+              "e1000e",
+              "ne2k_pci",
+              "pcnet",
+              "rtl8139",
+              "virtio",
+              "vmxnet3"
+            ]
+          },
+          "operatingSystem": {
+            "description": "Enables OS specific optimizations.",
+            "type": "string",
+            "x-extensible-enum": [
+              "windows",
+              "linux"
+            ]
+          },
+          "operatingSystemDistro": {
+            "description": "Operating System Distribution.",
+            "nullable": true,
+            "type": "string"
+          },
+          "operatingSystemVersion": {
+            "description": "Version of the OS.",
+            "nullable": true,
+            "type": "string"
+          },
+          "rescueBus": {
+            "description": "Sets the device bus when the image is used as a rescue image.",
+            "nullable": true,
+            "type": "string",
+            "x-extensible-enum": [
+              "scsi",
+              "virtio",
+              "ide",
+              "usb"
+            ]
+          },
+          "rescueDevice": {
+            "description": "Sets the device when the image is used as a rescue image.",
+            "nullable": true,
+            "type": "string",
+            "x-extensible-enum": [
+              "cdrom",
+              "disk"
+            ]
+          },
+          "secureBoot": {
+            "default": false,
+            "description": "Enables Secure Boot.",
+            "type": "boolean"
+          },
+          "uefi": {
+            "default": false,
+            "description": "Enables UEFI boot.",
+            "type": "boolean"
+          },
+          "videoModel": {
+            "description": "Sets Graphic device model.",
+            "nullable": true,
+            "type": "string",
+            "x-extensible-enum": [
+              "vga",
+              "cirrus",
+              "vmvga",
+              "qxl",
+              "virtio",
+              "none"
+            ]
+          },
+          "virtioScsi": {
+            "default": false,
+            "description": "Enables the use of VirtIO SCSI to provide block device access. By default instances use VirtIO Block.",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "ImageCreateResponse": {
+        "description": "Image creation response.",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/UUID"
+          },
+          "uploadUrl": {
+            "format": "uri",
+            "type": "string"
+          }
+        },
+        "required": [
+          "uploadUrl",
+          "id"
+        ],
+        "type": "object"
+      },
+      "ImageList": {
+        "description": "A list containing image objects.",
+        "items": {
+          "$ref": "#/components/schemas/Image"
+        },
+        "type": "array"
+      },
+      "ImageListResponse": {
+        "description": "Image list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/ImageList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "ImageStatus": {
+        "description": "The status of an image object.",
+        "example": "AVAILABLE",
         "type": "string"
       },
       "KeyPairFingerprint": {
@@ -1400,6 +1725,67 @@
         "example": "00:80:41:ae:fd:7e",
         "pattern": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$",
         "type": "string"
+      },
+      "MachineType": {
+        "description": "Machine Type.",
+        "example": {
+          "description": "small, specific instances with cpu-overcommit. Runs on various Intel CPUs.",
+          "disk": 1,
+          "extraSpecs": {
+            "cpu": "intel-ivybridge-generic",
+            "overcommit": "4"
+          },
+          "id": "25129382-dbe8-43eb-b71b-72253dd69452",
+          "name": "t1.1",
+          "ram": 512,
+          "vcpus": 1
+        },
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "disk": {
+            "$ref": "#/components/schemas/SizeInGB"
+          },
+          "extraSpecs": {
+            "$ref": "#/components/schemas/ExtraSpecs"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "ram": {
+            "$ref": "#/components/schemas/SizeInMB"
+          },
+          "vcpus": {
+            "$ref": "#/components/schemas/VCPUs"
+          }
+        },
+        "required": [
+          "name",
+          "ram",
+          "disk",
+          "vcpus"
+        ],
+        "type": "object"
+      },
+      "MachineTypeList": {
+        "description": "Machine type list.",
+        "items": {
+          "$ref": "#/components/schemas/MachineType"
+        },
+        "type": "array"
+      },
+      "MachineTypeListResponse": {
+        "description": "Machine type list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/MachineTypeList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
       },
       "NIC": {
         "description": "Object that represents a network interface.",
@@ -2289,8 +2675,7 @@
               {
                 "$ref": "#/components/schemas/BootVolume"
               }
-            ],
-            "writeOnly": true
+            ]
           },
           "createdAt": {
             "allOf": [
@@ -2633,6 +3018,12 @@
         "format": "int64",
         "type": "integer"
       },
+      "SizeInMB": {
+        "description": "Size in Megabyte.",
+        "example": 1337,
+        "format": "int64",
+        "type": "integer"
+      },
       "Stateful": {
         "default": true,
         "description": "Shows if a security group is stateful or stateless. You can only have one type of security groups per network interface/server.",
@@ -2646,6 +3037,12 @@
         ],
         "example": "PUBLIC",
         "type": "string"
+      },
+      "ThroughputInMB": {
+        "description": "Throughput in Megabyte per second.",
+        "example": 200,
+        "format": "int64",
+        "type": "integer"
       },
       "UUID": {
         "description": "Universally Unique Identifier (UUID).",
@@ -2720,6 +3117,34 @@
         },
         "type": "object"
       },
+      "UpdateImagePayload": {
+        "description": "Object that represents an update request body of an Image.",
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/ImageConfig"
+          },
+          "diskFormat": {
+            "$ref": "#/components/schemas/DiskFormat"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "minDiskSize": {
+            "$ref": "#/components/schemas/SizeInGB"
+          },
+          "minRam": {
+            "$ref": "#/components/schemas/SizeInMB"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "protected": {
+            "example": false,
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
       "UpdateKeyPairPayload": {
         "description": "Object that represents an update request body of a public key of an SSH keypair.",
         "properties": {
@@ -2729,7 +3154,7 @@
         },
         "type": "object"
       },
-      "UpdateNICPayload": {
+      "UpdateNicPayload": {
         "description": "Object that represents a network interface update.",
         "properties": {
           "allowedAddresses": {
@@ -2834,6 +3259,9 @@
       "UpdateVolumePayload": {
         "description": "Object that represents an update request body of a  volume.",
         "properties": {
+          "bootable": {
+            "$ref": "#/components/schemas/VolumeBootable"
+          },
           "description": {
             "$ref": "#/components/schemas/Description"
           },
@@ -2851,6 +3279,13 @@
         "example": "2017-07-21T17:32:28Z",
         "format": "date-time",
         "type": "string"
+      },
+      "VCPUs": {
+        "description": "The number of virtual CPUs of a server.",
+        "example": 4,
+        "format": "int64",
+        "minimum": 1,
+        "type": "integer"
       },
       "VirtualIp": {
         "description": "Object that represents a virtual IP.",
@@ -2918,6 +3353,13 @@
         "properties": {
           "availabilityZone": {
             "$ref": "#/components/schemas/AvailabilityZone"
+          },
+          "bootable": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VolumeBootable"
+              }
+            ]
           },
           "createdAt": {
             "allOf": [
@@ -3027,6 +3469,12 @@
         ],
         "type": "object"
       },
+      "VolumeBootable": {
+        "default": false,
+        "description": "Indicates if a volume is bootable.",
+        "example": true,
+        "type": "boolean"
+      },
       "VolumeList": {
         "description": "A list containing volume objects.",
         "items": {
@@ -3050,20 +3498,28 @@
         "description": "Object that represents a Volume performance class.",
         "example": {
           "description": "Performance Class 6 - 5000 IOPS; 200MB throughput.",
+          "iops": 5000,
           "labels": {
             "vendor_name": "NetApp"
           },
-          "name": "storage_premium_perf6"
+          "name": "storage_premium_perf6",
+          "throughput": 200
         },
         "properties": {
           "description": {
             "$ref": "#/components/schemas/Description"
+          },
+          "iops": {
+            "$ref": "#/components/schemas/IOPS"
           },
           "labels": {
             "$ref": "#/components/schemas/Labels"
           },
           "name": {
             "$ref": "#/components/schemas/GenericName"
+          },
+          "throughput": {
+            "$ref": "#/components/schemas/ThroughputInMB"
           }
         },
         "required": [
@@ -3578,6 +4034,334 @@
         "summary": "Get project details."
       }
     },
+    "/v1alpha1/projects/{projectId}/images": {
+      "get": {
+        "description": "Get a list of all images inside a project.",
+        "operationId": "ListImages",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImageListResponse"
+                }
+              }
+            },
+            "description": "List project images."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all Images inside a project."
+      },
+      "post": {
+        "description": "Create a new Image in a project. This call, if successful, returns a pre-signed URL for the customer to upload the image.",
+        "operationId": "CreateImage",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "allParams": {
+                  "value": {
+                    "active": true,
+                    "diskFormat": "qcow2",
+                    "labels": {
+                      "foo": "Foo Value"
+                    },
+                    "minDiskSize": 10,
+                    "minRam": 1,
+                    "name": "niceImage",
+                    "protected": false
+                  }
+                },
+                "minimumParams": {
+                  "value": {
+                    "diskFormat": "qcow2",
+                    "name": "niceImage"
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/CreateImagePayload"
+              }
+            }
+          },
+          "description": "Request an image creation.",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImageCreateResponse"
+                }
+              }
+            },
+            "description": "Create request for an Image has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create new Image."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/images/{imageId}": {
+      "delete": {
+        "description": "Delete an image that is part of the project.",
+        "operationId": "DeleteImage",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ImageID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Image delete request has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete an Image."
+      },
+      "get": {
+        "description": "Get details about a specific Image inside a project.",
+        "operationId": "GetImage",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ImageID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Image"
+                }
+              }
+            },
+            "description": "Show Image details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get details about an image."
+      },
+      "patch": {
+        "description": "Update the properties of an existing Image inside a project.",
+        "operationId": "UpdateImage",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1ImageID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "minimumParams": {
+                  "value": {
+                    "name": "fancyNewName"
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/UpdateImagePayload"
+              }
+            }
+          },
+          "description": "Request an update of an Image.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Image"
+                }
+              }
+            },
+            "description": "Response to update call. Provide the updated image object."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update Image Parameters."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/machine-types": {
+      "get": {
+        "description": "Get a list of all machine type available in a project.",
+        "operationId": "ListMachineTypes",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachineTypeListResponse"
+                }
+              }
+            },
+            "description": "List of machine types."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all machine types available for a project."
+      }
+    },
+    "/v1alpha1/projects/{projectId}/machine-types/{machineType}": {
+      "get": {
+        "description": "Get details about a specific machine type.",
+        "operationId": "GetMachineType",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1MachineTypeName"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachineType"
+                }
+              }
+            },
+            "description": "Show machine type details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get details about a machine type."
+      }
+    },
     "/v1alpha1/projects/{projectId}/networks": {
       "get": {
         "description": "Get a list of all networks inside a project.",
@@ -3665,7 +4449,7 @@
     "/v1alpha1/projects/{projectId}/networks/{networkId}/nics": {
       "get": {
         "description": "Get a list of all network interfaces inside a network.",
-        "operationId": "ListNICs",
+        "operationId": "ListNics",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1ProjectID"
@@ -3708,7 +4492,7 @@
       },
       "post": {
         "description": "Create a new network interface in a project.",
-        "operationId": "CreateNIC",
+        "operationId": "CreateNic",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1ProjectID"
@@ -3721,7 +4505,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateNICPayload"
+                "$ref": "#/components/schemas/CreateNicPayload"
               }
             }
           },
@@ -3767,7 +4551,7 @@
     "/v1alpha1/projects/{projectId}/networks/{networkId}/nics/{nicId}": {
       "delete": {
         "description": "Delete a network interface that is part of the project.",
-        "operationId": "DeleteNIC",
+        "operationId": "DeleteNic",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1ProjectID"
@@ -3803,7 +4587,7 @@
       },
       "get": {
         "description": "Get details about a network interface inside a network.",
-        "operationId": "GetNIC",
+        "operationId": "GetNic",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1ProjectID"
@@ -3846,7 +4630,7 @@
       },
       "patch": {
         "description": "Update the properties of an existing network interface inside a network.",
-        "operationId": "UpdateNIC",
+        "operationId": "UpdateNic",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1ProjectID"
@@ -3862,7 +4646,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateNICPayload"
+                "$ref": "#/components/schemas/UpdateNicPayload"
               }
             }
           },
@@ -3969,7 +4753,7 @@
           "required": true
         },
         "responses": {
-          "201": {
+          "202": {
             "content": {
               "application/json": {
                 "schema": {
@@ -5429,7 +6213,7 @@
     "/v1alpha1/projects/{projectId}/servers/{serverId}/nics": {
       "get": {
         "description": "Get all network interfaces attached to the server.",
-        "operationId": "ListServerNICs",
+        "operationId": "ListServerNics",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1ProjectID"
@@ -5471,7 +6255,7 @@
     "/v1alpha1/projects/{projectId}/servers/{serverId}/nics/{nicId}": {
       "delete": {
         "description": "Detach a network interface from a server.",
-        "operationId": "RemoveNICFromServer",
+        "operationId": "RemoveNicFromServer",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1ProjectID"

@@ -1,12 +1,32 @@
 {
   "components": {
     "parameters": {
+      "v1KeypairName": {
+        "description": "The name of an SSH keypair.",
+        "example": "keypair-123",
+        "in": "path",
+        "name": "keypairName",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/KeyPairName"
+        }
+      },
       "v1LabelSelector": {
         "description": "Filter resources by labels.",
         "in": "query",
         "name": "label_selector",
         "schema": {
           "type": "string"
+        }
+      },
+      "v1MachineTypeName": {
+        "description": "STACKIT machine type Name.",
+        "example": "t1.1",
+        "in": "path",
+        "name": "machineType",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/GenericName"
         }
       },
       "v1NICID": {
@@ -143,6 +163,16 @@
         "required": true,
         "schema": {
           "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v1VolumePerformanceClassName": {
+        "description": "The name of a STACKIT Volume performance class.",
+        "example": "storage_premium_perf6",
+        "in": "path",
+        "name": "volumePerformanceClass",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/GenericName"
         }
       }
     },
@@ -441,7 +471,7 @@
         "description": "The minimal prefix length for networks in the network area.",
         "example": 24,
         "maximum": 29,
-        "minimum": 22,
+        "minimum": 8,
         "type": "integer"
       },
       "AreaPrefixConfigIPv4": {
@@ -640,7 +670,159 @@
         ],
         "description": "The config object for a IPv4 network area."
       },
-      "CreateNICPayload": {
+      "CreateKeyPairPayload": {
+        "description": "Object that represents the public key of an SSH keypair and its name.",
+        "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "fingerprint": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/KeyPairFingerprint"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/KeyPairName"
+          },
+          "publicKey": {
+            "$ref": "#/components/schemas/SSHPublicKey"
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "publicKey"
+        ],
+        "type": "object"
+      },
+      "CreateNetworkAddressFamily": {
+        "description": "The addressFamily object for a network create request.",
+        "minProperties": 1,
+        "properties": {
+          "ipv4": {
+            "$ref": "#/components/schemas/CreateNetworkIPv4Body"
+          },
+          "ipv6": {
+            "$ref": "#/components/schemas/CreateNetworkIPv6Body"
+          }
+        },
+        "type": "object"
+      },
+      "CreateNetworkAreaPayload": {
+        "properties": {
+          "addressFamily": {
+            "$ref": "#/components/schemas/CreateAreaAddressFamily"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          }
+        },
+        "required": [
+          "name",
+          "addressFamily"
+        ],
+        "type": "object"
+      },
+      "CreateNetworkAreaRangePayload": {
+        "properties": {
+          "ipv4": {
+            "$ref": "#/components/schemas/NetworkRangeList"
+          }
+        },
+        "type": "object"
+      },
+      "CreateNetworkAreaRoutePayload": {
+        "properties": {
+          "ipv4": {
+            "$ref": "#/components/schemas/RouteList"
+          }
+        },
+        "type": "object"
+      },
+      "CreateNetworkIPv4Body": {
+        "description": "The config object for an IPv4 network.",
+        "properties": {
+          "gateway": {
+            "$ref": "#/components/schemas/NetworkGateway"
+          },
+          "nameservers": {
+            "$ref": "#/components/schemas/Nameserver"
+          },
+          "prefix": {
+            "$ref": "#/components/schemas/CIDR"
+          },
+          "prefixLength": {
+            "example": 24,
+            "maximum": 29,
+            "minimum": 8,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "CreateNetworkIPv6Body": {
+        "description": "The config object for an IPv6 network.",
+        "properties": {
+          "gateway": {
+            "$ref": "#/components/schemas/NetworkGateway"
+          },
+          "nameservers": {
+            "$ref": "#/components/schemas/Nameserverv6"
+          },
+          "prefix": {
+            "$ref": "#/components/schemas/CIDRv6"
+          },
+          "prefixLength": {
+            "example": 64,
+            "maximum": 128,
+            "minimum": 56,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "CreateNetworkPayload": {
+        "description": "Object that represents the request body for a network create.",
+        "properties": {
+          "addressFamily": {
+            "$ref": "#/components/schemas/CreateNetworkAddressFamily"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "routed": {
+            "$ref": "#/components/schemas/Routed"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "CreateNicPayload": {
         "description": "Object that represents a network interface.",
         "properties": {
           "allowedAddresses": {
@@ -719,116 +901,6 @@
             ]
           }
         },
-        "type": "object"
-      },
-      "CreateNetworkAddressFamily": {
-        "description": "The addressFamily object for a network create request.",
-        "minProperties": 1,
-        "properties": {
-          "ipv4": {
-            "$ref": "#/components/schemas/CreateNetworkIPv4Body"
-          },
-          "ipv6": {
-            "$ref": "#/components/schemas/CreateNetworkIPv6Body"
-          }
-        },
-        "type": "object"
-      },
-      "CreateNetworkAreaPayload": {
-        "properties": {
-          "addressFamily": {
-            "$ref": "#/components/schemas/CreateAreaAddressFamily"
-          },
-          "labels": {
-            "$ref": "#/components/schemas/Labels"
-          },
-          "name": {
-            "$ref": "#/components/schemas/GenericName"
-          }
-        },
-        "required": [
-          "name",
-          "addressFamily"
-        ],
-        "type": "object"
-      },
-      "CreateNetworkAreaRangePayload": {
-        "properties": {
-          "ipv4": {
-            "$ref": "#/components/schemas/NetworkRangeList"
-          }
-        },
-        "type": "object"
-      },
-      "CreateNetworkAreaRoutePayload": {
-        "properties": {
-          "ipv4": {
-            "$ref": "#/components/schemas/RouteList"
-          }
-        },
-        "type": "object"
-      },
-      "CreateNetworkIPv4Body": {
-        "description": "The config object for an IPv4 network.",
-        "properties": {
-          "gateway": {
-            "$ref": "#/components/schemas/NetworkGateway"
-          },
-          "nameservers": {
-            "$ref": "#/components/schemas/Nameserver"
-          },
-          "prefix": {
-            "$ref": "#/components/schemas/CIDR"
-          },
-          "prefixLength": {
-            "example": 24,
-            "maximum": 29,
-            "minimum": 22,
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "CreateNetworkIPv6Body": {
-        "description": "The config object for an IPv6 network.",
-        "properties": {
-          "gateway": {
-            "$ref": "#/components/schemas/NetworkGateway"
-          },
-          "nameservers": {
-            "$ref": "#/components/schemas/Nameserverv6"
-          },
-          "prefix": {
-            "$ref": "#/components/schemas/CIDRv6"
-          },
-          "prefixLength": {
-            "example": 64,
-            "maximum": 128,
-            "minimum": 56,
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "CreateNetworkPayload": {
-        "description": "Object that represents the request body for a network create.",
-        "properties": {
-          "addressFamily": {
-            "$ref": "#/components/schemas/CreateNetworkAddressFamily"
-          },
-          "labels": {
-            "$ref": "#/components/schemas/Labels"
-          },
-          "name": {
-            "$ref": "#/components/schemas/GenericName"
-          },
-          "routed": {
-            "$ref": "#/components/schemas/Routed"
-          }
-        },
-        "required": [
-          "name"
-        ],
         "type": "object"
       },
       "CreateProtocol": {
@@ -993,8 +1065,7 @@
               {
                 "$ref": "#/components/schemas/BootVolume"
               }
-            ],
-            "writeOnly": true
+            ]
           },
           "createdAt": {
             "allOf": [
@@ -1156,6 +1227,13 @@
           "availabilityZone": {
             "$ref": "#/components/schemas/AvailabilityZone"
           },
+          "bootable": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VolumeBootable"
+              }
+            ]
+          },
           "createdAt": {
             "allOf": [
               {
@@ -1254,6 +1332,14 @@
         ],
         "type": "object"
       },
+      "ExtraSpecs": {
+        "description": "Properties to control certain aspects or scheduling behavior for an object.",
+        "example": {
+          "os_distro": "arch"
+        },
+        "format": "json",
+        "type": "object"
+      },
       "GenericName": {
         "description": "The name for a General Object. Matches Names and also UUIDs.",
         "example": "objectName26",
@@ -1294,6 +1380,12 @@
         ],
         "type": "object"
       },
+      "IOPS": {
+        "description": "Input/Output Operations per second.",
+        "example": 5000,
+        "format": "int64",
+        "type": "integer"
+      },
       "IP": {
         "description": "Object that represents an IP address.",
         "example": "10.1.2.10",
@@ -1305,6 +1397,82 @@
         "example": "2001:db8:0:8d3:0:8a2e:70:7344",
         "pattern": "^\\s*((([0-9a-f]{1,4}:){7}([0-9a-f]{1,4}|:))|(([0-9a-f]{1,4}:){6}(:[0-9a-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){5}(((:[0-9a-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){4}(((:[0-9a-f]{1,4}){1,3})|((:[0-9a-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){3}(((:[0-9a-f]{1,4}){1,4})|((:[0-9a-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){2}(((:[0-9a-f]{1,4}){1,5})|((:[0-9a-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){1}(((:[0-9a-f]{1,4}){1,6})|((:[0-9a-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9a-f]{1,4}){1,7})|((:[0-9a-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))(%.+)?\\s*$",
         "type": "string"
+      },
+      "KeyPairFingerprint": {
+        "description": "Object that represents an SSH keypair MD5 fingerprint.",
+        "example": "de:ad:be:ef:de:ad:be:ef:de:ad:be:ef:de:ad:be:ef",
+        "maxLength": 47,
+        "minLength": 47,
+        "pattern": "^([0-9A-Fa-f]{2}[:-]){15}([0-9A-Fa-f]{2})$",
+        "type": "string"
+      },
+      "KeyPairList": {
+        "description": "A list of SSH keypairs.",
+        "items": {
+          "$ref": "#/components/schemas/Keypair"
+        },
+        "type": "array"
+      },
+      "KeyPairListResponse": {
+        "description": "SSH keypair list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/KeyPairList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "KeyPairName": {
+        "description": "The name of an SSH keypair. Allowed characters are letters [a-zA-Z], digits [0-9] and the following special characters: [@._-].",
+        "example": "schluesselbaer26",
+        "maxLength": 127,
+        "pattern": "^[A-Za-z0-9@._-]*$",
+        "type": "string"
+      },
+      "Keypair": {
+        "description": "Object that represents the public key of an SSH keypair and its name.",
+        "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "fingerprint": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/KeyPairFingerprint"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/KeyPairName"
+          },
+          "publicKey": {
+            "$ref": "#/components/schemas/SSHPublicKey"
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "publicKey"
+        ],
+        "type": "object"
       },
       "Labels": {
         "description": "Object that represents the labels of an object.",
@@ -1325,6 +1493,67 @@
         "example": "00:80:41:ae:fd:7e",
         "pattern": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$",
         "type": "string"
+      },
+      "MachineType": {
+        "description": "Machine Type.",
+        "example": {
+          "description": "small, specific instances with cpu-overcommit. Runs on various Intel CPUs.",
+          "disk": 1,
+          "extraSpecs": {
+            "cpu": "intel-ivybridge-generic",
+            "overcommit": "4"
+          },
+          "id": "25129382-dbe8-43eb-b71b-72253dd69452",
+          "name": "t1.1",
+          "ram": 512,
+          "vcpus": 1
+        },
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "disk": {
+            "$ref": "#/components/schemas/SizeInGB"
+          },
+          "extraSpecs": {
+            "$ref": "#/components/schemas/ExtraSpecs"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "ram": {
+            "$ref": "#/components/schemas/SizeInMB"
+          },
+          "vcpus": {
+            "$ref": "#/components/schemas/VCPUs"
+          }
+        },
+        "required": [
+          "name",
+          "ram",
+          "disk",
+          "vcpus"
+        ],
+        "type": "object"
+      },
+      "MachineTypeList": {
+        "description": "Machine type list.",
+        "items": {
+          "$ref": "#/components/schemas/MachineType"
+        },
+        "type": "array"
+      },
+      "MachineTypeListResponse": {
+        "description": "Machine type list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/MachineTypeList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
       },
       "NIC": {
         "description": "Object that represents a network interface.",
@@ -2035,6 +2264,12 @@
         "example": true,
         "type": "boolean"
       },
+      "SSHPublicKey": {
+        "description": "Object that represents a public SSH key.",
+        "example": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIDsPd27M449akqCtdFg2+AmRVJz6eWio0oMP9dVg7Xe",
+        "pattern": "^(ssh-rsa|ssh-ed25519)\\s+[A-Za-z0-9+/]+[=]{0,3}(\\s+.+)?\\s*$",
+        "type": "string"
+      },
       "SecurityGroup": {
         "description": "Object that represents a security group.",
         "properties": {
@@ -2170,8 +2405,7 @@
               {
                 "$ref": "#/components/schemas/BootVolume"
               }
-            ],
-            "writeOnly": true
+            ]
           },
           "createdAt": {
             "allOf": [
@@ -2514,10 +2748,22 @@
         "format": "int64",
         "type": "integer"
       },
+      "SizeInMB": {
+        "description": "Size in Megabyte.",
+        "example": 1337,
+        "format": "int64",
+        "type": "integer"
+      },
       "Stateful": {
         "default": true,
         "description": "Shows if a security group is stateful or stateless. You can only have one type of security groups per network interface/server.",
         "type": "boolean"
+      },
+      "ThroughputInMB": {
+        "description": "Throughput in Megabyte per second.",
+        "example": 200,
+        "format": "int64",
+        "type": "integer"
       },
       "UUID": {
         "description": "Universally Unique Identifier (UUID).",
@@ -2592,23 +2838,11 @@
         },
         "type": "object"
       },
-      "UpdateNICPayload": {
-        "description": "Object that represents a network interface update.",
+      "UpdateKeyPairPayload": {
+        "description": "Object that represents an update request body of a public key of an SSH keypair.",
         "properties": {
-          "allowedAddresses": {
-            "$ref": "#/components/schemas/AllowedAddresses"
-          },
           "labels": {
             "$ref": "#/components/schemas/Labels"
-          },
-          "name": {
-            "$ref": "#/components/schemas/GenericName"
-          },
-          "nicSecurity": {
-            "$ref": "#/components/schemas/NICSecurity"
-          },
-          "securityGroups": {
-            "$ref": "#/components/schemas/UUIDList"
           }
         },
         "type": "object"
@@ -2655,6 +2889,27 @@
           },
           "nameservers": {
             "$ref": "#/components/schemas/Nameserverv6"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateNicPayload": {
+        "description": "Object that represents a network interface update.",
+        "properties": {
+          "allowedAddresses": {
+            "$ref": "#/components/schemas/AllowedAddresses"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "nicSecurity": {
+            "$ref": "#/components/schemas/NICSecurity"
+          },
+          "securityGroups": {
+            "$ref": "#/components/schemas/UUIDList"
           }
         },
         "type": "object"
@@ -2723,6 +2978,9 @@
       "UpdateVolumePayload": {
         "description": "Object that represents an update request body of a  volume.",
         "properties": {
+          "bootable": {
+            "$ref": "#/components/schemas/VolumeBootable"
+          },
           "description": {
             "$ref": "#/components/schemas/Description"
           },
@@ -2741,11 +2999,25 @@
         "format": "date-time",
         "type": "string"
       },
+      "VCPUs": {
+        "description": "The number of virtual CPUs of a server.",
+        "example": 4,
+        "format": "int64",
+        "minimum": 1,
+        "type": "integer"
+      },
       "Volume": {
         "description": "Object that represents a volume and its parameters. Used for Creating and returning (get/list).",
         "properties": {
           "availabilityZone": {
             "$ref": "#/components/schemas/AvailabilityZone"
+          },
+          "bootable": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VolumeBootable"
+              }
+            ]
           },
           "createdAt": {
             "allOf": [
@@ -2855,6 +3127,12 @@
         ],
         "type": "object"
       },
+      "VolumeBootable": {
+        "default": false,
+        "description": "Indicates if a volume is bootable.",
+        "example": true,
+        "type": "boolean"
+      },
       "VolumeList": {
         "description": "A list containing volume objects.",
         "items": {
@@ -2867,6 +3145,58 @@
         "properties": {
           "items": {
             "$ref": "#/components/schemas/VolumeList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "VolumePerformanceClass": {
+        "description": "Object that represents a Volume performance class.",
+        "example": {
+          "description": "Performance Class 6 - 5000 IOPS; 200MB throughput.",
+          "iops": 5000,
+          "labels": {
+            "vendor_name": "NetApp"
+          },
+          "name": "storage_premium_perf6",
+          "throughput": 200
+        },
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "iops": {
+            "$ref": "#/components/schemas/IOPS"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "throughput": {
+            "$ref": "#/components/schemas/ThroughputInMB"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "VolumePerformanceClassList": {
+        "description": "A list containing Volume performance classes.",
+        "items": {
+          "$ref": "#/components/schemas/VolumePerformanceClass"
+        },
+        "type": "array"
+      },
+      "VolumePerformanceClassListResponse": {
+        "description": "Volume performance class list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/VolumePerformanceClassList"
           }
         },
         "required": [
@@ -2919,6 +3249,208 @@
   },
   "openapi": "3.0.1",
   "paths": {
+    "/v1beta1/keypairs": {
+      "get": {
+        "description": "Get a list of all SSH keypairs assigned to the requesting user.",
+        "operationId": "ListKeyPairs",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KeyPairListResponse"
+                }
+              }
+            },
+            "description": "List SSH keypairs."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all SSH keypairs for the requesting user."
+      },
+      "post": {
+        "description": "Import a new public key for the requesting user based on provided public key material. The creation will fail if an SSH keypair with the same name already exists. If a name is not provided it is autogenerated form the ssh-pubkey comment section. If that is also not present it will be the the MD5 fingerprint of the key. For autogenerated names invalid characters will be removed.",
+        "operationId": "CreateKeyPair",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateKeyPairPayload"
+              }
+            }
+          },
+          "description": "Request a public key import.",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Keypair"
+                }
+              }
+            },
+            "description": "Import of the public key was successful."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Import a public key."
+      }
+    },
+    "/v1beta1/keypairs/{keypairName}": {
+      "delete": {
+        "description": "Delete an SSH keypair from a user.",
+        "operationId": "DeleteKeyPair",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1KeypairName"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete request for an SSH keypair was accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete an SSH keypair."
+      },
+      "get": {
+        "description": "Get details about an SSH keypair.",
+        "operationId": "GetKeyPair",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1KeypairName"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Keypair"
+                }
+              }
+            },
+            "description": "Show SSH keypair details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get SSH keypair details."
+      },
+      "patch": {
+        "description": "Update labels of the SSH keypair.",
+        "operationId": "UpdateKeyPair",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1KeypairName"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateKeyPairPayload"
+              }
+            }
+          },
+          "description": "Request an update of an SSH keypair.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Keypair"
+                }
+              }
+            },
+            "description": "SSH keypair has been updated."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update information of an SSH keypair."
+      }
+    },
     "/v1beta1/organizations/{organizationId}/network-areas": {
       "get": {
         "description": "Get a list of all visible network areas defined in an organization.",
@@ -3695,6 +4227,87 @@
         "summary": "Lookup an organization request ID."
       }
     },
+    "/v1beta1/projects/{projectId}/machine-types": {
+      "get": {
+        "description": "Get a list of all machine type available in a project.",
+        "operationId": "ListMachineTypes",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachineTypeListResponse"
+                }
+              }
+            },
+            "description": "List of machine types."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all machine types available for a project."
+      }
+    },
+    "/v1beta1/projects/{projectId}/machine-types/{machineType}": {
+      "get": {
+        "description": "Get details about a specific machine type.",
+        "operationId": "GetMachineType",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1MachineTypeName"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachineType"
+                }
+              }
+            },
+            "description": "Show machine type details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get details about a machine type."
+      }
+    },
     "/v1beta1/projects/{projectId}/networks": {
       "get": {
         "description": "Get a list of all networks inside a project.",
@@ -3963,7 +4576,7 @@
     "/v1beta1/projects/{projectId}/networks/{networkId}/nics": {
       "get": {
         "description": "Get a list of all network interfaces inside a network.",
-        "operationId": "ListNICs",
+        "operationId": "ListNics",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1ProjectID"
@@ -4006,7 +4619,7 @@
       },
       "post": {
         "description": "Create a new network interface in a project.",
-        "operationId": "CreateNIC",
+        "operationId": "CreateNic",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1ProjectID"
@@ -4019,7 +4632,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateNICPayload"
+                "$ref": "#/components/schemas/CreateNicPayload"
               }
             }
           },
@@ -4065,7 +4678,7 @@
     "/v1beta1/projects/{projectId}/networks/{networkId}/nics/{nicId}": {
       "delete": {
         "description": "Delete a network interface that is part of the project.",
-        "operationId": "DeleteNIC",
+        "operationId": "DeleteNic",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1ProjectID"
@@ -4101,7 +4714,7 @@
       },
       "get": {
         "description": "Get details about a network interface inside a network.",
-        "operationId": "GetNIC",
+        "operationId": "GetNic",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1ProjectID"
@@ -4144,7 +4757,7 @@
       },
       "patch": {
         "description": "Update the properties of an existing network interface inside a network.",
-        "operationId": "UpdateNIC",
+        "operationId": "UpdateNic",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1ProjectID"
@@ -4160,7 +4773,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateNICPayload"
+                "$ref": "#/components/schemas/UpdateNicPayload"
               }
             }
           },
@@ -5388,7 +6001,7 @@
     "/v1beta1/projects/{projectId}/servers/{serverId}/nics": {
       "get": {
         "description": "Get all network interfaces attached to the server.",
-        "operationId": "ListServerNICs",
+        "operationId": "ListServerNics",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1ProjectID"
@@ -5430,7 +6043,7 @@
     "/v1beta1/projects/{projectId}/servers/{serverId}/nics/{nicId}": {
       "delete": {
         "description": "Detach a network interface from a server.",
-        "operationId": "RemoveNICFromServer",
+        "operationId": "RemoveNicFromServer",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1ProjectID"
@@ -6307,6 +6920,90 @@
           }
         },
         "summary": "Attach a volume to a server."
+      }
+    },
+    "/v1beta1/projects/{projectId}/volume-performance-classes": {
+      "get": {
+        "description": "Get a list of all volume performance classes available inside a project.",
+        "operationId": "ListVolumePerformanceClasses",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VolumePerformanceClassListResponse"
+                }
+              }
+            },
+            "description": "List volume performance classes."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all volume performance classes available for a project."
+      }
+    },
+    "/v1beta1/projects/{projectId}/volume-performance-classes/{volumePerformanceClass}": {
+      "get": {
+        "description": "Get details about a specific volume performance class.",
+        "operationId": "GetVolumePerformanceClass",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ProjectID"
+          },
+          {
+            "$ref": "#/components/parameters/v1VolumePerformanceClassName"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VolumePerformanceClass"
+                }
+              }
+            },
+            "description": "Show volume performance class details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get details about a volume performance class."
       }
     },
     "/v1beta1/projects/{projectId}/volumes": {

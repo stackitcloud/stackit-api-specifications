@@ -99,6 +99,47 @@
         ],
         "type": "object"
       },
+      "BackupPolicy": {
+        "properties": {
+          "backupProperties": {
+            "properties": {
+              "name": {
+                "example": "Daily Backup",
+                "type": "string"
+              },
+              "retentionPeriod": {
+                "example": 3,
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "default": {
+            "example": true,
+            "type": "boolean"
+          },
+          "description": {
+            "example": "Default Daily Backup Schedule",
+            "type": "string"
+          },
+          "enabled": {
+            "example": true,
+            "type": "boolean"
+          },
+          "id": {
+            "example": "a01c372f-5c15-418d-b2fb-b1f93ea2ffc8",
+            "type": "string"
+          },
+          "name": {
+            "example": "Default Backup Schedule",
+            "type": "string"
+          },
+          "rrule": {
+            "example": "DTSTART;TZID=Europe/Sofia:20200803T023000 RRULE:FREQ=DAILY;INTERVAL=1",
+            "type": "string"
+          }
+        }
+      },
       "BackupProperties": {
         "properties": {
           "name": {
@@ -235,6 +276,17 @@
         },
         "type": "object"
       },
+      "GetBackupPoliciesResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/BackupPolicy"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "GetBackupSchedulesResponse": {
         "properties": {
           "items": {
@@ -330,6 +382,41 @@
   },
   "openapi": "3.0.0",
   "paths": {
+    "/v1/projects/{projectId}/backup-policies": {
+      "get": {
+        "operationId": "ListBackupPolicies",
+        "parameters": [
+          {
+            "description": "project id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBackupPoliciesResponse"
+                }
+              }
+            },
+            "description": "backup policy list response"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Project Not Found"
+          }
+        },
+        "summary": "get list of backup policies"
+      }
+    },
     "/v1/projects/{projectId}/servers/{serverId}": {
       "delete": {
         "deprecated": true,

@@ -50,6 +50,26 @@
         },
         "type": "object"
       },
+      "CookiePersistence": {
+        "properties": {
+          "insert": {
+            "description": "Insert specifies if a new cookie should be inserted by the Application Load Balancer or not.",
+            "type": "boolean"
+          },
+          "name": {
+            "description": "Cookie is the name of the cookie to use.",
+            "type": "string"
+          },
+          "ttl": {
+            "description": "TTL specifies the time-to-live for the cookie.\nThe default value is 0s, if set to zero, and it acts as a session cookie, expiring when the client session ends.\nTTL is configurable only when insert is set to true.",
+            "example": "120s",
+            "pattern": "^-?(?:0|[1-9][0-9]{0,11})(?:\\.[0-9]{1,9})?s$",
+            "title": "TTL (Time-to-live)",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "CreateCredentialsPayload": {
         "properties": {
           "displayName": {
@@ -95,7 +115,7 @@
             "type": "string"
           },
           "listeners": {
-            "description": "There is a maximum listener count of 20.\n\nPort and protocol limitations:\n\n- UDP listeners cannot have the same port.\n- TCP-derived listeners cannot have the same port. A TCP-derived listener is any listener that listens on a TCP port.\n",
+            "description": "There is a maximum listener count of 20.\n\n",
             "items": {
               "$ref": "#/components/schemas/Listener"
             },
@@ -261,11 +281,11 @@
       "Header": {
         "properties": {
           "exactMatch": {
-            "description": "Exact match for the header value",
+            "description": "Exact match for the header value.",
             "type": "string"
           },
           "name": {
-            "description": "Header name",
+            "description": "Header name.",
             "type": "string"
           }
         },
@@ -357,8 +377,7 @@
             "enum": [
               "PROTOCOL_UNSPECIFIED",
               "PROTOCOL_HTTP",
-              "PROTOCOL_HTTPS",
-              "PROTOCOL_TCP"
+              "PROTOCOL_HTTPS"
             ],
             "type": "string"
           },
@@ -388,7 +407,7 @@
             "type": "string"
           },
           "listeners": {
-            "description": "There is a maximum listener count of 20.\n\nPort and protocol limitations:\n\n- UDP listeners cannot have the same port.\n- TCP-derived listeners cannot have the same port. A TCP-derived listener is any listener that listens on a TCP port.\n",
+            "description": "There is a maximum listener count of 20.\n\n",
             "items": {
               "$ref": "#/components/schemas/Listener"
             },
@@ -551,6 +570,9 @@
       },
       "Matcher": {
         "properties": {
+          "cookiePersistence": {
+            "$ref": "#/components/schemas/CookiePersistence"
+          },
           "headers": {
             "description": "Headers for the matcher",
             "items": {
@@ -793,7 +815,7 @@
             "type": "string"
           },
           "listeners": {
-            "description": "There is a maximum listener count of 20.\n\nPort and protocol limitations:\n\n- UDP listeners cannot have the same port.\n- TCP-derived listeners cannot have the same port. A TCP-derived listener is any listener that listens on a TCP port.\n",
+            "description": "There is a maximum listener count of 20.\n\n",
             "items": {
               "$ref": "#/components/schemas/Listener"
             },
@@ -999,7 +1021,7 @@
       },
       "get": {
         "deprecated": true,
-        "description": "DEPRECATED! Projects are auto-enabled on SE side, meaning status is always enabled.\n Status will return the Application Load Balancer functionality status for the project specified.",
+        "description": "DEPRECATED! Checking the status is now obsolete. The endpoint is kept for compatibility.\n Status will return the Application Load Balancer functionality status for the project specified.",
         "operationId": "GetServiceStatus",
         "parameters": [
           {

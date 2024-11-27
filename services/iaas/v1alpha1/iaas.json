@@ -687,6 +687,14 @@
       "CreateImagePayload": {
         "description": "Object that represents an Image and its parameters. Used for Creating and returning (get/list).",
         "properties": {
+          "checksum": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ImageChecksum"
+              }
+            ],
+            "readOnly": true
+          },
           "config": {
             "$ref": "#/components/schemas/ImageConfig"
           },
@@ -724,6 +732,14 @@
           "protected": {
             "example": false,
             "type": "boolean"
+          },
+          "scope": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ImageScope"
+              }
+            ],
+            "readOnly": true
           },
           "status": {
             "allOf": [
@@ -1415,6 +1431,14 @@
       "Image": {
         "description": "Object that represents an Image and its parameters. Used for Creating and returning (get/list).",
         "properties": {
+          "checksum": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ImageChecksum"
+              }
+            ],
+            "readOnly": true
+          },
           "config": {
             "$ref": "#/components/schemas/ImageConfig"
           },
@@ -1453,6 +1477,14 @@
             "example": false,
             "type": "boolean"
           },
+          "scope": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ImageScope"
+              }
+            ],
+            "readOnly": true
+          },
           "status": {
             "allOf": [
               {
@@ -1473,6 +1505,35 @@
         "required": [
           "name",
           "diskFormat"
+        ],
+        "type": "object"
+      },
+      "ImageChecksum": {
+        "description": "Representation of an image checksum.",
+        "example": {
+          "algorithm": "sha512",
+          "digest": "48c4b0c65baac295e206adb6be455896374fb59812e009345b7e2693b706671c455a2ebd8cfa741f4be27deba37defad5c84cfe6f09d592bc03122422ed9349e"
+        },
+        "properties": {
+          "algorithm": {
+            "description": "Algorithm for the checksum of the image data.",
+            "example": "sha512",
+            "type": "string",
+            "x-extensible-enum": [
+              "md5",
+              "sha512"
+            ]
+          },
+          "digest": {
+            "description": "Hexdigest of the checksum of the image data.",
+            "example": "48c4b0c65baac295e206adb6be455896374fb59812e009345b7e2693b706671c455a2ebd8cfa741f4be27deba37defad5c84cfe6f09d592bc03122422ed9349e",
+            "pattern": "^[0-9a-f]+$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "algorithm",
+          "digest"
         ],
         "type": "object"
       },
@@ -1624,6 +1685,11 @@
           "items"
         ],
         "type": "object"
+      },
+      "ImageScope": {
+        "description": "Scope of an Image.",
+        "example": "local",
+        "type": "string"
       },
       "ImageStatus": {
         "description": "The status of an image object.",

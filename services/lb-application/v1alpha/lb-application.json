@@ -52,16 +52,12 @@
       },
       "CookiePersistence": {
         "properties": {
-          "insert": {
-            "description": "Insert specifies if a new cookie should be inserted by the Application Load Balancer or not.",
-            "type": "boolean"
-          },
           "name": {
             "description": "Cookie is the name of the cookie to use.",
             "type": "string"
           },
           "ttl": {
-            "description": "TTL specifies the time-to-live for the cookie.\nThe default value is 0s, if set to zero, and it acts as a session cookie, expiring when the client session ends.\nTTL is configurable only when insert is set to true.",
+            "description": "TTL specifies the time-to-live for the cookie.\nThe default value is 0s, and it acts as a session cookie, expiring when the client session ends.\n",
             "example": "120s",
             "pattern": "^-?(?:0|[1-9][0-9]{0,11})(?:\\.[0-9]{1,9})?s$",
             "title": "TTL (Time-to-live)",
@@ -692,17 +688,6 @@
         },
         "type": "object"
       },
-      "SessionPersistence": {
-        "properties": {
-          "useSourceIpAddress": {
-            "description": "If enabled then all connections from one source IP address are redirected to the same target. This setting changes the load balancing algorithm to Maglev.",
-            "example": true,
-            "title": "UseSourceIPAddress",
-            "type": "boolean"
-          }
-        },
-        "type": "object"
-      },
       "Status": {
         "description": "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
         "properties": {
@@ -750,9 +735,6 @@
             "example": "my-target-pool",
             "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,18}[0-9a-z])?$",
             "type": "string"
-          },
-          "sessionPersistence": {
-            "$ref": "#/components/schemas/SessionPersistence"
           },
           "targetPort": {
             "description": "The number identifying the port where each target listens for traffic.",
@@ -885,9 +867,6 @@
             "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,18}[0-9a-z])?$",
             "type": "string"
           },
-          "sessionPersistence": {
-            "$ref": "#/components/schemas/SessionPersistence"
-          },
           "targetPort": {
             "description": "The number identifying the port where each target listens for traffic.",
             "example": 5732,
@@ -915,7 +894,7 @@
   "paths": {
     "/v1alpha/plans": {
       "get": {
-        "description": "ListPlans returns for the configured service plans for a project.",
+        "description": "Lists the configured service plans for a project.",
         "operationId": "ListPlans",
         "responses": {
           "200": {
@@ -964,7 +943,7 @@
     "/v1alpha/projects/{projectId}": {
       "delete": {
         "deprecated": true,
-        "description": "DEPRECATED! Disabling the application load balancer functionality is now automatic. The endpoint is kept for compatibility.\n Disable will disable the application load balancer functionality for the project specified.",
+        "description": "DEPRECATED! Disabling the Application Load Balancer functionality is now automatic.\n This endpoint is kept for compatibility.\n Disables the Application Load Balancer functionality for the specified project.",
         "operationId": "DisableService",
         "parameters": [
           {
@@ -1021,7 +1000,7 @@
       },
       "get": {
         "deprecated": true,
-        "description": "DEPRECATED! Checking the status is now obsolete. The endpoint is kept for compatibility.\n Status will return the Application Load Balancer functionality status for the project specified.",
+        "description": "DEPRECATED! Checking the status is now obsolete. The endpoint is kept for compatibility.\n Status will return the Application Load Balancer functionality status for the specified project.",
         "operationId": "GetServiceStatus",
         "parameters": [
           {
@@ -1078,7 +1057,7 @@
       },
       "post": {
         "deprecated": true,
-        "description": "DEPRECATED! Use CreateLoadBalancer directly instead.\n Enable will enable the Application Load Balancer functionality for the project specified.",
+        "description": "DEPRECATED! Checking the status is now obsolete. The endpoint is kept for compatibility.\n Enables the Application Load Balancer service for the specified project.",
         "operationId": "EnableService",
         "parameters": [
           {
@@ -1146,7 +1125,7 @@
     },
     "/v1alpha/projects/{projectId}/credentials": {
       "get": {
-        "description": "List Credentials",
+        "description": "Lists the stored Observability credentials.",
         "operationId": "ListCredentials",
         "parameters": [
           {
@@ -1202,7 +1181,7 @@
         "summary": "List all credentials in a project."
       },
       "post": {
-        "description": "Create credentials can be used to store existing credentials, which are valid to be used for Application Load Balancer Observability.\n This means, e.g. when using ARGUS, that credentials first must be created for that ARGUS instance (by using their API) and\n then can be provided to the Application Load Balancer by storing them with this endpoint.",
+        "description": "Creates and stores credentials for use with Application Load Balancer Observability.\n For example, when using ARGUS, credentials must first be created via the ARGUS API\n and then stored with this endpoint to be used by the Application Load Balancer.",
         "operationId": "CreateCredentials",
         "parameters": [
           {
@@ -1280,7 +1259,7 @@
     },
     "/v1alpha/projects/{projectId}/credentials/{credentialsRef}": {
       "delete": {
-        "description": "Delete Credential",
+        "description": "Deletes the stored Observability credentials.",
         "operationId": "DeleteCredentials",
         "parameters": [
           {
@@ -1344,7 +1323,7 @@
         "summary": "Delete a single credential in a project."
       },
       "get": {
-        "description": "Get Credentials",
+        "description": "Gets the stored Observability credentials.",
         "operationId": "GetCredentials",
         "parameters": [
           {
@@ -1411,7 +1390,7 @@
         "summary": "Get a single credential reference in a project."
       },
       "put": {
-        "description": "Update Credentials",
+        "description": "Updates the stored Observability credentials.",
         "operationId": "UpdateCredentials",
         "parameters": [
           {
@@ -1490,7 +1469,7 @@
     },
     "/v1alpha/projects/{projectId}/load-balancers": {
       "get": {
-        "description": "ListLoadBalancer will list load balancers of a project. This contains information set during\n creation or updates for every load balancer in the project. Additionally, it will have information about\n the state of the load balancer in the form of a status field and error description feedback.",
+        "description": "Lists all Application Load Balancers in a project.\n Includes details from creation or updates, along with their status and any error descriptions.",
         "operationId": "ListLoadBalancers",
         "parameters": [
           {
@@ -1562,7 +1541,7 @@
         "summary": "List load balancers in a project."
       },
       "post": {
-        "description": "Create Application Load Balancer will create a Application Load Balancer.\n The default load balancing algorithm is round robin unless useSourceIpAddress in session persistence is enabled for a target pool then it is Maglev.",
+        "description": "Creates an Application Load Balancer.\n The default load balancing algorithm is Maglev, and selecting a different algorithm is currently not supported.",
         "operationId": "CreateLoadBalancer",
         "parameters": [
           {
@@ -1643,7 +1622,7 @@
     },
     "/v1alpha/projects/{projectId}/load-balancers/{name}": {
       "delete": {
-        "description": "DeleteLoadBalancer will delete a given load balancer.",
+        "description": "Deletes the specified Application Load Balancer.",
         "operationId": "DeleteLoadBalancer",
         "parameters": [
           {
@@ -1707,7 +1686,7 @@
         "summary": "Delete a given load balancer in a project."
       },
       "get": {
-        "description": "Get Load Balancer will get a single load balancer of a project. This contains all the information set during\n creation or updates. Additionally, it will have information about the state of the load balancer in the form\n of a status field and error description feedback.",
+        "description": "Retrieves details of a specific Application Load Balancer in a project.\n Includes creation and update information, current status, and any error descriptions.",
         "operationId": "GetLoadBalancer",
         "parameters": [
           {
@@ -1774,7 +1753,7 @@
         "summary": "Get a single application load balancer in a project."
       },
       "put": {
-        "description": "Update Load Balancer allows the change of listeners and target pools of an existing Load Balancer.\n The Load balancer resource version needs to be the current version to ensure concurrency safe updates.\n The default load balancing algorithm is round robin unless useSourceIpAddress in session persistence is enabled for a target pool then it is Maglev.",
+        "description": "Updates an existing Application Load Balancer by modifying its listeners and target pools.\n Ensure the resource version is current to maintain concurrency safety.\n The default load balancing algorithm is Maglev, and selecting a different algorithm is currently not supported.",
         "operationId": "UpdateLoadBalancer",
         "parameters": [
           {
@@ -1853,7 +1832,7 @@
     },
     "/v1alpha/projects/{projectId}/load-balancers/{name}/target-pools/{targetPoolName}": {
       "put": {
-        "description": "ReplaceTargetPool will replace a specific target pool of a load balancer with new content.\n Useful to  add/remove target servers. will update a load balancer.\n Only replaces the mentioned target pools and leaves others unchanged.\n Cannot be used to create or rename a target pool.",
+        "description": "Replaces the content of a specific target pool in the Application Load Balancer (useful for adding or removing target servers).\n Only updates the specified target pool, leaving others unchanged.\n Cannot be used to create or rename target pools.",
         "operationId": "UpdateTargetPool",
         "parameters": [
           {
@@ -1937,7 +1916,7 @@
     },
     "/v1alpha/projects/{projectId}/quota": {
       "get": {
-        "description": "GetQuota gets the configured application load balancer quota for the project. Default is 3.",
+        "description": "Retrieves the configured Application Load Balancer quota for the project.\n The default quota is 3.",
         "operationId": "GetQuota",
         "parameters": [
           {

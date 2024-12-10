@@ -19,6 +19,17 @@
           "type": "string"
         }
       },
+      "v1LogLength": {
+        "description": "Request the server log. By default the length is limited to 2000 lines. Set to 0 to retrieve the complete log.",
+        "in": "query",
+        "name": "length",
+        "schema": {
+          "default": 2000,
+          "format": "int64",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
       "v1MachineTypeName": {
         "description": "STACKIT machine type Name.",
         "example": "t1.1",
@@ -63,6 +74,15 @@
         "required": true,
         "schema": {
           "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v1OpenStackProjectId": {
+        "description": "The identifier (ID) of an OpenStack Project.",
+        "in": "path",
+        "name": "openStackProjectId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/OpenStackProjectId"
         }
       },
       "v1OrganizationID": {
@@ -1253,6 +1273,14 @@
             ],
             "readOnly": true
           },
+          "imageConfig": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ImageConfig"
+              }
+            ],
+            "readOnly": true
+          },
           "labels": {
             "$ref": "#/components/schemas/Labels"
           },
@@ -1397,6 +1425,119 @@
         "example": "2001:db8:0:8d3:0:8a2e:70:7344",
         "pattern": "^\\s*((([0-9a-f]{1,4}:){7}([0-9a-f]{1,4}|:))|(([0-9a-f]{1,4}:){6}(:[0-9a-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){5}(((:[0-9a-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){4}(((:[0-9a-f]{1,4}){1,3})|((:[0-9a-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){3}(((:[0-9a-f]{1,4}){1,4})|((:[0-9a-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){2}(((:[0-9a-f]{1,4}){1,5})|((:[0-9a-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){1}(((:[0-9a-f]{1,4}){1,6})|((:[0-9a-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9a-f]{1,4}){1,7})|((:[0-9a-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))(%.+)?\\s*$",
         "type": "string"
+      },
+      "ImageConfig": {
+        "description": "Properties to set hardware and scheduling settings for an Image.",
+        "properties": {
+          "bootMenu": {
+            "default": false,
+            "description": "Enables the BIOS bootmenu.",
+            "type": "boolean"
+          },
+          "cdromBus": {
+            "description": "Sets CDROM bus controller type.",
+            "nullable": true,
+            "type": "string",
+            "x-extensible-enum": [
+              "scsi",
+              "virtio",
+              "ide",
+              "usb"
+            ]
+          },
+          "diskBus": {
+            "description": "Sets Disk bus controller type.",
+            "nullable": true,
+            "type": "string",
+            "x-extensible-enum": [
+              "scsi",
+              "virtio",
+              "ide",
+              "usb"
+            ]
+          },
+          "nicModel": {
+            "description": "Sets virtual nic model.",
+            "nullable": true,
+            "type": "string",
+            "x-extensible-enum": [
+              "e1000",
+              "e1000e",
+              "ne2k_pci",
+              "pcnet",
+              "rtl8139",
+              "virtio",
+              "vmxnet3"
+            ]
+          },
+          "operatingSystem": {
+            "description": "Enables OS specific optimizations.",
+            "type": "string",
+            "x-extensible-enum": [
+              "windows",
+              "linux"
+            ]
+          },
+          "operatingSystemDistro": {
+            "description": "Operating System Distribution.",
+            "nullable": true,
+            "type": "string"
+          },
+          "operatingSystemVersion": {
+            "description": "Version of the OS.",
+            "nullable": true,
+            "type": "string"
+          },
+          "rescueBus": {
+            "description": "Sets the device bus when the image is used as a rescue image.",
+            "nullable": true,
+            "type": "string",
+            "x-extensible-enum": [
+              "sata",
+              "scsi",
+              "virtio",
+              "usb"
+            ]
+          },
+          "rescueDevice": {
+            "description": "Sets the device when the image is used as a rescue image.",
+            "nullable": true,
+            "type": "string",
+            "x-extensible-enum": [
+              "cdrom",
+              "disk"
+            ]
+          },
+          "secureBoot": {
+            "default": false,
+            "description": "Enables Secure Boot.",
+            "type": "boolean"
+          },
+          "uefi": {
+            "default": false,
+            "description": "Enables UEFI boot.",
+            "type": "boolean"
+          },
+          "videoModel": {
+            "description": "Sets Graphic device model.",
+            "nullable": true,
+            "type": "string",
+            "x-extensible-enum": [
+              "vga",
+              "cirrus",
+              "vmvga",
+              "qxl",
+              "virtio",
+              "none"
+            ]
+          },
+          "virtioScsi": {
+            "default": false,
+            "description": "Enables the use of VirtIO SCSI to provide block device access. By default instances use VirtIO Block.",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
       },
       "KeyPairFingerprint": {
         "description": "Object that represents an SSH keypair MD5 fingerprint.",
@@ -2984,6 +3125,9 @@
           "description": {
             "$ref": "#/components/schemas/Description"
           },
+          "imageConfig": {
+            "$ref": "#/components/schemas/ImageConfig"
+          },
           "labels": {
             "$ref": "#/components/schemas/Labels"
           },
@@ -3034,6 +3178,14 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "imageConfig": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ImageConfig"
               }
             ],
             "readOnly": true
@@ -3338,11 +3490,6 @@
       "delete": {
         "description": "Delete an SSH keypair from a user.",
         "operationId": "DeleteKeyPair",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1KeypairName"
-          }
-        ],
         "responses": {
           "204": {
             "description": "Delete request for an SSH keypair was accepted."
@@ -3368,11 +3515,6 @@
       "get": {
         "description": "Get details about an SSH keypair.",
         "operationId": "GetKeyPair",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1KeypairName"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -3402,14 +3544,14 @@
         },
         "summary": "Get SSH keypair details."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1KeypairName"
+        }
+      ],
       "patch": {
         "description": "Update labels of the SSH keypair.",
         "operationId": "UpdateKeyPair",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1KeypairName"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -3457,9 +3599,6 @@
         "operationId": "ListNetworkAreas",
         "parameters": [
           {
-            "$ref": "#/components/parameters/v1OrganizationID"
-          },
-          {
             "$ref": "#/components/parameters/v1LabelSelector"
           }
         ],
@@ -3492,14 +3631,14 @@
         },
         "summary": "List all network areas in an organization."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1OrganizationID"
+        }
+      ],
       "post": {
         "description": "Create a new network area in an organization.",
         "operationId": "CreateNetworkArea",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1OrganizationID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -3573,14 +3712,6 @@
       "delete": {
         "description": "Delete an existing network area in an organization. This is only possible if no projects are using the area anymore.",
         "operationId": "DeleteNetworkArea",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1OrganizationID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkAreaID"
-          }
-        ],
         "responses": {
           "202": {
             "description": "Delete request for area has been accepted."
@@ -3609,14 +3740,6 @@
       "get": {
         "description": "Get details about a network area in an organization.",
         "operationId": "GetNetworkArea",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1OrganizationID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkAreaID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -3646,17 +3769,17 @@
         },
         "summary": "Get details about a network area."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1OrganizationID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkAreaID"
+        }
+      ],
       "patch": {
         "description": "Update the settings of a network area in an organization.",
         "operationId": "PartialUpdateNetworkArea",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1OrganizationID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkAreaID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -3718,14 +3841,6 @@
       "get": {
         "description": "Get a list of all network ranges in a network area.",
         "operationId": "ListNetworkAreaRanges",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1OrganizationID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkAreaID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -3755,17 +3870,17 @@
         },
         "summary": "List all network ranges in a network area."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1OrganizationID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkAreaID"
+        }
+      ],
       "post": {
         "description": "Create a new network range in an existing network area.",
         "operationId": "CreateNetworkAreaRange",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1OrganizationID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkAreaID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -3821,17 +3936,6 @@
       "delete": {
         "description": "Delete a network range of a network area. The deletion will fail if the network range is still used.",
         "operationId": "DeleteNetworkAreaRange",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1OrganizationID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkAreaID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkRangeID"
-          }
-        ],
         "responses": {
           "202": {
             "description": "Delete request for network range accepted."
@@ -3860,17 +3964,6 @@
       "get": {
         "description": "Get details about a network range in a network area.",
         "operationId": "GetNetworkAreaRange",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1OrganizationID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkAreaID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkRangeID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -3899,20 +3992,23 @@
           }
         },
         "summary": "Get details about a network range."
-      }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1OrganizationID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkAreaID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkRangeID"
+        }
+      ]
     },
     "/v1beta1/organizations/{organizationId}/network-areas/{areaId}/projects": {
       "get": {
         "description": "Get a list of all projects using a network area.",
         "operationId": "ListNetworkAreaProjects",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1OrganizationID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkAreaID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -3941,19 +4037,21 @@
           }
         },
         "summary": "List all projects using a network area."
-      }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1OrganizationID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkAreaID"
+        }
+      ]
     },
     "/v1beta1/organizations/{organizationId}/network-areas/{areaId}/routes": {
       "get": {
         "description": "Get a list of all network routes defined in a network area.",
         "operationId": "ListNetworkAreaRoutes",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/v1OrganizationID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkAreaID"
-          },
           {
             "$ref": "#/components/parameters/v1LabelSelector"
           }
@@ -3987,17 +4085,17 @@
         },
         "summary": "List all network routes in a network area."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1OrganizationID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkAreaID"
+        }
+      ],
       "post": {
         "description": "Create one or several new network routes in a network area.",
         "operationId": "CreateNetworkAreaRoute",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1OrganizationID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkAreaID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4054,17 +4152,6 @@
       "delete": {
         "description": "Delete a network route of a network area.",
         "operationId": "DeleteNetworkAreaRoute",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1OrganizationID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkAreaID"
-          },
-          {
-            "$ref": "#/components/parameters/v1RouteID"
-          }
-        ],
         "responses": {
           "202": {
             "description": "Delete request for the network route has been accepted."
@@ -4090,17 +4177,6 @@
       "get": {
         "description": "Get details about a network route defined in a network area.",
         "operationId": "GetNetworkAreaRoute",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1OrganizationID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkAreaID"
-          },
-          {
-            "$ref": "#/components/parameters/v1RouteID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -4130,20 +4206,20 @@
         },
         "summary": "Get details about a network route."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1OrganizationID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkAreaID"
+        },
+        {
+          "$ref": "#/components/parameters/v1RouteID"
+        }
+      ],
       "patch": {
         "description": "Update a network route defined in a network area.",
         "operationId": "UpdateNetworkAreaRoute",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1OrganizationID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkAreaID"
-          },
-          {
-            "$ref": "#/components/parameters/v1RouteID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4189,14 +4265,6 @@
       "get": {
         "description": "Lookup an organization request ID from a previous request. This allows to find resource IDs of resources generated during a organization request.",
         "operationId": "GetOrganizationRequest",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1OrganizationID"
-          },
-          {
-            "$ref": "#/components/parameters/v1RequestID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -4225,17 +4293,20 @@
           }
         },
         "summary": "Lookup an organization request ID."
-      }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1OrganizationID"
+        },
+        {
+          "$ref": "#/components/parameters/v1RequestID"
+        }
+      ]
     },
     "/v1beta1/projects/{projectId}/machine-types": {
       "get": {
         "description": "Get a list of all machine type available in a project.",
         "operationId": "ListMachineTypes",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -4264,20 +4335,17 @@
           }
         },
         "summary": "List all machine types available for a project."
-      }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        }
+      ]
     },
     "/v1beta1/projects/{projectId}/machine-types/{machineType}": {
       "get": {
         "description": "Get details about a specific machine type.",
         "operationId": "GetMachineType",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1MachineTypeName"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -4306,16 +4374,21 @@
           }
         },
         "summary": "Get details about a machine type."
-      }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1MachineTypeName"
+        }
+      ]
     },
     "/v1beta1/projects/{projectId}/networks": {
       "get": {
         "description": "Get a list of all networks inside a project.",
         "operationId": "ListNetworks",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
           {
             "$ref": "#/components/parameters/v1LabelSelector"
           }
@@ -4349,14 +4422,14 @@
         },
         "summary": "List all networks inside a project."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        }
+      ],
       "post": {
         "description": "Create a new network in a project. `nameservers` will be filled from `defaultNameservers` of the respective area if not specified. If the project has `internetAccess` enabled and this is the first network in the project this might incur cost.",
         "operationId": "CreateNetwork",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4445,14 +4518,6 @@
       "delete": {
         "description": "Delete a network. If the network is still in use, the deletion will fail.",
         "operationId": "DeleteNetwork",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkID"
-          }
-        ],
         "responses": {
           "202": {
             "description": "Delete request for network has been accepted."
@@ -4481,14 +4546,6 @@
       "get": {
         "description": "Get details about a network of a project.",
         "operationId": "GetNetwork",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -4518,17 +4575,17 @@
         },
         "summary": "Get network details."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkID"
+        }
+      ],
       "patch": {
         "description": "Update the settings of a network inside a project.",
         "operationId": "PartialUpdateNetwork",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4579,12 +4636,6 @@
         "operationId": "ListNics",
         "parameters": [
           {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkID"
-          },
-          {
             "$ref": "#/components/parameters/v1LabelSelector"
           }
         ],
@@ -4617,17 +4668,17 @@
         },
         "summary": "List all network interfaces inside a network."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkID"
+        }
+      ],
       "post": {
         "description": "Create a new network interface in a project.",
         "operationId": "CreateNic",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4679,17 +4730,6 @@
       "delete": {
         "description": "Delete a network interface that is part of the project.",
         "operationId": "DeleteNic",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NICID"
-          }
-        ],
         "responses": {
           "204": {
             "description": "Network interface delete request has been accepted."
@@ -4715,17 +4755,6 @@
       "get": {
         "description": "Get details about a network interface inside a network.",
         "operationId": "GetNic",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NICID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -4755,20 +4784,20 @@
         },
         "summary": "Get details about a network interface."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NICID"
+        }
+      ],
       "patch": {
         "description": "Update the properties of an existing network interface inside a network.",
         "operationId": "UpdateNic",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NICID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4819,9 +4848,6 @@
         "operationId": "ListPublicIPs",
         "parameters": [
           {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
             "$ref": "#/components/parameters/v1LabelSelector"
           }
         ],
@@ -4854,14 +4880,14 @@
         },
         "summary": "List all public IPs inside a project."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        }
+      ],
       "post": {
         "description": "Create a new public IP in a project.",
         "operationId": "CreatePublicIP",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4910,14 +4936,6 @@
       "delete": {
         "description": "Delete a public IP that is part of the project.",
         "operationId": "DeletePublicIP",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1PublicIPID"
-          }
-        ],
         "responses": {
           "204": {
             "description": "The public IP has been deleted."
@@ -4943,14 +4961,6 @@
       "get": {
         "description": "Get details about a public IP inside a project.",
         "operationId": "GetPublicIP",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1PublicIPID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -4980,17 +4990,17 @@
         },
         "summary": "Get details about a public IP."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1PublicIPID"
+        }
+      ],
       "patch": {
         "description": "Update the properties of an existing public IP inside a project.",
         "operationId": "UpdatePublicIP",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1PublicIPID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -5036,14 +5046,6 @@
       "get": {
         "description": "Lookup a project request ID from a previous request. This allows to find resource IDs of resources generated during a projects request.",
         "operationId": "GetProjectRequest",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1RequestID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -5072,16 +5074,21 @@
           }
         },
         "summary": "Lookup a project request ID."
-      }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1RequestID"
+        }
+      ]
     },
     "/v1beta1/projects/{projectId}/security-groups": {
       "get": {
         "description": "Get a list of all security groups inside a project.",
         "operationId": "ListSecurityGroups",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
           {
             "$ref": "#/components/parameters/v1LabelSelector"
           }
@@ -5115,14 +5122,14 @@
         },
         "summary": "List all security groups inside a project."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        }
+      ],
       "post": {
         "description": "Create a new security group in a project.",
         "operationId": "CreateSecurityGroup",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -5168,14 +5175,6 @@
       "delete": {
         "description": "Delete a security group.",
         "operationId": "DeleteSecurityGroup",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1SecurityGroupID"
-          }
-        ],
         "responses": {
           "204": {
             "description": "Delete request for security group has been accepted."
@@ -5204,14 +5203,6 @@
       "get": {
         "description": "Get details about a security group of a project.",
         "operationId": "GetSecurityGroup",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1SecurityGroupID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -5241,17 +5232,17 @@
         },
         "summary": "Get security group details."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1SecurityGroupID"
+        }
+      ],
       "patch": {
         "description": "Update labels of the security group.",
         "operationId": "UpdateSecurityGroup",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1SecurityGroupID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -5297,14 +5288,6 @@
       "get": {
         "description": "Get a list of all rules inside a security group.",
         "operationId": "ListSecurityGroupRules",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1SecurityGroupID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -5334,17 +5317,17 @@
         },
         "summary": "List all rules for a security group."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1SecurityGroupID"
+        }
+      ],
       "post": {
         "description": "Create a new security group rule in a project.",
         "operationId": "CreateSecurityGroupRule",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1SecurityGroupID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -5390,17 +5373,6 @@
       "delete": {
         "description": "Delete a security group rule.",
         "operationId": "DeleteSecurityGroupRule",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1SecurityGroupID"
-          },
-          {
-            "$ref": "#/components/parameters/v1SecurityGroupRuleID"
-          }
-        ],
         "responses": {
           "204": {
             "description": "Delete request for security group rule has been accepted."
@@ -5426,17 +5398,6 @@
       "get": {
         "description": "Get details about a security group rule of a project.",
         "operationId": "GetSecurityGroupRule",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1SecurityGroupID"
-          },
-          {
-            "$ref": "#/components/parameters/v1SecurityGroupRuleID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -5465,16 +5426,24 @@
           }
         },
         "summary": "Get security group rule details."
-      }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1SecurityGroupID"
+        },
+        {
+          "$ref": "#/components/parameters/v1SecurityGroupRuleID"
+        }
+      ]
     },
     "/v1beta1/projects/{projectId}/servers": {
       "get": {
         "description": "Get a list of all servers inside a project.",
         "operationId": "ListServers",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
           {
             "$ref": "#/components/parameters/v1ServerDetail"
           },
@@ -5511,14 +5480,14 @@
         },
         "summary": "List all servers inside a project."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        }
+      ],
       "post": {
         "description": "Create a new server in a project.",
         "operationId": "CreateServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -5633,14 +5602,6 @@
       "delete": {
         "description": "Delete a server. Volumes won't be deleted.",
         "operationId": "DeleteServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          }
-        ],
         "responses": {
           "204": {
             "description": "Delete request for server accepted."
@@ -5667,12 +5628,6 @@
         "description": "Get details about a server by its ID.",
         "operationId": "GetServer",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          },
           {
             "$ref": "#/components/parameters/v1ServerDetail"
           }
@@ -5706,17 +5661,17 @@
         },
         "summary": "Get server details."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServerID"
+        }
+      ],
       "patch": {
         "description": "Update name or labels of the server.",
         "operationId": "UpdateServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -5776,14 +5731,6 @@
       "get": {
         "description": "Get a URL for server remote console.",
         "operationId": "GetServerConsole",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -5812,20 +5759,28 @@
           }
         },
         "summary": "Get server console."
-      }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServerID"
+        }
+      ]
     },
     "/v1beta1/projects/{projectId}/servers/{serverId}/deallocate": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServerID"
+        }
+      ],
       "post": {
         "description": "Deallocate an existing server. The server will be removed from the hypervisor so only the volume will be billed.",
         "operationId": "DeallocateServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          }
-        ],
         "responses": {
           "202": {
             "description": "Server deallocation request accepted."
@@ -5858,34 +5813,9 @@
         "operationId": "GetServerLog",
         "parameters": [
           {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
+            "$ref": "#/components/parameters/v1LogLength"
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "example": {
-                "length": 5000
-              },
-              "schema": {
-                "properties": {
-                  "length": {
-                    "default": 2000,
-                    "description": "Set to 0 to retrieve the complete log.",
-                    "format": "int64",
-                    "minimum": 0,
-                    "type": "integer"
-                  }
-                },
-                "type": "object"
-              }
-            }
-          },
-          "description": "Request the server log. By default the length is limited to 2000 lines."
-        },
         "responses": {
           "200": {
             "content": {
@@ -5922,23 +5852,20 @@
           }
         },
         "summary": "Get server log."
-      }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServerID"
+        }
+      ]
     },
     "/v1beta1/projects/{projectId}/servers/{serverId}/networks/{networkId}": {
       "delete": {
         "description": "Detach and delete all network interfaces associated with the specified network from the server.",
         "operationId": "RemoveNetworkFromServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkID"
-          }
-        ],
         "responses": {
           "204": {
             "description": "Detach and delete network interface was accepted."
@@ -5961,20 +5888,20 @@
         },
         "summary": "Detach and delete all network interfaces associated with the specified network."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServerID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkID"
+        }
+      ],
       "post": {
         "description": "Create and attach a network interface from the specified network to the server.",
         "operationId": "AddNetworkToServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NetworkID"
-          }
-        ],
         "responses": {
           "202": {
             "description": "Create and attach network interface was accepted."
@@ -6002,14 +5929,6 @@
       "get": {
         "description": "Get all network interfaces attached to the server.",
         "operationId": "ListServerNics",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -6038,23 +5957,20 @@
           }
         },
         "summary": "Get all network interfaces."
-      }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServerID"
+        }
+      ]
     },
     "/v1beta1/projects/{projectId}/servers/{serverId}/nics/{nicId}": {
       "delete": {
         "description": "Detach a network interface from a server.",
         "operationId": "RemoveNicFromServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NICID"
-          }
-        ],
         "responses": {
           "204": {
             "description": "Network interface detachment request was accepted."
@@ -6077,20 +5993,20 @@
         },
         "summary": "Detach a network interface."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServerID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NICID"
+        }
+      ],
       "put": {
         "description": "Attach an existing network interface to a server.",
         "operationId": "AddNicToServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          },
-          {
-            "$ref": "#/components/parameters/v1NICID"
-          }
-        ],
         "responses": {
           "202": {
             "description": "Network interface attachment request was accepted."
@@ -6121,17 +6037,6 @@
       "delete": {
         "description": "Dissociate a public IP on an existing server.",
         "operationId": "RemovePublicIpFromServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          },
-          {
-            "$ref": "#/components/parameters/v1PublicIPID"
-          }
-        ],
         "responses": {
           "204": {
             "description": "Detach Public IP from server was accepted."
@@ -6157,20 +6062,20 @@
         },
         "summary": "Dissociate a public IP from a server."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServerID"
+        },
+        {
+          "$ref": "#/components/parameters/v1PublicIPID"
+        }
+      ],
       "put": {
         "description": "Associate a public IP to a server.",
         "operationId": "AddPublicIpToServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          },
-          {
-            "$ref": "#/components/parameters/v1PublicIPID"
-          }
-        ],
         "responses": {
           "202": {
             "description": "Attach Public IP to server was accepted."
@@ -6198,16 +6103,18 @@
       }
     },
     "/v1beta1/projects/{projectId}/servers/{serverId}/reboot": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServerID"
+        }
+      ],
       "post": {
         "description": "Reboot the server. A soft reboot will attempt to gracefully shut down the server by passing the command to the operating system. A hard reboot will power cycle the server without waiting for the operating system to shutdown properly.",
         "operationId": "RebootServer",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          },
           {
             "description": "Defines if it is a soft or a hard reboot.",
             "example": "soft",
@@ -6250,17 +6157,17 @@
       }
     },
     "/v1beta1/projects/{projectId}/servers/{serverId}/rescue": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServerID"
+        }
+      ],
       "post": {
         "description": "Rescue an existing server. It is shutdown and the initial image is attached as the boot volume, while the boot volume is attached as secondary volume and the server is booted.",
         "operationId": "RescueServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -6302,17 +6209,17 @@
       }
     },
     "/v1beta1/projects/{projectId}/servers/{serverId}/resize": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServerID"
+        }
+      ],
       "post": {
         "description": "Resize the server to the given machine type.",
         "operationId": "ResizeServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -6357,17 +6264,6 @@
       "delete": {
         "description": "Remove a server from a attached security group.",
         "operationId": "RemoveSecurityGroupFromServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          },
-          {
-            "$ref": "#/components/parameters/v1SecurityGroupID"
-          }
-        ],
         "responses": {
           "204": {
             "description": "Security group detachment request was accepted."
@@ -6393,20 +6289,20 @@
         },
         "summary": "Remove a server from a security group."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServerID"
+        },
+        {
+          "$ref": "#/components/parameters/v1SecurityGroupID"
+        }
+      ],
       "put": {
         "description": "Add an existing server to an existing security group.",
         "operationId": "AddSecurityGroupToServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          },
-          {
-            "$ref": "#/components/parameters/v1SecurityGroupID"
-          }
-        ],
         "responses": {
           "202": {
             "description": "Security group attachment request was accepted."
@@ -6437,14 +6333,6 @@
       "get": {
         "description": "Get the list of the service accounts of the server.",
         "operationId": "ListServerServiceAccounts",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -6473,23 +6361,20 @@
           }
         },
         "summary": "List all service accounts of the Server."
-      }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServerID"
+        }
+      ]
     },
     "/v1beta1/projects/{projectId}/servers/{serverId}/service-accounts/{serviceAccountMail}": {
       "delete": {
         "description": "Detach an additional service account from the server.",
         "operationId": "RemoveServiceAccountFromServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServiceAccountMail"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -6522,20 +6407,20 @@
         },
         "summary": "Detach a service account from a server."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServerID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServiceAccountMail"
+        }
+      ],
       "put": {
         "description": "Attach an additional service account to the server.",
         "operationId": "AddServiceAccountToServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServiceAccountMail"
-          }
-        ],
         "responses": {
           "201": {
             "content": {
@@ -6570,17 +6455,17 @@
       }
     },
     "/v1beta1/projects/{projectId}/servers/{serverId}/start": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServerID"
+        }
+      ],
       "post": {
         "description": "Start an existing server or allocates the server if deallocated.",
         "operationId": "StartServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          }
-        ],
         "responses": {
           "202": {
             "description": "Server start request accepted."
@@ -6608,17 +6493,17 @@
       }
     },
     "/v1beta1/projects/{projectId}/servers/{serverId}/stop": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServerID"
+        }
+      ],
       "post": {
         "description": "Stops an existing server. The server will remain on the Hypervisor and will be charged full price for all resources attached to it. The attached resources will remain reserved. Useful particularly for vGPU servers.",
         "operationId": "StopServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          }
-        ],
         "responses": {
           "202": {
             "description": "Server stop request accepted."
@@ -6646,17 +6531,17 @@
       }
     },
     "/v1beta1/projects/{projectId}/servers/{serverId}/unrescue": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServerID"
+        }
+      ],
       "post": {
         "description": "Unrescue an existing server. The original boot volume is attached as boot volume of the server and the server is booted up.",
         "operationId": "UnrescueServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          }
-        ],
         "responses": {
           "202": {
             "description": "Server unrescue request accepted."
@@ -6687,14 +6572,6 @@
       "get": {
         "description": "Get a list of all volume attachments of a server.",
         "operationId": "ListAttachedVolumes",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -6723,23 +6600,20 @@
           }
         },
         "summary": "List all volume attachments of a server."
-      }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServerID"
+        }
+      ]
     },
     "/v1beta1/projects/{projectId}/servers/{serverId}/volume-attachments/{volumeId}": {
       "delete": {
         "description": "Detach an existing volume from an existing server.",
         "operationId": "RemoveVolumeFromServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          },
-          {
-            "$ref": "#/components/parameters/v1VolumeID"
-          }
-        ],
         "responses": {
           "204": {
             "description": "Volume detachment request was accepted."
@@ -6768,17 +6642,6 @@
       "get": {
         "description": "Get the details of an existing Volume Attachment.",
         "operationId": "GetAttachedVolume",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          },
-          {
-            "$ref": "#/components/parameters/v1VolumeID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -6808,20 +6671,20 @@
         },
         "summary": "Get Volume Attachment details."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ServerID"
+        },
+        {
+          "$ref": "#/components/parameters/v1VolumeID"
+        }
+      ],
       "patch": {
         "description": "Update the properties of an existing Volume Attachment.",
         "operationId": "UpdateAttachedVolume",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          },
-          {
-            "$ref": "#/components/parameters/v1VolumeID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -6868,17 +6731,6 @@
       "put": {
         "description": "Attach an existing volume to an existing server.",
         "operationId": "AddVolumeToServer",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1ServerID"
-          },
-          {
-            "$ref": "#/components/parameters/v1VolumeID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -6928,9 +6780,6 @@
         "operationId": "ListVolumePerformanceClasses",
         "parameters": [
           {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
             "$ref": "#/components/parameters/v1LabelSelector"
           }
         ],
@@ -6962,20 +6811,17 @@
           }
         },
         "summary": "List all volume performance classes available for a project."
-      }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        }
+      ]
     },
     "/v1beta1/projects/{projectId}/volume-performance-classes/{volumePerformanceClass}": {
       "get": {
         "description": "Get details about a specific volume performance class.",
         "operationId": "GetVolumePerformanceClass",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1VolumePerformanceClassName"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -7004,16 +6850,21 @@
           }
         },
         "summary": "Get details about a volume performance class."
-      }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1VolumePerformanceClassName"
+        }
+      ]
     },
     "/v1beta1/projects/{projectId}/volumes": {
       "get": {
         "description": "Get a list of all volumes inside a project.",
         "operationId": "ListVolumes",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
           {
             "$ref": "#/components/parameters/v1LabelSelector"
           }
@@ -7047,14 +6898,14 @@
         },
         "summary": "List all volumes inside a project."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        }
+      ],
       "post": {
         "description": "Create a new volume in a project. If a volume source is not provided, an empty volume will be created. The size property is required if no source or an image source is provided.",
         "operationId": "CreateVolume",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -7158,14 +7009,6 @@
       "delete": {
         "description": "Delete a volume inside a project. The deletion will fail if the volume is still in use.",
         "operationId": "DeleteVolume",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1VolumeID"
-          }
-        ],
         "responses": {
           "204": {
             "description": "Volume delete request has been accepted."
@@ -7194,14 +7037,6 @@
       "get": {
         "description": "Get details about a block device volume.",
         "operationId": "GetVolume",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1VolumeID"
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -7231,17 +7066,17 @@
         },
         "summary": "Get details about a volume."
       },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1VolumeID"
+        }
+      ],
       "patch": {
         "description": "Update name, description or labels of the volume.",
         "operationId": "UpdateVolume",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1VolumeID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -7284,17 +7119,17 @@
       }
     },
     "/v1beta1/projects/{projectId}/volumes/{volumeId}/resize": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1VolumeID"
+        }
+      ],
       "post": {
         "description": "Update the size of a block device volume. The new volume size must be larger than the current size.",
         "operationId": "ResizeVolume",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1ProjectID"
-          },
-          {
-            "$ref": "#/components/parameters/v1VolumeID"
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {

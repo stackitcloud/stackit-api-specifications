@@ -603,6 +603,25 @@
         "example": "eu01-1",
         "type": "string"
       },
+      "AvailabilityZoneList": {
+        "description": "A list of availability zones.",
+        "items": {
+          "$ref": "#/components/schemas/AvailabilityZone"
+        },
+        "type": "array"
+      },
+      "AvailabilityZoneListResponse": {
+        "description": "Availability Zone list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/AvailabilityZoneList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
       "BaseSecurityGroupRule": {
         "description": "The base schema for a security group rule.",
         "properties": {
@@ -3845,6 +3864,40 @@
   },
   "openapi": "3.0.1",
   "paths": {
+    "/v1alpha1/availability-zones": {
+      "get": {
+        "description": "Get a list of all availability zones.",
+        "operationId": "ListAvailabilityZones",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvailabilityZoneListResponse"
+                }
+              }
+            },
+            "description": "Get a list of availability zones."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all availability zones."
+      }
+    },
     "/v1alpha1/keypairs": {
       "get": {
         "description": "Get a list of all SSH keypairs assigned to the requesting user.",

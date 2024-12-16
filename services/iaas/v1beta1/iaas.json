@@ -1626,6 +1626,64 @@
         ],
         "type": "object"
       },
+      "CreateSnapshotPayload": {
+        "description": "Object that represents a snapshot.",
+        "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "size": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SizeInGB"
+              }
+            ],
+            "readOnly": true
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SnapshotStatus"
+              }
+            ],
+            "readOnly": true
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "volumeId": {
+            "$ref": "#/components/schemas/UUID"
+          }
+        },
+        "required": [
+          "volumeId"
+        ],
+        "type": "object"
+      },
       "CreateVolumePayload": {
         "description": "Object that represents a volume and its parameters. Used for Creating and returning (get/list).",
         "properties": {
@@ -2087,12 +2145,14 @@
         "type": "string"
       },
       "ImageShare": {
-        "description": "Share details of an Image. ParentOrganization and Projects are mutually exclusive.",
+        "description": "Share details of an Image. For requests ParentOrganization and Projects are mutually exclusive.",
         "properties": {
           "parentOrganization": {
+            "description": "Image is shared with all projects inside the image owners organization.",
             "type": "boolean"
           },
           "projects": {
+            "description": "List of all projects the Image is shared with.",
             "items": {
               "$ref": "#/components/schemas/UUID"
             },
@@ -3487,12 +3547,14 @@
         "type": "object"
       },
       "SetImageSharePayload": {
-        "description": "Share details of an Image. ParentOrganization and Projects are mutually exclusive.",
+        "description": "Share details of an Image. For requests ParentOrganization and Projects are mutually exclusive.",
         "properties": {
           "parentOrganization": {
+            "description": "Image is shared with all projects inside the image owners organization.",
             "type": "boolean"
           },
           "projects": {
+            "description": "List of all projects the Image is shared with.",
             "items": {
               "$ref": "#/components/schemas/UUID"
             },
@@ -3678,6 +3740,82 @@
         },
         "type": "object"
       },
+      "UpdateBackupPayload": {
+        "description": "Object that represents a backup.",
+        "properties": {
+          "availabilityZone": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AvailabilityZone"
+              }
+            ],
+            "readOnly": true
+          },
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "size": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SizeInGB"
+              }
+            ],
+            "readOnly": true
+          },
+          "snapshotId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BackupStatus"
+              }
+            ],
+            "readOnly": true
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "volumeId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "type": "object"
+      },
       "UpdateImagePayload": {
         "description": "Object that represents an update request body of an Image.",
         "properties": {
@@ -3707,12 +3845,14 @@
         "type": "object"
       },
       "UpdateImageSharePayload": {
-        "description": "Share details of an Image. ParentOrganization and Projects are mutually exclusive.",
+        "description": "Share details of an Image. For requests ParentOrganization and Projects are mutually exclusive.",
         "properties": {
           "parentOrganization": {
+            "description": "Image is shared with all projects inside the image owners organization.",
             "type": "boolean"
           },
           "projects": {
+            "description": "List of all projects the Image is shared with.",
             "items": {
               "$ref": "#/components/schemas/UUID"
             },
@@ -3847,6 +3987,18 @@
       },
       "UpdateServerPayload": {
         "description": "Object that represents an update request body of a server.",
+        "properties": {
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateSnapshotPayload": {
+        "description": "Object that represents an update request body of a snapshot.",
         "properties": {
           "labels": {
             "$ref": "#/components/schemas/Labels"
@@ -4126,152 +4278,6 @@
         "description": "An error message.",
         "example": "Project not found",
         "type": "string"
-      },
-      "v1beta1CreateSnapshotPayload": {
-        "description": "Object that represents a snapshot.",
-        "properties": {
-          "createdAt": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/CreatedAt"
-              }
-            ],
-            "readOnly": true
-          },
-          "id": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UUID"
-              }
-            ],
-            "readOnly": true
-          },
-          "labels": {
-            "$ref": "#/components/schemas/Labels"
-          },
-          "name": {
-            "$ref": "#/components/schemas/GenericName"
-          },
-          "size": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/SizeInGB"
-              }
-            ],
-            "readOnly": true
-          },
-          "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/SnapshotStatus"
-              }
-            ],
-            "readOnly": true
-          },
-          "updatedAt": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UpdatedAt"
-              }
-            ],
-            "readOnly": true
-          },
-          "volumeId": {
-            "$ref": "#/components/schemas/UUID"
-          }
-        },
-        "required": [
-          "volumeId"
-        ],
-        "type": "object"
-      },
-      "v1beta1UpdateBackupPayload": {
-        "description": "Object that represents a backup.",
-        "properties": {
-          "availabilityZone": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AvailabilityZone"
-              }
-            ],
-            "readOnly": true
-          },
-          "createdAt": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/CreatedAt"
-              }
-            ],
-            "readOnly": true
-          },
-          "id": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UUID"
-              }
-            ],
-            "readOnly": true
-          },
-          "labels": {
-            "$ref": "#/components/schemas/Labels"
-          },
-          "name": {
-            "$ref": "#/components/schemas/GenericName"
-          },
-          "size": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/SizeInGB"
-              }
-            ],
-            "readOnly": true
-          },
-          "snapshotId": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UUID"
-              }
-            ],
-            "readOnly": true
-          },
-          "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/BackupStatus"
-              }
-            ],
-            "readOnly": true
-          },
-          "updatedAt": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UpdatedAt"
-              }
-            ],
-            "readOnly": true
-          },
-          "volumeId": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UUID"
-              }
-            ],
-            "readOnly": true
-          }
-        },
-        "type": "object"
-      },
-      "v1beta1UpdateSnapshotPayload": {
-        "description": "Object that represents an update request body of a snapshot.",
-        "properties": {
-          "labels": {
-            "$ref": "#/components/schemas/Labels"
-          },
-          "name": {
-            "$ref": "#/components/schemas/GenericName"
-          }
-        },
-        "type": "object"
       }
     }
   },
@@ -5560,7 +5566,7 @@
       ],
       "patch": {
         "description": "Update name or labels of the backup.",
-        "operationId": "v1beta1UpdateBackup",
+        "operationId": "UpdateBackup",
         "requestBody": {
           "content": {
             "application/json": {
@@ -5579,7 +5585,7 @@
                 }
               },
               "schema": {
-                "$ref": "#/components/schemas/v1beta1UpdateBackupPayload"
+                "$ref": "#/components/schemas/UpdateBackupPayload"
               }
             }
           },
@@ -8717,7 +8723,7 @@
     "/v1beta1/projects/{projectId}/snapshots": {
       "get": {
         "description": "Get a list of all snapshots inside a project.",
-        "operationId": "v1beta1ListSnapshotsInProject",
+        "operationId": "ListSnapshots",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1LabelSelector"
@@ -8759,7 +8765,7 @@
       ],
       "post": {
         "description": "Create a new Snapshot from a Volume in a project.",
-        "operationId": "v1beta1CreateSnapshot",
+        "operationId": "CreateSnapshot",
         "requestBody": {
           "content": {
             "application/json": {
@@ -8768,7 +8774,7 @@
                 "volumeId": "d61a8564-c8dd-4ffb-bc15-143e7d0c85ed"
               },
               "schema": {
-                "$ref": "#/components/schemas/v1beta1CreateSnapshotPayload"
+                "$ref": "#/components/schemas/CreateSnapshotPayload"
               }
             }
           },
@@ -8808,7 +8814,7 @@
     "/v1beta1/projects/{projectId}/snapshots/{snapshotId}": {
       "delete": {
         "description": "Delete a snapshot that is part of the project.",
-        "operationId": "v1beta1DeleteSnapshot",
+        "operationId": "DeleteSnapshot",
         "responses": {
           "204": {
             "description": "Snapshot delete request has been accepted."
@@ -8833,7 +8839,7 @@
       },
       "get": {
         "description": "Get details about a block device snapshot.",
-        "operationId": "v1beta1GetSnapshot",
+        "operationId": "GetSnapshot",
         "responses": {
           "200": {
             "content": {
@@ -8873,7 +8879,7 @@
       ],
       "patch": {
         "description": "Update information like name or labels of the snapshot.",
-        "operationId": "v1beta1UpdateSnapshot",
+        "operationId": "UpdateSnapshot",
         "requestBody": {
           "content": {
             "application/json": {
@@ -8892,7 +8898,7 @@
                 }
               },
               "schema": {
-                "$ref": "#/components/schemas/v1beta1UpdateSnapshotPayload"
+                "$ref": "#/components/schemas/UpdateSnapshotPayload"
               }
             }
           },

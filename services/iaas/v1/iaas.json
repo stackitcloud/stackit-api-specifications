@@ -85,6 +85,15 @@
           "$ref": "#/components/schemas/UUID"
         }
       },
+      "v1NetworkRangeID": {
+        "description": "The identifier (ID) of a STACKIT Network Range.",
+        "in": "path",
+        "name": "networkRangeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
       "v1OrganizationID": {
         "description": "The identifier (ID) of a STACKIT Organization.",
         "in": "path",
@@ -119,6 +128,15 @@
         "required": true,
         "schema": {
           "$ref": "#/components/schemas/ReqId"
+        }
+      },
+      "v1RouteID": {
+        "description": "The identifier (ID) of a STACKIT Route.",
+        "in": "path",
+        "name": "routeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
         }
       },
       "v1SecurityGroupID": {
@@ -165,15 +183,6 @@
         "required": true,
         "schema": {
           "$ref": "#/components/schemas/ServiceAccountMail"
-        }
-      },
-      "v1VirtualIPID": {
-        "description": "The identifier (ID) of a Virtual IP.",
-        "in": "path",
-        "name": "virtualIpId",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/UUID"
         }
       },
       "v1VolumeID": {
@@ -384,21 +393,12 @@
           }
         },
         "description": "A request which was not authorized."
+      },
+      "UpdateAccepted": {
+        "description": "An update was accepted."
       }
     },
     "schemas": {
-      "AddMemberToVirtualIPPayload": {
-        "description": "Object that represents a virtual IP member.",
-        "properties": {
-          "member": {
-            "$ref": "#/components/schemas/UUID"
-          }
-        },
-        "required": [
-          "member"
-        ],
-        "type": "object"
-      },
       "AddVolumeToServerPayload": {
         "description": "Object that represents a Volume attachment to a server.",
         "properties": {
@@ -702,6 +702,12 @@
         "pattern": "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\/(3[0-2]|2[0-9]|1[0-9]|[0-9]))$|^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))(\\/((1(1[0-9]|2[0-8]))|([0-9][0-9])|([0-9])))?$",
         "type": "string"
       },
+      "CIDRv6": {
+        "description": "Classless Inter-Domain Routing (CIDR) for IPv6.",
+        "example": "2001:0db8:85a3:0800::/56",
+        "pattern": "^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))(\\/((1(1[0-9]|2[0-8]))|([0-9][0-9])|([0-9])))?$",
+        "type": "string"
+      },
       "CreateAreaAddressFamily": {
         "description": "The addressFamily object for a area create request.",
         "minProperties": 1,
@@ -851,6 +857,61 @@
         "required": [
           "publicKey"
         ],
+        "type": "object"
+      },
+      "CreateNetworkAddressFamily": {
+        "description": "The addressFamily object for a network create request.",
+        "minProperties": 1,
+        "properties": {
+          "ipv4": {
+            "$ref": "#/components/schemas/CreateNetworkIPv4Body"
+          },
+          "ipv6": {
+            "$ref": "#/components/schemas/CreateNetworkIPv6Body"
+          }
+        },
+        "type": "object"
+      },
+      "CreateNetworkIPv4Body": {
+        "description": "The config object for an IPv4 network.",
+        "properties": {
+          "gateway": {
+            "$ref": "#/components/schemas/NetworkGateway"
+          },
+          "nameservers": {
+            "$ref": "#/components/schemas/Nameserver"
+          },
+          "prefix": {
+            "$ref": "#/components/schemas/CIDR"
+          },
+          "prefixLength": {
+            "example": 24,
+            "maximum": 29,
+            "minimum": 8,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "CreateNetworkIPv6Body": {
+        "description": "The config object for an IPv6 network.",
+        "properties": {
+          "gateway": {
+            "$ref": "#/components/schemas/NetworkGateway"
+          },
+          "nameservers": {
+            "$ref": "#/components/schemas/Nameserverv6"
+          },
+          "prefix": {
+            "$ref": "#/components/schemas/CIDRv6"
+          },
+          "prefixLength": {
+            "example": 64,
+            "maximum": 128,
+            "minimum": 56,
+            "type": "integer"
+          }
+        },
         "type": "object"
       },
       "CreateNicPayload": {
@@ -1250,48 +1311,6 @@
           "name",
           "machineType"
         ],
-        "type": "object"
-      },
-      "CreateVirtualIPPayload": {
-        "description": "Object that represents a virtual IP.",
-        "properties": {
-          "id": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UUID"
-              }
-            ],
-            "readOnly": true
-          },
-          "ip": {
-            "$ref": "#/components/schemas/IP"
-          },
-          "labels": {
-            "$ref": "#/components/schemas/Labels"
-          },
-          "members": {
-            "$ref": "#/components/schemas/UUIDList"
-          },
-          "name": {
-            "$ref": "#/components/schemas/GenericName"
-          },
-          "network": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UUID"
-              }
-            ],
-            "readOnly": true
-          },
-          "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ResourceState"
-              }
-            ],
-            "readOnly": true
-          }
-        },
         "type": "object"
       },
       "CreateVolumePayload": {
@@ -2321,6 +2340,18 @@
         "minItems": 1,
         "type": "array"
       },
+      "NetworkRangeListResponse": {
+        "description": "Network Range list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/NetworkRangeList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
       "OpenStackProjectId": {
         "description": "The identifier (ID) of an OpenStack project.",
         "example": "d61a8564c8dd4ffbbc15143e7d0c85ed",
@@ -2531,18 +2562,6 @@
         ],
         "type": "object"
       },
-      "RemoveMemberFromVirtualIPPayload": {
-        "description": "Object that represents a virtual IP member.",
-        "properties": {
-          "member": {
-            "$ref": "#/components/schemas/UUID"
-          }
-        },
-        "required": [
-          "member"
-        ],
-        "type": "object"
-      },
       "ReqId": {
         "description": "Identifier (ID) representing a single API request.",
         "example": "req-d61a8564c8dd4ffbbc15143e7d0c85ed",
@@ -2710,6 +2729,18 @@
           "$ref": "#/components/schemas/Route"
         },
         "type": "array"
+      },
+      "RouteListResponse": {
+        "description": "Route list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/RouteList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
       },
       "Routed": {
         "description": "Shows if the network is routed and therefore accessible from other networks.",
@@ -3368,6 +3399,43 @@
         },
         "type": "object"
       },
+      "UpdateNetworkAddressFamily": {
+        "description": "The addressFamily object for a network update request.",
+        "minProperties": 1,
+        "properties": {
+          "ipv4": {
+            "$ref": "#/components/schemas/UpdateNetworkIPv4Body"
+          },
+          "ipv6": {
+            "$ref": "#/components/schemas/UpdateNetworkIPv6Body"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateNetworkIPv4Body": {
+        "description": "The config object for a IPv4 network update.",
+        "properties": {
+          "gateway": {
+            "$ref": "#/components/schemas/NetworkGateway"
+          },
+          "nameservers": {
+            "$ref": "#/components/schemas/Nameserver"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateNetworkIPv6Body": {
+        "description": "The config object for a IPv6 network update.",
+        "properties": {
+          "gateway": {
+            "$ref": "#/components/schemas/NetworkGateway"
+          },
+          "nameservers": {
+            "$ref": "#/components/schemas/Nameserverv6"
+          }
+        },
+        "type": "object"
+      },
       "UpdateNicPayload": {
         "description": "Object that represents a network interface update.",
         "properties": {
@@ -3450,26 +3518,6 @@
         },
         "type": "object"
       },
-      "UpdateVirtualIPPayload": {
-        "description": "Object that represents a virtual IP update request body.",
-        "properties": {
-          "labels": {
-            "$ref": "#/components/schemas/Labels"
-          },
-          "members": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UUIDList"
-              }
-            ],
-            "nullable": true
-          },
-          "name": {
-            "$ref": "#/components/schemas/GenericName"
-          }
-        },
-        "type": "object"
-      },
       "UpdateVolumePayload": {
         "description": "Object that represents an update request body of a  volume.",
         "properties": {
@@ -3503,67 +3551,6 @@
         "format": "int64",
         "minimum": 1,
         "type": "integer"
-      },
-      "VirtualIp": {
-        "description": "Object that represents a virtual IP.",
-        "properties": {
-          "id": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UUID"
-              }
-            ],
-            "readOnly": true
-          },
-          "ip": {
-            "$ref": "#/components/schemas/IP"
-          },
-          "labels": {
-            "$ref": "#/components/schemas/Labels"
-          },
-          "members": {
-            "$ref": "#/components/schemas/UUIDList"
-          },
-          "name": {
-            "$ref": "#/components/schemas/GenericName"
-          },
-          "network": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UUID"
-              }
-            ],
-            "readOnly": true
-          },
-          "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ResourceState"
-              }
-            ],
-            "readOnly": true
-          }
-        },
-        "type": "object"
-      },
-      "VirtualIpList": {
-        "description": "A list of virtual IPs.",
-        "items": {
-          "$ref": "#/components/schemas/VirtualIp"
-        },
-        "type": "array"
-      },
-      "VirtualIpListResponse": {
-        "description": "Virtual IPs list response.",
-        "properties": {
-          "items": {
-            "$ref": "#/components/schemas/VirtualIpList"
-          }
-        },
-        "required": [
-          "items"
-        ],
-        "type": "object"
       },
       "Volume": {
         "description": "Object that represents a volume and its parameters. Used for Creating and returning (get/list).",
@@ -3800,6 +3787,102 @@
         "description": "An error message.",
         "example": "Project not found",
         "type": "string"
+      },
+      "v1AddNetworkRangesToAreaPayload": {
+        "properties": {
+          "ipv4": {
+            "$ref": "#/components/schemas/NetworkRangeList"
+          }
+        },
+        "type": "object"
+      },
+      "v1AddRoutesToAreaPayload": {
+        "properties": {
+          "ipv4": {
+            "$ref": "#/components/schemas/RouteList"
+          }
+        },
+        "type": "object"
+      },
+      "v1CreateAreaPayload": {
+        "properties": {
+          "addressFamily": {
+            "$ref": "#/components/schemas/CreateAreaAddressFamily"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          }
+        },
+        "required": [
+          "name",
+          "addressFamily"
+        ],
+        "type": "object"
+      },
+      "v1CreateNetworkPayload": {
+        "description": "Object that represents the request body for a network create.",
+        "properties": {
+          "addressFamily": {
+            "$ref": "#/components/schemas/CreateNetworkAddressFamily"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "routed": {
+            "$ref": "#/components/schemas/Routed"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "v1UpdateAreaPayload": {
+        "properties": {
+          "addressFamily": {
+            "$ref": "#/components/schemas/UpdateAreaAddressFamily"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          }
+        },
+        "type": "object"
+      },
+      "v1UpdateNetworkPayload": {
+        "description": "Object that represents the request body for a network update.",
+        "properties": {
+          "addressFamily": {
+            "$ref": "#/components/schemas/UpdateNetworkAddressFamily"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "routed": {
+            "$ref": "#/components/schemas/Routed"
+          }
+        },
+        "type": "object"
+      },
+      "v1UpdateRouteOfAreaPayload": {
+        "description": "Object that represents the request body for a route update.",
+        "properties": {
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          }
+        },
+        "type": "object"
       }
     }
   },
@@ -3812,11 +3895,11 @@
     "description": "This API allows you to create and modify IaaS resources.",
     "termsOfService": "https://stackit.de/en/imprint",
     "title": "IaaS-API",
-    "version": "1alpha1"
+    "version": "1"
   },
   "openapi": "3.0.1",
   "paths": {
-    "/v1alpha1/availability-zones": {
+    "/v1/availability-zones": {
       "get": {
         "description": "Get a list of all availability zones.",
         "operationId": "ListAvailabilityZones",
@@ -3850,7 +3933,7 @@
         "summary": "List all availability zones."
       }
     },
-    "/v1alpha1/keypairs": {
+    "/v1/keypairs": {
       "get": {
         "description": "Get a list of all SSH keypairs assigned to the requesting user.",
         "operationId": "ListKeyPairs",
@@ -3935,7 +4018,7 @@
         "summary": "Import a public key."
       }
     },
-    "/v1alpha1/keypairs/{keypairName}": {
+    "/v1/keypairs/{keypairName}": {
       "delete": {
         "description": "Delete an SSH keypair from a user.",
         "operationId": "DeleteKeyPair",
@@ -4042,7 +4125,7 @@
         "summary": "Update information of an SSH keypair."
       }
     },
-    "/v1alpha1/networks/public-ip-ranges": {
+    "/v1/networks/public-ip-ranges": {
       "get": {
         "description": "Get a list of all public IP ranges that STACKIT uses.",
         "operationId": "ListPublicIPRanges",
@@ -4076,10 +4159,10 @@
         "summary": "List all public IP ranges."
       }
     },
-    "/v1alpha1/organizations/{organizationId}/network-areas": {
+    "/v1/organizations/{organizationId}/network-areas": {
       "get": {
         "description": "Get a list of all visible network areas defined in an organization.",
-        "operationId": "ListNetworkAreas",
+        "operationId": "v1ListAreas",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1LabelSelector"
@@ -4118,12 +4201,111 @@
         {
           "$ref": "#/components/parameters/v1OrganizationID"
         }
-      ]
+      ],
+      "post": {
+        "description": "Create a new network area in an organization.",
+        "operationId": "v1CreateArea",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "addressFamily": {
+                  "ipv4": {
+                    "defaultNameservers": [
+                      "10.1.2.10"
+                    ],
+                    "defaultPrefixLen": 24,
+                    "maxPrefixLen": 28,
+                    "minPrefixLen": 22,
+                    "networkRanges": [
+                      {
+                        "prefix": "10.0.0.0/16"
+                      }
+                    ],
+                    "routes": [
+                      {
+                        "nexthop": "10.1.2.10",
+                        "prefix": "192.168.0.0/24"
+                      }
+                    ],
+                    "transferNetwork": "10.1.2.0/24"
+                  }
+                },
+                "labels": {
+                  "environment": "production"
+                },
+                "name": "My STACKIT Internet Network Area"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/v1CreateAreaPayload"
+              }
+            }
+          },
+          "description": "Request an area creation.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkArea"
+                }
+              }
+            },
+            "description": "Area has been successfully created."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create new network area in an organization."
+      }
     },
-    "/v1alpha1/organizations/{organizationId}/network-areas/{areaId}": {
+    "/v1/organizations/{organizationId}/network-areas/{areaId}": {
+      "delete": {
+        "description": "Delete an existing network area in an organization. This is only possible if no projects are using the area anymore.",
+        "operationId": "v1DeleteArea",
+        "responses": {
+          "202": {
+            "description": "Delete request for area has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete a network area."
+      },
       "get": {
         "description": "Get details about a network area in an organization.",
-        "operationId": "GetNetworkArea",
+        "operationId": "v1GetArea",
         "responses": {
           "200": {
             "content": {
@@ -4160,12 +4342,239 @@
         {
           "$ref": "#/components/parameters/v1NetworkAreaID"
         }
+      ],
+      "patch": {
+        "description": "Update the settings of a network area in an organization.",
+        "operationId": "v1UpdateArea",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "addressFamily": {
+                  "ipv4": {
+                    "defaultNameservers": [
+                      "10.1.2.10"
+                    ],
+                    "defaultPrefixLen": 24,
+                    "maxPrefixLen": 26,
+                    "minPrefixLen": 22
+                  }
+                },
+                "labels": {
+                  "environment": "production"
+                },
+                "name": "My STACKIT Internet Network Area"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/v1UpdateAreaPayload"
+              }
+            }
+          },
+          "description": "Request to update an area.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkArea"
+                }
+              }
+            },
+            "description": "Area has been updated."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update network area settings."
+      }
+    },
+    "/v1/organizations/{organizationId}/network-areas/{areaId}/network-ranges": {
+      "get": {
+        "description": "Get a list of all network ranges in a network area.",
+        "operationId": "v1ListNetworkRangesOfArea",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkRangeListResponse"
+                }
+              }
+            },
+            "description": "List all network ranges."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all network ranges in a network area."
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1OrganizationID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkAreaID"
+        }
+      ],
+      "post": {
+        "description": "Create a new network range in an existing network area.",
+        "operationId": "v1AddNetworkRangesToArea",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "ipv4": [
+                  {
+                    "prefix": "10.1.2.0/24"
+                  }
+                ]
+              },
+              "schema": {
+                "$ref": "#/components/schemas/v1AddNetworkRangesToAreaPayload"
+              }
+            }
+          },
+          "description": "Request an addition of network ranges to an area.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkRangeListResponse"
+                }
+              }
+            },
+            "description": "Adding network ranges was successful."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create new network range in a network area."
+      }
+    },
+    "/v1/organizations/{organizationId}/network-areas/{areaId}/network-ranges/{networkRangeId}": {
+      "delete": {
+        "description": "Delete a network range of a network area. The deletion will fail if the network range is still used.",
+        "operationId": "v1DeleteNetworkRangeFromArea",
+        "responses": {
+          "202": {
+            "description": "Delete request for network range has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete a network range."
+      },
+      "get": {
+        "description": "Get details about a network range in a network area.",
+        "operationId": "v1GetNetworkRangeOfArea",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkRange"
+                }
+              }
+            },
+            "description": "Show network range details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get details about a network range."
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1OrganizationID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkAreaID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkRangeID"
+        }
       ]
     },
-    "/v1alpha1/organizations/{organizationId}/network-areas/{areaId}/projects": {
+    "/v1/organizations/{organizationId}/network-areas/{areaId}/projects": {
       "get": {
         "description": "Get a list of all projects using a network area.",
-        "operationId": "ListNetworkAreaProjects",
+        "operationId": "v1GetProjectsUsingArea",
         "responses": {
           "200": {
             "content": {
@@ -4204,7 +4613,221 @@
         }
       ]
     },
-    "/v1alpha1/organizations/{organizationId}/requests/{requestId}": {
+    "/v1/organizations/{organizationId}/network-areas/{areaId}/routes": {
+      "get": {
+        "description": "Get a list of all network routes defined in a network area.",
+        "operationId": "v1ListRoutesOfArea",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RouteListResponse"
+                }
+              }
+            },
+            "description": "List network routes."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all network routes in a network area."
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1OrganizationID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkAreaID"
+        }
+      ],
+      "post": {
+        "description": "Create one or several new network routes in a network area.",
+        "operationId": "v1AddRoutesToArea",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "ipv4": [
+                  {
+                    "nexthop": "10.1.2.10",
+                    "prefix": "192.168.0.0/24"
+                  }
+                ]
+              },
+              "schema": {
+                "$ref": "#/components/schemas/v1AddRoutesToAreaPayload"
+              }
+            }
+          },
+          "description": "Request an addition of routes to an area.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RouteListResponse"
+                }
+              }
+            },
+            "description": "Create request for network routes has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create new network routes."
+      }
+    },
+    "/v1/organizations/{organizationId}/network-areas/{areaId}/routes/{routeId}": {
+      "delete": {
+        "description": "Delete a network route of a network area.",
+        "operationId": "v1DeleteRouteFromArea",
+        "responses": {
+          "202": {
+            "description": "Delete request for network route has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete a network route."
+      },
+      "get": {
+        "description": "Get details about a network route defined in a network area.",
+        "operationId": "v1GetRouteOfArea",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Route"
+                }
+              }
+            },
+            "description": "Show route details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get details about a network route."
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1OrganizationID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkAreaID"
+        },
+        {
+          "$ref": "#/components/parameters/v1RouteID"
+        }
+      ],
+      "patch": {
+        "description": "Update a network route defined in a network area.",
+        "operationId": "v1UpdateRouteOfArea",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/v1UpdateRouteOfAreaPayload"
+              }
+            }
+          },
+          "description": "Request an update of a network route.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Route"
+                }
+              }
+            },
+            "description": "Update request for network successful."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update a network route."
+      }
+    },
+    "/v1/organizations/{organizationId}/requests/{requestId}": {
       "get": {
         "description": "Lookup an organization request ID from a previous request. This allows to find resource IDs of resources generated during a organization request.",
         "operationId": "GetOrganizationRequest",
@@ -4246,7 +4869,7 @@
         }
       ]
     },
-    "/v1alpha1/projects/{projectId}": {
+    "/v1/projects/{projectId}": {
       "get": {
         "description": "Get details about a STACKIT project.",
         "operationId": "GetProjectDetails",
@@ -4285,7 +4908,7 @@
         }
       ]
     },
-    "/v1alpha1/projects/{projectId}/images": {
+    "/v1/projects/{projectId}/images": {
       "get": {
         "description": "Get a list of all images inside a project.",
         "operationId": "ListImages",
@@ -4396,7 +5019,7 @@
         "summary": "Create new Image."
       }
     },
-    "/v1alpha1/projects/{projectId}/images/{imageId}": {
+    "/v1/projects/{projectId}/images/{imageId}": {
       "delete": {
         "description": "Delete an image that is part of the project.",
         "operationId": "DeleteImage",
@@ -4513,7 +5136,7 @@
         "summary": "Update Image Parameters."
       }
     },
-    "/v1alpha1/projects/{projectId}/images/{imageId}/share": {
+    "/v1/projects/{projectId}/images/{imageId}/share": {
       "delete": {
         "description": "Remove the image share. New scope will be local.",
         "operationId": "DeleteImageShare",
@@ -4721,7 +5344,7 @@
         "summary": "Set image share."
       }
     },
-    "/v1alpha1/projects/{projectId}/images/{imageId}/share/{consumerProjectId}": {
+    "/v1/projects/{projectId}/images/{imageId}/share/{consumerProjectId}": {
       "delete": {
         "description": "Remove consumer from a shared image.",
         "operationId": "DeleteImageShareConsumer",
@@ -4791,7 +5414,7 @@
         }
       ]
     },
-    "/v1alpha1/projects/{projectId}/machine-types": {
+    "/v1/projects/{projectId}/machine-types": {
       "get": {
         "description": "Get a list of all machine type available in a project.",
         "operationId": "ListMachineTypes",
@@ -4830,7 +5453,7 @@
         }
       ]
     },
-    "/v1alpha1/projects/{projectId}/machine-types/{machineType}": {
+    "/v1/projects/{projectId}/machine-types/{machineType}": {
       "get": {
         "description": "Get details about a specific machine type.",
         "operationId": "GetMachineType",
@@ -4872,10 +5495,10 @@
         }
       ]
     },
-    "/v1alpha1/projects/{projectId}/networks": {
+    "/v1/projects/{projectId}/networks": {
       "get": {
         "description": "Get a list of all networks inside a project.",
-        "operationId": "ListNetworks",
+        "operationId": "v1ListNetworksInProject",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1LabelSelector"
@@ -4914,12 +5537,126 @@
         {
           "$ref": "#/components/parameters/v1ProjectID"
         }
-      ]
+      ],
+      "post": {
+        "description": "Create a new network in a project. `nameservers` will be filled from `defaultNameservers` of the respective area if not specified. If the project has `internetAccess` enabled and this is the first network in the project this might incur cost.",
+        "operationId": "v1CreateNetwork",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "NetworkWithPrefix": {
+                  "value": {
+                    "addressFamily": {
+                      "ipv4": {
+                        "nameservers": [
+                          "10.1.2.10"
+                        ],
+                        "prefix": "10.0.3.0/25"
+                      }
+                    },
+                    "name": "My Network"
+                  }
+                },
+                "NetworkWithPrefixLength": {
+                  "value": {
+                    "addressFamily": {
+                      "ipv4": {
+                        "nameservers": [
+                          "10.1.2.10"
+                        ],
+                        "prefixLength": 24
+                      }
+                    },
+                    "name": "My Network"
+                  }
+                },
+                "NetworkWithoutPrefixOrPrefixLength": {
+                  "value": {
+                    "addressFamily": {
+                      "ipv4": {
+                        "nameservers": [
+                          "10.1.2.10"
+                        ]
+                      }
+                    },
+                    "name": "My Network"
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/v1CreateNetworkPayload"
+              }
+            }
+          },
+          "description": "Request a network creation.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Network"
+                }
+              }
+            },
+            "description": "Network create has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create new network."
+      }
     },
-    "/v1alpha1/projects/{projectId}/networks/{networkId}": {
+    "/v1/projects/{projectId}/networks/{networkId}": {
+      "delete": {
+        "description": "Delete a network. If the network is still in use, the deletion will fail.",
+        "operationId": "v1DeleteNetwork",
+        "responses": {
+          "202": {
+            "description": "Delete request for network has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete network."
+      },
       "get": {
         "description": "Get details about a network of a project.",
-        "operationId": "GetNetwork",
+        "operationId": "v1GetNetwork",
         "responses": {
           "200": {
             "content": {
@@ -4956,9 +5693,55 @@
         {
           "$ref": "#/components/parameters/v1NetworkID"
         }
-      ]
+      ],
+      "patch": {
+        "description": "Update the settings of a network inside a project.",
+        "operationId": "v1UpdateNetwork",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "addressFamily": {
+                  "ipv4": {
+                    "nameservers": [
+                      "10.1.2.10"
+                    ]
+                  }
+                },
+                "name": "My Network"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/v1UpdateNetworkPayload"
+              }
+            }
+          },
+          "description": "Request an update of a network.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "$ref": "#/components/responses/UpdateAccepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update network settings."
+      }
     },
-    "/v1alpha1/projects/{projectId}/networks/{networkId}/nics": {
+    "/v1/projects/{projectId}/networks/{networkId}/nics": {
       "get": {
         "description": "Get a list of all network interfaces inside a network.",
         "operationId": "ListNics",
@@ -5054,7 +5837,7 @@
         "summary": "Create new network interface."
       }
     },
-    "/v1alpha1/projects/{projectId}/networks/{networkId}/nics/{nicId}": {
+    "/v1/projects/{projectId}/networks/{networkId}/nics/{nicId}": {
       "delete": {
         "description": "Delete a network interface that is part of the project.",
         "operationId": "DeleteNic",
@@ -5170,318 +5953,7 @@
         "summary": "Update a network interface."
       }
     },
-    "/v1alpha1/projects/{projectId}/networks/{networkId}/virtual-ips": {
-      "get": {
-        "description": "Get a list of all virtual IPs inside a project.",
-        "operationId": "ListVirtualIPs",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/v1LabelSelector"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VirtualIpListResponse"
-                }
-              }
-            },
-            "description": "List project virtual IPs."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "summary": "List all virtual IPs inside a project."
-      },
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/v1ProjectID"
-        },
-        {
-          "$ref": "#/components/parameters/v1NetworkID"
-        }
-      ],
-      "post": {
-        "description": "Create a new virtual IP in a project.",
-        "operationId": "CreateVirtualIP",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateVirtualIPPayload"
-              }
-            }
-          },
-          "description": "Request a virtual IP creation.",
-          "required": true
-        },
-        "responses": {
-          "202": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VirtualIp"
-                }
-              }
-            },
-            "description": "Virtual IP create request accepted."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequests"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "summary": "Create new virtual IP."
-      }
-    },
-    "/v1alpha1/projects/{projectId}/networks/{networkId}/virtual-ips/{virtualIpId}": {
-      "delete": {
-        "description": "Delete a virtual IP that is part of the project.",
-        "operationId": "DeleteVirtualIP",
-        "responses": {
-          "204": {
-            "description": "Virtual IP delete request accepted."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "summary": "Delete a virtual IP."
-      },
-      "get": {
-        "description": "Get details about a virtual IP inside a project.",
-        "operationId": "GetVirtualIP",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VirtualIp"
-                }
-              }
-            },
-            "description": "Show virtual IP details."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "summary": "Get details about a virtual IP."
-      },
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/v1ProjectID"
-        },
-        {
-          "$ref": "#/components/parameters/v1NetworkID"
-        },
-        {
-          "$ref": "#/components/parameters/v1VirtualIPID"
-        }
-      ],
-      "patch": {
-        "description": "Update the properties of an existing virtual IP inside a project.",
-        "operationId": "UpdateVirtualIP",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateVirtualIPPayload"
-              }
-            }
-          },
-          "description": "Request an update of a virtual IP.",
-          "required": true
-        },
-        "responses": {
-          "202": {
-            "description": "Virtual IP update request accepted."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "summary": "Update a virtual IP."
-      }
-    },
-    "/v1alpha1/projects/{projectId}/networks/{networkId}/virtual-ips/{virtualIpId}/add-member": {
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/v1ProjectID"
-        },
-        {
-          "$ref": "#/components/parameters/v1NetworkID"
-        },
-        {
-          "$ref": "#/components/parameters/v1VirtualIPID"
-        }
-      ],
-      "put": {
-        "description": "Atomically add a member to the virtual IP.",
-        "operationId": "AddMemberToVirtualIP",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AddMemberToVirtualIPPayload"
-              }
-            }
-          },
-          "description": "Request to add a member to a virtual IP.",
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VirtualIp"
-                }
-              }
-            },
-            "description": "Member has been added to the virtual IP."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "summary": "Add a member to the virtual IP."
-      }
-    },
-    "/v1alpha1/projects/{projectId}/networks/{networkId}/virtual-ips/{virtualIpId}/remove-member": {
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/v1ProjectID"
-        },
-        {
-          "$ref": "#/components/parameters/v1NetworkID"
-        },
-        {
-          "$ref": "#/components/parameters/v1VirtualIPID"
-        }
-      ],
-      "put": {
-        "description": "Atomically remove a member from the virtual IP.",
-        "operationId": "RemoveMemberFromVirtualIP",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RemoveMemberFromVirtualIPPayload"
-              }
-            }
-          },
-          "description": "Request to remove a member from a virtual IP.",
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VirtualIp"
-                }
-              }
-            },
-            "description": "Member has been removed from the virtual IP."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "summary": "Remove a member from the virtual IP."
-      }
-    },
-    "/v1alpha1/projects/{projectId}/public-ips": {
+    "/v1/projects/{projectId}/public-ips": {
       "get": {
         "description": "Get a list of all public IPs inside a project.",
         "operationId": "ListPublicIPs",
@@ -5571,7 +6043,7 @@
         "summary": "Create new public IP."
       }
     },
-    "/v1alpha1/projects/{projectId}/public-ips/{publicIpId}": {
+    "/v1/projects/{projectId}/public-ips/{publicIpId}": {
       "delete": {
         "description": "Delete a public IP that is part of the project.",
         "operationId": "DeletePublicIP",
@@ -5681,7 +6153,7 @@
         "summary": "Update a public IP."
       }
     },
-    "/v1alpha1/projects/{projectId}/requests/{requestId}": {
+    "/v1/projects/{projectId}/requests/{requestId}": {
       "get": {
         "description": "Lookup a project request ID from a previous request. This allows to find resource IDs of resources generated during a projects request.",
         "operationId": "GetProjectRequest",
@@ -5723,7 +6195,7 @@
         }
       ]
     },
-    "/v1alpha1/projects/{projectId}/security-groups": {
+    "/v1/projects/{projectId}/security-groups": {
       "get": {
         "description": "Get a list of all security groups inside a project.",
         "operationId": "ListSecurityGroups",
@@ -5810,7 +6282,7 @@
         "summary": "Create new security group."
       }
     },
-    "/v1alpha1/projects/{projectId}/security-groups/{securityGroupId}": {
+    "/v1/projects/{projectId}/security-groups/{securityGroupId}": {
       "delete": {
         "description": "Delete a security group.",
         "operationId": "DeleteSecurityGroup",
@@ -5923,7 +6395,7 @@
         "summary": "Update information of a security group."
       }
     },
-    "/v1alpha1/projects/{projectId}/security-groups/{securityGroupId}/rules": {
+    "/v1/projects/{projectId}/security-groups/{securityGroupId}/rules": {
       "get": {
         "description": "Get a list of all rules inside a security group.",
         "operationId": "ListSecurityGroupRules",
@@ -6008,7 +6480,7 @@
         "summary": "Create new security group rule."
       }
     },
-    "/v1alpha1/projects/{projectId}/security-groups/{securityGroupId}/rules/{securityGroupRuleId}": {
+    "/v1/projects/{projectId}/security-groups/{securityGroupId}/rules/{securityGroupRuleId}": {
       "delete": {
         "description": "Delete a security group rule.",
         "operationId": "DeleteSecurityGroupRule",
@@ -6078,7 +6550,7 @@
         }
       ]
     },
-    "/v1alpha1/projects/{projectId}/servers": {
+    "/v1/projects/{projectId}/servers": {
       "get": {
         "description": "Get a list of all servers inside a project.",
         "operationId": "ListServers",
@@ -6237,7 +6709,7 @@
         "summary": "Create new server."
       }
     },
-    "/v1alpha1/projects/{projectId}/servers/{serverId}": {
+    "/v1/projects/{projectId}/servers/{serverId}": {
       "delete": {
         "description": "Delete a server. Volumes won't be deleted.",
         "operationId": "DeleteServer",
@@ -6366,7 +6838,7 @@
         "summary": "Update information of a server."
       }
     },
-    "/v1alpha1/projects/{projectId}/servers/{serverId}/console": {
+    "/v1/projects/{projectId}/servers/{serverId}/console": {
       "get": {
         "description": "Get a URL for server remote console.",
         "operationId": "GetServerConsole",
@@ -6408,7 +6880,7 @@
         }
       ]
     },
-    "/v1alpha1/projects/{projectId}/servers/{serverId}/deallocate": {
+    "/v1/projects/{projectId}/servers/{serverId}/deallocate": {
       "parameters": [
         {
           "$ref": "#/components/parameters/v1ProjectID"
@@ -6446,7 +6918,7 @@
         "summary": "Deallocate an existing server."
       }
     },
-    "/v1alpha1/projects/{projectId}/servers/{serverId}/log": {
+    "/v1/projects/{projectId}/servers/{serverId}/log": {
       "get": {
         "description": "Get server console log.",
         "operationId": "GetServerLog",
@@ -6501,7 +6973,7 @@
         }
       ]
     },
-    "/v1alpha1/projects/{projectId}/servers/{serverId}/networks/{networkId}": {
+    "/v1/projects/{projectId}/servers/{serverId}/networks/{networkId}": {
       "delete": {
         "description": "Detach and delete all network interfaces associated with the specified network from the server.",
         "operationId": "RemoveNetworkFromServer",
@@ -6564,7 +7036,7 @@
         "summary": "Create and attach a network interface from the specified network."
       }
     },
-    "/v1alpha1/projects/{projectId}/servers/{serverId}/nics": {
+    "/v1/projects/{projectId}/servers/{serverId}/nics": {
       "get": {
         "description": "Get all network interfaces attached to the server.",
         "operationId": "ListServerNics",
@@ -6606,7 +7078,7 @@
         }
       ]
     },
-    "/v1alpha1/projects/{projectId}/servers/{serverId}/nics/{nicId}": {
+    "/v1/projects/{projectId}/servers/{serverId}/nics/{nicId}": {
       "delete": {
         "description": "Detach a network interface from a server.",
         "operationId": "RemoveNicFromServer",
@@ -6672,7 +7144,7 @@
         "summary": "Attach an existing network interface."
       }
     },
-    "/v1alpha1/projects/{projectId}/servers/{serverId}/public-ips/{publicIpId}": {
+    "/v1/projects/{projectId}/servers/{serverId}/public-ips/{publicIpId}": {
       "delete": {
         "description": "Dissociate a public IP on an existing server.",
         "operationId": "RemovePublicIpFromServer",
@@ -6741,7 +7213,7 @@
         "summary": "Associate a public IP to the server."
       }
     },
-    "/v1alpha1/projects/{projectId}/servers/{serverId}/reboot": {
+    "/v1/projects/{projectId}/servers/{serverId}/reboot": {
       "parameters": [
         {
           "$ref": "#/components/parameters/v1ProjectID"
@@ -6795,7 +7267,7 @@
         "summary": "Reboot the server."
       }
     },
-    "/v1alpha1/projects/{projectId}/servers/{serverId}/rescue": {
+    "/v1/projects/{projectId}/servers/{serverId}/rescue": {
       "parameters": [
         {
           "$ref": "#/components/parameters/v1ProjectID"
@@ -6847,7 +7319,7 @@
         "summary": "Rescue an existing server."
       }
     },
-    "/v1alpha1/projects/{projectId}/servers/{serverId}/resize": {
+    "/v1/projects/{projectId}/servers/{serverId}/resize": {
       "parameters": [
         {
           "$ref": "#/components/parameters/v1ProjectID"
@@ -6899,7 +7371,7 @@
         "summary": "Resize a server."
       }
     },
-    "/v1alpha1/projects/{projectId}/servers/{serverId}/security-groups/{securityGroupId}": {
+    "/v1/projects/{projectId}/servers/{serverId}/security-groups/{securityGroupId}": {
       "delete": {
         "description": "Remove a server from a attached security group.",
         "operationId": "RemoveSecurityGroupFromServer",
@@ -6968,7 +7440,7 @@
         "summary": "Add a server to a security group."
       }
     },
-    "/v1alpha1/projects/{projectId}/servers/{serverId}/service-accounts": {
+    "/v1/projects/{projectId}/servers/{serverId}/service-accounts": {
       "get": {
         "description": "Get the list of the service accounts of the server.",
         "operationId": "ListServerServiceAccounts",
@@ -7010,7 +7482,7 @@
         }
       ]
     },
-    "/v1alpha1/projects/{projectId}/servers/{serverId}/service-accounts/{serviceAccountMail}": {
+    "/v1/projects/{projectId}/servers/{serverId}/service-accounts/{serviceAccountMail}": {
       "delete": {
         "description": "Detach an additional service account from the server.",
         "operationId": "RemoveServiceAccountFromServer",
@@ -7093,7 +7565,7 @@
         "summary": "Attach service account to a server."
       }
     },
-    "/v1alpha1/projects/{projectId}/servers/{serverId}/start": {
+    "/v1/projects/{projectId}/servers/{serverId}/start": {
       "parameters": [
         {
           "$ref": "#/components/parameters/v1ProjectID"
@@ -7131,7 +7603,7 @@
         "summary": "Boot up a server."
       }
     },
-    "/v1alpha1/projects/{projectId}/servers/{serverId}/stop": {
+    "/v1/projects/{projectId}/servers/{serverId}/stop": {
       "parameters": [
         {
           "$ref": "#/components/parameters/v1ProjectID"
@@ -7169,7 +7641,7 @@
         "summary": "Stop an existing server."
       }
     },
-    "/v1alpha1/projects/{projectId}/servers/{serverId}/unrescue": {
+    "/v1/projects/{projectId}/servers/{serverId}/unrescue": {
       "parameters": [
         {
           "$ref": "#/components/parameters/v1ProjectID"
@@ -7207,7 +7679,7 @@
         "summary": "Unrescue an existing server."
       }
     },
-    "/v1alpha1/projects/{projectId}/servers/{serverId}/volume-attachments": {
+    "/v1/projects/{projectId}/servers/{serverId}/volume-attachments": {
       "get": {
         "description": "Get a list of all volume attachments of a server.",
         "operationId": "ListAttachedVolumes",
@@ -7249,7 +7721,7 @@
         }
       ]
     },
-    "/v1alpha1/projects/{projectId}/servers/{serverId}/volume-attachments/{volumeId}": {
+    "/v1/projects/{projectId}/servers/{serverId}/volume-attachments/{volumeId}": {
       "delete": {
         "description": "Detach an existing volume from an existing server.",
         "operationId": "RemoveVolumeFromServer",
@@ -7413,7 +7885,7 @@
         "summary": "Attach a volume to a server."
       }
     },
-    "/v1alpha1/projects/{projectId}/volume-performance-classes": {
+    "/v1/projects/{projectId}/volume-performance-classes": {
       "get": {
         "description": "Get a list of all volume performance classes available inside a project.",
         "operationId": "ListVolumePerformanceClasses",
@@ -7457,7 +7929,7 @@
         }
       ]
     },
-    "/v1alpha1/projects/{projectId}/volume-performance-classes/{volumePerformanceClass}": {
+    "/v1/projects/{projectId}/volume-performance-classes/{volumePerformanceClass}": {
       "get": {
         "description": "Get details about a specific volume performance class.",
         "operationId": "GetVolumePerformanceClass",
@@ -7499,7 +7971,7 @@
         }
       ]
     },
-    "/v1alpha1/projects/{projectId}/volumes": {
+    "/v1/projects/{projectId}/volumes": {
       "get": {
         "description": "Get a list of all volumes inside a project.",
         "operationId": "ListVolumes",
@@ -7644,7 +8116,7 @@
         "summary": "Create new volume."
       }
     },
-    "/v1alpha1/projects/{projectId}/volumes/{volumeId}": {
+    "/v1/projects/{projectId}/volumes/{volumeId}": {
       "delete": {
         "description": "Delete a volume inside a project. The deletion will fail if the volume is still in use.",
         "operationId": "DeleteVolume",
@@ -7757,7 +8229,7 @@
         "summary": "Update information of a volume."
       }
     },
-    "/v1alpha1/projects/{projectId}/volumes/{volumeId}/resize": {
+    "/v1/projects/{projectId}/volumes/{volumeId}/resize": {
       "parameters": [
         {
           "$ref": "#/components/parameters/v1ProjectID"

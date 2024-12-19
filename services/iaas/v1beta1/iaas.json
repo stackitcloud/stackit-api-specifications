@@ -1795,6 +1795,7 @@
         "properties": {
           "code": {
             "example": 404,
+            "format": "int64",
             "type": "integer"
           },
           "msg": {
@@ -2784,6 +2785,7 @@
       "ProjectCount": {
         "description": "The amount of projects currently referencing a specific area.",
         "example": 10,
+        "format": "int64",
         "minimum": 0,
         "type": "integer"
       },
@@ -2880,6 +2882,204 @@
         },
         "required": [
           "items"
+        ],
+        "type": "object"
+      },
+      "Quota": {
+        "description": "Object that represents a single resource quota.",
+        "properties": {
+          "limit": {
+            "example": 1338,
+            "format": "int64",
+            "type": "integer"
+          },
+          "usage": {
+            "example": 17,
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "limit",
+          "usage"
+        ],
+        "type": "object"
+      },
+      "QuotaList": {
+        "description": "Object that represents the quotas for a project.",
+        "example": {
+          "backupGigabytes": {
+            "limit": 100000000,
+            "usage": 0
+          },
+          "backups": {
+            "limit": 1000,
+            "usage": 0
+          },
+          "gigabytes": {
+            "limit": 1000000000,
+            "usage": 69
+          },
+          "networks": {
+            "limit": 1000,
+            "usage": 1
+          },
+          "nics": {
+            "limit": 1000,
+            "usage": 5
+          },
+          "publicIps": {
+            "limit": 1000,
+            "usage": 3
+          },
+          "ram": {
+            "limit": 1000000000,
+            "usage": 196608
+          },
+          "securityGroupRules": {
+            "limit": 100,
+            "usage": 10
+          },
+          "securityGroups": {
+            "limit": 10,
+            "usage": 5
+          },
+          "snapshots": {
+            "limit": 1000,
+            "usage": 0
+          },
+          "vcpu": {
+            "limit": 10000,
+            "usage": 48
+          },
+          "volumes": {
+            "limit": 1000,
+            "usage": 3
+          }
+        },
+        "properties": {
+          "backupGigabytes": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Quota"
+              }
+            ],
+            "description": "Total size in GiB of backups."
+          },
+          "backups": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Quota"
+              }
+            ],
+            "description": "Number of backups."
+          },
+          "gigabytes": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Quota"
+              }
+            ],
+            "description": "Total size in GiB of volumes and snapshots."
+          },
+          "networks": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Quota"
+              }
+            ],
+            "description": "Number of networks."
+          },
+          "nics": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Quota"
+              }
+            ],
+            "description": "Number of network interfaces."
+          },
+          "publicIps": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Quota"
+              }
+            ],
+            "description": "Number of public IP addresses."
+          },
+          "ram": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Quota"
+              }
+            ],
+            "description": "Amount of server RAM in MiB."
+          },
+          "securityGroupRules": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Quota"
+              }
+            ],
+            "description": "Number of security group rules."
+          },
+          "securityGroups": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Quota"
+              }
+            ],
+            "description": "Number of security groups."
+          },
+          "snapshots": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Quota"
+              }
+            ],
+            "description": "Number of snapshots."
+          },
+          "vcpu": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Quota"
+              }
+            ],
+            "description": "Number of server cores."
+          },
+          "volumes": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Quota"
+              }
+            ],
+            "description": "Number of volumes."
+          }
+        },
+        "required": [
+          "vcpu",
+          "ram",
+          "volumes",
+          "snapshots",
+          "backups",
+          "gigabytes",
+          "backupGigabytes",
+          "publicIps",
+          "networks",
+          "nics",
+          "securityGroups",
+          "securityGroupRules"
+        ],
+        "type": "object"
+      },
+      "QuotaListResponse": {
+        "description": "Quotas list response.",
+        "properties": {
+          "quotas": {
+            "$ref": "#/components/schemas/QuotaList"
+          }
+        },
+        "required": [
+          "quotas"
         ],
         "type": "object"
       },
@@ -5885,6 +6085,80 @@
         "summary": "Update Image Parameters."
       }
     },
+    "/v1beta1/projects/{projectId}/images/{imageId}/publish": {
+      "delete": {
+        "description": "Update the scope property of an existing Image inside a project to local.",
+        "operationId": "UpdateImageScopeLocal",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Image"
+                }
+              }
+            },
+            "description": "Response to update image-scope to local. Provide the updated image object."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update Image Scope to Local."
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1ImageID"
+        }
+      ],
+      "put": {
+        "description": "Update the scope property of an existing Image inside a project to public.",
+        "operationId": "UpdateImageScopePublic",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Image"
+                }
+              }
+            },
+            "description": "Response to update image-scope to public. Provide the updated image object."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update Image Scope to Public."
+      }
+    },
     "/v1beta1/projects/{projectId}/images/{imageId}/share": {
       "delete": {
         "description": "Remove the image share. New scope will be local.",
@@ -6987,6 +7261,45 @@
         },
         "summary": "Update a public IP."
       }
+    },
+    "/v1beta1/projects/{projectId}/quotas": {
+      "get": {
+        "description": "List quota limits and usage for project resources.",
+        "operationId": "ListQuotas",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuotaListResponse"
+                }
+              }
+            },
+            "description": "List quotas."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List project quotas."
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        }
+      ]
     },
     "/v1beta1/projects/{projectId}/requests/{requestId}": {
       "get": {

@@ -25,7 +25,6 @@
           },
           "size": {
             "example": 55,
-            "format": "int32",
             "type": "integer"
           },
           "status": {
@@ -56,7 +55,6 @@
                   "type": "string"
                 },
                 "size": {
-                  "format": "int32",
                   "type": "integer"
                 },
                 "status": {
@@ -101,6 +99,47 @@
         ],
         "type": "object"
       },
+      "BackupPolicy": {
+        "properties": {
+          "backupProperties": {
+            "properties": {
+              "name": {
+                "example": "Daily Backup",
+                "type": "string"
+              },
+              "retentionPeriod": {
+                "example": 3,
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "default": {
+            "example": true,
+            "type": "boolean"
+          },
+          "description": {
+            "example": "Default Daily Backup Schedule",
+            "type": "string"
+          },
+          "enabled": {
+            "example": true,
+            "type": "boolean"
+          },
+          "id": {
+            "example": "a01c372f-5c15-418d-b2fb-b1f93ea2ffc8",
+            "type": "string"
+          },
+          "name": {
+            "example": "Default Backup Schedule",
+            "type": "string"
+          },
+          "rrule": {
+            "example": "DTSTART;TZID=Europe/Sofia:20200803T023000 RRULE:FREQ=DAILY;INTERVAL=1",
+            "type": "string"
+          }
+        }
+      },
       "BackupProperties": {
         "properties": {
           "name": {
@@ -111,7 +150,6 @@
           "retentionPeriod": {
             "description": "Values are set in days (1-36500)",
             "example": 3,
-            "format": "int32",
             "maximum": 36500,
             "minimum": 1,
             "type": "integer"
@@ -144,7 +182,6 @@
           },
           "id": {
             "example": 1480,
-            "format": "int32",
             "type": "integer"
           },
           "name": {
@@ -174,7 +211,6 @@
           "retentionPeriod": {
             "description": "Values are set in days (1-36500)",
             "example": 3,
-            "format": "int32",
             "maximum": 36500,
             "minimum": 1,
             "type": "integer"
@@ -231,26 +267,46 @@
         },
         "type": "object"
       },
-      "ErrorResponse": {
+      "EnableServiceResourcePayload": {
         "properties": {
-          "message": {
-            "description": "Details about the error",
-            "type": "string"
-          },
-          "status": {
-            "description": "The string representation of the http status code (i.e. Not Found, Bad Request, etc)",
-            "type": "string"
-          },
-          "timestamp": {
-            "description": "The time the error occured",
+          "backupPolicyId": {
+            "format": "uuid",
             "type": "string"
           }
         },
-        "required": [
-          "timestamp",
-          "status",
-          "message"
-        ],
+        "type": "object"
+      },
+      "GetBackupPoliciesResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/BackupPolicy"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "GetBackupSchedulesResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/BackupSchedule"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "GetBackupsListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Backup"
+            },
+            "type": "array"
+          }
+        },
         "type": "object"
       },
       "RestoreBackupPayload": {
@@ -326,12 +382,48 @@
   },
   "openapi": "3.0.0",
   "paths": {
+    "/v1/projects/{projectId}/backup-policies": {
+      "get": {
+        "operationId": "ListBackupPolicies",
+        "parameters": [
+          {
+            "description": "project id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBackupPoliciesResponse"
+                }
+              }
+            },
+            "description": "backup policy list response"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Project Not Found"
+          }
+        },
+        "summary": "get list of backup policies"
+      }
+    },
     "/v1/projects/{projectId}/servers/{serverId}": {
       "delete": {
+        "deprecated": true,
         "operationId": "DisableService",
         "parameters": [
           {
-            "description": "portal project id",
+            "description": "project id",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -340,7 +432,7 @@
             }
           },
           {
-            "description": "openstack server id",
+            "description": "server id",
             "in": "path",
             "name": "serverId",
             "required": true,
@@ -356,16 +448,6 @@
           "400": {
             "description": "Bad request"
           },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
           "404": {
             "description": "Server not found"
           }
@@ -373,10 +455,11 @@
         "summary": "disable backup service"
       },
       "post": {
+        "deprecated": true,
         "operationId": "EnableService",
         "parameters": [
           {
-            "description": "portal project id",
+            "description": "project id",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -385,7 +468,7 @@
             }
           },
           {
-            "description": "openstack server id",
+            "description": "server id",
             "in": "path",
             "name": "serverId",
             "required": true,
@@ -417,16 +500,6 @@
           "400": {
             "description": "Bad Request"
           },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
           "404": {
             "description": "Server not found"
           }
@@ -439,7 +512,7 @@
         "operationId": "ListBackupSchedules",
         "parameters": [
           {
-            "description": "portal project id",
+            "description": "project id",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -448,7 +521,7 @@
             }
           },
           {
-            "description": "openstack server id",
+            "description": "server id",
             "in": "path",
             "name": "serverId",
             "required": true,
@@ -462,32 +535,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "items": {
-                      "items": {
-                        "$ref": "#/components/schemas/BackupSchedule"
-                      },
-                      "type": "array"
-                    }
-                  },
-                  "type": "object"
+                  "$ref": "#/components/schemas/GetBackupSchedulesResponse"
                 }
               }
             },
             "description": "schedule list response"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
           },
           "404": {
             "description": "Server not found"
@@ -499,7 +551,7 @@
         "operationId": "CreateBackupSchedule",
         "parameters": [
           {
-            "description": "portal project id",
+            "description": "project id",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -508,7 +560,7 @@
             }
           },
           {
-            "description": "openstack server id",
+            "description": "server id",
             "in": "path",
             "name": "serverId",
             "required": true,
@@ -540,16 +592,6 @@
           "400": {
             "description": "Bad Request"
           },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
           "404": {
             "description": "Server not found"
           }
@@ -562,7 +604,7 @@
         "operationId": "DeleteBackupSchedule",
         "parameters": [
           {
-            "description": "portal project id",
+            "description": "project id",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -571,7 +613,7 @@
             }
           },
           {
-            "description": "openstack server id",
+            "description": "server id",
             "in": "path",
             "name": "serverId",
             "required": true,
@@ -593,19 +635,6 @@
           "204": {
             "description": "backup schedule successfully deleted"
           },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
           "404": {
             "description": "Server | schedule not found"
           }
@@ -616,7 +645,7 @@
         "operationId": "GetBackupSchedule",
         "parameters": [
           {
-            "description": "portal project id",
+            "description": "project id",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -625,7 +654,7 @@
             }
           },
           {
-            "description": "openstack server id",
+            "description": "server id",
             "in": "path",
             "name": "serverId",
             "required": true,
@@ -654,19 +683,6 @@
             },
             "description": "backup schedule response"
           },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
           "404": {
             "description": "Server | backup schedule not found"
           }
@@ -677,7 +693,7 @@
         "operationId": "UpdateBackupSchedule",
         "parameters": [
           {
-            "description": "portal project id",
+            "description": "project id",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -686,7 +702,7 @@
             }
           },
           {
-            "description": "openstack server id",
+            "description": "server id",
             "in": "path",
             "name": "serverId",
             "required": true,
@@ -727,16 +743,6 @@
           "400": {
             "description": "Bad Request"
           },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
           "404": {
             "description": "Server | schedule not found"
           }
@@ -749,7 +755,7 @@
         "operationId": "ListBackups",
         "parameters": [
           {
-            "description": "portal project id",
+            "description": "project id",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -758,7 +764,7 @@
             }
           },
           {
-            "description": "openstack server id",
+            "description": "server id",
             "in": "path",
             "name": "serverId",
             "required": true,
@@ -772,32 +778,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "items": {
-                      "items": {
-                        "$ref": "#/components/schemas/Backup"
-                      },
-                      "type": "array"
-                    }
-                  },
-                  "type": "object"
+                  "$ref": "#/components/schemas/GetBackupsListResponse"
                 }
               }
             },
             "description": "backup list response"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
           },
           "404": {
             "description": "Server not found"
@@ -809,7 +794,7 @@
         "operationId": "CreateBackup",
         "parameters": [
           {
-            "description": "portal project id",
+            "description": "project id",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -818,7 +803,7 @@
             }
           },
           {
-            "description": "openstack server id",
+            "description": "server id",
             "in": "path",
             "name": "serverId",
             "required": true,
@@ -850,16 +835,6 @@
           "400": {
             "description": "Bad Request"
           },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
           "404": {
             "description": "Server not found"
           }
@@ -872,7 +847,7 @@
         "operationId": "DeleteBackup",
         "parameters": [
           {
-            "description": "portal project id",
+            "description": "project id",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -881,7 +856,7 @@
             }
           },
           {
-            "description": "openstack server id",
+            "description": "server id",
             "in": "path",
             "name": "serverId",
             "required": true,
@@ -903,19 +878,6 @@
           "202": {
             "description": "Request is accepted, but processing may take some time."
           },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
           "404": {
             "description": "Server | backup job not found"
           }
@@ -926,7 +888,7 @@
         "operationId": "GetBackup",
         "parameters": [
           {
-            "description": "portal project id",
+            "description": "project id",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -935,7 +897,7 @@
             }
           },
           {
-            "description": "openstack server id",
+            "description": "server id",
             "in": "path",
             "name": "serverId",
             "required": true,
@@ -1008,19 +970,6 @@
             },
             "description": "backup response"
           },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
           "404": {
             "description": "Server | backup job not found"
           }
@@ -1033,7 +982,7 @@
         "operationId": "RestoreBackup",
         "parameters": [
           {
-            "description": "portal project id",
+            "description": "project id",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -1042,7 +991,7 @@
             }
           },
           {
-            "description": "openstack server id",
+            "description": "server id",
             "in": "path",
             "name": "serverId",
             "required": true,
@@ -1076,16 +1025,6 @@
           "400": {
             "description": "Bad Request"
           },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
           "404": {
             "description": "Server | backup not found"
           }
@@ -1098,7 +1037,7 @@
         "operationId": "DeleteVolumeBackup",
         "parameters": [
           {
-            "description": "portal project id",
+            "description": "project id",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -1107,7 +1046,7 @@
             }
           },
           {
-            "description": "openstack server id",
+            "description": "server id",
             "in": "path",
             "name": "serverId",
             "required": true,
@@ -1138,19 +1077,6 @@
           "202": {
             "description": "Request is accepted, but processing may take some time."
           },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
           "404": {
             "description": "Server | volume backup not found"
           }
@@ -1163,7 +1089,7 @@
         "operationId": "RestoreVolumeBackup",
         "parameters": [
           {
-            "description": "portal project id",
+            "description": "project id",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -1172,7 +1098,7 @@
             }
           },
           {
-            "description": "openstack server id",
+            "description": "server id",
             "in": "path",
             "name": "serverId",
             "required": true,
@@ -1215,21 +1141,99 @@
           "400": {
             "description": "Bad Request"
           },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
           "404": {
             "description": "Server | backup not found"
           }
         },
         "summary": "trigger restore of the requested volume backup"
+      }
+    },
+    "/v1/projects/{projectId}/servers/{serverId}/service": {
+      "delete": {
+        "operationId": "DisableServiceResource",
+        "parameters": [
+          {
+            "description": "project id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "server id",
+            "in": "path",
+            "name": "serverId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Backup service disabled"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Server not found"
+          }
+        },
+        "summary": "disable backup service"
+      },
+      "post": {
+        "operationId": "EnableServiceResource",
+        "parameters": [
+          {
+            "description": "project id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "server id",
+            "in": "path",
+            "name": "serverId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "Enable Backup Additional Service": {
+                  "value": {
+                    "backupPolicyId": "2ab33ea4-9b4b-492c-8679-3d664091c195"
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/EnableServiceResourcePayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Backup service enabled"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Server not found"
+          }
+        },
+        "summary": "enable backup service"
       }
     }
   },

@@ -127,6 +127,14 @@
         },
         "type": "object"
       },
+      "GetUpdateServiceResponse": {
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
       "GetUpdatesListResponse": {
         "properties": {
           "items": {
@@ -425,6 +433,51 @@
           }
         },
         "summary": "disable update service"
+      },
+      "get": {
+        "operationId": "GetServiceResource",
+        "parameters": [
+          {
+            "description": "project id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "server id",
+            "in": "path",
+            "name": "serverId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUpdateServiceResponse"
+                }
+              }
+            },
+            "description": "Update service details"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Server, or service, Not Found"
+          }
+        },
+        "summary": "get update service details"
       },
       "post": {
         "operationId": "EnableServiceResource",

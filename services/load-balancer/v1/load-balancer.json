@@ -861,7 +861,10 @@
             "description": "Default error response"
           }
         },
-        "summary": "List available service plans."
+        "summary": "List available service plans.",
+        "x-stackit-authorization": {
+          "disabled": true
+        }
       }
     },
     "/v1/projects/{projectId}": {
@@ -920,7 +923,15 @@
             "description": "Default error response"
           }
         },
-        "summary": "Disables the functionality of load balancers for the project specified."
+        "summary": "Disables the functionality of load balancers for the project specified.",
+        "x-stackit-authorization": {
+          "actions": [
+            "nlb.loadbalancer.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
       },
       "get": {
         "deprecated": true,
@@ -977,7 +988,15 @@
             "description": "Default error response"
           }
         },
-        "summary": "Return the status of load balancer functionality for the project specified."
+        "summary": "Return the status of load balancer functionality for the project specified.",
+        "x-stackit-authorization": {
+          "actions": [
+            "nlb.loadbalancer.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
       },
       "post": {
         "deprecated": true,
@@ -1044,7 +1063,15 @@
             "description": "Default error response"
           }
         },
-        "summary": "Enables the functionality of load balancers for the project specified."
+        "summary": "Enables the functionality of load balancers for the project specified.",
+        "x-stackit-authorization": {
+          "actions": [
+            "nlb.loadbalancer.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
       }
     },
     "/v1/projects/{projectId}/credentials": {
@@ -1099,7 +1126,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "List all credentials in a project."
+        "summary": "List all credentials in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "nlb.credentials.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       },
       "post": {
         "description": "Create credentials can be used to store existing credentials, which are valid to be used for Load Balancer Observability.\n This means, e.g. when using ARGUS, that credentials first must be created for that ARGUS instance (by using their API) and\n then can be provided to the Load Balancer by storing them with this endpoint.",
@@ -1175,7 +1215,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Create credentials for observability of the Load Balancer"
+        "summary": "Create credentials for observability of the Load Balancer",
+        "x-stackit-authorization": {
+          "actions": [
+            "nlb.credentials.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       }
     },
     "/v1/projects/{projectId}/credentials/{credentialsRef}": {
@@ -1241,7 +1294,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Delete a single credential in a project."
+        "summary": "Delete a single credential in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "nlb.credentials.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       },
       "get": {
         "description": "Get Credentials",
@@ -1308,7 +1374,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Get a single credential reference in a project."
+        "summary": "Get a single credential reference in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "nlb.credentials.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       },
       "put": {
         "description": "Update Credentials",
@@ -1385,7 +1464,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Update credentials for observability in a project."
+        "summary": "Update credentials for observability in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "nlb.credentials.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       }
     },
     "/v1/projects/{projectId}/load-balancers": {
@@ -1462,7 +1554,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "List load balancers in a project."
+        "summary": "List load balancers in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "nlb.loadbalancer.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       },
       "post": {
         "description": "Create Load Balancer will create a load balancer.\n The default load balancing algorithm is round robin unless useSourceIpAddress in session persistence is enabled for a target pool then it is Maglev.",
@@ -1541,7 +1646,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Create a load balancer in a project"
+        "summary": "Create a load balancer in a project",
+        "x-stackit-authorization": {
+          "actions": [
+            "nlb.loadbalancer.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       }
     },
     "/v1/projects/{projectId}/load-balancers/{name}": {
@@ -1607,7 +1725,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Delete a given load balancer in a project."
+        "summary": "Delete a given load balancer in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "nlb.loadbalancer.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       },
       "get": {
         "description": "Get Load Balancer will get a single load balancer of a project. This contains all the information set during\n creation or updates. Additionally, it will have information about the state of the load balancer in the form\n of a status field and error description feedback.",
@@ -1674,7 +1805,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Get a single load balancer in a project."
+        "summary": "Get a single load balancer in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "nlb.loadbalancer.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       },
       "put": {
         "description": "Update Load Balancer allows the change of listeners and target pools of an existing Load Balancer.\n The Load balancer resource version needs to be the current version to ensure concurrency safe updates.\n The default load balancing algorithm is round robin unless useSourceIpAddress in session persistence is enabled for a target pool then it is Maglev.",
@@ -1751,7 +1895,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Update a load balancer in a project."
+        "summary": "Update a load balancer in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "nlb.loadbalancer.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       }
     },
     "/v1/projects/{projectId}/load-balancers/{name}/target-pools/{targetPoolName}": {
@@ -1835,7 +1992,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Update a single target pool of a load balancer in a project."
+        "summary": "Update a single target pool of a load balancer in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "nlb.targetpool.replace"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       }
     },
     "/v1/projects/{projectId}/quota": {
@@ -1893,7 +2063,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Get the quota of Load Balancers and Target Pools in a project."
+        "summary": "Get the quota of Load Balancers and Target Pools in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "nlb.quota.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       }
     }
   },

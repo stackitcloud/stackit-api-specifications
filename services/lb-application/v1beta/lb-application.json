@@ -945,7 +945,10 @@
             "description": "Default error response"
           }
         },
-        "summary": "List available service plans."
+        "summary": "List available service plans.",
+        "x-stackit-authorization": {
+          "disabled": true
+        }
       }
     },
     "/v1beta/projects/{projectId}": {
@@ -1004,7 +1007,15 @@
             "description": "Default error response"
           }
         },
-        "summary": "Disables the functionality of load balancers for the project specified."
+        "summary": "Disables the functionality of load balancers for the project specified.",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.loadbalancer.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
       },
       "get": {
         "deprecated": true,
@@ -1061,7 +1072,15 @@
             "description": "Default error response"
           }
         },
-        "summary": "Return the status of application load balancer functionality for the project specified."
+        "summary": "Return the status of application load balancer functionality for the project specified.",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.loadbalancer.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
       },
       "post": {
         "deprecated": true,
@@ -1128,7 +1147,15 @@
             "description": "Default error response"
           }
         },
-        "summary": "Enables the functionality of application load balancers for the project specified."
+        "summary": "Enables the functionality of application load balancers for the project specified.",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.loadbalancer.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
       }
     },
     "/v1beta/projects/{projectId}/credentials": {
@@ -1186,7 +1213,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "List all credentials in a project."
+        "summary": "List all credentials in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.credentials.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       },
       "post": {
         "description": "Creates and stores credentials for use with Application Load Balancer Observability.\n For example, when using ARGUS, credentials must first be created via the ARGUS API\n and then stored with this endpoint to be used by the Application Load Balancer.",
@@ -1262,7 +1302,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Create credentials for observability of the application load balancer"
+        "summary": "Create credentials for observability of the application load balancer",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.credentials.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       }
     },
     "/v1beta/projects/{projectId}/credentials/{credentialsRef}": {
@@ -1328,7 +1381,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Delete a single credential in a project."
+        "summary": "Delete a single credential in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.credentials.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       },
       "get": {
         "description": "Gets the stored Observability credentials.",
@@ -1395,7 +1461,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Get a single credential reference in a project."
+        "summary": "Get a single credential reference in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.credentials.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       },
       "put": {
         "description": "Updates the stored Observability credentials.",
@@ -1472,7 +1551,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Update credentials for observability in a project."
+        "summary": "Update credentials for observability in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.credentials.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       }
     },
     "/v1beta/projects/{projectId}/load-balancers": {
@@ -1546,7 +1638,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "List load balancers in a project."
+        "summary": "List load balancers in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.loadbalancer.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       },
       "post": {
         "description": "Creates an Application Load Balancer.\n The default load balancing algorithm is Maglev, and selecting a different algorithm is currently not supported.",
@@ -1625,7 +1730,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Create an application load balancer in a project"
+        "summary": "Create an application load balancer in a project",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.loadbalancer.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       }
     },
     "/v1beta/projects/{projectId}/load-balancers/{name}": {
@@ -1691,7 +1809,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Delete a given load balancer in a project."
+        "summary": "Delete a given load balancer in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.loadbalancer.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       },
       "get": {
         "description": "Retrieves details of a specific Application Load Balancer in a project.\n Includes creation and update information, current status, and any error descriptions.",
@@ -1758,7 +1889,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Get a single application load balancer in a project."
+        "summary": "Get a single application load balancer in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.loadbalancer.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       },
       "put": {
         "description": "Updates an existing Application Load Balancer by modifying its listeners and target pools.\n Ensure the resource version is current to maintain concurrency safety.\n The default load balancing algorithm is Maglev, and selecting a different algorithm is currently not supported.",
@@ -1835,7 +1979,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Update a load balancer in a project."
+        "summary": "Update a load balancer in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.loadbalancer.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       }
     },
     "/v1beta/projects/{projectId}/load-balancers/{name}/target-pools/{targetPoolName}": {
@@ -1919,7 +2076,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Update a single target pool of a load balancer in a project."
+        "summary": "Update a single target pool of a load balancer in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.targetpool.replace"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       }
     },
     "/v1beta/projects/{projectId}/quota": {
@@ -1977,7 +2147,20 @@
             "description": "Default error response"
           }
         },
-        "summary": "Get the quota of application load balancers and target pools in a project."
+        "summary": "Get the quota of application load balancers and target pools in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.quota.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
       }
     }
   },

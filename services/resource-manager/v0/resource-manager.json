@@ -49,14 +49,6 @@
           "type": "string"
         }
       },
-      "cursor": {
-        "description": "A pagination cursor is returned on the first call of the pagination process. If given, it will start from the end of the previous position. If not given, a new pagination is started.",
-        "in": "query",
-        "name": "cursor",
-        "schema": {
-          "type": "string"
-        }
-      },
       "limit": {
         "description": "The maximum number of projects to return in the response. If not present, an appropriate default will be used. If maximum is exceeded, maximum is used.",
         "in": "query",
@@ -122,12 +114,6 @@
         "title": "CreateProjectRequest",
         "type": "object"
       },
-      "Cursor": {
-        "description": "A pagination cursor is returned on the first call of the pagination process. If given, it will start from the end of the previous position. If not given, a new pagination is started.",
-        "example": "string",
-        "title": "cursor",
-        "type": "string"
-      },
       "ErrorResponse": {
         "properties": {
           "error": {
@@ -165,54 +151,6 @@
           "message"
         ],
         "title": "ErrorResponse",
-        "type": "object"
-      },
-      "FolderResponse": {
-        "properties": {
-          "containerId": {
-            "description": "Globally unique, user-friendly identifier.",
-            "example": "first-folder-158955",
-            "type": "string"
-          },
-          "creationTime": {
-            "description": "Timestamp at which the folder was created.",
-            "example": "2021-08-24T14:15:22Z",
-            "format": "date-time",
-            "type": "string"
-          },
-          "folderId": {
-            "description": "Globally unique folder identifier.",
-            "example": "54066bf4-1aff-4f7b-9f83-fb23c348fff3",
-            "format": "uuid",
-            "type": "string"
-          },
-          "labels": {
-            "$ref": "#/components/schemas/Labels"
-          },
-          "name": {
-            "description": "Folder name.",
-            "example": "First Folder",
-            "type": "string"
-          },
-          "parent": {
-            "$ref": "#/components/schemas/Parent"
-          },
-          "updateTime": {
-            "description": "Timestamp at which the folder was last modified.",
-            "example": "2021-08-24T14:15:22Z",
-            "format": "date-time",
-            "type": "string"
-          }
-        },
-        "required": [
-          "name",
-          "containerId",
-          "folderId",
-          "creationTime",
-          "updateTime",
-          "parent"
-        ],
-        "title": "FolderResponse",
         "type": "object"
       },
       "GetProjectResponse": {
@@ -298,69 +236,6 @@
         "minimum": 0,
         "title": "Limit",
         "type": "number"
-      },
-      "ListOrganizationContainersResponse": {
-        "properties": {
-          "cursor": {
-            "$ref": "#/components/schemas/Cursor"
-          },
-          "items": {
-            "items": {
-              "anyOf": [
-                {
-                  "properties": {
-                    "item": {
-                      "$ref": "#/components/schemas/FolderResponse"
-                    },
-                    "type": {
-                      "description": "Resource container type.",
-                      "enum": [
-                        "FOLDER"
-                      ],
-                      "example": "FOLDER",
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "item"
-                  ]
-                },
-                {
-                  "properties": {
-                    "item": {
-                      "$ref": "#/components/schemas/Project"
-                    },
-                    "type": {
-                      "description": "Resource container type.",
-                      "enum": [
-                        "PROJECT"
-                      ],
-                      "example": "PROJECT",
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "item"
-                  ]
-                }
-              ],
-              "type": "object"
-            },
-            "type": "array"
-          },
-          "limit": {
-            "$ref": "#/components/schemas/Limit"
-          }
-        },
-        "required": [
-          "limit",
-          "cursor",
-          "items"
-        ],
-        "title": "ListOrganizationContainersResponse",
-        "type": "object"
       },
       "ListOrganizationsResponse": {
         "properties": {
@@ -696,148 +571,6 @@
   },
   "openapi": "3.0.3",
   "paths": {
-    "/bff/folders/{id}/containers": {
-      "get": {
-        "description": "Returns all direct resource container under this folder including their metadata. \n- Response items will contain all folders first, followed by all projects\n- If a folder does not have any containers, an empty items list will be returned\n\n**Note:** Recursion is not supported - meaning only the next level in hierarchy tree is considered!",
-        "operationId": "bff-get-containers-of-a-folder",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/limit"
-          },
-          {
-            "$ref": "#/components/parameters/cursor"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListOrganizationContainersResponse"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Malformed input"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          }
-        },
-        "summary": "Get Containers Of A Folder",
-        "x-stackit-authorization": {
-          "actions": [
-            "resource-manager.folder.get"
-          ],
-          "resource-id": "id",
-          "resource-id-type": "dynamic",
-          "resource-type": "folder"
-        }
-      },
-      "parameters": [
-        {
-          "description": "Folder identifier - UUID identifier is preferred; containerId is also supported.",
-          "in": "path",
-          "name": "id",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        }
-      ]
-    },
-    "/bff/organizations/{id}/containers": {
-      "get": {
-        "description": "Returns all direct resource container under this organization including their metadata.\n- Response items will contain all folders first, followed by all projects\n- If organization does not have any containers, an empty items list will be returned",
-        "operationId": "bff-get-containers-of-an-organization",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/limit"
-          },
-          {
-            "$ref": "#/components/parameters/cursor"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListOrganizationContainersResponse"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Malformed input"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "Organization Not Found": {
-                    "$ref": "#/components/examples/NotFound"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Organization Not Found"
-          }
-        },
-        "summary": "Get Containers Of An Organization",
-        "x-stackit-authorization": {
-          "disabled": true
-        }
-      },
-      "parameters": [
-        {
-          "description": "Organization identifier - UUID identifier is preferred; containerId is also supported.",
-          "in": "path",
-          "name": "id",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        }
-      ]
-    },
     "/v2/organizations": {
       "get": {
         "description": "Returns all organizations and their metadata.\n- If no containerIds are specified, all organizations are returned, if permitted\n- ContainerIds may be set to filter\n- Member may be set to filter\n- If member and containerIds are given, both are used for filtering\n",

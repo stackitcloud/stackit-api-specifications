@@ -177,6 +177,15 @@
             "minimum": 60,
             "type": "integer"
           },
+          "extensions": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/zone.Extensions"
+              }
+            ],
+            "description": "optional extensions",
+            "type": "object"
+          },
           "isReverseZone": {
             "default": false,
             "description": "if the zone is a reverse zone or not",
@@ -199,7 +208,7 @@
           "primaries": {
             "description": "primary name server for secondary zone",
             "example": [
-              "1.2.3.4"
+              "192.0.2.1"
             ],
             "items": {
               "type": "string"
@@ -603,6 +612,15 @@
             "minimum": 60,
             "type": "integer"
           },
+          "extensions": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/zone.Extensions"
+              }
+            ],
+            "description": "optional extensions",
+            "type": "object"
+          },
           "name": {
             "description": "user given name",
             "example": "test",
@@ -646,7 +664,7 @@
         "properties": {
           "content": {
             "description": "content of the record",
-            "example": "1.2.3.4",
+            "example": "192.0.2.1",
             "maxLength": 64000,
             "minLength": 1,
             "type": "string"
@@ -672,7 +690,7 @@
           },
           "content": {
             "example": [
-              "1.2.3.4"
+              "192.0.2.1"
             ],
             "items": {
               "type": "string"
@@ -699,7 +717,7 @@
         "properties": {
           "content": {
             "description": "content of the record",
-            "example": "1.2.3.4",
+            "example": "192.0.2.1",
             "maxLength": 64000,
             "minLength": 1,
             "type": "string"
@@ -920,6 +938,9 @@
             "minimum": 60,
             "type": "integer"
           },
+          "extensions": {
+            "$ref": "#/components/schemas/domain.Extensions"
+          },
           "id": {
             "description": "zone id",
             "example": "37403b63-86ce-41e9-9b0b-1d8c5b3b2b96",
@@ -953,7 +974,7 @@
           "primaries": {
             "description": "primary name server for secondary zone",
             "example": [
-              "1.2.3.4"
+              "192.0.2.1"
             ],
             "items": {
               "type": "string"
@@ -1084,6 +1105,50 @@
         ],
         "type": "object"
       },
+      "domain.Extensions": {
+        "properties": {
+          "observabilityExtension": {
+            "$ref": "#/components/schemas/domain.ObservabilityExtension"
+          }
+        },
+        "type": "object"
+      },
+      "domain.ObservabilityExtension": {
+        "properties": {
+          "observabilityInstanceId": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "observabilityInstanceId"
+        ],
+        "type": "object"
+      },
+      "zone.Extensions": {
+        "properties": {
+          "observabilityExtension": {
+            "$ref": "#/components/schemas/zone.ObservabilityExtension"
+          }
+        },
+        "type": "object"
+      },
+      "zone.ObservabilityExtension": {
+        "properties": {
+          "observabilityInstanceId": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "observabilityInstanceId"
+        ],
+        "type": "object"
+      },
       "zone_models.ImportRecordModel": {
         "properties": {
           "comment": {
@@ -1092,7 +1157,7 @@
           },
           "content": {
             "example": [
-              "1.2.3.4"
+              "192.0.2.1"
             ],
             "items": {
               "type": "string"
@@ -2776,6 +2841,16 @@
               }
             },
             "description": "Bad Request"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Conflict"
           },
           "502": {
             "content": {

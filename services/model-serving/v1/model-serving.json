@@ -1,0 +1,1067 @@
+{
+  "components": {
+    "parameters": {
+      "modelId": {
+        "description": "model id",
+        "example": "550e8400-e29b-41d4-a716-446655440000",
+        "in": "path",
+        "name": "modelId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "style": "simple"
+      },
+      "projectId": {
+        "description": "portal project id",
+        "example": "904bb6ea-8632-4818-b26e-943557dc4f57",
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "style": "simple"
+      },
+      "regionId": {
+        "description": "region name",
+        "example": "eu01",
+        "in": "path",
+        "name": "regionId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "style": "simple"
+      },
+      "tId": {
+        "description": "token id",
+        "example": "6406334b-960f-4b45-8d9f-aa28f6205efd",
+        "in": "path",
+        "name": "tId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "style": "simple"
+      }
+    },
+    "responses": {
+      "BadRequestResp": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorMessageResponse"
+            }
+          }
+        },
+        "description": "invalid input"
+      },
+      "ConflictResp": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorMessageResponse"
+            }
+          }
+        },
+        "description": "conflict"
+      },
+      "InternalServerErrorResp": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorMessageResponse"
+            }
+          }
+        },
+        "description": "internal server error"
+      },
+      "NotFoundResp": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorMessageResponse"
+            }
+          }
+        },
+        "description": "not found"
+      },
+      "UnauthenticatedResp": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorMessageResp"
+            }
+          }
+        },
+        "description": "unauthenticated"
+      },
+      "UnauthorizedResp": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorMessageResponse"
+            }
+          }
+        },
+        "description": "unauthorized"
+      }
+    },
+    "schemas": {
+      "ChatModelDetails": {
+        "properties": {
+          "bits": {
+            "enum": [
+              1,
+              2,
+              4,
+              8,
+              16
+            ],
+            "format": "int32",
+            "type": "integer",
+            "x-enum-varnames": [
+              "1Bit",
+              "2Bits",
+              "4Bits",
+              "8Bits",
+              "16Bits"
+            ]
+          },
+          "category": {
+            "enum": [
+              "standard",
+              "plus",
+              "premium"
+            ],
+            "example": "standard",
+            "type": "string"
+          },
+          "contextLength": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "description": {
+            "example": "A chat model",
+            "maxLength": 2000,
+            "pattern": "^[0-9a-zA-Z\\s.:\\/\\-]+$",
+            "type": "string"
+          },
+          "displayedName": {
+            "example": "Llama 3 8B Instruct",
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[0-9a-zA-Z\\s_-]+$",
+            "type": "string"
+          },
+          "id": {
+            "description": "generated uuid to identify a model",
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "description": "huggingface name",
+            "example": "meta-llama/Meta-Llama-3-8B-Instruct",
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[0-9a-zA-Z\\s.:\\/\\-]+$",
+            "type": "string"
+          },
+          "quantizationMethod": {
+            "enum": [
+              "PTQ",
+              "QAT"
+            ],
+            "type": "string",
+            "x-enum-descriptions": [
+              "Post training quanitization",
+              "Quantization-aware training"
+            ]
+          },
+          "region": {
+            "example": "eu01",
+            "type": "string"
+          },
+          "size": {
+            "description": "model size in bytes",
+            "format": "int64",
+            "type": "integer"
+          },
+          "skus": {
+            "items": {
+              "$ref": "#/components/schemas/SKU"
+            },
+            "type": "array"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "url": {
+            "description": "url of the model",
+            "example": "https://api.openai-compat.model-serving.eu01.onstackit.cloud",
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[0-9a-zA-Z\\s.:\\/\\-]+$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "displayedName",
+          "description",
+          "size",
+          "contextLength",
+          "tags",
+          "url",
+          "category",
+          "skus",
+          "region"
+        ],
+        "type": "object"
+      },
+      "CreateTokenPayload": {
+        "properties": {
+          "description": {
+            "example": "my token",
+            "maxLength": 2000,
+            "pattern": "^[0-9a-zA-Z\\s.:\\/\\-]+$",
+            "type": "string"
+          },
+          "name": {
+            "example": "my-token",
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[0-9a-zA-Z\\s_-]+$",
+            "type": "string"
+          },
+          "ttlDuration": {
+            "description": "time to live duration. Must be valid duration string. If not set the token will never expire.",
+            "example": "5h30m40s",
+            "format": "duration",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "CreateTokenResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "token": {
+            "$ref": "#/components/schemas/TokenCreated"
+          }
+        },
+        "required": [
+          "token"
+        ],
+        "type": "object"
+      },
+      "EmbeddingModelDetails": {
+        "properties": {
+          "category": {
+            "enum": [
+              "standard",
+              "plus",
+              "premium"
+            ],
+            "example": "standard",
+            "type": "string"
+          },
+          "description": {
+            "example": "An embedding model",
+            "maxLength": 2000,
+            "pattern": "^[0-9a-zA-Z\\s.:\\/\\-]+$",
+            "type": "string"
+          },
+          "displayedName": {
+            "example": "Llama 3 8B Instruct",
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[0-9a-zA-Z\\s_-]+$",
+            "type": "string"
+          },
+          "id": {
+            "description": "generated uuid to identify a model",
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "description": "huggingface name",
+            "example": "meta-llama/Meta-Llama-3-8B-Instruct",
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[0-9a-zA-Z\\s.:\\/\\-]+$",
+            "type": "string"
+          },
+          "outputDimension": {
+            "example": 8192,
+            "format": "int64",
+            "type": "integer"
+          },
+          "region": {
+            "example": "eu01",
+            "type": "string"
+          },
+          "skus": {
+            "items": {
+              "$ref": "#/components/schemas/SKU"
+            },
+            "type": "array"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "url": {
+            "description": "url of the model",
+            "example": "https://api.openai-compat.model-serving.eu01.onstackit.cloud",
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[0-9a-zA-Z\\s.:\\/\\-]+$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "displayedName",
+          "description",
+          "outputDimension",
+          "url",
+          "skus",
+          "category",
+          "region"
+        ],
+        "type": "object"
+      },
+      "ErrorMessageResponse": {
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GetChatModelResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "model": {
+            "$ref": "#/components/schemas/ChatModelDetails"
+          }
+        },
+        "required": [
+          "model"
+        ],
+        "type": "object"
+      },
+      "GetEmbeddingsModelResp": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "model": {
+            "$ref": "#/components/schemas/EmbeddingModelDetails"
+          }
+        },
+        "required": [
+          "model"
+        ],
+        "type": "object"
+      },
+      "GetTokenResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "token": {
+            "$ref": "#/components/schemas/Token"
+          }
+        },
+        "required": [
+          "token"
+        ],
+        "type": "object"
+      },
+      "ListModelsResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "models": {
+            "items": {
+              "$ref": "#/components/schemas/Model"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "models"
+        ],
+        "type": "object"
+      },
+      "ListTokenResp": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "tokens": {
+            "items": {
+              "$ref": "#/components/schemas/Token"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "tokens"
+        ],
+        "type": "object"
+      },
+      "MessageResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Model": {
+        "properties": {
+          "category": {
+            "enum": [
+              "standard",
+              "plus",
+              "premium"
+            ],
+            "example": "standard",
+            "type": "string"
+          },
+          "description": {
+            "example": "A chat model",
+            "maxLength": 2000,
+            "pattern": "^[0-9a-zA-Z\\s.:\\/\\-]+$",
+            "type": "string"
+          },
+          "displayedName": {
+            "example": "Llama 3 8B Instruct",
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[0-9a-zA-Z\\s_-]+$",
+            "type": "string"
+          },
+          "id": {
+            "description": "generated uuid to identify a model",
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "description": "huggingface name",
+            "example": "meta-llama/Meta-Llama-3-8B-Instruct",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "region": {
+            "example": "eu01",
+            "type": "string"
+          },
+          "skus": {
+            "items": {
+              "$ref": "#/components/schemas/SKU"
+            },
+            "type": "array"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": {
+            "enum": [
+              "chat",
+              "embedding"
+            ],
+            "type": "string"
+          },
+          "url": {
+            "description": "url of the model",
+            "example": "https://api.openai-compat.model-serving.eu01.onstackit.cloud",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "displayedName",
+          "description",
+          "type",
+          "url",
+          "region",
+          "category",
+          "skus"
+        ],
+        "type": "object"
+      },
+      "PartialUpdateTokenPayload": {
+        "properties": {
+          "description": {
+            "example": "my token",
+            "maxLength": 2000,
+            "pattern": "^[0-9a-zA-Z\\s.:\\/\\-]+$",
+            "type": "string"
+          },
+          "name": {
+            "example": "my-token",
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[0-9a-zA-Z\\s_-]+$",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SKU": {
+        "properties": {
+          "description": {
+            "example": "Sku for input tokens for chat models",
+            "type": "string"
+          },
+          "id": {
+            "example": "ST-00000",
+            "type": "string"
+          },
+          "type": {
+            "example": "input",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "Token": {
+        "properties": {
+          "description": {
+            "example": "token description",
+            "maxLength": 2000,
+            "pattern": "^[0-9a-zA-Z\\s.:\\/\\-]+$",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "example": "my-token",
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[0-9a-zA-Z\\s_-]+$",
+            "type": "string"
+          },
+          "region": {
+            "example": "eu01",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "creating",
+              "active",
+              "deleting",
+              "inactive"
+            ],
+            "type": "string"
+          },
+          "validUntil": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "state",
+          "validUntil",
+          "name",
+          "region"
+        ],
+        "type": "object"
+      },
+      "TokenCreated": {
+        "properties": {
+          "content": {
+            "example": "ey...",
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[0-9a-zA-Z\\s_-]+$",
+            "type": "string"
+          },
+          "description": {
+            "example": "token description",
+            "maxLength": 2000,
+            "pattern": "^[0-9a-zA-Z\\s.:\\/\\-]+$",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "example": "my-token",
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[0-9a-zA-Z\\s_-]+$",
+            "type": "string"
+          },
+          "region": {
+            "example": "eu01",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "creating",
+              "active",
+              "deleting"
+            ],
+            "type": "string"
+          },
+          "validUntil": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "content",
+          "state",
+          "validUntil",
+          "name",
+          "region"
+        ],
+        "type": "object"
+      },
+      "UpdateTokenResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "token": {
+            "$ref": "#/components/schemas/Token"
+          }
+        },
+        "required": [
+          "token"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "contact": {
+      "email": "model-serving@mail.schwarz",
+      "name": "Model serving",
+      "url": "https://developers.stackit.schwarz"
+    },
+    "description": "This API provides endpoints for the model serving api",
+    "title": "STACKIT Model Serving API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1/projects/{projectId}/regions/{regionId}/tokens": {
+      "get": {
+        "description": "auth tokens for shared model in non dedicated instances",
+        "operationId": "ListTokens",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListTokenResp"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResp"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedResp"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResp"
+          }
+        },
+        "summary": "auth tokens for shared model in non dedicated instances",
+        "x-stackit-authorization": {
+          "actions": [
+            "model-serving.token.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.model-serving"
+            ]
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/projectId"
+        }
+      ],
+      "post": {
+        "description": "create auth token for shared model use",
+        "operationId": "CreateToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTokenPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateTokenResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResp"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedResp"
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictResp"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResp"
+          }
+        },
+        "summary": "create auth token for shared model use",
+        "x-stackit-authorization": {
+          "actions": [
+            "model-serving.token.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.model-serving"
+            ]
+          }
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{regionId}/tokens/{tId}": {
+      "delete": {
+        "description": "delete auth token in shared model use",
+        "operationId": "DeleteToken",
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResp"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedResp"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundResp"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResp"
+          }
+        },
+        "summary": "delete auth token in shared model use",
+        "x-stackit-authorization": {
+          "actions": [
+            "model-serving.token.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.model-serving"
+            ]
+          }
+        }
+      },
+      "get": {
+        "description": "get auth token for shared model use",
+        "operationId": "GetToken",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTokenResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResp"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedResp"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundResp"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResp"
+          }
+        },
+        "summary": "get auth token for shared model use",
+        "x-stackit-authorization": {
+          "actions": [
+            "model-serving.token.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.model-serving"
+            ]
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/tId"
+        }
+      ],
+      "patch": {
+        "description": "partial update auth token for shared model use",
+        "operationId": "PartialUpdateToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartialUpdateTokenPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateTokenResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResp"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedResp"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundResp"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResp"
+          }
+        },
+        "summary": "partial update auth token for shared model use",
+        "x-stackit-authorization": {
+          "actions": [
+            "model-serving.token.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.model-serving"
+            ]
+          }
+        }
+      }
+    },
+    "/v1/regions/{regionId}/chat/models/{modelId}": {
+      "get": {
+        "description": "details of a llm model",
+        "operationId": "GetChatModel",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetChatModelResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResp"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedResp"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResp"
+          }
+        },
+        "summary": "details of a llm model",
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/modelId"
+        }
+      ]
+    },
+    "/v1/regions/{regionId}/embedding/models/{modelId}": {
+      "get": {
+        "description": "details of an embedding model",
+        "operationId": "GetEmbeddingModel",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetEmbeddingsModelResp"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResp"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedResp"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResp"
+          }
+        },
+        "summary": "details of an embedding model",
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/modelId"
+        }
+      ]
+    },
+    "/v1/regions/{regionId}/models": {
+      "get": {
+        "description": "List of shared model",
+        "operationId": "ListModels",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListModelsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResp"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedResp"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResp"
+          }
+        },
+        "summary": "List of shared model",
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/regionId"
+        }
+      ]
+    }
+  },
+  "servers": [
+    {
+      "url": "https://model-serving.api.{region}stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "eu01.",
+          "enum": [
+            "eu01."
+          ]
+        }
+      }
+    }
+  ]
+}

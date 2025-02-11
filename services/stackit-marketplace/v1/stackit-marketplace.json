@@ -887,6 +887,208 @@
           "product"
         ],
         "type": "object"
+      },
+      "inquiries-create-inquiryPayload": {
+        "oneOf": [
+          {
+            "description": "Suggest a product.",
+            "properties": {
+              "suggestProduct": {
+                "properties": {
+                  "companyName": {
+                    "description": "The suggested product's company name.",
+                    "maxLength": 512,
+                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
+                    "type": "string"
+                  },
+                  "message": {
+                    "description": "An additional message.",
+                    "maxLength": 512,
+                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "The suggested product name.",
+                    "maxLength": 512,
+                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
+                    "type": "string"
+                  },
+                  "url": {
+                    "description": "The suggested product's website URL.",
+                    "format": "url",
+                    "maxLength": 512,
+                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "companyName",
+                  "url"
+                ],
+                "type": "object"
+              },
+              "type": {
+                "description": "The form type.",
+                "enum": [
+                  "suggest_product"
+                ],
+                "format": "enum",
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "suggestProduct"
+            ],
+            "title": "suggestProduct",
+            "type": "object"
+          },
+          {
+            "description": "Contact sales.",
+            "properties": {
+              "contactSales": {
+                "properties": {
+                  "companyName": {
+                    "description": "The company name.",
+                    "maxLength": 512,
+                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
+                    "type": "string"
+                  },
+                  "contactEmail": {
+                    "description": "The contact e-mail address.",
+                    "format": "email",
+                    "type": "string"
+                  },
+                  "fullName": {
+                    "description": "The full name of the contact person.",
+                    "maxLength": 512,
+                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
+                    "type": "string"
+                  },
+                  "message": {
+                    "description": "The message content.",
+                    "maxLength": 512,
+                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
+                    "type": "string"
+                  },
+                  "productId": {
+                    "description": "The product ID.",
+                    "format": "uuid",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "productId",
+                  "fullName",
+                  "companyName",
+                  "contactEmail",
+                  "message"
+                ],
+                "type": "object"
+              },
+              "type": {
+                "description": "The form type.",
+                "enum": [
+                  "contact_sales"
+                ],
+                "format": "enum",
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "contactSales"
+            ],
+            "title": "contactSales",
+            "type": "object"
+          },
+          {
+            "description": "Become a vendor.",
+            "properties": {
+              "becomeVendor": {
+                "properties": {
+                  "contactEmail": {
+                    "description": "The contact e-mail address.",
+                    "format": "email",
+                    "type": "string"
+                  },
+                  "message": {
+                    "description": "The message content.",
+                    "maxLength": 512,
+                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "contactEmail",
+                  "message"
+                ],
+                "type": "object"
+              },
+              "type": {
+                "description": "The form type.",
+                "enum": [
+                  "become_vendor"
+                ],
+                "format": "enum",
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "becomeVendor"
+            ],
+            "title": "becomeVendor",
+            "type": "object"
+          },
+          {
+            "description": "Register for testing.",
+            "properties": {
+              "registerTesting": {
+                "properties": {
+                  "contactEmail": {
+                    "description": "The contact e-mail address.",
+                    "format": "email",
+                    "type": "string"
+                  },
+                  "fullName": {
+                    "description": "The full name of the contact person.",
+                    "maxLength": 512,
+                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
+                    "type": "string"
+                  },
+                  "message": {
+                    "description": "The message content.",
+                    "maxLength": 512,
+                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "fullName",
+                  "contactEmail",
+                  "message"
+                ]
+              },
+              "type": {
+                "description": "The form type.",
+                "enum": [
+                  "register_testing"
+                ],
+                "format": "enum",
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "registerTesting"
+            ],
+            "title": "registerTesting",
+            "type": "object"
+          }
+        ],
+        "type": "object"
       }
     }
   },
@@ -984,6 +1186,43 @@
           }
         },
         "summary": "Get a product",
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      }
+    },
+    "/v1/inquiries": {
+      "post": {
+        "description": "Create an inquiry to contact sales, become a vendor, or suggest a product. Requests are limited to 10 per 5 minutes.",
+        "operationId": "inquiries-create-inquiry",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/inquiries-create-inquiryPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "Create inquiry",
         "x-stackit-authorization": {
           "disabled": true
         }

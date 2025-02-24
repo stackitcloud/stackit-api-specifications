@@ -65,6 +65,16 @@
           "type": "string"
         }
       },
+      "v1ListAllImages": {
+        "description": "List all Images.",
+        "in": "query",
+        "name": "all",
+        "schema": {
+          "default": false,
+          "example": true,
+          "type": "boolean"
+        }
+      },
       "v1LogLength": {
         "description": "Request the server log. By default the length is limited to 2000 lines. Set to 0 to retrieve the complete log.",
         "in": "query",
@@ -516,8 +526,8 @@
         "type": "object"
       },
       "AffinityGroupPolicy": {
-        "description": "The affinity group policy.",
-        "example": "anti-affinity",
+        "description": "The affinity group policy.\n`hard-affinity`: All servers in this group will be hosted on the same compute node.\n`soft-affinity`: All servers in this group will be hosted on as few compute nodes as possible.\n`hard-anti-affinity`: All servers in this group will be hosted on different compute nodes.\n`soft-anti-affinity`: All servers in this group will be hosted on as many compute nodes as possible.\nPossible values: `hard-anti-affinity`, `hard-affinity`, `soft-anti-affinity`, `soft-affinity`.",
+        "example": "hard-anti-affinity",
         "type": "string"
       },
       "AllowedAddresses": {
@@ -765,11 +775,11 @@
         "type": "object"
       },
       "BackupSourceTypes": {
-        "description": "The source types of a backup.",
+        "description": "The source types of a backup.\nPossible values: `volume`, `snapshot`.",
         "type": "string"
       },
       "BackupStatus": {
-        "description": "The status of a backup object.",
+        "description": "The status of a backup object.\nPossible values: `AVAILABLE`, `CREATING`, `DELETED`, `DELETING`, `ERROR`, `RESTORING`.",
         "example": "AVAILABLE",
         "type": "string"
       },
@@ -898,7 +908,7 @@
         "type": "object"
       },
       "BootVolumeSourceTypes": {
-        "description": "The source types of a boot volume.",
+        "description": "The source types of a boot volume.\nPossible values: `image`, `volume`.",
         "type": "string"
       },
       "CIDR": {
@@ -1048,6 +1058,14 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/ImageScope"
+              }
+            ],
+            "readOnly": true
+          },
+          "size": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SizeInBytes"
               }
             ],
             "readOnly": true
@@ -1506,7 +1524,7 @@
           "keypairName": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/GenericName"
+                "$ref": "#/components/schemas/KeyPairName"
               }
             ],
             "description": "The SSH keypair used during the server creation."
@@ -1776,7 +1794,6 @@
         "type": "string"
       },
       "DeleteOnTermination": {
-        "default": false,
         "description": "Delete the volume during the termination of the server. Defaults to false.",
         "type": "boolean"
       },
@@ -1787,7 +1804,7 @@
         "type": "string"
       },
       "DiskFormat": {
-        "description": "Object that represents a disk format.",
+        "description": "Object that represents a disk format.\nPossible values: `raw`, `qcow2`, `iso`.",
         "type": "string"
       },
       "Error": {
@@ -1939,6 +1956,14 @@
             ],
             "readOnly": true
           },
+          "size": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SizeInBytes"
+              }
+            ],
+            "readOnly": true
+          },
           "status": {
             "allOf": [
               {
@@ -1994,9 +2019,16 @@
       "ImageConfig": {
         "description": "Properties to set hardware and scheduling settings for an Image.",
         "properties": {
+          "architecture": {
+            "description": "Represents CPU architecture. The default for new images is x86.",
+            "type": "string",
+            "x-extensible-enum": [
+              "arm64",
+              "x86"
+            ]
+          },
           "bootMenu": {
-            "default": false,
-            "description": "Enables the BIOS bootmenu.",
+            "description": "Enables the BIOS bootmenu. The default for new images is disabled.",
             "type": "boolean"
           },
           "cdromBus": {
@@ -2074,13 +2106,11 @@
             ]
           },
           "secureBoot": {
-            "default": false,
-            "description": "Enables Secure Boot.",
+            "description": "Enables Secure Boot. The default for new images is disabled.",
             "type": "boolean"
           },
           "uefi": {
-            "default": false,
-            "description": "Enables UEFI boot.",
+            "description": "Configure UEFI boot. The default for new images is enabled.",
             "type": "boolean"
           },
           "videoModel": {
@@ -2097,8 +2127,7 @@
             ]
           },
           "virtioScsi": {
-            "default": false,
-            "description": "Enables the use of VirtIO SCSI to provide block device access. By default instances use VirtIO Block.",
+            "description": "Enables the use of VirtIO SCSI to provide block device access. By default servers use VirtIO Block.",
             "type": "boolean"
           }
         },
@@ -2141,7 +2170,7 @@
         "type": "object"
       },
       "ImageScope": {
-        "description": "Scope of an Image.",
+        "description": "Scope of an Image.\nPossible values: `public`, `local`, `projects`, `organization`.",
         "example": "local",
         "type": "string"
       },
@@ -2199,7 +2228,7 @@
         }
       },
       "ImageStatus": {
-        "description": "The status of an image object.",
+        "description": "The status of an image object.\nPossible values: `AVAILABLE`, `CREATING`, `DEACTIVATED`, `DELETED`, `DELETING`, `ERROR`.",
         "example": "AVAILABLE",
         "type": "string"
       },
@@ -2280,9 +2309,9 @@
         "type": "object"
       },
       "Labels": {
-        "description": "Object that represents the labels of an object.",
+        "description": "Object that represents the labels of an object. Regex for keys: `^[a-z]((-|_|[a-z0-9])){0,62}$`. Regex for values: `^(-|_|[a-z0-9]){0,63}$`.",
         "example": {
-          "foo": "Foo Value"
+          "key": "value"
         },
         "format": "json",
         "type": "object"
@@ -2302,7 +2331,7 @@
       "MachineType": {
         "description": "Machine Type.",
         "example": {
-          "description": "small, specific instances with cpu-overcommit. Runs on various Intel CPUs.",
+          "description": "small, specific servers with cpu-overcommit. Runs on various Intel CPUs.",
           "disk": 1,
           "extraSpecs": {
             "cpu": "intel-ivybridge-generic",
@@ -2821,7 +2850,7 @@
         "type": "object"
       },
       "ProtocolName": {
-        "description": "The protocol name which the rule should match.",
+        "description": "The protocol name which the rule should match.\nPossible values: `ah`, `dccp`, `egp`, `esp`, `gre`, `icmp`, `igmp`, `ipip`, `ipv6-encap`, `ipv6-frag`, `ipv6-icmp`, `ipv6-nonxt`, `ipv6-opts`, `ipv6-route`, `ospf`, `pgm`, `rsvp`, `sctp`, `tcp`, `udp`, `udplite`, `vrrp`.",
         "type": "string"
       },
       "ProtocolNumber": {
@@ -2878,6 +2907,37 @@
         "properties": {
           "items": {
             "$ref": "#/components/schemas/PublicIpList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "PublicNetwork": {
+        "description": "Public network.",
+        "properties": {
+          "cidr": {
+            "$ref": "#/components/schemas/CIDR"
+          }
+        },
+        "required": [
+          "cidr"
+        ],
+        "type": "object"
+      },
+      "PublicNetworkList": {
+        "description": "A list of public networks.",
+        "items": {
+          "$ref": "#/components/schemas/PublicNetwork"
+        },
+        "type": "array"
+      },
+      "PublicNetworkListResponse": {
+        "description": "Public network list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/PublicNetworkList"
           }
         },
         "required": [
@@ -3187,17 +3247,17 @@
         "type": "object"
       },
       "Resource": {
-        "description": "Object that represents a resource type.",
+        "description": "Object that represents a resource type.\nPossible values: `BACKUP`, `IMAGE`, `NETWORK`, `NETWORKAREA`, `NIC`, `PROJECT`, `ROUTE`, `SERVER`, `SERVICEACCOUNT`, `SNAPSHOT`, `VIRTUALIP`, `VOLUME`.",
         "example": "SERVER",
         "type": "string"
       },
       "ResourceAction": {
-        "description": "Object that represents a resource action.",
+        "description": "Object that represents a resource action.\nPossible values: `CREATE`, `DELETE`, `UPDATE`.",
         "example": "CREATE",
         "type": "string"
       },
       "ResourceState": {
-        "description": "The state of a resource object.",
+        "description": "The state of a resource object.\nPossible values: `CREATING`, `CREATED`, `DELETING`, `DELETED`, `FAILED`, `UPDATED`, `UPDATING`.",
         "example": "CREATING",
         "type": "string"
       },
@@ -3271,7 +3331,7 @@
       "SSHPublicKey": {
         "description": "Object that represents a public SSH key.",
         "example": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIDsPd27M449akqCtdFg2+AmRVJz6eWio0oMP9dVg7Xe",
-        "pattern": "^(ssh-rsa|ssh-ed25519)\\s+[A-Za-z0-9+/]+[=]{0,3}(\\s+.+)?\\s*$",
+        "pattern": "^(ssh-rsa|ssh-ed25519|ecdsa-sha2-nistp(256|384|521))\\s+[A-Za-z0-9+/]+[=]{0,3}(\\s+.+)?\\s*$",
         "type": "string"
       },
       "SecurityGroup": {
@@ -3445,7 +3505,7 @@
           "keypairName": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/GenericName"
+                "$ref": "#/components/schemas/KeyPairName"
               }
             ],
             "description": "The SSH keypair used during the server creation."
@@ -3682,7 +3742,6 @@
             "$ref": "#/components/schemas/UUID"
           },
           "nicSecurity": {
-            "default": true,
             "description": "If this is set to false, then no security groups will apply to this server network interface.",
             "type": "boolean"
           },
@@ -3703,12 +3762,12 @@
         "type": "object"
       },
       "ServerPowerStatus": {
-        "description": "The power status of a server.",
+        "description": "The power status of a server.\nPossible values: `CRASHED`, `ERROR`, `RUNNING`, `STOPPED`.",
         "example": "RUNNING",
         "type": "string"
       },
       "ServerStatus": {
-        "description": "The status of a server object.",
+        "description": "The status of a server object.\nPossible values: `ACTIVE`, `BACKING-UP`, `CREATING`, `DEALLOCATED`, `DEALLOCATING`, `DELETED`, `DELETING`, `ERROR`, `INACTIVE`, `MIGRATING`, `REBOOT`, `REBOOTING`, `REBUILD`, `REBUILDING`, `RESCUE`, `RESCUING`, `RESIZING`, `RESTORING`, `SNAPSHOTTING`, `STARTING`, `STOPPING`, `UNRESCUING`, `UPDATING`.",
         "example": "ACTIVE",
         "type": "string"
       },
@@ -3761,6 +3820,12 @@
             "type": "array"
           }
         }
+      },
+      "SizeInBytes": {
+        "description": "Size in bytes.",
+        "example": 1401946112,
+        "format": "int64",
+        "type": "integer"
       },
       "SizeInGB": {
         "description": "Size in Gigabyte.",
@@ -3852,7 +3917,7 @@
         "type": "object"
       },
       "SnapshotStatus": {
-        "description": "The status of a snapshot object.",
+        "description": "The status of a snapshot object.\nPossible values: `AVAILABLE`, `BACKING-UP`, `CREATING`, `DELETED`, `DELETING`, `ERROR`, `RESTORING`, `UNMANAGING`, `UPDATING`.",
         "example": "AVAILABLE",
         "type": "string"
       },
@@ -4192,7 +4257,7 @@
             "$ref": "#/components/schemas/Labels"
           },
           "name": {
-            "$ref": "#/components/schemas/GenericName"
+            "$ref": "#/components/schemas/ServerName"
           }
         },
         "type": "object"
@@ -4373,7 +4438,6 @@
         "type": "object"
       },
       "VolumeBootable": {
-        "default": false,
         "description": "Indicates if a volume is bootable.",
         "example": true,
         "type": "boolean"
@@ -4466,11 +4530,11 @@
         "type": "object"
       },
       "VolumeSourceTypes": {
-        "description": "The source types of a volume.",
+        "description": "The source types of a volume.\nPossible values: `image`, `volume`, `snapshot`, `backup`.",
         "type": "string"
       },
       "VolumeStatus": {
-        "description": "The status of a volume object.",
+        "description": "The status of a volume object.\nPossible values: `ATTACHED`, `ATTACHING`, `AVAILABLE`, `AWAITING-TRANSFER`, `BACKING-UP`, `CREATING`, `DELETED`, `DELETING`, `DETACHING`, `DOWNLOADING`, `ERROR`, `ERROR_BACKING-UP`, `ERROR_DELETING`, `ERROR_RESIZING`, `ERROR_RESTORING-BACKUP`, `MAINTENANCE`, `RESERVED`, `RESIZING`, `RESTORING-BACKUP`, `RETYPING`, `UPLOADING`.",
         "example": "ATTACHED",
         "type": "string"
       },
@@ -4733,6 +4797,43 @@
           }
         },
         "summary": "Update information of an SSH keypair.",
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      }
+    },
+    "/v1beta1/networks/public-ip-ranges": {
+      "get": {
+        "description": "Get a list of all public IP ranges that STACKIT uses.",
+        "operationId": "ListPublicIpRanges",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicNetworkListResponse"
+                }
+              }
+            },
+            "description": "List public IP ranges."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all public IP ranges.",
         "x-stackit-authorization": {
           "disabled": true
         }
@@ -6089,6 +6190,9 @@
         "operationId": "ListImages",
         "parameters": [
           {
+            "$ref": "#/components/parameters/v1ListAllImages"
+          },
+          {
             "$ref": "#/components/parameters/v1LabelSelector"
           }
         ],
@@ -6146,7 +6250,7 @@
                     "active": true,
                     "diskFormat": "qcow2",
                     "labels": {
-                      "foo": "Foo Value"
+                      "key": "value"
                     },
                     "minDiskSize": 10,
                     "minRam": 1,
@@ -8339,7 +8443,7 @@
                     },
                     "machineType": "t1.1",
                     "name": "bootFromExistingVolume",
-                    "network": "ef018b02-74e9-4f70-87bb-ce1a9742afb9"
+                    "networking": "ef018b02-74e9-4f70-87bb-ce1a9742afb9"
                   }
                 },
                 "BootFromImage": {
@@ -8347,7 +8451,7 @@
                     "image": "e24b1440-8d9c-431b-8da4-02916720fab5",
                     "machineType": "t1.1",
                     "name": "bootFromImage",
-                    "network": "ef018b02-74e9-4f70-87bb-ce1a9742afb9"
+                    "networking": "ef018b02-74e9-4f70-87bb-ce1a9742afb9"
                   }
                 },
                 "BootImageFromVolume": {
@@ -8361,7 +8465,7 @@
                     },
                     "machineType": "t1.1",
                     "name": "bootImageFromVolume",
-                    "network": "ef018b02-74e9-4f70-87bb-ce1a9742afb9"
+                    "networking": "ef018b02-74e9-4f70-87bb-ce1a9742afb9"
                   }
                 },
                 "FullExample": {
@@ -8379,11 +8483,11 @@
                     },
                     "keypairName": "keypair-517e9448-1cf1-4b36-9f29-6e66d669a6d2",
                     "labels": {
-                      "foo": "Foo Value"
+                      "key": "value"
                     },
                     "machineType": "t1.1",
                     "name": "server1",
-                    "network": "ef018b02-74e9-4f70-87bb-ce1a9742afb9",
+                    "networking": "ef018b02-74e9-4f70-87bb-ce1a9742afb9",
                     "securityGroups": [
                       "188de165-5767-4fc2-8710-a4d2017249e7"
                     ],

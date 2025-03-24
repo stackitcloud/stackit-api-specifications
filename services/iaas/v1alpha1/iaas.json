@@ -28,6 +28,14 @@
           "$ref": "#/components/schemas/UUID"
         }
       },
+      "v1FieldFilter": {
+        "description": "Filter resources by fields. A subset of expr-lang is supported. See https://expr-lang.org/docs/language-definition for usage details.",
+        "in": "query",
+        "name": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
       "v1Force": {
         "description": "Force action.",
         "in": "query",
@@ -2403,7 +2411,7 @@
         "type": "string"
       },
       "MachineType": {
-        "description": "Machine Type.",
+        "description": "Machine Type. Filterable Fields: name, ram, vcpus, disk, extraSpecs.",
         "example": {
           "description": "small, specific servers with cpu-overcommit. Runs on various Intel CPUs.",
           "disk": 1,
@@ -2421,19 +2429,54 @@
             "$ref": "#/components/schemas/Description"
           },
           "disk": {
-            "$ref": "#/components/schemas/SizeInGB"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SizeInGB"
+              }
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "expr": "disk"
+            }
           },
           "extraSpecs": {
-            "$ref": "#/components/schemas/ExtraSpecs"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ExtraSpecs"
+              }
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "expr": "extraSpecs"
+            }
           },
           "name": {
-            "$ref": "#/components/schemas/GenericName"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GenericName"
+              }
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "expr": "name"
+            }
           },
           "ram": {
-            "$ref": "#/components/schemas/SizeInMB"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SizeInMB"
+              }
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "expr": "ram"
+            }
           },
           "vcpus": {
-            "$ref": "#/components/schemas/VCPUs"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VCPUs"
+              }
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "expr": "vcpus"
+            }
           }
         },
         "required": [
@@ -7149,6 +7192,11 @@
       "get": {
         "description": "Get a list of all machine type available in a project.",
         "operationId": "ListMachineTypes",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1FieldFilter"
+          }
+        ],
         "responses": {
           "200": {
             "content": {

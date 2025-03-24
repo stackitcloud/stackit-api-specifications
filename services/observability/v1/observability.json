@@ -65,6 +65,102 @@
         ],
         "type": "object"
       },
+      "AlertGroup": {
+        "properties": {
+          "interval": {
+            "default": "60s",
+            "maxLength": 8,
+            "minLength": 2,
+            "title": "Interval",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/AlertRuleRecord"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "rules"
+        ],
+        "type": "object"
+      },
+      "AlertGroupsResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/AlertGroup"
+            },
+            "type": "array"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "message"
+        ],
+        "type": "object"
+      },
+      "AlertRuleRecord": {
+        "properties": {
+          "alert": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Alert",
+            "type": "string"
+          },
+          "annotations": {
+            "additionalProperties": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Annotations",
+            "type": "object"
+          },
+          "expr": {
+            "maxLength": 600,
+            "minLength": 1,
+            "title": "Expr",
+            "type": "string"
+          },
+          "for": {
+            "maxLength": 8,
+            "minLength": 2,
+            "title": "For",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Labels",
+            "type": "object"
+          },
+          "record": {
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Record",
+            "type": "string"
+          }
+        },
+        "required": [
+          "expr"
+        ],
+        "type": "object"
+      },
       "BasicAuth": {
         "properties": {
           "password": {
@@ -5401,6 +5497,98 @@
         "x-stackit-authorization": {
           "actions": [
             "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/alertgroups": {
+      "get": {
+        "description": "Get alert groups.",
+        "operationId": "v1_projects_instances_alertgroups_list",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "interval": "5m",
+                      "name": "test alert",
+                      "rules": [
+                        {
+                          "alert": "up test",
+                          "annotations": {
+                            "test": "test"
+                          },
+                          "expr": "up == 1",
+                          "for": "30s",
+                          "labels": {
+                            "test": "test"
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "message": "Successfully got alert groups"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/AlertGroupsResponse"
+                }
+              }
+            },
+            "description": "Get all alert groups"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Something went wrong."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

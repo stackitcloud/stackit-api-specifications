@@ -1,0 +1,1738 @@
+{
+  "components": {
+    "parameters": {
+      "keyId": {
+        "description": "The key UUID.",
+        "in": "path",
+        "name": "keyId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "keyRingId": {
+        "description": "The key ring UUID.",
+        "in": "path",
+        "name": "keyRingId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "projectId": {
+        "description": "The STACKIT portal project UUID the key ring is part of.",
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "regionId": {
+        "description": "The STACKIT region name the key ring is located in.",
+        "in": "path",
+        "name": "regionId",
+        "required": true,
+        "schema": {
+          "enum": [
+            "eu01"
+          ],
+          "type": "string"
+        }
+      },
+      "versionNumber": {
+        "description": "The version number.",
+        "in": "path",
+        "name": "versionNumber",
+        "required": true,
+        "schema": {
+          "format": "int64",
+          "type": "integer"
+        }
+      },
+      "wrappingKeyId": {
+        "description": "The wrapping key UUID.",
+        "in": "path",
+        "name": "wrappingKeyId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "badRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/httpError"
+            }
+          }
+        },
+        "description": "Bad Request. Malformed parameters or invalid body."
+      },
+      "conflict": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/httpError"
+            }
+          }
+        },
+        "description": "Conflict. Requested resource encounters an issue that makes it not ready to use."
+      },
+      "forbidden": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/httpError"
+            }
+          }
+        },
+        "description": "Forbidden. Requested action is not allowed to be performed on the resource."
+      },
+      "internalServerError": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/httpError"
+            }
+          }
+        },
+        "description": "Internal server error. The application experienced some unexpected situation."
+      },
+      "notFound": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/httpError"
+            }
+          }
+        },
+        "description": "Not found. Requested resource has not been found."
+      },
+      "unauthorized": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/httpError"
+            }
+          }
+        },
+        "description": "Unauthorized. You may have provided no or wrong credentials."
+      }
+    },
+    "schemas": {
+      "CreateKeyPayload": {
+        "properties": {
+          "algorithm": {
+            "$ref": "#/components/schemas/algorithm"
+          },
+          "backend": {
+            "$ref": "#/components/schemas/backend"
+          },
+          "description": {
+            "description": "A user chosen description to distinguish multiple keys.",
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name to distinguish multiple keys.",
+            "maxLength": 64,
+            "type": "string"
+          },
+          "importOnly": {
+            "default": false,
+            "description": "States whether versions can be created or only imported.",
+            "type": "boolean"
+          },
+          "purpose": {
+            "$ref": "#/components/schemas/purpose"
+          }
+        },
+        "required": [
+          "displayName",
+          "backend",
+          "purpose",
+          "algorithm"
+        ]
+      },
+      "CreateKeyRingPayload": {
+        "properties": {
+          "description": {
+            "description": "A user chosen description to distinguish multiple key rings.",
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name to distinguish multiple key rings.",
+            "maxLength": 64,
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName"
+        ]
+      },
+      "CreateWrappingKeyPayload": {
+        "properties": {
+          "algorithm": {
+            "$ref": "#/components/schemas/wrappingAlgorithm"
+          },
+          "backend": {
+            "$ref": "#/components/schemas/backend"
+          },
+          "description": {
+            "description": "A user chosen description to distinguish multiple wrapping keys.",
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name to distinguish multiple wrapping keys.",
+            "maxLength": 64,
+            "type": "string"
+          },
+          "purpose": {
+            "$ref": "#/components/schemas/wrappingPurpose"
+          }
+        },
+        "required": [
+          "displayName",
+          "backend",
+          "purpose",
+          "algorithm"
+        ]
+      },
+      "DecryptPayload": {
+        "properties": {
+          "data": {
+            "description": "The data that has to be decrypted. Encoded in base64.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "EncryptPayload": {
+        "properties": {
+          "data": {
+            "description": "The data that has to be encrypted. Encoded in base64.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "ImportKeyPayload": {
+        "properties": {
+          "wrappedKey": {
+            "description": "The wrapped key material that has to be imported. Encoded in base64.",
+            "type": "string"
+          },
+          "wrappingKeyId": {
+            "description": "The unique id of the wrapping key the key material has been wrapped with.",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "wrappingKeyId",
+          "wrappedKey"
+        ]
+      },
+      "SignPayload": {
+        "properties": {
+          "data": {
+            "description": "The data that has to be signed. Encoded in base64.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "VerifyPayload": {
+        "properties": {
+          "data": {
+            "description": "The data to be verified. Encoded in base64.",
+            "format": "byte",
+            "type": "string"
+          },
+          "signature": {
+            "description": "The signature of the data. Encoded in base64.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "signature"
+        ]
+      },
+      "algorithm": {
+        "description": "The algorithm the key material uses.",
+        "enum": [
+          "aes_256_gcm",
+          "rsa_2048_oaep_sha256",
+          "rsa_3072_oaep_sha256",
+          "rsa_4096_oaep_sha256",
+          "rsa_4096_oaep_sha512",
+          "hmac_sha256",
+          "hmac_sha384",
+          "hmac_sha512",
+          "ecdsa_p256_sha256",
+          "ecdsa_p384_sha384",
+          "ecdsa_p521_sha512"
+        ],
+        "type": "string"
+      },
+      "backend": {
+        "description": "The backend that is responsible for maintaining this key.",
+        "enum": [
+          "software"
+        ],
+        "type": "string"
+      },
+      "decryptedData": {
+        "properties": {
+          "data": {
+            "description": "The decrypted data. Encoded in base64.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "encryptedData": {
+        "properties": {
+          "data": {
+            "description": "The encrypted data. Encoded in base64.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "httpError": {
+        "properties": {
+          "message": {
+            "description": "A string that gives a short information about what went wrong.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "key": {
+        "properties": {
+          "algorithm": {
+            "$ref": "#/components/schemas/algorithm"
+          },
+          "backend": {
+            "$ref": "#/components/schemas/backend"
+          },
+          "createdAt": {
+            "description": "The date and time the creation of the key was triggered.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "description": "A user chosen description to distinguish multiple keys.",
+            "maxLength": 256,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name to distinguish multiple keys.",
+            "maxLength": 64,
+            "type": "string"
+          },
+          "id": {
+            "description": "A auto generated unique id which identifies the keys.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "importOnly": {
+            "default": false,
+            "description": "States whether versions can be created or only imported.",
+            "type": "boolean"
+          },
+          "keyRingId": {
+            "description": "The unique id of the key ring this key is assigned to.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "purpose": {
+            "$ref": "#/components/schemas/purpose"
+          },
+          "state": {
+            "description": "The current state of the key.",
+            "enum": [
+              "active",
+              "version_not_ready",
+              "deleting"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "state",
+          "createdAt",
+          "keyRingId",
+          "backend",
+          "purpose",
+          "algorithm"
+        ]
+      },
+      "keyList": {
+        "properties": {
+          "keys": {
+            "items": {
+              "$ref": "#/components/schemas/key"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "keys"
+        ]
+      },
+      "keyRing": {
+        "properties": {
+          "createdAt": {
+            "description": "The date and time the creation of the key ring was triggered.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "description": "A user chosen description to distinguish multiple key rings.",
+            "maxLength": 256,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name to distinguish multiple key rings.",
+            "maxLength": 64,
+            "type": "string"
+          },
+          "id": {
+            "description": "A auto generated unique id which identifies the key ring.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "state": {
+            "description": "The current state of the key ring.",
+            "enum": [
+              "active",
+              "deleting"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "state",
+          "createdAt"
+        ]
+      },
+      "keyRingList": {
+        "properties": {
+          "keyRings": {
+            "items": {
+              "$ref": "#/components/schemas/keyRing"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "keyRings"
+        ]
+      },
+      "purpose": {
+        "description": "The purpose of the key.",
+        "enum": [
+          "symmetric_encrypt_decrypt",
+          "asymmetric_encrypt_decrypt",
+          "message_authentication_code",
+          "asymmetric_sign_verify"
+        ],
+        "type": "string"
+      },
+      "signedData": {
+        "properties": {
+          "data": {
+            "description": "The data that was signed. Encoded in base64.",
+            "format": "byte",
+            "type": "string"
+          },
+          "signature": {
+            "description": "The signature of the data. Encoded in base64.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "signature"
+        ]
+      },
+      "verifiedData": {
+        "properties": {
+          "valid": {
+            "description": "Whether or not the data has a valid signature.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "valid"
+        ]
+      },
+      "version": {
+        "properties": {
+          "createdAt": {
+            "description": "The date and time the creation of the key was triggered.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "disabled": {
+            "default": false,
+            "description": "States whether versions is enabled or disabled.",
+            "type": "boolean"
+          },
+          "keyId": {
+            "description": "The unique id of the key this version is assigned to.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "keyRingId": {
+            "description": "The unique id of the key ring the key of this version is assigned to.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "number": {
+            "description": "A sequential number which identifies the key versions.",
+            "format": "int64",
+            "type": "integer"
+          },
+          "publicKey": {
+            "description": "The public key of the key version. Only present in asymmetric keys.",
+            "type": "string"
+          },
+          "state": {
+            "description": "The current state of the key.",
+            "enum": [
+              "active",
+              "key_material_not_ready",
+              "key_material_invalid",
+              "disabled",
+              "deleting"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "number",
+          "state",
+          "createdAt",
+          "keyId",
+          "keyRingId"
+        ]
+      },
+      "versionList": {
+        "properties": {
+          "versions": {
+            "items": {
+              "$ref": "#/components/schemas/version"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "versions"
+        ]
+      },
+      "wrappingAlgorithm": {
+        "description": "The wrapping algorithm used to wrap the key to import.",
+        "enum": [
+          "rsa_2048_oaep_sha256",
+          "rsa_3072_oaep_sha256",
+          "rsa_4096_oaep_sha256",
+          "rsa_4096_oaep_sha512",
+          "rsa_2048_oaep_sha256_aes_256_key_wrap",
+          "rsa_3072_oaep_sha256_aes_256_key_wrap",
+          "rsa_4096_oaep_sha256_aes_256_key_wrap",
+          "rsa_4096_oaep_sha512_aes_256_key_wrap"
+        ],
+        "type": "string"
+      },
+      "wrappingKey": {
+        "properties": {
+          "algorithm": {
+            "$ref": "#/components/schemas/wrappingAlgorithm"
+          },
+          "backend": {
+            "$ref": "#/components/schemas/backend"
+          },
+          "createdAt": {
+            "description": "The date and time the creation of the wrapping key was triggered.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "description": "A user chosen description to distinguish multiple wrapping keys.",
+            "maxLength": 256,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name to distinguish multiple wrapping keys.",
+            "maxLength": 64,
+            "type": "string"
+          },
+          "expiresAt": {
+            "description": "The date and time the wrapping key will expire.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "description": "A auto generated unique id which identifies the wrapping keys.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "keyRingId": {
+            "description": "The unique id of the key ring this wrapping key is assigned to.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "publicKey": {
+            "description": "The public key of the wrapping key.",
+            "type": "string"
+          },
+          "purpose": {
+            "$ref": "#/components/schemas/wrappingPurpose"
+          },
+          "state": {
+            "description": "The current state of the wrapping key.",
+            "enum": [
+              "active",
+              "key_material_not_ready",
+              "expired",
+              "deleting"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "state",
+          "createdAt",
+          "expiresAt",
+          "keyRingId",
+          "backend",
+          "purpose",
+          "algorithm"
+        ]
+      },
+      "wrappingKeyList": {
+        "properties": {
+          "wrappingKeys": {
+            "items": {
+              "$ref": "#/components/schemas/wrappingKey"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "wrappingKeys"
+        ]
+      },
+      "wrappingPurpose": {
+        "description": "The wrapping purpose for the wrapping key.",
+        "enum": [
+          "wrap_symmetric_key",
+          "wrap_asymmetric_key"
+        ],
+        "type": "string"
+      }
+    }
+  },
+  "info": {
+    "description": "This API provides endpoints for managing keys and key rings.\n",
+    "title": "STACKIT Key Management Service API",
+    "version": "1beta.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1beta/projects/{projectId}/regions/{regionId}/keyrings": {
+      "get": {
+        "description": "Returns a list of all key rings within the project.",
+        "operationId": "ListKeyRings",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/keyRingList"
+                }
+              }
+            },
+            "description": "Successful response with all key rings."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "List key rings",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        }
+      ],
+      "post": {
+        "description": "Creates a new key ring within the project.",
+        "operationId": "CreateKeyRing",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateKeyRingPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/keyRing"
+                }
+              }
+            },
+            "description": "Key ring was created successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Create key ring",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}": {
+      "get": {
+        "description": "Returns the details for the given key ring.",
+        "operationId": "GetKeyRing",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/keyRing"
+                }
+              }
+            },
+            "description": "Key ring details successfully retrieved."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Get key ring",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/keyRingId"
+        }
+      ]
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/keys": {
+      "get": {
+        "description": "Returns the keys for the given key ring.",
+        "operationId": "ListKeys",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/keyList"
+                }
+              }
+            },
+            "description": "All keys for the key ring have been returned."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "List keys",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/keyRingId"
+        }
+      ],
+      "post": {
+        "description": "Creates a new key for the given key ring.",
+        "operationId": "CreateKey",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateKeyPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/key"
+                }
+              }
+            },
+            "description": "The key has been created for the key ring."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Create key",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/keys/{keyId}": {
+      "get": {
+        "description": "Returns the details for the given key.",
+        "operationId": "GetKey",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/key"
+                }
+              }
+            },
+            "description": "The details for the key have been successfully returned."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Get key",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/keyRingId"
+        },
+        {
+          "$ref": "#/components/parameters/keyId"
+        }
+      ]
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/keys/{keyId}/import": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/keyRingId"
+        },
+        {
+          "$ref": "#/components/parameters/keyId"
+        }
+      ],
+      "post": {
+        "description": "Imports a new version to the given key.",
+        "operationId": "ImportKey",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportKeyPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/key"
+                }
+              }
+            },
+            "description": "The key has been imported."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Import key",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/keys/{keyId}/rotate": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/keyRingId"
+        },
+        {
+          "$ref": "#/components/parameters/keyId"
+        }
+      ],
+      "post": {
+        "description": "Rotates the given key.",
+        "operationId": "RotateKey",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/key"
+                }
+              }
+            },
+            "description": "The key has been rotated."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Rotate key",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/keys/{keyId}/versions": {
+      "get": {
+        "description": "Returns a list of all versions of a given key.",
+        "operationId": "ListVersions",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/versionList"
+                }
+              }
+            },
+            "description": "The list of key versions have been successfully returned."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "List versions",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/keyRingId"
+        },
+        {
+          "$ref": "#/components/parameters/keyId"
+        }
+      ]
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/keys/{keyId}/versions/{versionNumber}": {
+      "get": {
+        "description": "Returns the details for the given version.",
+        "operationId": "GetVersion",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/version"
+                }
+              }
+            },
+            "description": "The details for the version have been successfully returned."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Get version",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/keyRingId"
+        },
+        {
+          "$ref": "#/components/parameters/keyId"
+        },
+        {
+          "$ref": "#/components/parameters/versionNumber"
+        }
+      ]
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/keys/{keyId}/versions/{versionNumber}/decrypt": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/keyRingId"
+        },
+        {
+          "$ref": "#/components/parameters/keyId"
+        },
+        {
+          "$ref": "#/components/parameters/versionNumber"
+        }
+      ],
+      "post": {
+        "description": "Decrypts data using the given key version.",
+        "operationId": "Decrypt",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecryptPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/decryptedData"
+                }
+              }
+            },
+            "description": "The decrypted data."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Decrypt",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/keys/{keyId}/versions/{versionNumber}/disable": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/keyRingId"
+        },
+        {
+          "$ref": "#/components/parameters/keyId"
+        },
+        {
+          "$ref": "#/components/parameters/versionNumber"
+        }
+      ],
+      "post": {
+        "description": "Disables the given version.",
+        "operationId": "DisableVersion",
+        "responses": {
+          "204": {
+            "description": "The version has been successfully disabled."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Disable version",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/keys/{keyId}/versions/{versionNumber}/enable": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/keyRingId"
+        },
+        {
+          "$ref": "#/components/parameters/keyId"
+        },
+        {
+          "$ref": "#/components/parameters/versionNumber"
+        }
+      ],
+      "post": {
+        "description": "Enables the given version.",
+        "operationId": "EnableVersion",
+        "responses": {
+          "204": {
+            "description": "The version has been successfully enabled."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Enable version",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/keys/{keyId}/versions/{versionNumber}/encrypt": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/keyRingId"
+        },
+        {
+          "$ref": "#/components/parameters/keyId"
+        },
+        {
+          "$ref": "#/components/parameters/versionNumber"
+        }
+      ],
+      "post": {
+        "description": "Encrypts data using the given key version.",
+        "operationId": "Encrypt",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EncryptPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/encryptedData"
+                }
+              }
+            },
+            "description": "The encrypted data."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Encrypt",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/keys/{keyId}/versions/{versionNumber}/sign": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/keyRingId"
+        },
+        {
+          "$ref": "#/components/parameters/keyId"
+        },
+        {
+          "$ref": "#/components/parameters/versionNumber"
+        }
+      ],
+      "post": {
+        "description": "Sign data using the given key version as secret.",
+        "operationId": "Sign",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/signedData"
+                }
+              }
+            },
+            "description": "The message has been signed using the key version."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Sign",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/keys/{keyId}/versions/{versionNumber}/verify": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/keyRingId"
+        },
+        {
+          "$ref": "#/components/parameters/keyId"
+        },
+        {
+          "$ref": "#/components/parameters/versionNumber"
+        }
+      ],
+      "post": {
+        "description": "Verify data using the given key version as secret.",
+        "operationId": "Verify",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/verifiedData"
+                }
+              }
+            },
+            "description": "The message has verified using the key version."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Verify",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/wrappingkeys": {
+      "get": {
+        "description": "Returns the wrapping keys for the given key ring.",
+        "operationId": "ListWrappingKeys",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/wrappingKeyList"
+                }
+              }
+            },
+            "description": "All wrapping keys for the key ring have been returned."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "List wrapping keys",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/keyRingId"
+        }
+      ],
+      "post": {
+        "description": "Creates a new wrapping key for the given key ring.",
+        "operationId": "CreateWrappingKey",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWrappingKeyPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/wrappingKey"
+                }
+              }
+            },
+            "description": "The wrapping key has been created for the key ring."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Create wrapping key",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/wrappingkeys/{wrappingKeyId}": {
+      "get": {
+        "description": "Returns the details for the given wrapping key.",
+        "operationId": "GetWrappingKey",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/wrappingKey"
+                }
+              }
+            },
+            "description": "The details for the wrapping key have been successfully returned."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Get wrapping key",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/keyRingId"
+        },
+        {
+          "$ref": "#/components/parameters/wrappingKeyId"
+        }
+      ]
+    }
+  },
+  "servers": [
+    {
+      "url": "https://kms.api.{region}stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "eu01.",
+          "enum": [
+            "eu01."
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -80,6 +80,39 @@
       }
     },
     "schemas": {
+      "CreateFolderPayload": {
+        "properties": {
+          "containerParentId": {
+            "description": "Identifier of the parent resource container - containerId as well as UUID identifier is supported.",
+            "example": "name-of-parent-173523",
+            "type": "string"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "members": {
+            "description": "The initial members assigned to the project. At least one subject needs to be a user, and not a client or service account.",
+            "items": {
+              "$ref": "#/components/schemas/Member"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "name": {
+            "description": "The name of the folder matching the regex `^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$`.",
+            "example": "My Folder",
+            "pattern": "^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "containerParentId"
+        ],
+        "title": "CreateFolderRequest",
+        "type": "object"
+      },
       "CreateProjectPayload": {
         "properties": {
           "containerParentId": {
@@ -151,6 +184,105 @@
           "message"
         ],
         "title": "ErrorResponse",
+        "type": "object"
+      },
+      "FolderResponse": {
+        "properties": {
+          "containerId": {
+            "description": "Globally unique, user-friendly identifier.",
+            "example": "first-folder-158955",
+            "type": "string"
+          },
+          "creationTime": {
+            "description": "Timestamp at which the folder was created.",
+            "example": "2021-08-24T14:15:22Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "folderId": {
+            "description": "Globally unique folder identifier.",
+            "example": "54066bf4-1aff-4f7b-9f83-fb23c348fff3",
+            "format": "uuid",
+            "type": "string"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "description": "Folder name.",
+            "example": "First Folder",
+            "type": "string"
+          },
+          "parent": {
+            "$ref": "#/components/schemas/Parent"
+          },
+          "updateTime": {
+            "description": "Timestamp at which the folder was last modified.",
+            "example": "2021-08-24T14:15:22Z",
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "containerId",
+          "folderId",
+          "creationTime",
+          "updateTime",
+          "parent"
+        ],
+        "title": "FolderResponse",
+        "type": "object"
+      },
+      "GetFolderDetailsResponse": {
+        "properties": {
+          "containerId": {
+            "description": "Globally unique user-friendly identifier.",
+            "example": "first-folder-158955",
+            "type": "string"
+          },
+          "creationTime": {
+            "description": "Timestamp at which the folder was created.",
+            "example": "2021-08-24T14:15:22Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "folderId": {
+            "description": "Globally unique folder identifier.",
+            "example": "54066bf4-1aff-4f7b-9f83-fb23c348fff3",
+            "format": "uuid",
+            "type": "string"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "description": "Folder name.",
+            "example": "First Folder",
+            "type": "string"
+          },
+          "parent": {
+            "$ref": "#/components/schemas/Parent"
+          },
+          "parents": {
+            "$ref": "#/components/schemas/ParentList"
+          },
+          "updateTime": {
+            "description": "Timestamp at which the folder was last modified.",
+            "example": "2021-08-24T14:15:22Z",
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "containerId",
+          "folderId",
+          "creationTime",
+          "updateTime",
+          "parent"
+        ],
+        "title": "GetFolderDetailsResponse",
         "type": "object"
       },
       "GetProjectResponse": {
@@ -486,6 +618,25 @@
         "title": "ParentList",
         "type": "array"
       },
+      "PartialUpdateFolderPayload": {
+        "properties": {
+          "containerParentId": {
+            "description": "New parent identifier for the resource container - containerId as well as UUID identifier is supported.",
+            "example": "name-of-parent-173523",
+            "type": "string"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "description": "New name for the resource container matching the regex `^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$`.",
+            "pattern": "^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$",
+            "type": "string"
+          }
+        },
+        "title": "UpdateFolderRequest",
+        "type": "object"
+      },
       "PartialUpdateProjectPayload": {
         "properties": {
           "containerParentId": {
@@ -571,6 +722,357 @@
   },
   "openapi": "3.0.3",
   "paths": {
+    "/v2/folders": {
+      "post": {
+        "description": "Create a new folder.",
+        "operationId": "CreateFolder",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFolderPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolderResponse"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Bad Request": {
+                    "$ref": "#/components/examples/BadRequest"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Forbidden": {
+                    "$ref": "#/components/examples/Forbidden"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Conflict": {
+                    "$ref": "#/components/examples/PolicyConflict"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          }
+        },
+        "summary": "Create Folder",
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      }
+    },
+    "/v2/folders/{containerId}": {
+      "delete": {
+        "description": "Delete a folder and its metadata.\n- Folder must not be parent of any other container\n- A force flag may be set, deleting all underlying folders recursively - if no project is attached!",
+        "operationId": "DeleteFolder",
+        "parameters": [
+          {
+            "description": "If true, all nested, empty folders are deleted recursively - if no project is attached!",
+            "in": "query",
+            "name": "force",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Deletion process triggered"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Not Found": {
+                    "$ref": "#/components/examples/NotFound"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Conflict": {
+                    "$ref": "#/components/examples/PolicyConflict"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          }
+        },
+        "summary": "Delete Folder",
+        "x-stackit-authorization": {
+          "actions": [
+            "resource-manager.folder.delete"
+          ],
+          "resource-id": "containerId",
+          "resource-id-type": "dynamic",
+          "resource-type": "folder"
+        }
+      },
+      "get": {
+        "description": "Returns all metadata for a specific folder.",
+        "operationId": "GetFolderDetails",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "includeParents",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetFolderDetailsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Forbidden": {
+                    "$ref": "#/components/examples/Forbidden"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Not Found": {
+                    "$ref": "#/components/examples/NotFound"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          }
+        },
+        "summary": "Get Folder Details",
+        "x-stackit-authorization": {
+          "actions": [
+            "resource-manager.folder.get"
+          ],
+          "resource-id": "containerId",
+          "resource-id-type": "dynamic",
+          "resource-type": "folder"
+        }
+      },
+      "parameters": [
+        {
+          "description": "Folder identifier - containerId as well as UUID identifier is supported.",
+          "in": "path",
+          "name": "containerId",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "patch": {
+        "description": "Update the folder and its metadata.\n- Update folder name\n- Update folder labels\n- Update folder parent (folder or organization)",
+        "operationId": "PartialUpdateFolder",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartialUpdateFolderPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolderResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Forbidden": {
+                    "$ref": "#/components/examples/Forbidden"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Not Found": {
+                    "$ref": "#/components/examples/NotFound"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Conflict": {
+                    "$ref": "#/components/examples/PolicyConflict"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          }
+        },
+        "summary": "Update Folder",
+        "x-stackit-authorization": {
+          "actions": [
+            "resource-manager.folder.edit"
+          ],
+          "resource-id": "containerId",
+          "resource-id-type": "dynamic",
+          "resource-type": "folder"
+        }
+      }
+    },
+    "/v2/folders/{containerId}/labels": {
+      "delete": {
+        "description": "Deletes all folder labels by given keys.\n- Specific labels may be deleted by key(s)\n- If no key is specified, all labels will be deleted!",
+        "operationId": "DeleteFolderLabels",
+        "parameters": [
+          {
+            "description": "Label name.",
+            "in": "query",
+            "name": "keys",
+            "schema": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Labels removed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Cannot delete label because of policy": {
+                    "$ref": "#/components/examples/PolicyConflict"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          }
+        },
+        "summary": "Delete Folder Labels",
+        "x-stackit-authorization": {
+          "actions": [
+            "resource-manager.folder.edit"
+          ],
+          "resource-id": "containerId",
+          "resource-id-type": "dynamic",
+          "resource-type": "folder"
+        }
+      },
+      "parameters": [
+        {
+          "description": "Folder identifier - containerId as well as UUID identifier is supported.",
+          "in": "path",
+          "name": "containerId",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
     "/v2/organizations": {
       "get": {
         "description": "Returns all organizations and their metadata.\n- If no containerIds are specified, all organizations are returned, if permitted\n- ContainerIds may be set to filter\n- Member may be set to filter\n- If member and containerIds are given, both are used for filtering\n",

@@ -6,11 +6,12 @@
         "in": "query",
         "name": "cursor",
         "schema": {
-          "type": "string"
+          "$ref": "#/components/schemas/cursor"
         }
       },
       "filter": {
         "description": "Filter the products based on attributes. E.g `deliveryMethod eq \"SAAS\"`. The supported attributes are `deliveryMethod`, `priceType`, `category`, `vendorId`, `vendorName`, and `name`. The supported operators are `eq`. Filters can be joined with `and` or `or`.",
+        "example": "deliveryMethod eq \"SAAS\"",
         "in": "query",
         "name": "filter",
         "schema": {
@@ -22,13 +23,12 @@
         "in": "query",
         "name": "limit",
         "schema": {
-          "maximum": 100,
-          "minimum": 0,
-          "type": "number"
+          "$ref": "#/components/schemas/limit"
         }
       },
       "locale": {
         "description": "The language of the response.",
+        "example": "de",
         "in": "query",
         "name": "locale",
         "schema": {
@@ -42,10 +42,10 @@
       },
       "offset": {
         "description": "The offset of the first item in the collection to return.",
+        "example": 2,
         "in": "query",
         "name": "offset",
         "schema": {
-          "minimum": 0,
           "type": "number"
         }
       },
@@ -55,8 +55,7 @@
         "name": "productId",
         "required": true,
         "schema": {
-          "format": "uuid",
-          "type": "string"
+          "$ref": "#/components/schemas/UUID"
         },
         "style": "simple"
       },
@@ -66,8 +65,7 @@
         "name": "projectId",
         "required": true,
         "schema": {
-          "format": "uuid",
-          "type": "string"
+          "$ref": "#/components/schemas/UUID"
         },
         "style": "simple"
       },
@@ -77,8 +75,7 @@
         "name": "subscriptionId",
         "required": true,
         "schema": {
-          "format": "uuid",
-          "type": "string"
+          "$ref": "#/components/schemas/UUID"
         },
         "style": "simple"
       },
@@ -87,12 +84,12 @@
         "in": "query",
         "name": "productId",
         "schema": {
-          "format": "uuid",
-          "type": "string"
+          "$ref": "#/components/schemas/UUID"
         }
       },
       "sort": {
         "description": "Sort the products based on attributes and order (if specified). E.g `name:asc`. The supported attributes are `name`, `price`, and `deliveryMethod`. To set the sort order, append `asc` (ascending) or `desc` (descending) to the attribute, e.g. `name:asc`. To sort by multiple attributes, separate them with a comma. E.g `name,price:desc`. The order can be ommited to sort by the default order. E.g `name`.",
+        "example": "name:asc",
         "in": "query",
         "name": "sort",
         "schema": {
@@ -190,8 +187,13 @@
       "ApproveSubscriptionPayload": {
         "properties": {
           "instanceTarget": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/url"
+              }
+            ],
             "description": "The target URL of the user instance, used to redirect the user to the instance after the subscription is active.",
-            "type": "string"
+            "example": "https://marketplace-application.com/register?x-stackit–marketplace-token=eC1zdGFja2l0LW1hcmtldHBsYWNlLXRva2Vu"
           }
         },
         "type": "object"
@@ -199,8 +201,7 @@
       "CatalogPricingOptionHighlight": {
         "properties": {
           "highlightContent": {
-            "description": "The highlight content.",
-            "type": "string"
+            "$ref": "#/components/schemas/catalogHighlightContent"
           }
         },
         "type": "object"
@@ -208,31 +209,24 @@
       "CatalogProductDetail": {
         "properties": {
           "categories": {
-            "description": "The list of categories associated to the product.",
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
+            "$ref": "#/components/schemas/productCategories"
           },
           "deliveryMethod": {
-            "description": "The product type. For reference: SAAS - Software as a Service, SAI - STACKIT Application Image",
-            "enum": [
-              "SAAS",
-              "KUBERNETES",
-              "SAI",
-              "PROFESSIONAL_SERVICE"
-            ],
-            "format": "enum",
-            "type": "string"
+            "$ref": "#/components/schemas/deliveryMethod"
           },
           "description": {
-            "description": "The product description.",
-            "type": "string"
+            "$ref": "#/components/schemas/productDescription"
           },
           "documentationUrl": {
-            "description": "The documentation URL.",
-            "format": "url",
-            "type": "string"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/url"
+              }
+            ],
+            "description": "The documentation URL."
+          },
+          "email": {
+            "$ref": "#/components/schemas/email"
           },
           "highlights": {
             "description": "The list of highlights.",
@@ -242,26 +236,21 @@
             "type": "array"
           },
           "isProductListing": {
-            "description": "If true, the product is not fully integrated but only listed. Product listings may not have prices and support information.",
-            "type": "boolean"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/bool"
+              }
+            ],
+            "description": "If true, the product is not fully integrated but only listed. Product listings may not have prices and support information."
           },
           "lifecycleState": {
-            "description": "The lifecycle state of the product.",
-            "enum": [
-              "PRODUCT_LIVE",
-              "PRODUCT_PREVIEW"
-            ],
-            "format": "enum",
-            "type": "string"
+            "$ref": "#/components/schemas/productLifecycleState"
           },
           "logo": {
-            "description": "The logo base64 encoded.",
-            "format": "base64",
-            "type": "string"
+            "$ref": "#/components/schemas/logo"
           },
           "name": {
-            "description": "The product name.",
-            "type": "string"
+            "$ref": "#/components/schemas/productName"
           },
           "pricingOptions": {
             "description": "The list of pricing options.",
@@ -271,27 +260,21 @@
             "type": "array"
           },
           "productId": {
-            "description": "The product ID.",
-            "format": "uuid",
-            "type": "string"
+            "$ref": "#/components/schemas/productId"
           },
           "summary": {
-            "description": "The short summary of the product.",
-            "type": "string"
-          },
-          "supportEmail": {
-            "description": "The e-mail address for support inquiries.",
-            "format": "email",
-            "type": "string"
+            "$ref": "#/components/schemas/productSummary"
           },
           "supportFaq": {
-            "description": "The support FAQ URL.",
-            "format": "url",
-            "type": "string"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/url"
+              }
+            ],
+            "description": "The support FAQ URL."
           },
           "supportPhone": {
-            "description": "The phone number for support inquiries.",
-            "type": "string"
+            "$ref": "#/components/schemas/supportPhone"
           },
           "supportResources": {
             "description": "The list of support resources.",
@@ -311,8 +294,12 @@
             "type": "array"
           },
           "videoUrl": {
-            "description": "The video URL.",
-            "type": "string"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/url"
+              }
+            ],
+            "description": "The video URL."
           }
         },
         "required": [
@@ -335,32 +322,32 @@
       "CatalogProductDetailsVendor": {
         "properties": {
           "description": {
-            "description": "The vendor description.",
-            "type": "string"
+            "$ref": "#/components/schemas/vendorDescription"
           },
           "logo": {
-            "description": "The vendor logo base64 encoded.",
-            "format": "base64",
-            "type": "string"
+            "$ref": "#/components/schemas/logo"
           },
           "name": {
-            "description": "The vendor name.",
-            "type": "string"
+            "$ref": "#/components/schemas/vendorName"
           },
           "vendorId": {
-            "description": "The vendor ID.",
-            "format": "uuid",
-            "type": "string"
+            "$ref": "#/components/schemas/vendorId"
           },
           "videoUrl": {
-            "description": "The vendor video URL.",
-            "format": "url",
-            "type": "string"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/url"
+              }
+            ],
+            "description": "The vendor video URL."
           },
           "websiteUrl": {
-            "description": "The vendor website URL.",
-            "format": "url",
-            "type": "string"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/url"
+              }
+            ],
+            "description": "The vendor website URL."
           }
         },
         "required": [
@@ -376,16 +363,13 @@
       "CatalogProductHighlight": {
         "properties": {
           "highlightContent": {
-            "description": "The highlight content.",
-            "type": "string"
+            "$ref": "#/components/schemas/catalogHighlightContent"
           },
           "highlightIcon": {
-            "description": "The highlight icon.",
-            "type": "string"
+            "$ref": "#/components/schemas/catalogHighlightIcon"
           },
           "highlightTitle": {
-            "description": "The highlight title.",
-            "type": "string"
+            "$ref": "#/components/schemas/catalogHighlightTitle"
           }
         },
         "type": "object"
@@ -393,42 +377,27 @@
       "CatalogProductOverview": {
         "properties": {
           "deliveryMethod": {
-            "description": "The product type. For reference: SAAS - Software as a Service, SAI - STACKIT Application Image",
-            "enum": [
-              "SAAS",
-              "KUBERNETES",
-              "SAI",
-              "PROFESSIONAL_SERVICE"
-            ],
-            "format": "enum",
-            "type": "string"
+            "$ref": "#/components/schemas/deliveryMethod"
           },
           "lifecycleState": {
-            "description": "The lifecycle state of the product.",
-            "enum": [
-              "PRODUCT_LIVE",
-              "PRODUCT_PREVIEW"
-            ],
-            "format": "enum",
-            "type": "string"
+            "$ref": "#/components/schemas/productLifecycleState"
           },
           "logo": {
-            "description": "The logo base64 encoded.",
-            "format": "base64",
-            "type": "string"
+            "$ref": "#/components/schemas/logo"
           },
           "name": {
-            "description": "The product name.",
-            "type": "string"
+            "$ref": "#/components/schemas/productName"
           },
           "productId": {
-            "description": "The product ID.",
-            "format": "uuid",
-            "type": "string"
+            "$ref": "#/components/schemas/productId"
           },
           "summary": {
-            "description": "The short summary of the product.",
-            "type": "string"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/message"
+              }
+            ],
+            "description": "The short summary of the product."
           },
           "vendor": {
             "$ref": "#/components/schemas/CatalogProductOverviewVendor"
@@ -447,18 +416,13 @@
       "CatalogProductOverviewVendor": {
         "properties": {
           "name": {
-            "description": "The vendor name.",
-            "type": "string"
+            "$ref": "#/components/schemas/vendorName"
           },
           "vendorId": {
-            "description": "The vendor ID.",
-            "format": "uuid",
-            "type": "string"
+            "$ref": "#/components/schemas/vendorId"
           },
           "websiteUrl": {
-            "description": "The vendor website URL.",
-            "format": "url",
-            "type": "string"
+            "$ref": "#/components/schemas/url"
           }
         },
         "required": [
@@ -471,8 +435,7 @@
       "CatalogProductPricingOption": {
         "properties": {
           "description": {
-            "description": "The pricing option description.",
-            "type": "string"
+            "$ref": "#/components/schemas/pricingOptionDescription"
           },
           "highlights": {
             "description": "The list of highlights.",
@@ -482,44 +445,28 @@
             "type": "array"
           },
           "name": {
-            "description": "The pricing option name.",
-            "type": "string"
+            "$ref": "#/components/schemas/pricingOptionName"
           },
           "priceType": {
-            "description": "The price type / pricing model.",
-            "enum": [
-              "CONTRACT",
-              "FREE",
-              "FREE_TRIAL",
-              "BYOL",
-              "PAYG"
-            ],
-            "format": "enum",
-            "type": "string"
+            "$ref": "#/components/schemas/priceType"
           },
           "pricingPlan": {
-            "description": "Additional price type information.",
-            "type": "string"
+            "$ref": "#/components/schemas/pricingPlan"
           },
           "rate": {
-            "description": "The price of the product (per unit).",
-            "type": "string"
+            "$ref": "#/components/schemas/pricingOptionRate"
           },
           "sku": {
-            "description": "The concrete variant of the product.",
-            "type": "string"
+            "$ref": "#/components/schemas/sku"
           },
           "skuInfo": {
-            "description": "Short description of this offering.",
-            "type": "string"
+            "$ref": "#/components/schemas/skuInfo"
           },
           "skuInfoDetails": {
-            "description": "More details about what this offering entails.",
-            "type": "string"
+            "$ref": "#/components/schemas/skuInfoDetails"
           },
           "unit": {
-            "description": "The interval to which the rate applies.",
-            "type": "string"
+            "$ref": "#/components/schemas/pricingOptionUnit"
           }
         },
         "required": [
@@ -535,13 +482,15 @@
       "CatalogProductSupportResource": {
         "properties": {
           "supportLink": {
-            "description": "The support resource link.",
-            "format": "url",
-            "type": "string"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/url"
+              }
+            ],
+            "description": "The support resource link."
           },
           "supportLinkTitle": {
-            "description": "The support resource link title.",
-            "type": "string"
+            "$ref": "#/components/schemas/supportLinkTitle"
           }
         },
         "type": "object"
@@ -549,16 +498,18 @@
       "CatalogProductVendorTerms": {
         "properties": {
           "description": {
-            "description": "The terms of use description.",
-            "type": "string"
+            "$ref": "#/components/schemas/tosDescription"
           },
           "title": {
-            "description": "The terms of use title.",
-            "type": "string"
+            "$ref": "#/components/schemas/tosTitle"
           },
           "url": {
-            "description": "The terms of use url.",
-            "type": "string"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/url"
+              }
+            ],
+            "description": "The terms of use url."
           }
         },
         "required": [
@@ -568,57 +519,32 @@
         ],
         "type": "object"
       },
-      "CurrentSubscriptionStateResponse": {
-        "example": {
-          "lifecycleState": "SUBSCRIPTION_ACTIVE",
-          "subscriptionId": "65791df4-2b07-4b52-99c7-783be4b0761d"
-        },
-        "properties": {
-          "lifecycleState": {
-            "description": "Lifecycle state of the subscription.",
-            "enum": [
-              "SUBSCRIPTION_PENDING",
-              "SUBSCRIPTION_ACTIVE",
-              "SUBSCRIPTION_INACTIVE",
-              "SUBSCRIPTION_CANCELLING",
-              "SUBSCRIPTION_CANCELLED",
-              "SUBSCRIPTION_REJECTED"
-            ],
-            "format": "enum",
-            "type": "string"
-          },
-          "subscriptionId": {
-            "description": "The subscription ID.",
-            "type": "string"
-          }
-        },
-        "required": [
-          "subscriptionId",
-          "lifecycleState"
-        ],
-        "type": "object"
-      },
       "ErrorResponse": {
         "properties": {
           "error": {
             "description": "Reason phrase of the status code.",
+            "example": "status code phrase",
             "type": "string"
           },
           "message": {
             "description": "Description of the error.",
+            "example": "error message example",
             "type": "string"
           },
           "path": {
             "description": "Path which was called.",
+            "example": "/path/where/error/occurred",
             "type": "string"
           },
           "status": {
             "description": "HTTP response status code.",
+            "example": 500,
             "format": "int32",
             "type": "integer"
           },
           "timeStamp": {
             "description": "Timestamp at which the error occurred.",
+            "example": "2019-08-24T14:15:22Z",
             "format": "date-time",
             "type": "string"
           }
@@ -632,11 +558,121 @@
         ],
         "type": "object"
       },
+      "InquiryBecomeVendor": {
+        "description": "Become a vendor.",
+        "properties": {
+          "contactEmail": {
+            "$ref": "#/components/schemas/email"
+          },
+          "message": {
+            "$ref": "#/components/schemas/message"
+          }
+        },
+        "required": [
+          "contactEmail",
+          "message"
+        ],
+        "title": "becomeVendor",
+        "type": "object"
+      },
+      "InquiryContactSales": {
+        "description": "Contact sales.",
+        "properties": {
+          "companyName": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/vendorName"
+              }
+            ],
+            "description": "The company name."
+          },
+          "contactEmail": {
+            "$ref": "#/components/schemas/email"
+          },
+          "fullName": {
+            "$ref": "#/components/schemas/contactPersonName"
+          },
+          "message": {
+            "$ref": "#/components/schemas/message"
+          },
+          "productId": {
+            "$ref": "#/components/schemas/productId"
+          }
+        },
+        "required": [
+          "productId",
+          "fullName",
+          "companyName",
+          "contactEmail",
+          "message"
+        ],
+        "title": "contactSales",
+        "type": "object"
+      },
+      "InquiryRegisterTesting": {
+        "description": "Register for testing.",
+        "properties": {
+          "contactEmail": {
+            "$ref": "#/components/schemas/email"
+          },
+          "fullName": {
+            "$ref": "#/components/schemas/contactPersonName"
+          },
+          "message": {
+            "$ref": "#/components/schemas/message"
+          }
+        },
+        "required": [
+          "fullName",
+          "contactEmail",
+          "message"
+        ],
+        "title": "registerTesting",
+        "type": "object"
+      },
+      "InquirySuggestProduct": {
+        "description": "Suggest a product.",
+        "properties": {
+          "companyName": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/vendorName"
+              }
+            ],
+            "description": "The suggested product's company name."
+          },
+          "message": {
+            "$ref": "#/components/schemas/message"
+          },
+          "name": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/productName"
+              }
+            ],
+            "description": "The suggested product name."
+          },
+          "url": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/url"
+              }
+            ],
+            "description": "The suggested product's website URL."
+          }
+        },
+        "required": [
+          "name",
+          "companyName",
+          "url"
+        ],
+        "title": "suggestProduct",
+        "type": "object"
+      },
       "ListCatalogProductsResponse": {
         "properties": {
           "cursor": {
-            "description": "A pagination cursor that represents a position in the dataset. Use it in subsequent requests to continue retrieving data from this position. If `null`, there are no more results to retrieve.",
-            "type": "string"
+            "$ref": "#/components/schemas/cursor"
           },
           "items": {
             "items": {
@@ -645,12 +681,12 @@
             "type": "array"
           },
           "limit": {
-            "default": 50,
-            "description": "The maximum number of items to return in the response. If not present, an appropriate default will be used. If maximum is exceeded, maximum is used.",
-            "format": "int32",
-            "maximum": 100,
-            "minimum": 0,
-            "type": "integer"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/limit"
+              }
+            ],
+            "default": 50
           }
         },
         "required": [
@@ -661,32 +697,9 @@
         "type": "object"
       },
       "ListVendorSubscriptionsResponse": {
-        "example": {
-          "cursor": "eyJrZXkiOiJ2YWx1ZSJ9",
-          "items": [
-            {
-              "lifecycleState": "SUBSCRIPTION_PENDING",
-              "product": {
-                "deliveryMethod": "SAAS",
-                "lifecycleState": "PRODUCT_LIVE",
-                "priceType": "CONTRACT",
-                "pricingPlan": "Test Plan",
-                "productId": "2ea4b536-07c8-479e-a7a7-41ff724e053f",
-                "productName": "Test Product Name",
-                "vendorName": "STACKIT",
-                "vendorProductId": "vendor-custom-id",
-                "vendorWebsiteUrl": "https://example.com"
-              },
-              "projectId": "c5fedcab-920d-40cd-a06f-e7443db8e7f7",
-              "subscriptionId": "e93750b2-3d5c-496e-844d-67c947e34c67"
-            }
-          ],
-          "limit": 50
-        },
         "properties": {
           "cursor": {
-            "description": "A pagination cursor that represents a position in the dataset. Use it in subsequent requests to continue retrieving data from this position. If `null`, there are no more results to retrieve.",
-            "type": "string"
+            "$ref": "#/components/schemas/cursor"
           },
           "items": {
             "description": "List of subscriptions.",
@@ -696,12 +709,12 @@
             "type": "array"
           },
           "limit": {
-            "default": 50,
-            "description": "Number of subscriptions returned for a single request.",
-            "format": "int32",
-            "maximum": 100,
-            "minimum": 0,
-            "type": "integer"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/limit"
+              }
+            ],
+            "default": 50
           }
         },
         "required": [
@@ -711,44 +724,10 @@
         ],
         "type": "object"
       },
-      "RequestedSubscriptionStateResponse": {
-        "example": {
-          "lifecycleState": "SUBSCRIPTION_CANCELLING",
-          "subscriptionId": "65791df4-2b07-4b52-99c7-783be4b0761d"
-        },
-        "properties": {
-          "lifecycleState": {
-            "description": "Lifecycle state of the subscription.",
-            "enum": [
-              "SUBSCRIPTION_PENDING",
-              "SUBSCRIPTION_ACTIVE",
-              "SUBSCRIPTION_INACTIVE",
-              "SUBSCRIPTION_CANCELLING",
-              "SUBSCRIPTION_CANCELLED",
-              "SUBSCRIPTION_REJECTED"
-            ],
-            "format": "enum",
-            "type": "string"
-          },
-          "subscriptionId": {
-            "description": "The subscription ID.",
-            "type": "string"
-          }
-        },
-        "required": [
-          "subscriptionId",
-          "lifecycleState"
-        ],
-        "type": "object"
-      },
       "ResolveCustomerPayload": {
-        "example": {
-          "token": "VGhpcyBpcyBhIHRva2VuIGJ5IGRvbW15IHRva2VuIGFuZCBiYXNlNjQgZW5jb2RlZA=="
-        },
         "properties": {
           "token": {
-            "description": "Opaque token exchangeable for subscription details.",
-            "type": "string"
+            "$ref": "#/components/schemas/customerToken"
           }
         },
         "required": [
@@ -756,98 +735,40 @@
         ],
         "type": "object"
       },
-      "SubscriptionCancelResponse": {
-        "example": {
-          "currentSubscription": {
-            "lifecycleState": "SUBSCRIPTION_ACTIVE",
-            "subscriptionId": "65791df4-2b07-4b52-99c7-783be4b0761d"
-          },
-          "requestedSubscription": {
-            "lifecycleState": "SUBSCRIPTION_CANCELLING",
-            "subscriptionId": "11d1a618-4eeb-488b-973c-7e46dafddcf2"
-          }
-        },
-        "properties": {
-          "currentSubscription": {
-            "$ref": "#/components/schemas/CurrentSubscriptionStateResponse"
-          },
-          "requestedSubscription": {
-            "$ref": "#/components/schemas/RequestedSubscriptionStateResponse"
-          }
-        },
-        "required": [
-          "currentSubscription",
-          "requestedSubscription"
-        ],
-        "type": "object"
-      },
       "SubscriptionProduct": {
-        "example": {
-          "deliveryMethod": "SAAS",
-          "lifecycleState": "PRODUCT_LIVE",
-          "priceType": "CONTRACT",
-          "pricingPlan": "Test Plan",
-          "productId": "2ea4b536-07c8-479e-a7a7-41ff724e053f",
-          "productName": "Test Product Name",
-          "vendorName": "STACKIT",
-          "vendorWebsiteUrl": "https://example.com"
-        },
+        "description": "The product of a subscription",
         "properties": {
           "deliveryMethod": {
-            "description": "The product's delivery method.",
-            "enum": [
-              "SAAS"
-            ],
-            "format": "enum",
-            "type": "string"
+            "$ref": "#/components/schemas/deliveryMethod"
           },
           "lifecycleState": {
-            "description": "The lifecycle state of the product.",
-            "enum": [
-              "PRODUCT_LIVE",
-              "PRODUCT_PREVIEW"
-            ],
-            "format": "enum",
-            "type": "string"
+            "$ref": "#/components/schemas/productLifecycleState"
           },
           "priceType": {
-            "description": "The product's price type.",
-            "enum": [
-              "CONTRACT",
-              "FREE",
-              "FREE_TRIAL",
-              "BYOL",
-              "PAYG"
-            ],
-            "format": "enum",
-            "type": "string"
+            "$ref": "#/components/schemas/priceType"
           },
           "pricingPlan": {
-            "description": "The product's pricing plan.",
-            "type": "string"
+            "$ref": "#/components/schemas/pricingPlan"
           },
           "productId": {
-            "description": "The product ID.",
-            "type": "string"
+            "$ref": "#/components/schemas/productId"
           },
           "productName": {
-            "description": "The name of the product.",
-            "type": "string"
+            "$ref": "#/components/schemas/productName"
           },
           "vendorName": {
-            "description": "The product's vendor name.",
-            "type": "string"
+            "$ref": "#/components/schemas/vendorName"
           },
           "vendorProductId": {
-            "description": "The product ID provided by the Vendor.",
-            "example": "vendor-custom-id",
-            "format": "string",
-            "pattern": "^[a-zA-Z0-9](?:[a-zA-Z0-9_+\u0026-]){0,39}$",
-            "type": "string"
+            "$ref": "#/components/schemas/vendorProductId"
           },
           "vendorWebsiteUrl": {
-            "description": "The vendor's website.",
-            "type": "string"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/url"
+              }
+            ],
+            "description": "The vendor's website."
           }
         },
         "required": [
@@ -862,48 +783,28 @@
         ],
         "type": "object"
       },
+      "UUID": {
+        "description": "Universally Unique Identifier (UUID).",
+        "example": "14fef715-4ef3-4b10-8789-cd7f9bd09421",
+        "format": "uuid",
+        "maxLength": 36,
+        "minLength": 36,
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+        "type": "string"
+      },
       "VendorSubscription": {
-        "example": {
-          "lifecycleState": "SUBSCRIPTION_PENDING",
-          "product": {
-            "deliveryMethod": "SAAS",
-            "lifecycleState": "PRODUCT_LIVE",
-            "priceType": "CONTRACT",
-            "pricingPlan": "Test Plan",
-            "productId": "2ea4b536-07c8-479e-a7a7-41ff724e053f",
-            "productName": "Test Product Name",
-            "vendorName": "STACKIT",
-            "vendorProductId": "vendor-custom-id",
-            "vendorWebsiteUrl": "https://example.com"
-          },
-          "projectId": "c5fedcab-920d-40cd-a06f-e7443db8e7f7",
-          "subscriptionId": "e93750b2-3d5c-496e-844d-67c947e34c67"
-        },
         "properties": {
           "lifecycleState": {
-            "description": "Lifecycle state of the subscription.",
-            "enum": [
-              "SUBSCRIPTION_PENDING",
-              "SUBSCRIPTION_ACTIVE",
-              "SUBSCRIPTION_INACTIVE",
-              "SUBSCRIPTION_CANCELLING",
-              "SUBSCRIPTION_CANCELLED",
-              "SUBSCRIPTION_REJECTED"
-            ],
-            "format": "enum",
-            "type": "string"
+            "$ref": "#/components/schemas/subscriptionLifecycleState"
           },
           "product": {
             "$ref": "#/components/schemas/SubscriptionProduct"
           },
           "projectId": {
-            "description": "The associated consumer project ID.",
-            "format": "uuid",
-            "type": "string"
+            "$ref": "#/components/schemas/projectId"
           },
           "subscriptionId": {
-            "description": "The subscription ID.",
-            "type": "string"
+            "$ref": "#/components/schemas/subscriptionId"
           }
         },
         "required": [
@@ -914,53 +815,71 @@
         ],
         "type": "object"
       },
+      "bool": {
+        "description": "Boolean data type.",
+        "example": true,
+        "type": "boolean"
+      },
+      "catalogHighlightContent": {
+        "description": "The highlight content.",
+        "example": "this is the content of the best highlight ever",
+        "type": "string"
+      },
+      "catalogHighlightIcon": {
+        "description": "The highlight icon.",
+        "example": "rocket",
+        "type": "string"
+      },
+      "catalogHighlightTitle": {
+        "description": "The highlight title.",
+        "example": "best highlight ever",
+        "type": "string"
+      },
+      "contactPersonName": {
+        "description": "The full name of the contact person.",
+        "example": "Max Mustermann",
+        "maxLength": 512,
+        "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
+        "type": "string"
+      },
+      "cursor": {
+        "description": "A pagination cursor that represents a position in the dataset. If given, results will be returned from the item after the cursor. If not given, results will be returned from the beginning.",
+        "example": "eyJrZXkiOiJ2YWx1ZSJ9",
+        "type": "string"
+      },
+      "customerToken": {
+        "description": "Opaque token exchangeable for subscription details.",
+        "example": "VGhpcyBpcyBhIHRva2VuIGJ5IGRvbW15IHRva2VuIGFuZCBiYXNlNjQgZW5jb2RlZA==",
+        "type": "string"
+      },
+      "deliveryMethod": {
+        "description": "The product delivery method/type. For reference: SAAS - Software as a Service, SAI - STACKIT Application Image",
+        "enum": [
+          "SAAS",
+          "KUBERNETES",
+          "SAI",
+          "PROFESSIONAL_SERVICE"
+        ],
+        "example": "SAAS",
+        "format": "enum",
+        "type": "string"
+      },
+      "email": {
+        "description": "A e-mail address.",
+        "example": "example@stackit.de",
+        "format": "email",
+        "type": "string"
+      },
       "inquiries-create-inquiryPayload": {
         "oneOf": [
           {
             "description": "Suggest a product.",
             "properties": {
               "suggestProduct": {
-                "properties": {
-                  "companyName": {
-                    "description": "The suggested product's company name.",
-                    "maxLength": 512,
-                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
-                    "type": "string"
-                  },
-                  "message": {
-                    "description": "An additional message.",
-                    "maxLength": 512,
-                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
-                    "type": "string"
-                  },
-                  "name": {
-                    "description": "The suggested product name.",
-                    "maxLength": 512,
-                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
-                    "type": "string"
-                  },
-                  "url": {
-                    "description": "The suggested product's website URL.",
-                    "format": "url",
-                    "maxLength": 512,
-                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "name",
-                  "companyName",
-                  "url"
-                ],
-                "type": "object"
+                "$ref": "#/components/schemas/InquirySuggestProduct"
               },
               "type": {
-                "description": "The form type.",
-                "enum": [
-                  "suggest_product"
-                ],
-                "format": "enum",
-                "type": "string"
+                "$ref": "#/components/schemas/inquiryFormType"
               }
             },
             "required": [
@@ -974,52 +893,10 @@
             "description": "Contact sales.",
             "properties": {
               "contactSales": {
-                "properties": {
-                  "companyName": {
-                    "description": "The company name.",
-                    "maxLength": 512,
-                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
-                    "type": "string"
-                  },
-                  "contactEmail": {
-                    "description": "The contact e-mail address.",
-                    "format": "email",
-                    "type": "string"
-                  },
-                  "fullName": {
-                    "description": "The full name of the contact person.",
-                    "maxLength": 512,
-                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
-                    "type": "string"
-                  },
-                  "message": {
-                    "description": "The message content.",
-                    "maxLength": 512,
-                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
-                    "type": "string"
-                  },
-                  "productId": {
-                    "description": "The product ID.",
-                    "format": "uuid",
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "productId",
-                  "fullName",
-                  "companyName",
-                  "contactEmail",
-                  "message"
-                ],
-                "type": "object"
+                "$ref": "#/components/schemas/InquiryContactSales"
               },
               "type": {
-                "description": "The form type.",
-                "enum": [
-                  "contact_sales"
-                ],
-                "format": "enum",
-                "type": "string"
+                "$ref": "#/components/schemas/inquiryFormType"
               }
             },
             "required": [
@@ -1030,35 +907,13 @@
             "type": "object"
           },
           {
-            "description": "Become a vendor.",
+            "description": "Become a Vendor.",
             "properties": {
               "becomeVendor": {
-                "properties": {
-                  "contactEmail": {
-                    "description": "The contact e-mail address.",
-                    "format": "email",
-                    "type": "string"
-                  },
-                  "message": {
-                    "description": "The message content.",
-                    "maxLength": 512,
-                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "contactEmail",
-                  "message"
-                ],
-                "type": "object"
+                "$ref": "#/components/schemas/InquiryBecomeVendor"
               },
               "type": {
-                "description": "The form type.",
-                "enum": [
-                  "become_vendor"
-                ],
-                "format": "enum",
-                "type": "string"
+                "$ref": "#/components/schemas/inquiryFormType"
               }
             },
             "required": [
@@ -1072,38 +927,10 @@
             "description": "Register for testing.",
             "properties": {
               "registerTesting": {
-                "properties": {
-                  "contactEmail": {
-                    "description": "The contact e-mail address.",
-                    "format": "email",
-                    "type": "string"
-                  },
-                  "fullName": {
-                    "description": "The full name of the contact person.",
-                    "maxLength": 512,
-                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
-                    "type": "string"
-                  },
-                  "message": {
-                    "description": "The message content.",
-                    "maxLength": 512,
-                    "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "fullName",
-                  "contactEmail",
-                  "message"
-                ]
+                "$ref": "#/components/schemas/InquiryRegisterTesting"
               },
               "type": {
-                "description": "The form type.",
-                "enum": [
-                  "register_testing"
-                ],
-                "format": "enum",
-                "type": "string"
+                "$ref": "#/components/schemas/inquiryFormType"
               }
             },
             "required": [
@@ -1115,6 +942,219 @@
           }
         ],
         "type": "object"
+      },
+      "inquiryFormType": {
+        "description": "The form type.",
+        "enum": [
+          "suggestProduct",
+          "contactSales",
+          "becomeVendor",
+          "registerTesting"
+        ],
+        "format": "enum",
+        "type": "string"
+      },
+      "limit": {
+        "description": "Limit for returned Objects.",
+        "example": 50,
+        "maximum": 100,
+        "minimum": 0,
+        "type": "number"
+      },
+      "logo": {
+        "description": "The logo base64 encoded.",
+        "format": "byte",
+        "type": "string"
+      },
+      "message": {
+        "description": "A custom message.",
+        "example": "A very custom message.",
+        "maxLength": 512,
+        "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
+        "type": "string"
+      },
+      "priceType": {
+        "description": "The product's price type.",
+        "enum": [
+          "CONTRACT",
+          "FREE",
+          "FREE_TRIAL",
+          "BYOL",
+          "PAYG"
+        ],
+        "example": "CONTRACT",
+        "format": "enum",
+        "type": "string"
+      },
+      "pricingOptionDescription": {
+        "description": "The pricing option description.",
+        "example": "Product Premium Plan.",
+        "type": "string"
+      },
+      "pricingOptionName": {
+        "description": "The pricing option name.",
+        "example": "Premium Plan",
+        "type": "string"
+      },
+      "pricingOptionRate": {
+        "description": "The price of the product (per unit).",
+        "example": "9,90€",
+        "type": "string"
+      },
+      "pricingOptionUnit": {
+        "description": "The interval to which the rate applies.",
+        "enum": [
+          "month"
+        ],
+        "example": "month",
+        "format": "enum",
+        "type": "string"
+      },
+      "pricingPlan": {
+        "description": "Additional price type information.",
+        "example": "Monthly subscription",
+        "type": "string"
+      },
+      "productCategories": {
+        "description": "The list of categories associated to the product.",
+        "items": {
+          "example": "Infrastructure Software",
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "productDescription": {
+        "description": "The product description.",
+        "example": "very nice description!",
+        "type": "string"
+      },
+      "productId": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/UUID"
+          }
+        ],
+        "description": "The product ID."
+      },
+      "productLifecycleState": {
+        "description": "The lifecycle state of the product.",
+        "enum": [
+          "PRODUCT_LIVE",
+          "PRODUCT_PREVIEW"
+        ],
+        "example": "PRODUCT_LIVE",
+        "format": "enum",
+        "type": "string"
+      },
+      "productName": {
+        "description": "The name of the product.",
+        "example": "Cool Product Name",
+        "maxLength": 512,
+        "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
+        "type": "string"
+      },
+      "productSummary": {
+        "description": "The short summary of the product.",
+        "example": "short summary of product subscription.",
+        "type": "string"
+      },
+      "projectId": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/UUID"
+          }
+        ],
+        "description": "The associated consumer project ID."
+      },
+      "sku": {
+        "description": "The concrete variant of the product.",
+        "example": "MP-1234",
+        "type": "string"
+      },
+      "skuInfo": {
+        "description": "Short description of this offering.",
+        "example": "Flexible and scalable",
+        "type": "string"
+      },
+      "skuInfoDetails": {
+        "description": "More details about what this offering entails.",
+        "example": "Access the full suite of the Product features with this plan.",
+        "type": "string"
+      },
+      "subscriptionId": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/UUID"
+          }
+        ],
+        "description": "The subscription ID."
+      },
+      "subscriptionLifecycleState": {
+        "description": "Lifecycle state of the subscription.",
+        "enum": [
+          "SUBSCRIPTION_PENDING",
+          "SUBSCRIPTION_ACTIVE",
+          "SUBSCRIPTION_INACTIVE",
+          "SUBSCRIPTION_CANCELLING",
+          "SUBSCRIPTION_CANCELLED",
+          "SUBSCRIPTION_REJECTED"
+        ],
+        "example": "SUBSCRIPTION_ACTIVE",
+        "format": "enum",
+        "type": "string"
+      },
+      "supportLinkTitle": {
+        "description": "The support resource link title.",
+        "example": "contact our support",
+        "type": "string"
+      },
+      "supportPhone": {
+        "description": "The phone number for support inquiries.",
+        "example": "+49 800 187187187",
+        "type": "string"
+      },
+      "tosDescription": {
+        "description": "The terms of service description.",
+        "example": "See the terms and conditions of this product.",
+        "type": "string"
+      },
+      "tosTitle": {
+        "description": "The terms of service title.",
+        "example": "Vendor Terms of Service",
+        "type": "string"
+      },
+      "url": {
+        "description": "Uniform Resource Locator.",
+        "example": "https://example.com",
+        "maxLength": 512,
+        "pattern": "^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$",
+        "type": "string"
+      },
+      "vendorDescription": {
+        "description": "The vendor description.",
+        "example": "This is the example vendor.",
+        "type": "string"
+      },
+      "vendorId": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/UUID"
+          }
+        ],
+        "description": "The vendor ID."
+      },
+      "vendorName": {
+        "description": "The product's vendor name.",
+        "example": "STACKIT",
+        "maxLength": 512,
+        "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
+        "type": "string"
+      },
+      "vendorProductId": {
+        "description": "The vendor provided product ID.",
+        "example": "custom-vendor-id-123",
+        "pattern": "^[a-zA-Z0-9](?:[a-zA-Z0-9_+\u0026-]){0,39}$",
+        "type": "string"
       }
     }
   },

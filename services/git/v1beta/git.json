@@ -1,0 +1,186 @@
+{
+  "components": {
+    "schemas": {
+      "Instance": {
+        "description": "Describes a STACKIT Git instance.",
+        "properties": {
+          "created": {
+            "description": "The date and time the creation of the STACKIT GIT instance was triggered.",
+            "format": "date-time",
+            "maxLength": 48,
+            "type": "string"
+          },
+          "id": {
+            "description": "A auto generated unique id which identifies the STACKIT GIT instances.",
+            "format": "uuid",
+            "maxLength": 36,
+            "type": "string"
+          },
+          "name": {
+            "description": "A user chosen name to distinguish multiple STACKIT GIT instances.",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "state": {
+            "description": "The current state of the STACKIT GIT instance.",
+            "enum": [
+              "Creating",
+              "WaitingForResources",
+              "Updating",
+              "Deleting",
+              "Ready",
+              "Error"
+            ],
+            "maxLength": 32,
+            "type": "string"
+          },
+          "url": {
+            "description": "The URL for reaching the STACKIT GIT instance.",
+            "maxLength": 2048,
+            "type": "string"
+          },
+          "version": {
+            "description": "The current version of STACKIT GIT deployed to the instance.",
+            "maxLength": 20,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "url",
+          "created",
+          "state",
+          "version"
+        ]
+      },
+      "InternalServerErrorResponse": {
+        "description": "Internal server error.",
+        "properties": {
+          "error": {
+            "example": "Internal server error.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ListInstances": {
+        "description": "A list of STACKIT Git instances.",
+        "properties": {
+          "instances": {
+            "items": {
+              "$ref": "#/components/schemas/Instance"
+            },
+            "maxItems": 50,
+            "type": "array"
+          }
+        },
+        "required": [
+          "instances"
+        ]
+      },
+      "UnauthorizedResponse": {
+        "description": "The request could not be authorized.",
+        "properties": {
+          "error": {
+            "example": "The request could not be authorized",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "contact": {
+      "email": "git@stackit.cloud",
+      "name": "STACKIT Git",
+      "url": "https://docs.stackit.cloud/stackit/en/git-261161358.html"
+    },
+    "description": "Manage STACKIT Git instances.",
+    "title": "STACKIT Git API",
+    "version": "1beta.0.3"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1beta/projects/{projectId}/instances": {
+      "get": {
+        "description": "Returns a list of all STACKIT Git instances within the project.",
+        "operationId": "ListInstances",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListInstances"
+                }
+              }
+            },
+            "description": "Successful response with all instances."
+          },
+          "400": {
+            "description": "Bad Request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResponse"
+                }
+              }
+            },
+            "description": "Unauthorized."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "STACKIT Git instances exist within a project, and a project may have zero or more instances.\nThis endpoint allows a user with read-access to a project to list all instances that exist\nwithin the specified project.\n",
+        "x-stackit-authorization": {
+          "actions": [
+            "git.instance.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "description": "The STACKIT portal project UUID the STACKIT Git instance is part of.",
+          "example": "83b8e9c4-e3d1-4dc4-bb89-9854c8b5383e",
+          "in": "path",
+          "name": "projectId",
+          "required": true,
+          "schema": {
+            "format": "uuid",
+            "maxLength": 36,
+            "type": "string"
+          }
+        }
+      ]
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://git.api.stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "global"
+        }
+      }
+    }
+  ]
+}

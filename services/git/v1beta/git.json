@@ -1,6 +1,21 @@
 {
   "components": {
     "schemas": {
+      "CreateInstancePayload": {
+        "description": "Request a STACKIT Git instance to be created with these properties.",
+        "properties": {
+          "name": {
+            "description": "A user chosen name to distinguish multiple STACKIT Git instances.",
+            "maxLength": 32,
+            "minLength": 5,
+            "pattern": "^[a-zA-Z0-9-_]+$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
       "Instance": {
         "description": "Describes a STACKIT Git instance.",
         "properties": {
@@ -158,6 +173,194 @@
           "example": "83b8e9c4-e3d1-4dc4-bb89-9854c8b5383e",
           "in": "path",
           "name": "projectId",
+          "required": true,
+          "schema": {
+            "format": "uuid",
+            "maxLength": 36,
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "description": "Creates a new STACKIT Git instance within the project.",
+        "operationId": "CreateInstance",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInstancePayload"
+              }
+            }
+          },
+          "description": "Provides the options to use when creating the instance.",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Instance"
+                }
+              }
+            },
+            "description": "Instance was created successfully"
+          },
+          "400": {
+            "description": "Bad Request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResponse"
+                }
+              }
+            },
+            "description": "Unauthorized."
+          },
+          "409": {
+            "description": "Conflict."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "Users with write-access to a project may create a new STACKIT Git instance by posting\nthe instance creation request to this endpoint, which will schedule the creation of a\nnew STACKIT Git instance within that project.\n",
+        "x-stackit-authorization": {
+          "actions": [
+            "git.instance.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/instances/{instanceId}": {
+      "delete": {
+        "description": "Deletes the given STACKIT Git instance.",
+        "operationId": "DeleteInstance",
+        "responses": {
+          "202": {
+            "description": "Instance was deleted successfully."
+          },
+          "400": {
+            "description": "Bad Request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResponse"
+                }
+              }
+            },
+            "description": "Unauthorized."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "409": {
+            "description": "Conflict."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "Allows a user with write-access to a project to schedule the deletion of a STACKIT Git\ninstance, which will soon eliminate all repositories \u0026 user metadata associated with\nthat instance. This is a destructive operation.\n",
+        "x-stackit-authorization": {
+          "actions": [
+            "git.instance.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns the details for the given STACKIT Git instance.",
+        "operationId": "GetInstance",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Instance"
+                }
+              }
+            },
+            "description": "Instance details successfully retrieved."
+          },
+          "400": {
+            "description": "Bad Request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResponse"
+                }
+              }
+            },
+            "description": "Unauthorized."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "Provides detailed information about the state of an instance within the specified\nproject including information about how to access the instance for further use.\n",
+        "x-stackit-authorization": {
+          "actions": [
+            "git.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "description": "The STACKIT portal project UUID the STACKIT Git instance is part of.",
+          "example": "83b8e9c4-e3d1-4dc4-bb89-9854c8b5383e",
+          "in": "path",
+          "name": "projectId",
+          "required": true,
+          "schema": {
+            "format": "uuid",
+            "maxLength": 36,
+            "type": "string"
+          }
+        },
+        {
+          "description": "The STACKIT Git instance UUID.",
+          "example": "f88b5082-a81b-41ae-aae0-33df56907aa8",
+          "in": "path",
+          "name": "instanceId",
           "required": true,
           "schema": {
             "format": "uuid",

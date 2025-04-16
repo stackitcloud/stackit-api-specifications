@@ -657,6 +657,70 @@
         ],
         "type": "object"
       },
+      "CreateLogsAlertgroupsPayload": {
+        "description": "Alert group that should be created or updated\n`Additional Validators:`\n* total config should not be bigger than 500000 characters as string since this the limitation of prometheus.\n",
+        "properties": {
+          "interval": {
+            "default": "60s",
+            "description": "How often rules in the group are evaluated.\n`Additional Validators:`\n* must be a valid time string\n* should be \u003e=60s",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of the group. Must be unique.\n`Additional Validators:`\n* is the identifier and so unique\n* should only include the characters: a-zA-Z0-9-",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "rules": {
+            "description": "rules for the alert group",
+            "items": {
+              "description": "Alert rule.\n`Additional Validators:`\n* total config (all alert groups/rules) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
+              "properties": {
+                "alert": {
+                  "description": "The name of the alert.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9-",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "annotations": {
+                  "description": "map of key:value. Annotations to add to each alert.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+                  "type": "object"
+                },
+                "expr": {
+                  "description": "The PromQL expression to evaluate. Every evaluation cycle this is evaluated at the current time, and all resultant time series become pending/firing alerts.",
+                  "maxLength": 600,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "for": {
+                  "default": "0s",
+                  "description": "Alerts are considered firing once they have been returned for this long. Alerts which have not yet fired for long enough are considered pending.\n`Additional Validators:`\n* must be a valid time string",
+                  "maxLength": 8,
+                  "minLength": 2,
+                  "type": "string"
+                },
+                "labels": {
+                  "description": "map of key:value. Labels to add or overwrite for each alert.\n`Additional Validators:`\n* should not contain more than 10 keys\n* each key and value should not be longer than 200 characters",
+                  "type": "object"
+                }
+              },
+              "required": [
+                "alert",
+                "expr"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "rules"
+        ],
+        "type": "object"
+      },
       "CreateScrapeConfigPayload": {
         "properties": {
           "basicAuth": {
@@ -3556,6 +3620,63 @@
         },
         "required": [
           "planId"
+        ],
+        "type": "object"
+      },
+      "UpdateLogsAlertgroupPayload": {
+        "description": "Alert group that should be created or updated\n`Additional Validators:`\n* total config should not be bigger than 500000 characters as string since this the limitation of prometheus.\n",
+        "properties": {
+          "interval": {
+            "default": "60s",
+            "description": "How often rules in the group are evaluated.\n`Additional Validators:`\n* must be a valid time string\n* should be \u003e=60s",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "rules": {
+            "description": "rules for the alert group",
+            "items": {
+              "description": "Alert rule.\n`Additional Validators:`\n* total config (all alert groups/rules) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
+              "properties": {
+                "alert": {
+                  "description": "The name of the alert.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9-",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "annotations": {
+                  "description": "map of key:value. Annotations to add to each alert.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+                  "type": "object"
+                },
+                "expr": {
+                  "description": "The PromQL expression to evaluate. Every evaluation cycle this is evaluated at the current time, and all resultant time series become pending/firing alerts.",
+                  "maxLength": 600,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "for": {
+                  "default": "0s",
+                  "description": "Alerts are considered firing once they have been returned for this long. Alerts which have not yet fired for long enough are considered pending.\n`Additional Validators:`\n* must be a valid time string",
+                  "maxLength": 8,
+                  "minLength": 2,
+                  "type": "string"
+                },
+                "labels": {
+                  "description": "map of key:value. Labels to add or overwrite for each alert.\n`Additional Validators:`\n* should not contain more than 10 keys\n* each key and value should not be longer than 200 characters",
+                  "type": "object"
+                }
+              },
+              "required": [
+                "alert",
+                "expr"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "rules"
         ],
         "type": "object"
       },
@@ -7878,6 +7999,542 @@
               }
             },
             "description": "You do not have permission to perform this action."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/logs-alertgroups": {
+      "get": {
+        "description": "Get logs alert groups config.",
+        "operationId": "ListLogsAlertgroups",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "interval": "5m",
+                      "name": "test alert",
+                      "rules": [
+                        {
+                          "alert": "up test",
+                          "annotations": {
+                            "test": "test"
+                          },
+                          "expr": "up == 1",
+                          "for": "30s",
+                          "labels": {
+                            "test": "test"
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "message": "Successfully got alert groups"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/AlertGroupsResponse"
+                }
+              }
+            },
+            "description": "Get all alert groups"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Something went wrong."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create logs alert group config.",
+        "operationId": "CreateLogsAlertgroups",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLogsAlertgroupsPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "interval": "5m",
+                      "name": "test alert",
+                      "rules": [
+                        {
+                          "alert": "up test",
+                          "annotations": {
+                            "test": "test"
+                          },
+                          "expr": "up == 1",
+                          "for": "30s",
+                          "labels": {
+                            "test": "test"
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "message": "Group successfully created",
+                  "success": true
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/AlertGroupsResponse"
+                }
+              }
+            },
+            "description": "Create alert group."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Could not create alert group config"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Could not create alert group config"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/logs-alertgroups/{groupName}": {
+      "delete": {
+        "description": "Delete logs alert group config.",
+        "operationId": "DeleteLogsAlertgroup",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "groupName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "interval": "5m",
+                      "name": "test alert",
+                      "rules": [
+                        {
+                          "alert": "up test",
+                          "annotations": {
+                            "test": "test"
+                          },
+                          "expr": "up == 1",
+                          "for": "30s",
+                          "labels": {
+                            "test": "test"
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "message": "Alert group has been deleted successfully"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/AlertGroupsResponse"
+                }
+              }
+            },
+            "description": "Delete alert group."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Could not delete alert group config"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Something went wrong deleting the alert group."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Alert group not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Alert group not found."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get logs alert group config.",
+        "operationId": "GetLogsAlertgroup",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "groupName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "interval": "5m",
+                    "name": "test alert",
+                    "rules": [
+                      {
+                        "alert": "up test",
+                        "annotations": {
+                          "test": "test"
+                        },
+                        "expr": "up == 1",
+                        "for": "30s",
+                        "labels": {
+                          "test": "test"
+                        }
+                      }
+                    ]
+                  },
+                  "message": "Successfully got alert groups"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/AlertGroupResponse"
+                }
+              }
+            },
+            "description": "Get alert group"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Could not read alert group config"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Alert group not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Alert group not found."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "put": {
+        "description": "Update logs alert group config.",
+        "operationId": "UpdateLogsAlertgroup",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "groupName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLogsAlertgroupPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "interval": "5m",
+                      "name": "test alert",
+                      "rules": [
+                        {
+                          "alert": "up test",
+                          "annotations": {
+                            "test": "test"
+                          },
+                          "expr": "up == 1",
+                          "for": "30s",
+                          "labels": {
+                            "test": "test"
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "message": "Alert group updated successfully"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/AlertGroupsResponse"
+                }
+              }
+            },
+            "description": "Update alert group."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Could not update alert group config"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Something went wrong updating the alert group."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Alert group not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Alert group not found."
           }
         },
         "x-stackit-authorization": {

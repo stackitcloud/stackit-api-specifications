@@ -347,6 +347,11 @@
             "format": "date-time",
             "type": "string"
           },
+          "deletionDate": {
+            "description": "This date is set when a key is pending deletion and refers to the scheduled date of deletion",
+            "format": "date-time",
+            "type": "string"
+          },
           "description": {
             "description": "A user chosen description to distinguish multiple keys.",
             "maxLength": 256,
@@ -380,7 +385,7 @@
             "enum": [
               "active",
               "version_not_ready",
-              "deleting"
+              "deleted"
             ],
             "type": "string"
           }
@@ -435,7 +440,7 @@
             "description": "The current state of the key ring.",
             "enum": [
               "active",
-              "deleting"
+              "deleted"
             ],
             "type": "string"
           }
@@ -506,6 +511,11 @@
             "format": "date-time",
             "type": "string"
           },
+          "destroyDate": {
+            "description": "The scheduled date when a version's key material will be erased completely from the backend",
+            "format": "date-time",
+            "type": "string"
+          },
           "disabled": {
             "default": false,
             "description": "States whether versions is enabled or disabled.",
@@ -537,7 +547,7 @@
               "key_material_not_ready",
               "key_material_invalid",
               "disabled",
-              "deleting"
+              "destroyed"
             ],
             "type": "string"
           }
@@ -764,6 +774,36 @@
       }
     },
     "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}": {
+      "delete": {
+        "description": "Deletes the given key ring if it is empty",
+        "operationId": "DeleteKeyRing",
+        "responses": {
+          "204": {
+            "description": "Key ring was deleted successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Delete keyring",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
       "get": {
         "description": "Returns the details for the given key ring.",
         "operationId": "GetKeyRing",
@@ -911,6 +951,36 @@
       }
     },
     "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/keys/{keyId}": {
+      "delete": {
+        "description": "Schedules the deletion of the given key",
+        "operationId": "DeleteKey",
+        "responses": {
+          "202": {
+            "description": "Deletion was scheduled successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Delete key",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
       "get": {
         "description": "Returns the details for the given key.",
         "operationId": "GetKey",
@@ -1019,6 +1089,52 @@
           }
         },
         "summary": "Import key",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/keys/{keyId}/restore": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/keyRingId"
+        },
+        {
+          "$ref": "#/components/parameters/keyId"
+        }
+      ],
+      "post": {
+        "description": "Restores the given key from being deleted.",
+        "operationId": "RestoreKey",
+        "responses": {
+          "200": {
+            "description": "The key has been restored."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Restore deleted key",
         "x-stackit-authorization": {
           "actions": [
             "kms.keyring.update"
@@ -1266,6 +1382,55 @@
         }
       }
     },
+    "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/keys/{keyId}/versions/{versionNumber}/destroy": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/keyRingId"
+        },
+        {
+          "$ref": "#/components/parameters/keyId"
+        },
+        {
+          "$ref": "#/components/parameters/versionNumber"
+        }
+      ],
+      "post": {
+        "description": "Removes the key material of a version permanently.",
+        "operationId": "DestroyVersion",
+        "responses": {
+          "204": {
+            "description": "The version has been successfully destroyed."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Destroy version",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
     "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/keys/{keyId}/versions/{versionNumber}/disable": {
       "parameters": [
         {
@@ -1426,6 +1591,55 @@
         "x-stackit-authorization": {
           "actions": [
             "kms.keyring.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/keys/{keyId}/versions/{versionNumber}/restore": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/keyRingId"
+        },
+        {
+          "$ref": "#/components/parameters/keyId"
+        },
+        {
+          "$ref": "#/components/parameters/versionNumber"
+        }
+      ],
+      "post": {
+        "description": "Restores the given version from being destroyed",
+        "operationId": "RestoreVersion",
+        "responses": {
+          "204": {
+            "description": "The version has been successfully restored."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Restore version",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.update"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

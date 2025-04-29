@@ -17,6 +17,30 @@
               }
             ]
           },
+          "blockedCountries": {
+            "description": "Restricts access to your content based on country. \nWe use the ISO 3166-1 alpha-2 standard for country codes (e.g., DE, ES, GB). \nThis setting blocks users from the specified countries.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "blockedIPs": {
+            "description": "Restricts access to your content by specifying a list of blocked IPv4 addresses. \nThis feature enhances security and privacy by preventing these addresses from accessing your distribution.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "monthlyLimitBytes": {
+            "description": "Sets the monthly limit of bandwidth in bytes that the pullzone is allowed to use.\n",
+            "format": "int64",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer",
+            "x-go-type": "uint64"
+          },
           "regions": {
             "items": {
               "$ref": "#/components/schemas/Region"
@@ -28,7 +52,9 @@
         },
         "required": [
           "regions",
-          "backend"
+          "backend",
+          "blockedIPs",
+          "blockedCountries"
         ],
         "type": "object"
       },
@@ -48,6 +74,30 @@
               }
             ]
           },
+          "blockedCountries": {
+            "description": "Restricts access to your content based on country. \nWe use the ISO 3166-1 alpha-2 standard for country codes (e.g., DE, ES, GB). \nThis setting blocks users from the specified countries.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "blockedIPs": {
+            "description": "Restricts access to your content by specifying a list of blocked IPv4 addresses. \nThis feature enhances security and privacy by preventing these addresses from accessing your distribution.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "monthlyLimitBytes": {
+            "description": "Sets the monthly limit of bandwidth in bytes that the pullzone is allowed to use.\n",
+            "format": "int64",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer",
+            "x-go-type": "uint64"
+          },
           "regions": {
             "items": {
               "$ref": "#/components/schemas/Region"
@@ -62,9 +112,32 @@
       "CreateDistributionPayload": {
         "additionalProperties": false,
         "properties": {
+          "blockedCountries": {
+            "description": "Restricts access to your content based on country. \nWe use the ISO 3166-1 alpha-2 standard for country codes (e.g., DE, ES, GB). \nThis setting blocks users from the specified countries.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "blockedIPs": {
+            "description": "Restricts access to your content by specifying a list of blocked IPv4 addresses. \nThis feature enhances security and privacy by preventing these addresses from accessing your distribution.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
           "intentId": {
             "description": "While optional, it is greatly encouraged to provide an `intentId`. \nThis is used to deduplicate requests.  \nIf multiple POST-Requests with the same `intentId` for a given `projectId` are received, all but the first request are dropped.\n",
             "type": "string"
+          },
+          "monthlyLimitBytes": {
+            "description": "Sets the monthly limit of bandwidth in bytes that the pullzone is allowed to use.\n",
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer",
+            "x-go-type": "uint64"
           },
           "originRequestHeaders": {
             "additionalProperties": {
@@ -196,7 +269,7 @@
             "type": "string"
           },
           "updatedAt": {
-            "description": "RFC3339 string which returns the last time the distribution's configuration was modified.\n",
+            "description": "RFC3339 string which returns the last time the distribution configuration was modified.\n",
             "format": "date-time",
             "type": "string"
           }
@@ -211,6 +284,56 @@
           "domains"
         ],
         "type": "object"
+      },
+      "DistributionLogsRecord": {
+        "properties": {
+          "cacheHit": {
+            "type": "boolean"
+          },
+          "dataCenterRegion": {
+            "type": "string"
+          },
+          "distributionID": {
+            "type": "string"
+          },
+          "host": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "requestCountryCode": {
+            "description": "ISO 3166-1 A2 compliant country code",
+            "maxLength": 2,
+            "minLength": 2,
+            "type": "string"
+          },
+          "size": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer",
+            "x-go-type": "uint64"
+          },
+          "statusCode": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "timestamp": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "distributionID",
+          "statusCode",
+          "path",
+          "cacheHit",
+          "timestamp",
+          "size",
+          "requestCountryCode",
+          "dataCenterRegion",
+          "host"
+        ]
       },
       "DistributionStatisticsRecord": {
         "allOf": [
@@ -354,6 +477,46 @@
         ],
         "type": "string"
       },
+      "ErrorDetails": {
+        "additionalProperties": false,
+        "properties": {
+          "de": {
+            "description": "German description of the error",
+            "minLength": 1,
+            "type": "string"
+          },
+          "description": {
+            "deprecated": true,
+            "minLength": 1,
+            "type": "string"
+          },
+          "en": {
+            "description": "English description of the error",
+            "minLength": 1,
+            "type": "string"
+          },
+          "field": {
+            "description": "Optional field in the request this error detail refers to",
+            "minLength": 1,
+            "type": "string"
+          },
+          "key": {
+            "enum": [
+              "UNKNOWN",
+              "CUSTOM_DOMAIN_CNAME_MISSING",
+              "INVALID_ARGUMENT"
+            ],
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "description",
+          "en"
+        ],
+        "type": "object"
+      },
       "FindCachePathsResponse": {
         "additionalProperties": false,
         "properties": {
@@ -390,22 +553,7 @@
           "details": {
             "description": "Listing of issues with your request",
             "items": {
-              "additionalProperties": false,
-              "properties": {
-                "description": {
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "field": {
-                  "minLength": 1,
-                  "type": "string"
-                }
-              },
-              "required": [
-                "field",
-                "description"
-              ],
-              "type": "object"
+              "$ref": "#/components/schemas/ErrorDetails"
             },
             "minLength": 1,
             "type": "array"
@@ -500,6 +648,23 @@
           "distribution"
         ],
         "type": "object"
+      },
+      "GetLogsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "logs": {
+            "items": {
+              "$ref": "#/components/schemas/DistributionLogsRecord"
+            },
+            "type": "array"
+          },
+          "nextPageIdentifier": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "logs"
+        ]
       },
       "GetStatisticsResponse": {
         "additionalProperties": false,
@@ -681,7 +846,8 @@
             "enum": [
               "UNKNOWN",
               "CUSTOM_DOMAIN_CNAME_MISSING",
-              "CUSTOM_DOMAIN_ALREADY_IN_USE"
+              "CUSTOM_DOMAIN_ALREADY_IN_USE",
+              "PUBLIC_BETA_QUOTA_REACHED"
             ],
             "minLength": 1,
             "type": "string"
@@ -708,7 +874,7 @@
         "operationId": "ListDistributions",
         "parameters": [
           {
-            "description": "Your STACKIT Project's ID",
+            "description": "Your STACKIT Project ID",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -738,7 +904,7 @@
             }
           },
           {
-            "description": "The following sort options exist. We default to `createdAt`\n- `id` - Sort by the distributions's ID using String comparison\n- `updatedAt` - Sort by when the distribution's configuration was last modified, \n  for example by changing the regions or response headers\n- `createdAt` - Sort by when the distribution was initially created.\n- `originUrl` - Sort by originURL using String comparison\n- `status` - Sort by looking at the distribution's status, using String comparison\n",
+            "description": "The following sort options exist. We default to `createdAt`\n- `id` - Sort by distribution ID using String comparison\n- `updatedAt` - Sort by when the distribution configuration was last modified, \n  for example by changing the regions or response headers\n- `createdAt` - Sort by when the distribution was initially created.\n- `originUrl` - Sort by originURL using String comparison\n- `status` - Sort by distribution status, using String comparison\n",
             "in": "query",
             "name": "sortBy",
             "schema": {
@@ -945,7 +1111,7 @@
         "operationId": "CreateDistribution",
         "parameters": [
           {
-            "description": "Your STACKIT Project's ID",
+            "description": "Your STACKIT Project ID",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -1081,7 +1247,7 @@
         "operationId": "DeleteDistribution",
         "parameters": [
           {
-            "description": "Your STACKIT Project's ID",
+            "description": "Your STACKIT Project ID",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -1204,7 +1370,7 @@
         "operationId": "GetDistribution",
         "parameters": [
           {
-            "description": "Your STACKIT Project's ID",
+            "description": "Your STACKIT Project ID",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -1402,7 +1568,7 @@
         "operationId": "PatchDistribution",
         "parameters": [
           {
-            "description": "Your STACKIT Project's ID",
+            "description": "Your STACKIT Project ID",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -1579,7 +1745,7 @@
         "operationId": "GetCacheInfo",
         "parameters": [
           {
-            "description": "Your STACKIT Project's ID",
+            "description": "Your STACKIT Project ID",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -1694,7 +1860,7 @@
         "operationId": "FindCachePaths",
         "parameters": [
           {
-            "description": "Your STACKIT Project's ID",
+            "description": "Your STACKIT Project ID",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -1811,7 +1977,7 @@
         "operationId": "PurgeCache",
         "parameters": [
           {
-            "description": "Your STACKIT Project's ID",
+            "description": "Your STACKIT Project ID",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -1834,7 +2000,7 @@
             "application/json": {
               "examples": {
                 "full purge": {
-                  "description": "Purges the entire distribution's cache",
+                  "description": "Purges the entire distribution cache",
                   "value": {}
                 },
                 "granular purge": {
@@ -1908,7 +2074,7 @@
             "description": "Default error response"
           }
         },
-        "summary": "Clear distribution's cache",
+        "summary": "Clear distribution cache",
         "x-stackit-authorization": {
           "actions": [
             "cdn.distribution.edit"
@@ -1925,7 +2091,7 @@
         "operationId": "DeleteCustomDomain",
         "parameters": [
           {
-            "description": "Your STACKIT Project's ID",
+            "description": "Your STACKIT Project ID",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -2033,7 +2199,7 @@
         "operationId": "GetCustomDomain",
         "parameters": [
           {
-            "description": "Your STACKIT Project's ID",
+            "description": "Your STACKIT Project ID",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -2146,7 +2312,7 @@
         "operationId": "PutCustomDomain",
         "parameters": [
           {
-            "description": "Your STACKIT Project's ID",
+            "description": "Your STACKIT Project ID",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -2254,13 +2420,164 @@
         }
       }
     },
+    "/v1beta/projects/{projectId}/distributions/{distributionId}/logs": {
+      "get": {
+        "operationId": "GetLogs",
+        "parameters": [
+          {
+            "description": "Your STACKIT Project ID",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Your CDN distribution ID",
+            "in": "path",
+            "name": "distributionId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "the start of the time range for which logs should be returned",
+            "in": "query",
+            "name": "from",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "description": "the end of the time range for which logs should be returned. If not specified, \n\"now\" is used.\n",
+            "in": "query",
+            "name": "to",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Quantifies how many log entries should be returned on this \npage. Must be a natural number between 1 and 1000 (inclusive)\n",
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "default": 20,
+              "format": "int32",
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Identifier is returned by the previous response and is used to request the next page.\n\nAs the `pageIdentifier` encodes an element, inserts during pagination will *not* shift the result.\nSo a scenario like:  \n- Start listing first page\n- Insert new element\n- Start listing second page\nwill *never* result in an element from the first page to get \"pushed\" to the second page, like it could \noccur with basic limit + offset pagination.\n\nThe identifier should be treated as an opaque string and never modified. Only pass values returned by the API.\n",
+            "in": "query",
+            "name": "pageIdentifier",
+            "schema": {
+              "example": "CiQ0NjExMDY1MS1kNDQ1LTQ3NjgtOTc3YS00MTIzMjlmMjliYjYgAQ",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The following sort options exist. We default to `timestamp`\n- `timestamp` - Sort by log message time stamp.\n",
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "default": "timestamp",
+              "enum": [
+                "timestamp"
+              ],
+              "format": "enum",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "enum": [
+                "ascending",
+                "descending"
+              ],
+              "format": "enum",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLogsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "unauthorized - please make sure the \"Authorization\" header is set and uses correct credentials"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJSONResponse"
+                }
+              }
+            },
+            "description": "unprocessable entity - please make sure the body you provided is constructed according to spec"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJSONResponse"
+                }
+              }
+            },
+            "description": "internal error - please try again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJSONResponse"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Retrieve distribution logs",
+        "x-stackit-authorization": {
+          "actions": [
+            "cdn.distribution.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
     "/v1beta/projects/{projectId}/distributions/{distributionId}/statistics": {
       "get": {
         "description": "Returns the statistics of the distribution in the given\ntime range. The response is a list of statistics records. Each record aggregates the statistics for its time interval.\nIn case no statistics for a time interval exist, no record is returned.\nThe time range for which statistics should be returned can be configured using query parameters.\n\nTimestamps are assumed to be UTC. This is especially important for the \"buckets\" when you, for example, return daily information. A day always starts and ends at 00:00Z.\n\n**Important Note:** Lower bounds are inclusive, upper bounds are exclusive. If you, for example, want a daily grouped which starts on the 1st Jan and also contains the full 10th Jan day, you would define `2025-01-01T00:00:00Z` as the lower and `2025-01-11T00:00:00Z` as the upper bound.\n\nThe upper bound is optional. If you omit it, the API will use the start of the next interval as the upper bound.  \nExample: if `interval` is `hourly`, `from` would default to the start of the next hour, if it's `daily`, `from` would default to the start of the next day, etc.\n",
         "operationId": "GetStatistics",
         "parameters": [
           {
-            "description": "Your STACKIT Project's ID",
+            "description": "Your STACKIT Project ID",
             "in": "path",
             "name": "projectId",
             "required": true,
@@ -2288,7 +2605,7 @@
             }
           },
           {
-            "description": "the end of the time range for which statistics should be returned. If not specified, \nthe end of the current time's interval is used, e.g. next day for daily, \nnext month for monthly, and so on.\n",
+            "description": "the end of the time range for which statistics should be returned. If not specified, \nthe end of the current time interval is used, e.g. next day for daily, \nnext month for monthly, and so on.\n",
             "in": "query",
             "name": "to",
             "schema": {

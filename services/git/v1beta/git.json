@@ -8,7 +8,7 @@
             "description": "A user chosen name to distinguish multiple STACKIT Git instances.",
             "maxLength": 32,
             "minLength": 5,
-            "pattern": "^[a-zA-Z0-9-_]+$",
+            "pattern": "^[a-z]([a-z0-9\\-]){0,30}[a-z0-9]+$",
             "type": "string"
           }
         },
@@ -20,24 +20,24 @@
         "description": "Describes a STACKIT Git instance.",
         "properties": {
           "created": {
-            "description": "The date and time the creation of the STACKIT GIT instance was triggered.",
+            "description": "The date and time the creation of the STACKIT Git instance was triggered.",
             "format": "date-time",
             "maxLength": 48,
             "type": "string"
           },
           "id": {
-            "description": "A auto generated unique id which identifies the STACKIT GIT instances.",
+            "description": "A auto generated unique id which identifies the STACKIT Git instances.",
             "format": "uuid",
             "maxLength": 36,
             "type": "string"
           },
           "name": {
-            "description": "A user chosen name to distinguish multiple STACKIT GIT instances.",
+            "description": "A user chosen name to distinguish multiple STACKIT Git instances.",
             "maxLength": 32,
             "type": "string"
           },
           "state": {
-            "description": "The current state of the STACKIT GIT instance.",
+            "description": "The current state of the STACKIT Git instance.",
             "enum": [
               "Creating",
               "WaitingForResources",
@@ -50,12 +50,12 @@
             "type": "string"
           },
           "url": {
-            "description": "The URL for reaching the STACKIT GIT instance.",
+            "description": "The URL for reaching the STACKIT Git instance.",
             "maxLength": 2048,
             "type": "string"
           },
           "version": {
-            "description": "The current version of STACKIT GIT deployed to the instance.",
+            "description": "The current version of STACKIT Git deployed to the instance.",
             "maxLength": 20,
             "type": "string"
           }
@@ -120,7 +120,7 @@
   "paths": {
     "/v1beta/projects/{projectId}/instances": {
       "get": {
-        "description": "Returns a list of all STACKIT Git instances within the project.",
+        "description": "STACKIT Git instances exist within a project, and a project may have zero or more instances.\nThis endpoint allows a user with read-access to a project to list all instances that exist\nwithin the specified project.\n",
         "operationId": "ListInstances",
         "responses": {
           "200": {
@@ -157,7 +157,7 @@
             "description": "Internal server error."
           }
         },
-        "summary": "STACKIT Git instances exist within a project, and a project may have zero or more instances.\nThis endpoint allows a user with read-access to a project to list all instances that exist\nwithin the specified project.\n",
+        "summary": "Returns a list of all STACKIT Git instances within the project.",
         "x-stackit-authorization": {
           "actions": [
             "git.instance.list"
@@ -182,7 +182,7 @@
         }
       ],
       "post": {
-        "description": "Creates a new STACKIT Git instance within the project.",
+        "description": "Users with write-access to a project may create a new STACKIT Git instance by posting\nthe instance creation request to this endpoint, which will schedule the creation of a\nnew STACKIT Git instance within that project.\n",
         "operationId": "CreateInstance",
         "requestBody": {
           "content": {
@@ -233,7 +233,7 @@
             "description": "Internal server error."
           }
         },
-        "summary": "Users with write-access to a project may create a new STACKIT Git instance by posting\nthe instance creation request to this endpoint, which will schedule the creation of a\nnew STACKIT Git instance within that project.\n",
+        "summary": "Creates a new STACKIT Git instance within the project.",
         "x-stackit-authorization": {
           "actions": [
             "git.instance.create"
@@ -246,7 +246,7 @@
     },
     "/v1beta/projects/{projectId}/instances/{instanceId}": {
       "delete": {
-        "description": "Deletes the given STACKIT Git instance.",
+        "description": "Allows a user with write-access to a project to schedule the deletion of a STACKIT Git\ninstance, which will soon eliminate all repositories \u0026 user metadata associated with\nthat instance. This is a destructive operation.\n",
         "operationId": "DeleteInstance",
         "responses": {
           "202": {
@@ -282,7 +282,7 @@
             "description": "Internal server error."
           }
         },
-        "summary": "Allows a user with write-access to a project to schedule the deletion of a STACKIT Git\ninstance, which will soon eliminate all repositories \u0026 user metadata associated with\nthat instance. This is a destructive operation.\n",
+        "summary": "Deletes the given STACKIT Git instance.",
         "x-stackit-authorization": {
           "actions": [
             "git.instance.delete"
@@ -293,7 +293,7 @@
         }
       },
       "get": {
-        "description": "Returns the details for the given STACKIT Git instance.",
+        "description": "Provides detailed information about the state of an instance within the specified\nproject including information about how to access the instance for further use.\n",
         "operationId": "GetInstance",
         "responses": {
           "200": {
@@ -333,7 +333,7 @@
             "description": "Internal server error."
           }
         },
-        "summary": "Provides detailed information about the state of an instance within the specified\nproject including information about how to access the instance for further use.\n",
+        "summary": "Returns the details for the given STACKIT Git instance.",
         "x-stackit-authorization": {
           "actions": [
             "git.instance.get"

@@ -800,6 +800,9 @@
           "lifecycleState": {
             "$ref": "#/components/schemas/subscriptionLifecycleState"
           },
+          "organizationId": {
+            "$ref": "#/components/schemas/organizationId"
+          },
           "product": {
             "$ref": "#/components/schemas/SubscriptionProduct"
           },
@@ -812,6 +815,7 @@
         },
         "required": [
           "subscriptionId",
+          "organizationId",
           "projectId",
           "lifecycleState",
           "product"
@@ -976,6 +980,14 @@
         "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
         "type": "string"
       },
+      "organizationId": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/UUID"
+          }
+        ],
+        "description": "The associated organization ID."
+      },
       "priceType": {
         "description": "The product's price type.",
         "enum": [
@@ -1067,7 +1079,7 @@
             "$ref": "#/components/schemas/UUID"
           }
         ],
-        "description": "The associated consumer project ID."
+        "description": "The associated project ID."
       },
       "sku": {
         "description": "The concrete variant of the product.",
@@ -1367,7 +1379,7 @@
     },
     "/v1/vendors/projects/{projectId}/subscriptions": {
       "get": {
-        "description": "List all subscriptions.",
+        "description": "List all subscriptions of a project.",
         "operationId": "ListVendorSubscriptions",
         "parameters": [
           {
@@ -1404,7 +1416,7 @@
             "$ref": "#/components/responses/Forbidden"
           }
         },
-        "summary": "List all subscriptions",
+        "summary": "List all subscriptions of a project.",
         "x-stackit-authorization": {
           "actions": [
             "marketplace.subscription.list"

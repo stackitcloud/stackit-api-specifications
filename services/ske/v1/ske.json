@@ -356,6 +356,16 @@
               "details": "details",
               "message": "message"
             },
+            "errors": [
+              {
+                "code": "SKE_OBSERVABILITY_INSTANCE_NOT_FOUND",
+                "message": "message"
+              },
+              {
+                "code": "SKE_OBSERVABILITY_INSTANCE_NOT_FOUND",
+                "message": "message"
+              }
+            ],
             "hibernated": true
           }
         },
@@ -397,6 +407,27 @@
         ],
         "type": "object"
       },
+      "ClusterError": {
+        "example": {
+          "code": "SKE_OBSERVABILITY_INSTANCE_NOT_FOUND",
+          "message": "message"
+        },
+        "properties": {
+          "code": {
+            "enum": [
+              "SKE_OBSERVABILITY_INSTANCE_NOT_FOUND",
+              "SKE_DNS_ZONE_NOT_FOUND",
+              "SKE_NODE_MISCONFIGURED_PDB",
+              "SKE_NODE_NO_VALID_HOST_FOUND"
+            ],
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "ClusterStatus": {
         "example": {
           "aggregated": "STATE_UNSPECIFIED",
@@ -414,6 +445,16 @@
             "details": "details",
             "message": "message"
           },
+          "errors": [
+            {
+              "code": "SKE_OBSERVABILITY_INSTANCE_NOT_FOUND",
+              "message": "message"
+            },
+            {
+              "code": "SKE_OBSERVABILITY_INSTANCE_NOT_FOUND",
+              "message": "message"
+            }
+          ],
           "hibernated": true
         },
         "properties": {
@@ -441,6 +482,12 @@
           },
           "error": {
             "$ref": "#/components/schemas/RuntimeError"
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ClusterError"
+            },
+            "type": "array"
           },
           "hibernated": {
             "title": "Indicates whether the cluster is currently hibernated",
@@ -1044,6 +1091,16 @@
                   "details": "details",
                   "message": "message"
                 },
+                "errors": [
+                  {
+                    "code": "SKE_OBSERVABILITY_INSTANCE_NOT_FOUND",
+                    "message": "message"
+                  },
+                  {
+                    "code": "SKE_OBSERVABILITY_INSTANCE_NOT_FOUND",
+                    "message": "message"
+                  }
+                ],
                 "hibernated": true
               }
             },
@@ -1326,6 +1383,16 @@
                   "details": "details",
                   "message": "message"
                 },
+                "errors": [
+                  {
+                    "code": "SKE_OBSERVABILITY_INSTANCE_NOT_FOUND",
+                    "message": "message"
+                  },
+                  {
+                    "code": "SKE_OBSERVABILITY_INSTANCE_NOT_FOUND",
+                    "message": "message"
+                  }
+                ],
                 "hibernated": true
               }
             }
@@ -1854,6 +1921,7 @@
             "type": "string"
           }
         },
+        "title": "Deprecated: use the errors field instead",
         "type": "object"
       },
       "Taint": {

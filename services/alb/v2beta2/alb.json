@@ -589,6 +589,19 @@
         },
         "type": "object"
       },
+      "Path": {
+        "properties": {
+          "exact": {
+            "description": "Exact path match. Only a request path exactly equal to the value will match, e.g. '/foo' matches only '/foo', not '/foo/bar' or '/foobar'.",
+            "type": "string"
+          },
+          "prefix": {
+            "description": "Prefix path match. Only matches on full segment boundaries, e.g. '/foo' matches '/foo' and '/foo/bar' but NOT '/foobar'.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "PlanDetails": {
         "properties": {
           "description": {
@@ -670,8 +683,11 @@
             },
             "type": "array"
           },
+          "path": {
+            "$ref": "#/components/schemas/Path"
+          },
           "pathPrefix": {
-            "description": "Path prefix for the rule. If empty or '/', it matches the root path.",
+            "description": "Legacy path prefix match. Optional. If not set, defaults to root path '/'. Cannot be set if 'path' is used. Prefer using 'path.prefix' instead.\nOnly matches on full segment boundaries, e.g. '/foo' matches '/foo' and '/foo/bar' but NOT '/foobar'.",
             "type": "string"
           },
           "queryParameters": {

@@ -1537,6 +1537,51 @@
           }
         }
       }
+    },
+    "/v1/vendors/projects/{projectId}/subscriptions/{subscriptionId}/reject": {
+      "post": {
+        "description": "Reject a subscription (in any lifecycle state). Only available for subscriptions to products with lifecycle state `PRODUCT_PREVIEW`.",
+        "operationId": "vendors-subscriptions-reject",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pathParamProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/pathParamSubscriptionId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "Reject a subscription",
+        "x-stackit-authorization": {
+          "actions": [
+            "marketplace.subscription.reject"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.marketplace"
+            ]
+          }
+        }
+      }
     }
   },
   "servers": [

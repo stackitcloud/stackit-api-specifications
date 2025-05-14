@@ -180,6 +180,17 @@
         },
         "type": "object"
       },
+      "DataPoint": {
+        "properties": {
+          "timestamp": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
       "Database": {
         "properties": {
           "id": {
@@ -309,6 +320,37 @@
         },
         "type": "object"
       },
+      "Host": {
+        "properties": {
+          "hostMetrics": {
+            "items": {
+              "$ref": "#/components/schemas/HostMetric"
+            },
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "HostMetric": {
+        "properties": {
+          "datapoints": {
+            "items": {
+              "$ref": "#/components/schemas/DataPoint"
+            },
+            "type": "array"
+          },
+          "name": {
+            "type": "string"
+          },
+          "units": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "Instance": {
         "properties": {
           "acl": {
@@ -417,6 +459,17 @@
           "items": {
             "items": {
               "$ref": "#/components/schemas/instance.ListInstance"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ListMetricsResponse": {
+        "properties": {
+          "hosts": {
+            "items": {
+              "$ref": "#/components/schemas/Host"
             },
             "type": "array"
           }
@@ -1013,6 +1066,144 @@
   },
   "openapi": "3.0.1",
   "paths": {
+    "/v2/projects/{projectId}/instances/{instanceId}/metrics/{metric}": {
+      "get": {
+        "description": "Returns a metric for an instance. The metric will only be for the master pod if needed. Granularity parameter is always needed. If start and end time is provided, period is not considered in max-connections and disk-use. If you provide start time, you have to provide end time as well and vice versa.",
+        "operationId": "ListMetrics",
+        "parameters": [
+          {
+            "description": "The UUID of the project.",
+            "explode": false,
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "The UUID of the instance.",
+            "explode": false,
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "The name of the metric. Valid metrics are 'cpu', 'memory', 'data-disk-size', 'data-disk-use','log-disk-size', 'log-disk-use', 'life-expectancy' and 'connections'.",
+            "explode": false,
+            "in": "path",
+            "name": "metric",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "The granularity in ISO8601 e.g. 5 minutes are 'PT5M'.",
+            "explode": true,
+            "in": "query",
+            "name": "granularity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "form"
+          },
+          {
+            "description": "The period in ISO8601 format e.g. 5 minutes are 'PT5M'. If no period is provided, the standard value of 5 minutes is used.",
+            "explode": true,
+            "in": "query",
+            "name": "period",
+            "schema": {
+              "type": "string"
+            },
+            "style": "form"
+          },
+          {
+            "description": "The start of the timeframe as timestamp in ISO8601 (RFC3339) e.g. '2023-08-28T07:10:52.536Z'. If no start time is provided, current server time as UTC is used.",
+            "explode": true,
+            "in": "query",
+            "name": "start",
+            "schema": {
+              "type": "string"
+            },
+            "style": "form"
+          },
+          {
+            "description": "The end of the timeframe as timestamp in ISO8601 (RFC3339) e.g. '2023-08-28T07:10:52.536Z'.",
+            "explode": true,
+            "in": "query",
+            "name": "end",
+            "schema": {
+              "type": "string"
+            },
+            "style": "form"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListMetricsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/instance.Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/instance.Error"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/instance.Error"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get Metric",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.metric.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
     "/v2/projects/{projectId}/regions/{region}": {
       "delete": {
         "description": "Termination is the deletion of a whole project which causes the deletion of all instances for this project. Only System with permission system.databases-project.remove is able to call this resource",

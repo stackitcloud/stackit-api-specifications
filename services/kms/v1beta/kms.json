@@ -641,7 +641,7 @@
               "active",
               "key_material_not_ready",
               "expired",
-              "deleting",
+              "deleted",
               "key_material_unavailable"
             ],
             "type": "string"
@@ -1887,6 +1887,36 @@
       }
     },
     "/v1beta/projects/{projectId}/regions/{regionId}/keyrings/{keyRingId}/wrappingkeys/{wrappingKeyId}": {
+      "delete": {
+        "description": "Deletes the given wrapping key",
+        "operationId": "DeleteWrappingKey",
+        "responses": {
+          "204": {
+            "description": "Deletion was scheduled successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Delete wrapping key",
+        "x-stackit-authorization": {
+          "actions": [
+            "kms.keyring.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
       "get": {
         "description": "Returns the details for the given wrapping key.",
         "operationId": "GetWrappingKey",

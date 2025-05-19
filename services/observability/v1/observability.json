@@ -294,6 +294,11 @@
                   "minLength": 1,
                   "type": "string"
                 },
+                "sendResolved": {
+                  "default": false,
+                  "description": "Whether to notify about resolved alerts.",
+                  "type": "boolean"
+                },
                 "smarthost": {
                   "description": "The SMTP host through which emails are sent.\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9_./@\u0026?:-",
                   "maxLength": 200,
@@ -333,6 +338,17 @@
                   "minLength": 1,
                   "type": "string"
                 },
+                "priority": {
+                  "description": "Priority level of alert. Possible values are P1, P2, P3, P4, and P5.",
+                  "maxLength": 2,
+                  "minLength": 2,
+                  "type": "string"
+                },
+                "sendResolved": {
+                  "default": true,
+                  "description": "Whether to notify about resolved alerts.",
+                  "type": "boolean"
+                },
                 "tags": {
                   "description": "Comma separated list of tags attached to the notifications.",
                   "maxLength": 400,
@@ -350,6 +366,11 @@
                 "msTeams": {
                   "default": false,
                   "description": "Microsoft Teams webhooks require special handling. If you set this property to true, it is treated as such",
+                  "type": "boolean"
+                },
+                "sendResolved": {
+                  "default": true,
+                  "description": "Whether to notify about resolved alerts.",
                   "type": "boolean"
                 },
                 "url": {
@@ -372,6 +393,11 @@
       "CreateAlertConfigRoutePayload": {
         "description": "The root node of the routing tree.",
         "properties": {
+          "continue": {
+            "default": false,
+            "description": "Whether an alert should continue matching subsequent sibling nodes.",
+            "type": "boolean"
+          },
           "groupBy": {
             "description": "The labels by which incoming alerts are grouped together. For example, multiple alerts coming in for cluster=A and alertname=LatencyHigh would be batched into a single group. To aggregate by all possible labels use the special value '...' as the sole label name, for example: group_by: ['...']. This effectively disables aggregation entirely, passing through all alerts as-is. This is unlikely to be what you want, unless you have a very low alert volume or your upstream notification system performs its own grouping.",
             "items": {
@@ -397,10 +423,12 @@
             "type": "string"
           },
           "match": {
+            "deprecated": true,
             "description": "map of key:value. A set of equality matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters\n* key and values should only include the characters: a-zA-Z0-9_./@\u0026?:-",
             "type": "object"
           },
           "matchRe": {
+            "deprecated": true,
             "description": "map of key:value. A set of regex-matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
             "type": "object"
           },
@@ -432,6 +460,11 @@
             "items": {
               "description": "As in one level above",
               "properties": {
+                "continue": {
+                  "default": false,
+                  "description": "As in one level above",
+                  "type": "boolean"
+                },
                 "groupBy": {
                   "items": {
                     "description": "As in one level above",
@@ -453,12 +486,24 @@
                   "type": "string"
                 },
                 "match": {
+                  "deprecated": true,
                   "description": "As in one level above",
                   "type": "object"
                 },
                 "matchRe": {
+                  "deprecated": true,
                   "description": "As in one level above",
                   "type": "object"
+                },
+                "matchers": {
+                  "description": "As in one level above",
+                  "items": {
+                    "description": "Item of matchers",
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array"
                 },
                 "receiver": {
                   "description": "As in one level above",
@@ -2673,6 +2718,15 @@
             "title": "Matchre",
             "type": "object"
           },
+          "matchers": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 5,
+            "type": "array"
+          },
           "receiver": {
             "maxLength": 200,
             "minLength": 1,
@@ -2917,6 +2971,11 @@
                   "minLength": 1,
                   "type": "string"
                 },
+                "sendResolved": {
+                  "default": false,
+                  "description": "Whether to notify about resolved alerts.",
+                  "type": "boolean"
+                },
                 "smarthost": {
                   "description": "The SMTP host through which emails are sent.\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9_./@\u0026?:-",
                   "maxLength": 200,
@@ -2956,6 +3015,17 @@
                   "minLength": 1,
                   "type": "string"
                 },
+                "priority": {
+                  "description": "Priority level of alert. Possible values are P1, P2, P3, P4, and P5.",
+                  "maxLength": 2,
+                  "minLength": 2,
+                  "type": "string"
+                },
+                "sendResolved": {
+                  "default": true,
+                  "description": "Whether to notify about resolved alerts.",
+                  "type": "boolean"
+                },
                 "tags": {
                   "description": "Comma separated list of tags attached to the notifications.",
                   "maxLength": 400,
@@ -2973,6 +3043,11 @@
                 "msTeams": {
                   "default": false,
                   "description": "Microsoft Teams webhooks require special handling. If you set this property to true, it is treated as such",
+                  "type": "boolean"
+                },
+                "sendResolved": {
+                  "default": true,
+                  "description": "Whether to notify about resolved alerts.",
                   "type": "boolean"
                 },
                 "url": {
@@ -2995,6 +3070,11 @@
       "UpdateAlertConfigRoutePayload": {
         "description": "The root node of the routing tree.",
         "properties": {
+          "continue": {
+            "default": false,
+            "description": "Whether an alert should continue matching subsequent sibling nodes.",
+            "type": "boolean"
+          },
           "groupBy": {
             "description": "The labels by which incoming alerts are grouped together. For example, multiple alerts coming in for cluster=A and alertname=LatencyHigh would be batched into a single group. To aggregate by all possible labels use the special value '...' as the sole label name, for example: group_by: ['...']. This effectively disables aggregation entirely, passing through all alerts as-is. This is unlikely to be what you want, unless you have a very low alert volume or your upstream notification system performs its own grouping.",
             "items": {
@@ -3020,10 +3100,12 @@
             "type": "string"
           },
           "match": {
+            "deprecated": true,
             "description": "map of key:value. A set of equality matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters\n* key and values should only include the characters: a-zA-Z0-9_./@\u0026?:-",
             "type": "object"
           },
           "matchRe": {
+            "deprecated": true,
             "description": "map of key:value. A set of regex-matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
             "type": "object"
           },
@@ -3055,6 +3137,11 @@
             "items": {
               "description": "As in one level above",
               "properties": {
+                "continue": {
+                  "default": false,
+                  "description": "As in one level above",
+                  "type": "boolean"
+                },
                 "groupBy": {
                   "items": {
                     "description": "As in one level above",
@@ -3076,12 +3163,24 @@
                   "type": "string"
                 },
                 "match": {
+                  "deprecated": true,
                   "description": "As in one level above",
                   "type": "object"
                 },
                 "matchRe": {
+                  "deprecated": true,
                   "description": "As in one level above",
                   "type": "object"
+                },
+                "matchers": {
+                  "description": "As in one level above",
+                  "items": {
+                    "description": "Item of matchers",
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array"
                 },
                 "receiver": {
                   "description": "As in one level above",
@@ -3236,6 +3335,11 @@
                         "minLength": 1,
                         "type": "string"
                       },
+                      "sendResolved": {
+                        "default": false,
+                        "description": "Whether to notify about resolved alerts.",
+                        "type": "boolean"
+                      },
                       "smarthost": {
                         "description": "The SMTP host through which emails are sent.\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9_./@\u0026?:-",
                         "maxLength": 200,
@@ -3275,6 +3379,17 @@
                         "minLength": 1,
                         "type": "string"
                       },
+                      "priority": {
+                        "description": "Priority level of alert. Possible values are P1, P2, P3, P4, and P5.",
+                        "maxLength": 2,
+                        "minLength": 2,
+                        "type": "string"
+                      },
+                      "sendResolved": {
+                        "default": true,
+                        "description": "Whether to notify about resolved alerts.",
+                        "type": "boolean"
+                      },
                       "tags": {
                         "description": "Comma separated list of tags attached to the notifications.",
                         "maxLength": 400,
@@ -3292,6 +3407,11 @@
                       "msTeams": {
                         "default": false,
                         "description": "Microsoft Teams webhooks require special handling. If you set this property to true, it is treated as such",
+                        "type": "boolean"
+                      },
+                      "sendResolved": {
+                        "default": true,
+                        "description": "Whether to notify about resolved alerts.",
                         "type": "boolean"
                       },
                       "url": {
@@ -3316,6 +3436,11 @@
           "route": {
             "description": "The root node of the routing tree.",
             "properties": {
+              "continue": {
+                "default": false,
+                "description": "Whether an alert should continue matching subsequent sibling nodes.",
+                "type": "boolean"
+              },
               "groupBy": {
                 "description": "The labels by which incoming alerts are grouped together. For example, multiple alerts coming in for cluster=A and alertname=LatencyHigh would be batched into a single group. To aggregate by all possible labels use the special value '...' as the sole label name, for example: group_by: ['...']. This effectively disables aggregation entirely, passing through all alerts as-is. This is unlikely to be what you want, unless you have a very low alert volume or your upstream notification system performs its own grouping.",
                 "items": {
@@ -3341,10 +3466,12 @@
                 "type": "string"
               },
               "match": {
+                "deprecated": true,
                 "description": "map of key:value. A set of equality matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters\n* key and values should only include the characters: a-zA-Z0-9_./@\u0026?:-",
                 "type": "object"
               },
               "matchRe": {
+                "deprecated": true,
                 "description": "map of key:value. A set of regex-matchers an alert has to fulfill to match the node. \n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
                 "type": "object"
               },
@@ -3376,6 +3503,11 @@
                 "items": {
                   "description": "As in one level above",
                   "properties": {
+                    "continue": {
+                      "default": false,
+                      "description": "As in one level above",
+                      "type": "boolean"
+                    },
                     "groupBy": {
                       "items": {
                         "description": "As in one level above",
@@ -3397,12 +3529,24 @@
                       "type": "string"
                     },
                     "match": {
+                      "deprecated": true,
                       "description": "As in one level above",
                       "type": "object"
                     },
                     "matchRe": {
+                      "deprecated": true,
                       "description": "As in one level above",
                       "type": "object"
+                    },
+                    "matchers": {
+                      "description": "As in one level above",
+                      "items": {
+                        "description": "Item of matchers",
+                        "maxLength": 200,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": "array"
                     },
                     "receiver": {
                       "description": "As in one level above",

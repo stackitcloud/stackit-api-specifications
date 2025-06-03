@@ -369,6 +369,73 @@
         "title": "Limit",
         "type": "number"
       },
+      "ListFoldersResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "properties": {
+                "containerId": {
+                  "description": "Globally unique folder identifier.",
+                  "example": "first-folder-158955",
+                  "type": "string"
+                },
+                "creationTime": {
+                  "description": "Timestamp at which the folder was created.",
+                  "example": "2020-08-24T14:15:22Z",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "folderId": {
+                  "description": "Globally unique folder identifier.",
+                  "example": "54066bf4-1aff-4f7b-9f83-fb23c348fff3",
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "labels": {
+                  "$ref": "#/components/schemas/Labels"
+                },
+                "name": {
+                  "description": "Name of the folder.",
+                  "example": "My Folder",
+                  "type": "string"
+                },
+                "parent": {
+                  "$ref": "#/components/schemas/Parent"
+                },
+                "updateTime": {
+                  "description": "Timestamp at which the folder was created.",
+                  "example": "2020-08-24T14:15:22Z",
+                  "format": "date-time",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "parent",
+                "containerId",
+                "folderId",
+                "creationTime",
+                "updateTime"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "$ref": "#/components/schemas/Limit"
+          },
+          "offset": {
+            "$ref": "#/components/schemas/Offset"
+          }
+        },
+        "required": [
+          "items",
+          "offset",
+          "limit"
+        ],
+        "title": "ListFoldersResponse",
+        "type": "object"
+      },
       "ListOrganizationsResponse": {
         "properties": {
           "items": {
@@ -635,6 +702,21 @@
         "title": "UpdateFolderRequest",
         "type": "object"
       },
+      "PartialUpdateOrganizationPayload": {
+        "properties": {
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "description": "The new name of the organization matching the regex `^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$`.",
+            "example": "My Organization",
+            "pattern": "^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$",
+            "type": "string"
+          }
+        },
+        "title": "UpdateOrganizationRequest",
+        "type": "object"
+      },
       "PartialUpdateProjectPayload": {
         "properties": {
           "containerParentId": {
@@ -721,6 +803,107 @@
   "openapi": "3.0.3",
   "paths": {
     "/v2/folders": {
+      "get": {
+        "description": "Returns all folders and their metadata that: \n- Are children of the specific containerParentId\n- Match the given containerIds\n- User is member of \u003cbr /\u003e\n\nFilter:\n- Either containerParentId OR containerIds OR member must be passed\n- If containerId and containerParentId are given, both are used for filtering - containers must point to the same parent\n- If member and containerParentId are given, both are used for filtering\n- If member is given, containers must not point to the same container parent\n",
+        "operationId": "ListFolders",
+        "parameters": [
+          {
+            "description": "Identifier of the parent resource container - containerId as well as UUID identifier is supported.",
+            "in": "query",
+            "name": "containerParentId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "List of container identifiers - containerId as well as UUID identifier is supported.",
+            "in": "query",
+            "name": "containerIds",
+            "schema": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/member"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/offset"
+          },
+          {
+            "$ref": "#/components/parameters/creation-time-start"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListFoldersResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Bad Request": {
+                    "$ref": "#/components/examples/BadRequest"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Forbidden": {
+                    "$ref": "#/components/examples/Forbidden"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Conflict": {
+                    "$ref": "#/components/examples/PolicyConflict"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          }
+        },
+        "summary": "Get All Folders",
+        "x-stackit-authorization": {
+          "disabled": true,
+          "implicit-actions": [
+            "resource-manager.folder.get"
+          ]
+        }
+      },
       "post": {
         "description": "Create a new folder.",
         "operationId": "CreateFolder",
@@ -792,7 +975,10 @@
         },
         "summary": "Create Folder",
         "x-stackit-authorization": {
-          "disabled": true
+          "disabled": true,
+          "implicit-actions": [
+            "resource-manager.folder.create"
+          ]
         }
       }
     },
@@ -1144,9 +1330,71 @@
         },
         "summary": "Get All Organizations",
         "x-stackit-authorization": {
-          "disabled": true
+          "disabled": true,
+          "implicit-actions": [
+            "resource-manager.organization.list"
+          ]
         }
       }
+    },
+    "/v2/organizations/{containerId}/labels": {
+      "delete": {
+        "description": "Deletes all organization labels by given keys.\n- Specific labels may be deleted by key(s)\n- If no key is specified, all labels will be deleted!",
+        "operationId": "DeleteOrganizationLabels",
+        "parameters": [
+          {
+            "description": "Label name.",
+            "in": "query",
+            "name": "keys",
+            "schema": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Labels removed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Cannot delete label because of policy": {
+                    "$ref": "#/components/examples/PolicyConflict"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          }
+        },
+        "summary": "Delete Organization Labels",
+        "x-stackit-authorization": {
+          "actions": [
+            "resource-manager.organization.edit"
+          ],
+          "resource-id": "containerId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      },
+      "parameters": [
+        {
+          "description": "Organization identifier - containerId as well as UUID identifier is supported.",
+          "in": "path",
+          "name": "containerId",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
     },
     "/v2/organizations/{id}": {
       "get": {
@@ -1199,7 +1447,71 @@
             "type": "string"
           }
         }
-      ]
+      ],
+      "patch": {
+        "description": "Update the organization and its metadata.\n- Update organization name\n- Update organization labels",
+        "operationId": "PartialUpdateOrganization",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartialUpdateOrganizationPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Not Found": {
+                    "$ref": "#/components/examples/NotFound"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Conflict": {
+                    "$ref": "#/components/examples/PolicyConflict"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          }
+        },
+        "summary": "Update Organization",
+        "x-stackit-authorization": {
+          "actions": [
+            "resource-manager.organization.edit"
+          ],
+          "resource-id": "id",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      }
     },
     "/v2/projects": {
       "get": {
@@ -1282,7 +1594,10 @@
         },
         "summary": "Get All Projects",
         "x-stackit-authorization": {
-          "disabled": true
+          "disabled": true,
+          "implicit-actions": [
+            "resource-manager.project.get"
+          ]
         }
       },
       "post": {
@@ -1356,9 +1671,71 @@
         },
         "summary": "Create Project",
         "x-stackit-authorization": {
-          "disabled": true
+          "disabled": true,
+          "implicit-actions": [
+            "resource-manager.project.create"
+          ]
         }
       }
+    },
+    "/v2/projects/{containerId}/labels": {
+      "delete": {
+        "description": "Deletes all project labels by given keys.\n- Specific labels may be deleted by key(s)\n- If no key is specified, all labels will be deleted!",
+        "operationId": "DeleteProjectLabels",
+        "parameters": [
+          {
+            "description": "Label name.",
+            "in": "query",
+            "name": "keys",
+            "schema": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Labels removed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Cannot delete label because of policy": {
+                    "$ref": "#/components/examples/PolicyConflict"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          }
+        },
+        "summary": "Delete Project Labels",
+        "x-stackit-authorization": {
+          "actions": [
+            "resource-manager.project.edit"
+          ],
+          "resource-id": "containerId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "description": "Project identifier - containerId as well as UUID identifier is supported.",
+          "in": "path",
+          "name": "containerId",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
     },
     "/v2/projects/{id}": {
       "delete": {

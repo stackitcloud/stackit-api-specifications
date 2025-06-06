@@ -363,6 +363,53 @@
         ],
         "type": "object"
       },
+      "CatalogProductFacets": {
+        "additionalProperties": {
+          "items": {
+            "properties": {
+              "count": {
+                "description": "The number of items associated with this facet value.",
+                "format": "int32",
+                "type": "integer"
+              },
+              "value": {
+                "description": "The value of the facet.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "value",
+              "count"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "description": "A collection of facets, where each key represents a facet category.",
+        "example": {
+          "categories": [
+            {
+              "count": 20,
+              "value": "Infrastructure Software"
+            },
+            {
+              "count": 5,
+              "value": "Data Products"
+            }
+          ],
+          "industries": [
+            {
+              "count": 15,
+              "value": "eGovernment"
+            },
+            {
+              "count": 12,
+              "value": "Retail"
+            }
+          ]
+        },
+        "type": "object"
+      },
       "CatalogProductHighlight": {
         "properties": {
           "highlightContent": {
@@ -676,6 +723,9 @@
         "properties": {
           "cursor": {
             "$ref": "#/components/schemas/cursor"
+          },
+          "facets": {
+            "$ref": "#/components/schemas/CatalogProductFacets"
           },
           "items": {
             "items": {

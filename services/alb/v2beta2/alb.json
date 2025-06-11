@@ -103,6 +103,10 @@
       },
       "CreateLoadBalancerPayload": {
         "properties": {
+          "disableTargetSecurityGroupAssignment": {
+            "description": "Disable target security group assignemt to allow targets outside of the given network. Connectivity to targets need to be ensured by the customer, including routing and Security Groups (targetSecurityGroup can be assigned). Not changeable after creation.",
+            "type": "boolean"
+          },
           "errors": {
             "description": "Reports all errors a application load balancer has.",
             "items": {
@@ -173,6 +177,15 @@
               "$ref": "#/components/schemas/TargetPool"
             },
             "type": "array"
+          },
+          "targetSecurityGroup": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SecurityGroup"
+              }
+            ],
+            "description": "Security Group permitting network traffic from the LoadBalancer to the targets. Useful when disableTargetSecurityGroupAssignment=true to manually assign target security groups to targets.",
+            "readOnly": true
           },
           "version": {
             "description": "Application Load Balancer resource version.\nMust be empty or unset for creating load balancers, non-empty for updating load balancers. Semantics:\nWhile retrieving load balancers, this is the current version of this application load balancer resource that changes during updates of the load balancers. On updates this field specified the application load balancer version you calculated your update for instead of the future version to enable concurrency safe updates. Update calls will then report the new version in their result as you would see with a application load balancer retrieval call later. There exist no total order of the version, so you can only compare it for equality, but not for less/greater than another version. Since the creation of application load balancer is always intended to create the first version of it, there should be no existing version. That's why this field must by empty of not present in that case.",
@@ -386,6 +399,10 @@
       },
       "LoadBalancer": {
         "properties": {
+          "disableTargetSecurityGroupAssignment": {
+            "description": "Disable target security group assignemt to allow targets outside of the given network. Connectivity to targets need to be ensured by the customer, including routing and Security Groups (targetSecurityGroup can be assigned). Not changeable after creation.",
+            "type": "boolean"
+          },
           "errors": {
             "description": "Reports all errors a application load balancer has.",
             "items": {
@@ -456,6 +473,15 @@
               "$ref": "#/components/schemas/TargetPool"
             },
             "type": "array"
+          },
+          "targetSecurityGroup": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SecurityGroup"
+              }
+            ],
+            "description": "Security Group permitting network traffic from the LoadBalancer to the targets. Useful when disableTargetSecurityGroupAssignment=true to manually assign target security groups to targets.",
+            "readOnly": true
           },
           "version": {
             "description": "Application Load Balancer resource version.\nMust be empty or unset for creating load balancers, non-empty for updating load balancers. Semantics:\nWhile retrieving load balancers, this is the current version of this application load balancer resource that changes during updates of the load balancers. On updates this field specified the application load balancer version you calculated your update for instead of the future version to enable concurrency safe updates. Update calls will then report the new version in their result as you would see with a application load balancer retrieval call later. There exist no total order of the version, so you can only compare it for equality, but not for less/greater than another version. Since the creation of application load balancer is always intended to create the first version of it, there should be no existing version. That's why this field must by empty of not present in that case.",
@@ -711,6 +737,19 @@
         },
         "type": "object"
       },
+      "SecurityGroup": {
+        "properties": {
+          "id": {
+            "description": "ID of the security Group",
+            "type": "string"
+          },
+          "name": {
+            "description": "Name of the security Group",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "Status": {
         "description": "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
         "properties": {
@@ -833,6 +872,10 @@
       },
       "UpdateLoadBalancerPayload": {
         "properties": {
+          "disableTargetSecurityGroupAssignment": {
+            "description": "Disable target security group assignemt to allow targets outside of the given network. Connectivity to targets need to be ensured by the customer, including routing and Security Groups (targetSecurityGroup can be assigned). Not changeable after creation.",
+            "type": "boolean"
+          },
           "errors": {
             "description": "Reports all errors a application load balancer has.",
             "items": {
@@ -903,6 +946,15 @@
               "$ref": "#/components/schemas/TargetPool"
             },
             "type": "array"
+          },
+          "targetSecurityGroup": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SecurityGroup"
+              }
+            ],
+            "description": "Security Group permitting network traffic from the LoadBalancer to the targets. Useful when disableTargetSecurityGroupAssignment=true to manually assign target security groups to targets.",
+            "readOnly": true
           },
           "version": {
             "description": "Application Load Balancer resource version.\nMust be empty or unset for creating load balancers, non-empty for updating load balancers. Semantics:\nWhile retrieving load balancers, this is the current version of this application load balancer resource that changes during updates of the load balancers. On updates this field specified the application load balancer version you calculated your update for instead of the future version to enable concurrency safe updates. Update calls will then report the new version in their result as you would see with a application load balancer retrieval call later. There exist no total order of the version, so you can only compare it for equality, but not for less/greater than another version. Since the creation of application load balancer is always intended to create the first version of it, there should be no existing version. That's why this field must by empty of not present in that case.",

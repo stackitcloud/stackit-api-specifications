@@ -32,6 +32,12 @@
             "type": "array",
             "uniqueItems": true
           },
+          "defaultCacheDuration": {
+            "description": "Sets the default cache duration for the distribution. \nThe default cache duration is applied when a 'Cache-Control' header is not presented in the origin's response.\nWe use ISO8601 duration format for cache duration (e.g. P1DT2H30M)\n",
+            "nullable": true,
+            "type": "string",
+            "x-go-type": "string"
+          },
           "monthlyLimitBytes": {
             "description": "Sets the monthly limit of bandwidth in bytes that the pullzone is allowed to use.\n",
             "format": "int64",
@@ -91,6 +97,12 @@
             "type": "array",
             "uniqueItems": true
           },
+          "defaultCacheDuration": {
+            "description": "Sets the default cache duration for the distribution. \nThe default cache duration is applied when a 'Cache-Control' header is not presented in the origin's response.\nWe use ISO8601 duration format for cache duration (e.g. P1DT2H30M)\n",
+            "nullable": true,
+            "type": "string",
+            "x-go-type": "string"
+          },
           "monthlyLimitBytes": {
             "description": "Sets the monthly limit of bandwidth in bytes that the pullzone is allowed to use.\n",
             "format": "int64",
@@ -130,6 +142,11 @@
             },
             "type": "array",
             "uniqueItems": true
+          },
+          "defaultCacheDuration": {
+            "description": "Sets the default cache duration for the distribution. \nThe default cache duration is applied when a 'Cache-Control' header is not presented in the origin's response.\nWe use ISO8601 duration format for cache duration (e.g. P1DT2H30M)\n",
+            "type": "string",
+            "x-go-type": "string"
           },
           "intentId": {
             "description": "While optional, it is greatly encouraged to provide an `intentId`. \nThis is used to deduplicate requests.  \nIf multiple POST-Requests with the same `intentId` for a given `projectId` are received, all but the first request are dropped.\n",
@@ -905,7 +922,7 @@
             }
           },
           {
-            "description": "The following sort options exist. We default to `createdAt`\n- `id` - Sort by distribution ID using String comparison\n- `updatedAt` - Sort by when the distribution configuration was last modified, \n  for example by changing the regions or response headers\n- `createdAt` - Sort by when the distribution was initially created.\n- `originUrl` - Sort by originURL using String comparison\n- `status` - Sort by distribution status, using String comparison\n",
+            "description": "The following sort options exist. We default to `createdAt`\n- `id` - Sort by distribution ID using String comparison\n- `updatedAt` - Sort by when the distribution configuration was last modified, \n  for example by changing the regions or response headers\n- `createdAt` - Sort by when the distribution was initially created.\n- `originUrl` - Sort by originURL using String comparison\n- `status` - Sort by distribution status, using String comparison\n- `originUrlRelated` - The origin URL is segmented and reversed before sorting. E.g. `www.example.com` is converted to `com.example.www` for sorting. This way, distributions pointing to the same domain trees are grouped next to each other.\n",
             "in": "query",
             "name": "sortBy",
             "schema": {
@@ -915,7 +932,8 @@
                 "updatedAt",
                 "createdAt",
                 "originUrl",
-                "status"
+                "status",
+                "originUrlRelated"
               ],
               "format": "enum",
               "type": "string"

@@ -244,7 +244,8 @@
                 "$ref": "#/components/schemas/bool"
               }
             ],
-            "description": "If true, the product is not fully integrated but only listed. Product listings may not have prices and support information."
+            "deprecated": true,
+            "description": "If true, the product is not fully integrated but only listed. Product listings may not have prices and support information. \n\nDeprecated: Will be removed after 16.12.2025. Please use `offerType` as replacement."
           },
           "lifecycleState": {
             "$ref": "#/components/schemas/productLifecycleState"
@@ -254,6 +255,9 @@
           },
           "name": {
             "$ref": "#/components/schemas/productName"
+          },
+          "offerType": {
+            "$ref": "#/components/schemas/offerType"
           },
           "pricingOptions": {
             "description": "The list of pricing options.",
@@ -317,7 +321,7 @@
           "documentationUrl",
           "highlights",
           "vendor",
-          "isProductListing",
+          "offerType",
           "lifecycleState"
         ],
         "type": "object"
@@ -1031,6 +1035,16 @@
         "example": "A very custom message.",
         "maxLength": 512,
         "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
+        "type": "string"
+      },
+      "offerType": {
+        "description": "The offer type of a product reflecting the business model.",
+        "enum": [
+          "OFFER_LISTING",
+          "OFFER_RESELLING"
+        ],
+        "example": "OFFER_LISTING",
+        "format": "enum",
         "type": "string"
       },
       "priceType": {

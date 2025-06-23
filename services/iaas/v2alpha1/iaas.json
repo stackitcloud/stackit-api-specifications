@@ -1,0 +1,1869 @@
+{
+  "components": {
+    "parameters": {
+      "v1LabelSelector": {
+        "description": "Filter resources by labels.",
+        "in": "query",
+        "name": "label_selector",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "v1NetworkAreaID": {
+        "description": "The identifier (ID) of a STACKIT Network Area.",
+        "in": "path",
+        "name": "areaId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v1NetworkID": {
+        "description": "The identifier (ID) of a STACKIT Network.",
+        "in": "path",
+        "name": "networkId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v1OrganizationID": {
+        "description": "The identifier (ID) of a STACKIT Organization.",
+        "in": "path",
+        "name": "organizationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v1ProjectID": {
+        "description": "The identifier (ID) of a STACKIT Project.",
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v1Region": {
+        "description": "The STACKIT Region of the resources.",
+        "in": "path",
+        "name": "region",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/v1RegionName"
+        }
+      },
+      "v1RouteID": {
+        "description": "The identifier (ID) of a STACKIT Route.",
+        "in": "path",
+        "name": "routeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v2RoutingTableID": {
+        "description": "The identifier (ID) of a STACKIT Routing Table.",
+        "in": "path",
+        "name": "routingTableId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "InvalidAffinityGroupPolicy": {
+                "value": {
+                  "code": 400,
+                  "msg": "The affinity group policy is not supported"
+                }
+              },
+              "InvalidBootDeviceSize": {
+                "value": {
+                  "code": 400,
+                  "msg": "boot device size is not valid or missing"
+                }
+              },
+              "InvalidMachineType": {
+                "value": {
+                  "code": 400,
+                  "msg": "machine type is not valid"
+                }
+              },
+              "InvalidParameter": {
+                "value": {
+                  "code": 400,
+                  "msg": "request body has an error: doesn't match schema: Error at \"/name\": value must be a string"
+                }
+              },
+              "InvalidPublicKey": {
+                "value": {
+                  "code": 400,
+                  "msg": "invalid pubkey"
+                }
+              },
+              "InvalidUUID": {
+                "value": {
+                  "code": 400,
+                  "msg": "invalid uuid"
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "A bad request."
+      },
+      "Conflict": {
+        "content": {
+          "application/json": {
+            "example": {
+              "code": 409,
+              "msg": "Conflict"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "A conflict has occurred."
+      },
+      "Forbidden": {
+        "content": {
+          "application/json": {
+            "example": {
+              "code": 403,
+              "msg": "Forbidden"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "A request which was forbidden."
+      },
+      "InternalServerError": {
+        "content": {
+          "application/json": {
+            "example": {
+              "code": 500,
+              "msg": "internal server error"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Internal Server Error, returns a 500 if something is broken on IaaS API Side."
+      },
+      "NotFound": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "AreaNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "area not found"
+                }
+              },
+              "KeypairNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "keypair not found"
+                }
+              },
+              "NetworkNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "network not found"
+                }
+              },
+              "NetworkRangeNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "network range not found"
+                }
+              },
+              "OrganizationNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "organization not found"
+                }
+              },
+              "ProjectNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "project not found"
+                }
+              },
+              "RequestNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "request not found"
+                }
+              },
+              "RouteNotFound": {
+                "value": {
+                  "code": 404,
+                  "msg": "route not found"
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "The object was not found."
+      },
+      "Unauthorized": {
+        "content": {
+          "application/json": {
+            "example": {
+              "code": 401,
+              "msg": "Unauthorized"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "A request which was not authorized."
+      },
+      "UpdateAccepted": {
+        "description": "An update was accepted."
+      }
+    },
+    "schemas": {
+      "AddRoutesToRoutingTablePayload": {
+        "description": "Object represents a request to add network routes.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/RouteList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "AddRoutingTableToAreaPayload": {
+        "description": "An object representing a routing table.",
+        "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "default": {
+            "default": true,
+            "description": "This is the default routing table for this area. It can't be deleted and is used if the user does not specify it otherwise.",
+            "readOnly": true,
+            "type": "boolean"
+          },
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "systemRoutes": {
+            "default": true,
+            "type": "boolean"
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "CIDRv4": {
+        "description": "IPv4 Classless Inter-Domain Routing (CIDR).",
+        "example": "192.168.0.0/24",
+        "pattern": "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\/(3[0-2]|2[0-9]|1[0-9]|[0-9]))$",
+        "type": "string"
+      },
+      "CIDRv6": {
+        "description": "Classless Inter-Domain Routing (CIDR) for IPv6.",
+        "example": "2001:0db8:85a3:0800::/56",
+        "pattern": "^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))(\\/((1(1[0-9]|2[0-8]))|([0-9][0-9])|([0-9])))?$",
+        "type": "string"
+      },
+      "CreateNetworkIPv4": {
+        "description": "The create request for an IPv4 network.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/CreateNetworkIPv4WithPrefix"
+          },
+          {
+            "$ref": "#/components/schemas/CreateNetworkIPv4WithPrefixLength"
+          }
+        ],
+        "type": "object"
+      },
+      "CreateNetworkIPv4WithPrefix": {
+        "description": "The create request for an IPv4 network with a specified prefix.",
+        "properties": {
+          "gateway": {
+            "$ref": "#/components/schemas/NetworkGatewayIPv4"
+          },
+          "nameservers": {
+            "$ref": "#/components/schemas/NameserversIPv4"
+          },
+          "prefix": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CIDRv4"
+              }
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        },
+        "required": [
+          "prefix"
+        ],
+        "type": "object"
+      },
+      "CreateNetworkIPv4WithPrefixLength": {
+        "description": "The create request for an IPv4 network with a wanted prefix length.",
+        "properties": {
+          "nameservers": {
+            "$ref": "#/components/schemas/NameserversIPv4"
+          },
+          "prefixLength": {
+            "example": 24,
+            "format": "int64",
+            "maximum": 29,
+            "minimum": 8,
+            "type": "integer",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        },
+        "required": [
+          "prefixLength"
+        ],
+        "type": "object"
+      },
+      "CreateNetworkIPv6": {
+        "description": "The create request for an IPv6 network.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/CreateNetworkIPv6WithPrefix"
+          },
+          {
+            "$ref": "#/components/schemas/CreateNetworkIPv6WithPrefixLength"
+          }
+        ],
+        "type": "object"
+      },
+      "CreateNetworkIPv6WithPrefix": {
+        "description": "The create request for an IPv6 network with a specified prefix.",
+        "properties": {
+          "gateway": {
+            "$ref": "#/components/schemas/NetworkGatewayIPv6"
+          },
+          "nameservers": {
+            "$ref": "#/components/schemas/NameserversIPv6"
+          },
+          "prefix": {
+            "$ref": "#/components/schemas/CIDRv6"
+          }
+        },
+        "required": [
+          "prefix"
+        ],
+        "type": "object"
+      },
+      "CreateNetworkIPv6WithPrefixLength": {
+        "description": "The create request for an IPv6 network with a wanted prefix length.",
+        "properties": {
+          "nameservers": {
+            "$ref": "#/components/schemas/NameserversIPv6"
+          },
+          "prefixLength": {
+            "example": 64,
+            "format": "int64",
+            "maximum": 128,
+            "minimum": 56,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "prefixLength"
+        ],
+        "type": "object"
+      },
+      "CreateNetworkPayload": {
+        "description": "Object that represents the request body for a network create.",
+        "properties": {
+          "ipv4": {
+            "$ref": "#/components/schemas/CreateNetworkIPv4"
+          },
+          "ipv6": {
+            "$ref": "#/components/schemas/CreateNetworkIPv6"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "routed": {
+            "$ref": "#/components/schemas/Routed"
+          },
+          "routingTableId": {
+            "$ref": "#/components/schemas/UUID"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "CreatedAt": {
+        "description": "Date-time when resource was created.",
+        "example": "2017-07-21T17:32:28Z",
+        "format": "date-time",
+        "type": "string"
+      },
+      "Description": {
+        "description": "Description Object. Allows string up to 255 Characters.",
+        "example": "cool description dude. Wanna play some Snakeybus?",
+        "maxLength": 255,
+        "type": "string"
+      },
+      "DestinationCIDRv4": {
+        "description": "IPv4 Classless Inter-Domain Routing (CIDR) Object.",
+        "properties": {
+          "type": {
+            "example": "cidrv4",
+            "type": "string"
+          },
+          "value": {
+            "description": "An CIDRv4 string.",
+            "example": "192.168.0.0/24",
+            "pattern": "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\/(3[0-2]|2[0-9]|1[0-9]|[0-9]))$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "DestinationCIDRv6": {
+        "description": "IPv6 Classless Inter-Domain Routing (CIDR) Object.",
+        "properties": {
+          "type": {
+            "example": "cidrv6",
+            "type": "string"
+          },
+          "value": {
+            "description": "An CIDRv6 string.",
+            "example": "2001:0db8:85a3:0800::/56",
+            "pattern": "^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))(\\/((1(1[0-9]|2[0-8]))|([0-9][0-9])|([0-9])))?$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "Error": {
+        "description": "Error with HTTP error code and an error message.",
+        "properties": {
+          "code": {
+            "example": 404,
+            "format": "int64",
+            "type": "integer"
+          },
+          "msg": {
+            "$ref": "#/components/schemas/errorMessage"
+          }
+        },
+        "required": [
+          "code",
+          "msg"
+        ],
+        "type": "object"
+      },
+      "GenericName": {
+        "description": "The name for a General Object. Matches Names and also UUIDs.",
+        "example": "objectName26",
+        "maxLength": 127,
+        "pattern": "^[A-Za-z0-9]+([ /._-]*[A-Za-z0-9]+)*$",
+        "type": "string"
+      },
+      "IPv4": {
+        "description": "String that represents an IPv4 address.",
+        "example": "10.1.2.10",
+        "pattern": "^\\s*((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))\\s*$",
+        "type": "string"
+      },
+      "IPv6": {
+        "description": "String that represents an IPv6 address.",
+        "example": "2001:db8:0:8d3:0:8a2e:70:7344",
+        "pattern": "^\\s*((([0-9a-f]{1,4}:){7}([0-9a-f]{1,4}|:))|(([0-9a-f]{1,4}:){6}(:[0-9a-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){5}(((:[0-9a-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){4}(((:[0-9a-f]{1,4}){1,3})|((:[0-9a-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){3}(((:[0-9a-f]{1,4}){1,4})|((:[0-9a-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){2}(((:[0-9a-f]{1,4}){1,5})|((:[0-9a-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){1}(((:[0-9a-f]{1,4}){1,6})|((:[0-9a-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9a-f]{1,4}){1,7})|((:[0-9a-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))(%.+)?\\s*$",
+        "type": "string"
+      },
+      "Labels": {
+        "description": "Object that represents the labels of an object. Regex for keys: `^[a-z]((-|_|[a-z0-9])){0,62}$`. Regex for values: `^(-|_|[a-z0-9]){0,63}$`.",
+        "example": {
+          "key": "value"
+        },
+        "format": "json",
+        "type": "object"
+      },
+      "NameserversIPv4": {
+        "description": "A list containing DNS Servers/Nameservers for IPv4.",
+        "example": [
+          "10.20.30.40",
+          "50.60.70.80"
+        ],
+        "items": {
+          "$ref": "#/components/schemas/IPv4"
+        },
+        "maxItems": 3,
+        "type": "array"
+      },
+      "NameserversIPv6": {
+        "description": "A list containing DNS Servers/Nameservers for IPv6.",
+        "example": [
+          "2001:4860:4860::8888",
+          "2001:4860:4860::8844"
+        ],
+        "items": {
+          "$ref": "#/components/schemas/IPv6"
+        },
+        "maxItems": 3,
+        "type": "array"
+      },
+      "Network": {
+        "description": "Object that represents a network.",
+        "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "id": {
+            "$ref": "#/components/schemas/UUID"
+          },
+          "ipv4": {
+            "$ref": "#/components/schemas/NetworkIPv4"
+          },
+          "ipv6": {
+            "$ref": "#/components/schemas/NetworkIPv6"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "example": "My network",
+            "type": "string"
+          },
+          "routed": {
+            "$ref": "#/components/schemas/Routed"
+          },
+          "routingTableId": {
+            "$ref": "#/components/schemas/UUID"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ResourceState"
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status"
+        ],
+        "type": "object"
+      },
+      "NetworkGatewayIPv4": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IPv4"
+          }
+        ],
+        "description": "The IPv4 gateway of a network. If not specified the first IP of the network will be assigned as the gateway. If 'null' is sent, then the network doesn't have a gateway.",
+        "nullable": true
+      },
+      "NetworkGatewayIPv6": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IPv6"
+          }
+        ],
+        "description": "The IPv6 gateway of a network. If not specified the first IP of the network will be assigned as the gateway. If 'null' is sent, then the network doesn't have a gateway.",
+        "nullable": true
+      },
+      "NetworkIPv4": {
+        "description": "Object that represents the IPv4 part of a network.",
+        "properties": {
+          "gateway": {
+            "$ref": "#/components/schemas/NetworkGatewayIPv4"
+          },
+          "nameservers": {
+            "$ref": "#/components/schemas/NameserversIPv4"
+          },
+          "prefixes": {
+            "example": [
+              "10.10.0.0/16"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CIDRv4"
+            },
+            "type": "array"
+          },
+          "publicIp": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IPv4"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "prefixes"
+        ],
+        "type": "object"
+      },
+      "NetworkIPv6": {
+        "description": "Object that represents the IPv6 part of a network.",
+        "properties": {
+          "gateway": {
+            "$ref": "#/components/schemas/NetworkGatewayIPv6"
+          },
+          "nameservers": {
+            "$ref": "#/components/schemas/NameserversIPv6"
+          },
+          "prefixes": {
+            "example": [
+              "2001:4860:4860::/64"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CIDRv6"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "prefixes"
+        ],
+        "type": "object"
+      },
+      "NetworkList": {
+        "description": "A list of networks.",
+        "items": {
+          "$ref": "#/components/schemas/Network"
+        },
+        "type": "array"
+      },
+      "NetworkListResponse": {
+        "description": "Network list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/NetworkList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "NexthopBlackhole": {
+        "description": "Object that represents a blackhole route.",
+        "properties": {
+          "type": {
+            "example": "blackhole",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "NexthopIPv4": {
+        "description": "Object that represents an IPv4 address.",
+        "properties": {
+          "type": {
+            "example": "ipv4",
+            "type": "string"
+          },
+          "value": {
+            "description": "An IPv4 address.",
+            "example": "10.1.2.10",
+            "pattern": "^\\s*((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))\\s*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "NexthopIPv6": {
+        "description": "Object that represents an IPv6 address.",
+        "properties": {
+          "type": {
+            "example": "ipv6",
+            "type": "string"
+          },
+          "value": {
+            "description": "An IPv6 address.",
+            "example": "2001:db8:0:8d3:0:8a2e:70:7344",
+            "pattern": "^\\s*((([0-9a-f]{1,4}:){7}([0-9a-f]{1,4}|:))|(([0-9a-f]{1,4}:){6}(:[0-9a-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){5}(((:[0-9a-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9a-f]{1,4}:){4}(((:[0-9a-f]{1,4}){1,3})|((:[0-9a-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){3}(((:[0-9a-f]{1,4}){1,4})|((:[0-9a-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){2}(((:[0-9a-f]{1,4}){1,5})|((:[0-9a-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9a-f]{1,4}:){1}(((:[0-9a-f]{1,4}){1,6})|((:[0-9a-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9a-f]{1,4}){1,7})|((:[0-9a-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))(%.+)?\\s*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "NexthopInternet": {
+        "description": "Object that represents a route to the internet.",
+        "properties": {
+          "type": {
+            "example": "internet",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "PartialUpdateNetworkPayload": {
+        "description": "Object that represents the request body for a network update.",
+        "properties": {
+          "ipv4": {
+            "$ref": "#/components/schemas/UpdateNetworkIPv4Body"
+          },
+          "ipv6": {
+            "$ref": "#/components/schemas/UpdateNetworkIPv6Body"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "routed": {
+            "$ref": "#/components/schemas/Routed"
+          },
+          "routingTableId": {
+            "$ref": "#/components/schemas/UUID"
+          }
+        },
+        "type": "object"
+      },
+      "ResourceState": {
+        "description": "The state of a resource object.\nPossible values: `CREATING`, `CREATED`, `DELETING`, `DELETED`, `FAILED`, `UPDATED`, `UPDATING`.",
+        "example": "CREATING",
+        "type": "string"
+      },
+      "Route": {
+        "description": "Object represents a network route.",
+        "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "destination": {
+            "discriminator": {
+              "mapping": {
+                "cidrv4": "#/components/schemas/v2RouteDestinationCIDRv4",
+                "cidrv6": "#/components/schemas/v2RouteDestinationCIDRv6"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DestinationCIDRv4"
+              },
+              {
+                "$ref": "#/components/schemas/DestinationCIDRv6"
+              }
+            ],
+            "properties": {
+              "type": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "type": "object"
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "nexthop": {
+            "discriminator": {
+              "mapping": {
+                "blackhole": "#/components/schemas/v2RouteNexthopBlackhole",
+                "internet": "#/components/schemas/v2RouteNexthopInternet",
+                "ipv4": "#/components/schemas/v2RouteNexthopIPv4",
+                "ipv6": "#/components/schemas/v2RouteNexthopIPv6"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/NexthopIPv4"
+              },
+              {
+                "$ref": "#/components/schemas/NexthopIPv6"
+              },
+              {
+                "$ref": "#/components/schemas/NexthopInternet"
+              },
+              {
+                "$ref": "#/components/schemas/NexthopBlackhole"
+              }
+            ],
+            "properties": {
+              "type": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "type": "object"
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "destination",
+          "nexthop"
+        ],
+        "type": "object"
+      },
+      "RouteList": {
+        "description": "A list of routes.",
+        "items": {
+          "$ref": "#/components/schemas/Route"
+        },
+        "type": "array"
+      },
+      "RouteListResponse": {
+        "description": "Route list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/RouteList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "Routed": {
+        "description": "Shows if the network is routed and therefore accessible from other networks.",
+        "example": true,
+        "type": "boolean"
+      },
+      "RoutingTable": {
+        "description": "An object representing a routing table.",
+        "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "default": {
+            "default": true,
+            "description": "This is the default routing table for this area. It can't be deleted and is used if the user does not specify it otherwise.",
+            "readOnly": true,
+            "type": "boolean"
+          },
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "systemRoutes": {
+            "default": true,
+            "type": "boolean"
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "RoutingTableListResponse": {
+        "description": "Routing table response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/RoutingTablesList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "RoutingTablesList": {
+        "description": "A list of routing tables.",
+        "items": {
+          "$ref": "#/components/schemas/RoutingTable"
+        },
+        "type": "array"
+      },
+      "UUID": {
+        "description": "Universally Unique Identifier (UUID).",
+        "example": "d61a8564-c8dd-4ffb-bc15-143e7d0c85ed",
+        "format": "uuid",
+        "maxLength": 36,
+        "minLength": 36,
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+        "type": "string"
+      },
+      "UpdateNetworkIPv4Body": {
+        "description": "The config object for a IPv4 network update.",
+        "properties": {
+          "gateway": {
+            "$ref": "#/components/schemas/NetworkGatewayIPv4"
+          },
+          "nameservers": {
+            "$ref": "#/components/schemas/NameserversIPv4"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateNetworkIPv6Body": {
+        "description": "The config object for a IPv6 network update.",
+        "properties": {
+          "gateway": {
+            "$ref": "#/components/schemas/NetworkGatewayIPv6"
+          },
+          "nameservers": {
+            "$ref": "#/components/schemas/NameserversIPv6"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateRouteOfRoutingTablePayload": {
+        "description": "Object that represents the request body for a route update.",
+        "properties": {
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateRoutingTableOfAreaPayload": {
+        "description": "Object that represents the request body for a routing table update.",
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          }
+        },
+        "type": "object"
+      },
+      "UpdatedAt": {
+        "description": "Date-time when resource was last updated.",
+        "example": "2017-07-21T17:32:28Z",
+        "format": "date-time",
+        "type": "string"
+      },
+      "errorMessage": {
+        "description": "An error message.",
+        "example": "Project not found",
+        "type": "string"
+      },
+      "v1RegionName": {
+        "description": "Name of the region.",
+        "example": "eu01",
+        "type": "string"
+      }
+    }
+  },
+  "info": {
+    "contact": {
+      "email": "stackit-iaas@mail.schwarz",
+      "name": "STACKIT IaaS Teams",
+      "url": "https://support.stackit.cloud/servicedesk"
+    },
+    "description": "This API allows you to create and modify IaaS resources.",
+    "termsOfService": "https://stackit.de/en/imprint",
+    "title": "IaaS-API",
+    "version": "2alpha1"
+  },
+  "openapi": "3.0.1",
+  "paths": {
+    "/v2alpha1/organizations/{organizationId}/network-areas/{areaId}/regions/{region}/routing-tables": {
+      "get": {
+        "description": "Get a list of all routing tables in a network area.",
+        "operationId": "ListRoutingTablesOfArea",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoutingTableListResponse"
+                }
+              }
+            },
+            "description": "List all routing tables."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all routing tables in a network area.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.network-area.rt.list"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1OrganizationID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkAreaID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        }
+      ],
+      "post": {
+        "description": "Create a new routing table in an existing network area.",
+        "operationId": "AddRoutingTableToArea",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddRoutingTableToAreaPayload"
+              }
+            }
+          },
+          "description": "Request an addition of a routing table to an area.",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoutingTable"
+                }
+              }
+            },
+            "description": "Adding routing table was successful."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create new routing table in a network area.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.network-area.rt.create"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      }
+    },
+    "/v2alpha1/organizations/{organizationId}/network-areas/{areaId}/regions/{region}/routing-tables/{routingTableId}": {
+      "delete": {
+        "description": "Delete a routing table of a network area.",
+        "operationId": "DeleteRoutingTableFromArea",
+        "responses": {
+          "204": {
+            "description": "Delete request for the routing table has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete a routing table.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.network-area.rt.delete"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      },
+      "get": {
+        "description": "Get details about a routing table defined in a network area.",
+        "operationId": "GetRoutingTableOfArea",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoutingTable"
+                }
+              }
+            },
+            "description": "Show routing table details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get details about a routing table.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.network-area.rt.get"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1OrganizationID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkAreaID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        },
+        {
+          "$ref": "#/components/parameters/v2RoutingTableID"
+        }
+      ],
+      "patch": {
+        "description": "Update a routing table defined in a network area.",
+        "operationId": "UpdateRoutingTableOfArea",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRoutingTableOfAreaPayload"
+              }
+            }
+          },
+          "description": "Request an update of a routing table.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoutingTable"
+                }
+              }
+            },
+            "description": "Update request for routing table successful."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update a routing table.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.network-area.rt.update"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      }
+    },
+    "/v2alpha1/organizations/{organizationId}/network-areas/{areaId}/regions/{region}/routing-tables/{routingTableId}/routes": {
+      "get": {
+        "description": "Get a list of all routes in a routing table.",
+        "operationId": "ListRoutesOfRoutingTable",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RouteListResponse"
+                }
+              }
+            },
+            "description": "List all routing table routes."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all routes in a routing table.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.network-area.rt.route.list"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1OrganizationID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkAreaID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        },
+        {
+          "$ref": "#/components/parameters/v2RoutingTableID"
+        }
+      ],
+      "post": {
+        "description": "Create new routes in an existing routing table.",
+        "operationId": "AddRoutesToRoutingTable",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddRoutesToRoutingTablePayload"
+              }
+            }
+          },
+          "description": "Request an addition of routes to a routing table.",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RouteListResponse"
+                }
+              }
+            },
+            "description": "Adding routes to routing table was successful."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create new routes in a routing table.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.network-area.rt.route.create"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      }
+    },
+    "/v2alpha1/organizations/{organizationId}/network-areas/{areaId}/regions/{region}/routing-tables/{routingTableId}/routes/{routeId}": {
+      "delete": {
+        "description": "Delete a route in an existing routing table.",
+        "operationId": "DeleteRouteFromRoutingTable",
+        "responses": {
+          "204": {
+            "description": "Delete request for the route has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete a route in a routing table.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.network-area.rt.route.delete"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      },
+      "get": {
+        "description": "Get details about a route defined in a routing table.",
+        "operationId": "GetRouteOfRoutingTable",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Route"
+                }
+              }
+            },
+            "description": "Show the details of a route in a routing table."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get details about a route of a routing table.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.network-area.rt.route.get"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1OrganizationID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkAreaID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        },
+        {
+          "$ref": "#/components/parameters/v2RoutingTableID"
+        },
+        {
+          "$ref": "#/components/parameters/v1RouteID"
+        }
+      ],
+      "patch": {
+        "description": "Update a route defined in a routing table.",
+        "operationId": "UpdateRouteOfRoutingTable",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRouteOfRoutingTablePayload"
+              }
+            }
+          },
+          "description": "Request an update of a route in a routing table.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Route"
+                }
+              }
+            },
+            "description": "Update request for route successful."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update a route of a routing table.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.network-area.rt.route.update"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      }
+    },
+    "/v2alpha1/projects/{projectId}/regions/{region}/networks": {
+      "get": {
+        "description": "Get a list of all networks inside a project.",
+        "operationId": "ListNetworks",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkListResponse"
+                }
+              }
+            },
+            "description": "List all networks of a project."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all networks inside a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.network.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        }
+      ],
+      "post": {
+        "description": "Create a new network in a project. `nameservers` will be filled from `defaultNameservers` of the respective area if not specified. If the project has `internetAccess` enabled and this is the first network in the project this might incur cost.",
+        "operationId": "CreateNetwork",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateNetworkPayload"
+              }
+            }
+          },
+          "description": "Request a network creation.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Network"
+                }
+              }
+            },
+            "description": "Network create has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create new network.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.network.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v2alpha1/projects/{projectId}/regions/{region}/networks/{networkId}": {
+      "delete": {
+        "description": "Delete a network. If the network is still in use, the deletion will fail.",
+        "operationId": "DeleteNetwork",
+        "responses": {
+          "202": {
+            "description": "Delete request for network has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete network.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.network.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get details about a network of a project.",
+        "operationId": "GetNetwork",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Network"
+                }
+              }
+            },
+            "description": "Show network details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get network details.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.network.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkID"
+        }
+      ],
+      "patch": {
+        "description": "Update the settings of a network inside a project.",
+        "operationId": "PartialUpdateNetwork",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "ipv4": {
+                  "nameservers": [
+                    "10.1.2.10"
+                  ]
+                },
+                "name": "My Network"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/PartialUpdateNetworkPayload"
+              }
+            }
+          },
+          "description": "Request an update of a network.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "$ref": "#/components/responses/UpdateAccepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update network settings.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.network.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://iaas.api.stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "global"
+        }
+      }
+    }
+  ]
+}

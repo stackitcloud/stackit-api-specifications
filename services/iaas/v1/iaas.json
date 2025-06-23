@@ -1328,7 +1328,8 @@
             "x-extensible-enum": [
               "server",
               "metadata",
-              "gateway"
+              "gateway",
+              "none"
             ]
           }
         },
@@ -1564,6 +1565,9 @@
               }
             ],
             "readOnly": true
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/Metadata"
           },
           "name": {
             "$ref": "#/components/schemas/ServerName"
@@ -1844,8 +1848,8 @@
       "GenericName": {
         "description": "The name for a General Object. Matches Names and also UUIDs.",
         "example": "objectName26",
-        "maxLength": 63,
-        "pattern": "^[A-Za-z0-9]+((-|_|\\s|\\.)[A-Za-z0-9]+)*$",
+        "maxLength": 127,
+        "pattern": "^[A-Za-z0-9]+([ /._-]*[A-Za-z0-9]+)*$",
         "type": "string"
       },
       "GenericNameList": {
@@ -2431,6 +2435,14 @@
         ],
         "type": "object"
       },
+      "Metadata": {
+        "description": "Object that represents the metadata of an object. Regex for keys: `^[a-zA-Z0-9-_:. ]{1,255}$`. Regex for values: `^.{0,255}$`.",
+        "example": {
+          "key": "value"
+        },
+        "format": "json",
+        "type": "object"
+      },
       "NIC": {
         "description": "Object that represents a network interface.",
         "properties": {
@@ -2506,7 +2518,8 @@
             "x-extensible-enum": [
               "server",
               "metadata",
-              "gateway"
+              "gateway",
+              "none"
             ]
           }
         },
@@ -3581,6 +3594,9 @@
             ],
             "readOnly": true
           },
+          "metadata": {
+            "$ref": "#/components/schemas/Metadata"
+          },
           "name": {
             "$ref": "#/components/schemas/ServerName"
           },
@@ -3748,7 +3764,7 @@
         "description": "The name for a Server.",
         "example": "server1",
         "maxLength": 63,
-        "pattern": "^[A-Za-z0-9]+((-|\\.)[A-Za-z0-9]+)*$",
+        "pattern": "^(([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$",
         "type": "string"
       },
       "ServerNetwork": {
@@ -4298,6 +4314,9 @@
         "properties": {
           "labels": {
             "$ref": "#/components/schemas/Labels"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/Metadata"
           },
           "name": {
             "$ref": "#/components/schemas/ServerName"

@@ -208,6 +208,9 @@
       },
       "CatalogProductDetail": {
         "properties": {
+          "assets": {
+            "$ref": "#/components/schemas/assets"
+          },
           "categories": {
             "$ref": "#/components/schemas/productCategories"
           },
@@ -798,6 +801,9 @@
       "SubscriptionProduct": {
         "description": "The product of a subscription",
         "properties": {
+          "assets": {
+            "$ref": "#/components/schemas/assets"
+          },
           "deliveryMethod": {
             "$ref": "#/components/schemas/deliveryMethod"
           },
@@ -882,6 +888,15 @@
         ],
         "type": "object"
       },
+      "assets": {
+        "description": "The assets associated with the product.",
+        "properties": {
+          "serviceCertificate": {
+            "$ref": "#/components/schemas/serviceCertificate"
+          }
+        },
+        "type": "object"
+      },
       "bool": {
         "description": "Boolean data type.",
         "example": true,
@@ -935,6 +950,12 @@
         "description": "A e-mail address.",
         "example": "example@stackit.de",
         "format": "email",
+        "type": "string"
+      },
+      "fileName": {
+        "description": "The file version matching the file name (localized).",
+        "example": "2025_06_02_01_file-name_DE.pdf",
+        "pattern": "^\\d{4}_\\d{2}_\\d{2}_\\d{3}_[a-zA-Z0-9_-]+_(DE|EN)\\.$",
         "type": "string"
       },
       "inquiries-create-inquiryPayload": {
@@ -1027,6 +1048,18 @@
         "maximum": 100,
         "minimum": 0,
         "type": "number"
+      },
+      "localizedVersion": {
+        "description": "The localized version (file name) of a file.",
+        "properties": {
+          "de": {
+            "$ref": "#/components/schemas/fileName"
+          },
+          "en": {
+            "$ref": "#/components/schemas/fileName"
+          }
+        },
+        "type": "object"
       },
       "logo": {
         "description": "The logo base64 encoded.",
@@ -1173,6 +1206,15 @@
           }
         ],
         "description": "The associated project ID."
+      },
+      "serviceCertificate": {
+        "description": "The related service certificate of the (subscription) product.",
+        "properties": {
+          "version": {
+            "$ref": "#/components/schemas/localizedVersion"
+          }
+        },
+        "type": "object"
       },
       "sku": {
         "description": "The concrete variant of the product.",

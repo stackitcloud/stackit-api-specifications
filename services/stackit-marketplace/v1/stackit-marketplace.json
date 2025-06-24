@@ -501,6 +501,9 @@
           "name": {
             "$ref": "#/components/schemas/pricingOptionName"
           },
+          "noticePeriod": {
+            "$ref": "#/components/schemas/noticePeriod"
+          },
           "priceType": {
             "$ref": "#/components/schemas/priceType"
           },
@@ -1036,6 +1039,29 @@
         "maxLength": 512,
         "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
         "type": "string"
+      },
+      "noticePeriod": {
+        "description": "The notice period for a product and plan.",
+        "example": {
+          "type": "DAYS",
+          "value": 14
+        },
+        "properties": {
+          "type": {
+            "description": "The notice period type.",
+            "enum": [
+              "SAME_DAY",
+              "DAYS",
+              "MONTHS"
+            ],
+            "type": "string"
+          },
+          "value": {
+            "description": "The value of the corresponding type. Omitted for _SAME_DAY_.",
+            "type": "integer"
+          }
+        },
+        "type": "object"
       },
       "offerType": {
         "description": "The offer type of a product reflecting the business model.",

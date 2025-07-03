@@ -3,6 +3,7 @@
     "parameters": {
       "InstanceId": {
         "description": "Instance identifier.",
+        "example": "83b8e9c4-e3d1-4dc4-bb89-9854c8b5383e",
         "explode": false,
         "in": "path",
         "name": "instanceId",
@@ -14,6 +15,7 @@
       },
       "ProjectId": {
         "description": "Project identifier.",
+        "example": "83b8e9c4-e3d1-4dc4-bb89-9854c8b5383e",
         "explode": false,
         "in": "path",
         "name": "projectId",
@@ -26,7 +28,7 @@
     },
     "schemas": {
       "CreateInstancePayload": {
-        "description": "Instance creation configuration options.",
+        "description": "Request a STACKIT Git instance to be created with these properties.",
         "properties": {
           "acl": {
             "description": "Restricted ACL for instance access.",
@@ -37,14 +39,16 @@
             "type": "array"
           },
           "flavor": {
-            "default": "git-100",
-            "description": "Instance flavor. Defaults to git-100 if not specified.",
-            "example": "git-100",
+            "description": "Desired instance flavor. Must be one of the defined enum values",
+            "enum": [
+              "git-10",
+              "git-100"
+            ],
+            "maxLength": 255,
             "type": "string"
           },
           "name": {
             "description": "A user chosen name to distinguish multiple STACKIT Git instances.",
-            "example": "my-instance",
             "maxLength": 32,
             "minLength": 5,
             "pattern": "^[a-z]([a-z0-9\\-]){0,30}[a-z0-9]+$",
@@ -80,13 +84,18 @@
             "description": "Flavor id.",
             "maxLength": 36,
             "type": "string"
+          },
+          "sku": {
+            "description": "SAP article number.",
+            "type": "string"
           }
         },
         "required": [
           "id",
           "availability",
           "display_name",
-          "description"
+          "description",
+          "sku"
         ]
       },
       "GenericErrorResponse": {
@@ -109,7 +118,7 @@
         "type": "object"
       },
       "Instance": {
-        "description": "Information about an Instance.",
+        "description": "Describes a STACKIT Git instance.",
         "properties": {
           "acl": {
             "description": "Restricted ACL for instance access.",
@@ -127,34 +136,28 @@
             "type": "string"
           },
           "created": {
-            "description": "Instance creation timestamp in RFC3339 format.",
-            "example": "2025-04-07T07:08:12Z",
+            "description": "The date and time the creation of the STACKIT Git instance was triggered.",
             "format": "date-time",
             "maxLength": 48,
             "type": "string"
           },
           "flavor": {
-            "description": "Instance flavor.",
-            "example": "git-100",
+            "description": "Desired instance flavor. Must be one of the defined enum values",
             "type": "string"
           },
           "id": {
-            "description": "Instance identifier.",
-            "example": "f88b5082-a81b-41ae-aae0-33df56907aa8",
+            "description": "A auto generated unique id which identifies the STACKIT Git instances.",
             "format": "uuid",
             "maxLength": 36,
-            "minLength": 36,
-            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
             "type": "string"
           },
           "name": {
-            "description": "Instance name.",
-            "example": "my-instance",
+            "description": "A user chosen name to distinguish multiple STACKIT Git instances.",
             "maxLength": 32,
             "type": "string"
           },
           "state": {
-            "description": "Indicate the readiness state of the instance.",
+            "description": "The current state of the STACKIT Git instance.",
             "enum": [
               "Creating",
               "WaitingForResources",
@@ -167,14 +170,12 @@
             "type": "string"
           },
           "url": {
-            "description": "Instance url.",
-            "example": "https://my-instance.git.onstackit.cloud",
-            "maxLength": 512,
+            "description": "The URL for reaching the STACKIT Git instance.",
+            "maxLength": 2048,
             "type": "string"
           },
           "version": {
-            "description": "STACKIT Git version indicator.",
-            "example": "v1.0.0",
+            "description": "The current version of STACKIT Git deployed to the instance.",
             "maxLength": 20,
             "type": "string"
           }
@@ -182,13 +183,13 @@
         "required": [
           "id",
           "name",
-          "flavor",
           "url",
           "created",
           "state",
           "version",
           "consumed_disk",
           "consumed_object_storage",
+          "flavor",
           "acl"
         ]
       },
@@ -217,13 +218,13 @@
         ]
       },
       "ListInstances": {
-        "description": "List of Instances.",
+        "description": "A list of STACKIT Git instances.",
         "properties": {
           "instances": {
             "items": {
               "$ref": "#/components/schemas/Instance"
             },
-            "maxItems": 100,
+            "maxItems": 50,
             "type": "array"
           }
         },
@@ -280,6 +281,13 @@
             "description": "Git flavors."
           },
           "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
             "description": "Bad Request."
           },
           "401": {
@@ -299,7 +307,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InternalServerErrorResponse"
+                  "$ref": "#/components/schemas/GenericErrorResponse"
                 }
               }
             },
@@ -318,16 +326,7 @@
       },
       "parameters": [
         {
-          "description": "The STACKIT portal project UUID the STACKIT Git instance is part of.",
-          "example": "83b8e9c4-e3d1-4dc4-bb89-9854c8b5383e",
-          "in": "path",
-          "name": "projectId",
-          "required": true,
-          "schema": {
-            "format": "uuid",
-            "maxLength": 36,
-            "type": "string"
-          }
+          "$ref": "#/components/parameters/ProjectId"
         }
       ]
     },

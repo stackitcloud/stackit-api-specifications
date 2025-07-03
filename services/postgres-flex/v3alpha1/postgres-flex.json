@@ -1,6 +1,15 @@
 {
   "components": {
     "examples": {
+      "alreadyExistsError": {
+        "summary": "Already Exists",
+        "value": {
+          "code": 409,
+          "message": "database already exists",
+          "traceId": "885bef8bbc18649c",
+          "type": "ALREADY_EXISTS_ERROR"
+        }
+      },
       "badRequestError": {
         "summary": "Bad Request",
         "value": {
@@ -8,6 +17,15 @@
           "message": "invalid backup id",
           "traceId": "885bef8bbc18649c",
           "type": "BAD_REQUEST_ERROR"
+        }
+      },
+      "failedPreconditionError": {
+        "summary": "Failed Precondition",
+        "value": {
+          "code": 412,
+          "message": "precondition for this operation failed",
+          "traceId": "885bef8bbc18649c",
+          "type": "FAILED_PRECONDITION_ERROR"
         }
       },
       "forbiddenError": {
@@ -26,42 +44,6 @@
           "message": "invalid owner",
           "traceId": "885bef8bbc18649c",
           "type": "INTERNAL_ERROR"
-        }
-      },
-      "invalidDatabaseIdError": {
-        "summary": "Bad Request",
-        "value": {
-          "code": 400,
-          "message": "invalid database id",
-          "traceId": "885bef8bbc18649c",
-          "type": "BAD_REQUEST_ERROR"
-        }
-      },
-      "invalidInputError": {
-        "summary": "Bad Request",
-        "value": {
-          "code": 400,
-          "message": "invalid input",
-          "traceId": "885bef8bbc18649c",
-          "type": "BAD_REQUEST_ERROR"
-        }
-      },
-      "invalidInstanceError": {
-        "summary": "Bad Request",
-        "value": {
-          "code": 400,
-          "message": "invalid instance id",
-          "traceId": "885bef8bbc18649c",
-          "type": "BAD_REQUEST_ERROR"
-        }
-      },
-      "invalidUserIdError": {
-        "summary": "Bad Request",
-        "value": {
-          "code": 400,
-          "message": "invalid user id",
-          "traceId": "885bef8bbc18649c",
-          "type": "BAD_REQUEST_ERROR"
         }
       },
       "notFoundError": {
@@ -788,6 +770,17 @@
         ],
         "type": "object"
       },
+      "RecoveryResponse": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/instance.id"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
       "ResetUserResponse": {
         "properties": {
           "connectionString": {
@@ -938,6 +931,8 @@
       },
       "backup.sort": {
         "enum": [
+          "completion_time.desc",
+          "completion_time.asc",
           "end_time.desc",
           "end_time.asc",
           "index.desc",
@@ -1272,33 +1267,15 @@
         "type": "object"
       },
       "instance.version": {
-        "description": "The postgres version used for the instance.",
-        "enum": [
-          "13",
-          "14",
-          "15",
-          "16"
-        ],
+        "description": "The Postgres version used for the instance. See [Versions Endpoint](/v3alpha1/projects/{projectId}/regions/{region}/versions) for supported version parameters.",
         "type": "string"
       },
       "instance.version.update": {
-        "description": "The postgres version used for the instance.",
-        "enum": [
-          "13",
-          "14",
-          "15",
-          "16"
-        ],
+        "description": "The Postgres version used for the instance. See [Versions Endpoint](/v3alpha1/projects/{projectId}/regions/{region}/versions) for supported version parameters.",
         "type": "string"
       },
       "instance.version.update.opt": {
-        "description": "The postgres version used for the instance.",
-        "enum": [
-          "13",
-          "14",
-          "15",
-          "16"
-        ],
+        "description": "The Postgres version used for the instance. See [Versions Endpoint](/v3alpha1/projects/{projectId}/regions/{region}/versions) for supported version parameters.",
         "type": "string"
       },
       "pointInTimeRecoveryRequestPayload": {
@@ -1746,7 +1723,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidInputError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -1880,7 +1857,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidInputError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -1999,7 +1976,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidInputError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -2115,7 +2092,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidInstanceError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -2169,6 +2146,21 @@
               }
             },
             "description": "Not found: Could not find an instance with the provided Id."
+          },
+          "412": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "preconditionFailedError": {
+                    "$ref": "#/components/examples/failedPreconditionError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Precondition Failed: The precondition for this operation was not met."
           },
           "500": {
             "content": {
@@ -2226,7 +2218,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidInstanceError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -2341,7 +2333,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidInstanceError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -2395,6 +2387,21 @@
               }
             },
             "description": "Not found: Could not find an instance with the provided Id."
+          },
+          "412": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "preconditionFailedError": {
+                    "$ref": "#/components/examples/failedPreconditionError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Precondition Failed: The precondition for this operation was not met."
           },
           "422": {
             "content": {
@@ -2466,7 +2473,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidInstanceError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -2520,6 +2527,21 @@
               }
             },
             "description": "Not found: Could not find an instance with the provided Id."
+          },
+          "412": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "preconditionFailedError": {
+                    "$ref": "#/components/examples/failedPreconditionError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Precondition Failed: The precondition for this operation was not met."
           },
           "422": {
             "content": {
@@ -2598,7 +2620,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidInputError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -2722,6 +2744,13 @@
         },
         "responses": {
           "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoveryResponse"
+                }
+              }
+            },
             "description": "Accepted: The request was accepted"
           },
           "400": {
@@ -2813,6 +2842,11 @@
             "content": {
               "application/json": {
                 "examples": {
+                  "examples": {
+                    "notImplementedError": {
+                      "$ref": "#/components/examples/notImplementedError"
+                    }
+                  },
                   "notImplementedError": {
                     "$ref": "#/components/examples/notImplementedError"
                   }
@@ -3132,7 +3166,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidInstanceError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -3269,7 +3303,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidInputError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -3391,7 +3425,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidInputError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -3445,6 +3479,21 @@
               }
             },
             "description": "Not found: The requested resource was not found."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "notFoundError": {
+                    "$ref": "#/components/examples/alreadyExistsError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Database name already exists"
           },
           "422": {
             "content": {
@@ -3510,7 +3559,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidDatabaseIdError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -3635,7 +3684,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidDatabaseIdError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -3770,7 +3819,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidDatabaseIdError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -3904,7 +3953,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidInstanceError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -4051,7 +4100,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidInputError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -4173,7 +4222,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidInputError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -4292,7 +4341,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidUserIdError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -4406,7 +4455,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidUserIdError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -4523,7 +4572,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidUserIdError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -4651,7 +4700,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidUserIdError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -4777,7 +4826,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidUserIdError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {
@@ -4897,7 +4946,7 @@
               "application/json": {
                 "examples": {
                   "badRequestError": {
-                    "$ref": "#/components/examples/invalidInputError"
+                    "$ref": "#/components/examples/badRequestError"
                   }
                 },
                 "schema": {

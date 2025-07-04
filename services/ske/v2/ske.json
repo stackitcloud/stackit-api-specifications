@@ -32,27 +32,6 @@
         ],
         "type": "object"
       },
-      "Argus": {
-        "example": {
-          "argusInstanceId": "argusInstanceId",
-          "enabled": true
-        },
-        "properties": {
-          "argusInstanceId": {
-            "description": "Argus instance ID to choose which Argus instance is used.",
-            "type": "string"
-          },
-          "enabled": {
-            "description": "Enables the argus extension.",
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "argusInstanceId",
-          "enabled"
-        ],
-        "type": "object"
-      },
       "AvailabilityZone": {
         "example": {
           "name": "name"
@@ -93,10 +72,6 @@
               ],
               "enabled": true
             },
-            "argus": {
-              "argusInstanceId": "argusInstanceId",
-              "enabled": true
-            },
             "dns": {
               "enabled": true,
               "zones": [
@@ -106,6 +81,10 @@
                 "zones",
                 "zones"
               ]
+            },
+            "observability": {
+              "enabled": true,
+              "instanceId": "instanceId"
             }
           },
           "hibernation": {
@@ -123,7 +102,6 @@
             ]
           },
           "kubernetes": {
-            "allowPrivilegedContainers": true,
             "version": "version"
           },
           "maintenance": {
@@ -535,7 +513,7 @@
           "STATE_HIBERNATING",
           "STATE_WAKINGUP"
         ],
-        "title": "aggregated state of the cluster",
+        "title": "ClusterStatusState holds information about the current state of the Cluster",
         "type": "string"
       },
       "CreateKubeconfigPayload": {
@@ -602,7 +580,7 @@
             "type": "string"
           },
           "phase": {
-            "description": "Phase of the credentials rotation. `NEVER` indicates that no credentials rotation has been performed using the new credentials rotation endpoints yet.",
+            "description": "Phase of the credentials rotation. `NEVER` indicates that no credentials rotation has been performed using the new credentials rotation endpoints yet. Using the deprecated [rotate-credentials](#tag/Credentials/operation/SkeService_GetClusterCredentials) endpoint will not update this status field.",
             "enum": [
               "NEVER",
               "PREPARING",
@@ -658,10 +636,6 @@
             ],
             "enabled": true
           },
-          "argus": {
-            "argusInstanceId": "argusInstanceId",
-            "enabled": true
-          },
           "dns": {
             "enabled": true,
             "zones": [
@@ -671,17 +645,21 @@
               "zones",
               "zones"
             ]
+          },
+          "observability": {
+            "enabled": true,
+            "instanceId": "instanceId"
           }
         },
         "properties": {
           "acl": {
             "$ref": "#/components/schemas/ACL"
           },
-          "argus": {
-            "$ref": "#/components/schemas/Argus"
-          },
           "dns": {
             "$ref": "#/components/schemas/DNS"
+          },
+          "observability": {
+            "$ref": "#/components/schemas/Observability"
           }
         },
         "type": "object"
@@ -785,14 +763,9 @@
       "Kubernetes": {
         "description": "For valid versions please take a look at [provider-options](#tag/ProviderOptions/operation/SkeService_GetProviderOptions) `kubernetesVersions`.",
         "example": {
-          "allowPrivilegedContainers": true,
           "version": "version"
         },
         "properties": {
-          "allowPrivilegedContainers": {
-            "description": "DEPRECATED as of Kubernetes 1.25+\nFlag to specify if privileged mode for containers is enabled or not.\nThis should be used with care since it also disables a couple of other features like the use of some volume type (e.g. PVCs).\nBy default this is set to true.",
-            "type": "boolean"
-          },
           "version": {
             "pattern": "^\\d+\\.\\d+\\.\\d+$",
             "title": "Kubernetes version used for the cluster",
@@ -853,10 +826,6 @@
                   ],
                   "enabled": true
                 },
-                "argus": {
-                  "argusInstanceId": "argusInstanceId",
-                  "enabled": true
-                },
                 "dns": {
                   "enabled": true,
                   "zones": [
@@ -866,6 +835,10 @@
                     "zones",
                     "zones"
                   ]
+                },
+                "observability": {
+                  "enabled": true,
+                  "instanceId": "instanceId"
                 }
               },
               "hibernation": {
@@ -883,7 +856,6 @@
                 ]
               },
               "kubernetes": {
-                "allowPrivilegedContainers": true,
                 "version": "version"
               },
               "maintenance": {
@@ -1151,10 +1123,6 @@
                   ],
                   "enabled": true
                 },
-                "argus": {
-                  "argusInstanceId": "argusInstanceId",
-                  "enabled": true
-                },
                 "dns": {
                   "enabled": true,
                   "zones": [
@@ -1164,6 +1132,10 @@
                     "zones",
                     "zones"
                   ]
+                },
+                "observability": {
+                  "enabled": true,
+                  "instanceId": "instanceId"
                 }
               },
               "hibernation": {
@@ -1181,7 +1153,6 @@
                 ]
               },
               "kubernetes": {
-                "allowPrivilegedContainers": true,
                 "version": "version"
               },
               "maintenance": {
@@ -1778,6 +1749,27 @@
         ],
         "type": "object"
       },
+      "Observability": {
+        "example": {
+          "enabled": true,
+          "instanceId": "instanceId"
+        },
+        "properties": {
+          "enabled": {
+            "description": "Enables the Observability extension.",
+            "type": "boolean"
+          },
+          "instanceId": {
+            "description": "Instance ID to choose which Observability instance is used.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "enabled",
+          "instanceId"
+        ],
+        "type": "object"
+      },
       "ProviderOptions": {
         "example": {
           "availabilityZones": [
@@ -1939,12 +1931,12 @@
         },
         "properties": {
           "code": {
-            "description": "- Code:    `SKE_UNSPECIFIED`\n  Message: \"An error occurred. Please open a support ticket if this error persists.\"\n- Code:    `SKE_TMP_AUTH_ERROR`\n  Message: \"Authentication failed. This is a temporary error. Please wait while the system recovers.\"\n- Code:    `SKE_QUOTA_EXCEEDED`\n  Message: \"Your project's resource quotas are exhausted. Please make sure your quota is sufficient for the ordered cluster.\"\n- Code:    `SKE_ARGUS_INSTANCE_NOT_FOUND`\n  Message: \"The provided Argus instance could not be found.\"\n- Code:    `SKE_RATE_LIMITS`\n  Message: \"While provisioning your cluster, request rate limits where incurred. Please wait while the system recovers.\"\n- Code:    `SKE_INFRA_ERROR`\n  Message: \"An error occurred with the underlying infrastructure. Please open a support ticket if this error persists.\"\n- Code:    `SKE_REMAINING_RESOURCES`\n  Message: \"There are remaining Kubernetes resources in your cluster that prevent deletion. Please make sure to remove them.\"\n- Code:    `SKE_CONFIGURATION_PROBLEM`\n  Message: \"A configuration error occurred. Please open a support ticket if this error persists.\"\n- Code:    `SKE_UNREADY_NODES`\n  Message: \"Not all worker nodes are ready. Please open a support ticket if this error persists.\"\n- Code:    `SKE_API_SERVER_ERROR`\n  Message: \"The Kubernetes API server is not reporting readiness. Please open a support ticket if this error persists.\"\n- Code:    `SKE_DNS_ZONE_NOT_FOUND`\n  Message: \"The provided DNS zone for the STACKIT DNS extension could not be found. Please ensure you defined a valid domain that belongs to a STACKIT DNS zone.\"\n",
+            "description": "- Code:    `SKE_UNSPECIFIED`\n  Message: \"An error occurred. Please open a support ticket if this error persists.\"\n- Code:    `SKE_TMP_AUTH_ERROR`\n  Message: \"Authentication failed. This is a temporary error. Please wait while the system recovers.\"\n- Code:    `SKE_QUOTA_EXCEEDED`\n  Message: \"Your project's resource quotas are exhausted. Please make sure your quota is sufficient for the ordered cluster.\"\n- Code:    `SKE_OBSERVABILITY_INSTANCE_NOT_FOUND`\n  Message: \"The provided Observability instance could not be found.\"\n- Code:    `SKE_RATE_LIMITS`\n  Message: \"While provisioning your cluster, request rate limits where incurred. Please wait while the system recovers.\"\n- Code:    `SKE_INFRA_ERROR`\n  Message: \"An error occurred with the underlying infrastructure. Please open a support ticket if this error persists.\"\n- Code:    `SKE_REMAINING_RESOURCES`\n  Message: \"There are remaining Kubernetes resources in your cluster that prevent deletion. Please make sure to remove them.\"\n- Code:    `SKE_CONFIGURATION_PROBLEM`\n  Message: \"A configuration error occurred. Please open a support ticket if this error persists.\"\n- Code:    `SKE_UNREADY_NODES`\n  Message: \"Not all worker nodes are ready. Please open a support ticket if this error persists.\"\n- Code:    `SKE_API_SERVER_ERROR`\n  Message: \"The Kubernetes API server is not reporting readiness. Please open a support ticket if this error persists.\"\n- Code:    `SKE_DNS_ZONE_NOT_FOUND`\n  Message: \"The provided DNS zone for the STACKIT DNS extension could not be found. Please ensure you defined a valid domain that belongs to a STACKIT DNS zone.\"\n",
             "enum": [
               "SKE_UNSPECIFIED",
               "SKE_TMP_AUTH_ERROR",
               "SKE_QUOTA_EXCEEDED",
-              "SKE_ARGUS_INSTANCE_NOT_FOUND",
+              "SKE_OBSERVABILITY_INSTANCE_NOT_FOUND",
               "SKE_RATE_LIMITS",
               "SKE_INFRA_ERROR",
               "SKE_REMAINING_RESOURCES",
@@ -2063,11 +2055,11 @@
     "description": "The SKE API provides endpoints to create, update, delete clusters within STACKIT portal projects and to trigger further cluster management tasks.",
     "termsOfService": "https://stackit.de/en/imprint",
     "title": "SKE-API",
-    "version": "1.1"
+    "version": "2.0"
   },
   "openapi": "3.0.1",
   "paths": {
-    "/v1/projects/{projectId}/clusters": {
+    "/v2/projects/{projectId}/regions/{region}/clusters": {
       "get": {
         "description": "Return a list of Kubernetes clusters in the project specified by `projectId`.",
         "operationId": "ListClusters",
@@ -2075,6 +2067,14 @@
           {
             "in": "path",
             "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
             "required": true,
             "schema": {
               "type": "string"
@@ -2101,6 +2101,16 @@
               }
             },
             "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
           },
           "404": {
             "content": {
@@ -2139,7 +2149,7 @@
         }
       }
     },
-    "/v1/projects/{projectId}/clusters/{clusterName}": {
+    "/v2/projects/{projectId}/regions/{region}/clusters/{clusterName}": {
       "delete": {
         "description": "Delete Kubernetes cluster specified by the identifier, belonging to the project specified by `projectId`.",
         "operationId": "DeleteCluster",
@@ -2147,6 +2157,14 @@
           {
             "in": "path",
             "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
             "required": true,
             "schema": {
               "type": "string"
@@ -2181,6 +2199,26 @@
               }
             },
             "description": "Accepted, deletion of cluster happens asynchronously. The deletion is done as soon as GetCluster returns a 404 code. The progress can be observerd in the GetCluster's lastOperation field that contains a progress indicator."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
           },
           "default": {
             "content": {
@@ -2222,6 +2260,14 @@
           },
           {
             "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
             "name": "clusterName",
             "required": true,
             "schema": {
@@ -2239,6 +2285,26 @@
               }
             },
             "description": "A successful response."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
           },
           "default": {
             "content": {
@@ -2273,6 +2339,14 @@
           {
             "in": "path",
             "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
             "required": true,
             "schema": {
               "type": "string"
@@ -2328,6 +2402,16 @@
             },
             "description": "Invalid request."
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "404": {
             "content": {
               "application/json": {
@@ -2365,7 +2449,7 @@
         }
       }
     },
-    "/v1/projects/{projectId}/clusters/{clusterName}/complete-credentials-rotation": {
+    "/v2/projects/{projectId}/regions/{region}/clusters/{clusterName}/complete-credentials-rotation": {
       "post": {
         "description": "Complete cluster credentials rotation. This is step 2 of a two-step process. Start the rotation using [start-credentials-rotation](#tag/Credentials/operation/SkeService_StartClusterCredentialsRotation).",
         "operationId": "CompleteCredentialsRotation",
@@ -2373,6 +2457,14 @@
           {
             "in": "path",
             "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
             "required": true,
             "schema": {
               "type": "string"
@@ -2417,6 +2509,16 @@
               }
             },
             "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
           },
           "404": {
             "content": {
@@ -2455,7 +2557,7 @@
         }
       }
     },
-    "/v1/projects/{projectId}/clusters/{clusterName}/hibernate": {
+    "/v2/projects/{projectId}/regions/{region}/clusters/{clusterName}/hibernate": {
       "post": {
         "description": "Trigger immediate hibernation of the cluster. If the cluster is already in hibernation state, the method does nothing.",
         "operationId": "TriggerHibernate",
@@ -2463,6 +2565,14 @@
           {
             "in": "path",
             "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
             "required": true,
             "schema": {
               "type": "string"
@@ -2497,6 +2607,26 @@
               }
             },
             "description": "Accepted, execution happens asynchronously. Use GetCluster endpoint to read the status of the cluster via status.conditions."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
           },
           "404": {
             "content": {
@@ -2535,7 +2665,7 @@
         }
       }
     },
-    "/v1/projects/{projectId}/clusters/{clusterName}/kubeconfig": {
+    "/v2/projects/{projectId}/regions/{region}/clusters/{clusterName}/kubeconfig": {
       "post": {
         "description": "Create a new kubeconfig for the cluster. You can specify the expiration (in seconds) in the request body. Its value must be in the range from 600 (10 min) to 15552000 (6 months).",
         "operationId": "CreateKubeconfig",
@@ -2543,6 +2673,14 @@
           {
             "in": "path",
             "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
             "required": true,
             "schema": {
               "type": "string"
@@ -2578,6 +2716,26 @@
             },
             "description": "A successful response."
           },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "default": {
             "content": {
               "application/json": {
@@ -2605,7 +2763,7 @@
         }
       }
     },
-    "/v1/projects/{projectId}/clusters/{clusterName}/kubeconfig/login": {
+    "/v2/projects/{projectId}/regions/{region}/clusters/{clusterName}/kubeconfig/login": {
       "get": {
         "description": "A kubeconfig retrieved using this endpoint does not contain any credentials and instead obtains valid credentials via the STACKIT CLI.",
         "operationId": "GetLoginKubeconfig",
@@ -2613,6 +2771,14 @@
           {
             "in": "path",
             "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
             "required": true,
             "schema": {
               "type": "string"
@@ -2637,6 +2803,26 @@
               }
             },
             "description": "A successful response."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
           },
           "default": {
             "content": {
@@ -2665,7 +2851,7 @@
         }
       }
     },
-    "/v1/projects/{projectId}/clusters/{clusterName}/maintenance": {
+    "/v2/projects/{projectId}/regions/{region}/clusters/{clusterName}/maintenance": {
       "post": {
         "description": "Trigger immediate maintenance of the cluster. The autoUpdate configuration specified in the Maintenance object of the cluster spec defines what is updated during the immediate maintenance operation.",
         "operationId": "TriggerMaintenance",
@@ -2673,6 +2859,14 @@
           {
             "in": "path",
             "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
             "required": true,
             "schema": {
               "type": "string"
@@ -2707,6 +2901,26 @@
               }
             },
             "description": "Accepted, execution happens asynchronously. Use GetCluster endpoint to read the status of the cluster via status.conditions."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
           },
           "404": {
             "content": {
@@ -2745,7 +2959,7 @@
         }
       }
     },
-    "/v1/projects/{projectId}/clusters/{clusterName}/reconcile": {
+    "/v2/projects/{projectId}/regions/{region}/clusters/{clusterName}/reconcile": {
       "post": {
         "description": "Trigger immediate reconciliation of the complete cluster without changing the cluster specification.",
         "operationId": "TriggerReconcile",
@@ -2753,6 +2967,14 @@
           {
             "in": "path",
             "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
             "required": true,
             "schema": {
               "type": "string"
@@ -2787,6 +3009,26 @@
               }
             },
             "description": "Accepted, execution happens asynchronously. Use GetCluster endpoint to read the status of the cluster via status.conditions."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
           },
           "404": {
             "content": {
@@ -2825,7 +3067,7 @@
         }
       }
     },
-    "/v1/projects/{projectId}/clusters/{clusterName}/start-credentials-rotation": {
+    "/v2/projects/{projectId}/regions/{region}/clusters/{clusterName}/start-credentials-rotation": {
       "post": {
         "description": "Start cluster credentials rotation. This is step 1 of a two-step process. Complete the rotation using [complete-credentials-rotation](#tag/Credentials/operation/SkeService_CompleteClusterCredentialsRotation).",
         "operationId": "StartCredentialsRotation",
@@ -2833,6 +3075,14 @@
           {
             "in": "path",
             "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
             "required": true,
             "schema": {
               "type": "string"
@@ -2878,6 +3128,16 @@
             },
             "description": "Invalid request."
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "404": {
             "content": {
               "application/json": {
@@ -2915,10 +3175,20 @@
         }
       }
     },
-    "/v1/provider-options": {
+    "/v2/regions/{region}/provider-options": {
       "get": {
         "description": "Returns a list of supported Kubernetes versions and a list of supported machine types for the cluster nodes.",
         "operationId": "ListProviderOptions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -2929,6 +3199,26 @@
               }
             },
             "description": "A successful response."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
           },
           "default": {
             "content": {
@@ -2955,13 +3245,10 @@
   ],
   "servers": [
     {
-      "url": "https://ske.api.{region}stackit.cloud",
+      "url": "https://ske.api.stackit.cloud",
       "variables": {
         "region": {
-          "default": "eu01.",
-          "enum": [
-            "eu01."
-          ]
+          "default": "global"
         }
       }
     }

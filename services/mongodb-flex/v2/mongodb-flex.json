@@ -285,36 +285,6 @@
         },
         "type": "object"
       },
-      "HandlersInfraFlavor": {
-        "properties": {
-          "categories": {
-            "example": [
-              "Replica"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "cpu": {
-            "example": 1,
-            "type": "integer"
-          },
-          "description": {
-            "example": "Small, Compute optimized",
-            "type": "string"
-          },
-          "id": {
-            "example": "1.1",
-            "type": "string"
-          },
-          "memory": {
-            "example": 1,
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
       "Host": {
         "properties": {
           "hostMetrics": {
@@ -430,7 +400,7 @@
         "properties": {
           "flavors": {
             "items": {
-              "$ref": "#/components/schemas/HandlersInfraFlavor"
+              "$ref": "#/components/schemas/instance.Flavor"
             },
             "type": "array"
           }
@@ -885,57 +855,6 @@
         },
         "type": "object"
       },
-      "handlers_infra.Flavor": {
-        "properties": {
-          "categories": {
-            "example": [
-              "Replica"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "cpu": {
-            "example": 1,
-            "format": "int32",
-            "type": "integer"
-          },
-          "description": {
-            "example": "Small, Compute optimized",
-            "type": "string"
-          },
-          "id": {
-            "example": "1.1",
-            "type": "string"
-          },
-          "memory": {
-            "example": 1,
-            "format": "int32",
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "handlers_infra.GetFlavorsResponse": {
-        "properties": {
-          "flavors": {
-            "items": {
-              "$ref": "#/components/schemas/handlers_infra.Flavor"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "handlers_instances.GetInstanceResponse": {
-        "properties": {
-          "item": {
-            "$ref": "#/components/schemas/Instance"
-          }
-        },
-        "type": "object"
-      },
       "handlers_instances.SlowQueriesResponse": {
         "properties": {
           "slowQueries": {
@@ -963,6 +882,38 @@
               "$ref": "#/components/schemas/SuggestedIndex"
             },
             "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "instance.Flavor": {
+        "properties": {
+          "categories": {
+            "example": [
+              "Replica"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "cpu": {
+            "example": 1,
+            "format": "int32",
+            "type": "integer"
+          },
+          "description": {
+            "example": "Small, Compute optimized",
+            "type": "string"
+          },
+          "id": {
+            "example": "1.1",
+            "type": "string"
+          },
+          "memory": {
+            "example": 1,
+            "format": "int32",
+            "type": "integer"
           }
         },
         "type": "object"
@@ -1133,7 +1084,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/handlers_infra.GetFlavorsResponse"
+                  "$ref": "#/components/schemas/ListFlavorsResponse"
                 }
               }
             },
@@ -1550,7 +1501,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/handlers_instances.GetInstanceResponse"
+                  "$ref": "#/components/schemas/GetInstanceResponse"
                 }
               }
             },

@@ -1,0 +1,1307 @@
+{
+  "components": {
+    "parameters": {
+      "force": {
+        "description": "If true, deletes all child resources. If false, the resource remains in a 'deletion state' while child resources exist.",
+        "in": "query",
+        "name": "force",
+        "schema": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "intakeId": {
+        "description": "The intake UUID.",
+        "in": "path",
+        "name": "intakeId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "intakeRunnerId": {
+        "description": "The intake runner UUID.",
+        "in": "path",
+        "name": "intakeRunnerId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "intakeUserId": {
+        "description": "The intake user UUID.",
+        "in": "path",
+        "name": "intakeUserId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "pageSize": {
+        "description": "Maximum number of items to return",
+        "in": "query",
+        "name": "pageSize",
+        "schema": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "pageToken": {
+        "description": "A token to retrieve the next page of results.",
+        "in": "query",
+        "name": "pageToken",
+        "schema": {
+          "maxLength": 1024,
+          "type": "string"
+        }
+      },
+      "projectId": {
+        "description": "The STACKIT portal project UUID the resource is located in.",
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "regionId": {
+        "description": "The STACKIT region name the resource is located in.",
+        "in": "path",
+        "name": "regionId",
+        "required": true,
+        "schema": {
+          "enum": [
+            "eu01",
+            "eu02"
+          ],
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "badRequest": {
+        "description": "Bad Request. The data provided by the client did not match expectations."
+      },
+      "conflict": {
+        "description": "Conflict. The resource has been modified by some other client. Please try again."
+      },
+      "internalServerError": {
+        "description": "Internal server error. The application experienced some unexpected situation."
+      },
+      "notFound": {
+        "description": "Not found. The resource has not been found."
+      },
+      "unauthorized": {
+        "description": "Unauthorized. You may have provided no or wrong credentials."
+      }
+    },
+    "schemas": {
+      "catalogAuth": {
+        "description": "Configures authentication for the Iceberg catalog",
+        "properties": {
+          "dremio": {
+            "$ref": "#/components/schemas/dremioAuth"
+          },
+          "type": {
+            "$ref": "#/components/schemas/catalogAuthType"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "catalogAuthPatch": {
+        "description": "Configures authentication for the Iceberg catalog",
+        "properties": {
+          "dremio": {
+            "$ref": "#/components/schemas/dremioAuthPatch"
+          },
+          "type": {
+            "$ref": "#/components/schemas/catalogAuthType"
+          }
+        }
+      },
+      "catalogAuthType": {
+        "description": "Means of authentication for catalog requests",
+        "enum": [
+          "none",
+          "dremio"
+        ],
+        "type": "string"
+      },
+      "create-intake-runnerPayload": {
+        "properties": {
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxMessageSizeKiB": {
+            "description": "The maximum size of a message in kibibytes (1 KiB = 1024 bytes).",
+            "type": "integer"
+          },
+          "maxMessagesPerHour": {
+            "description": "The maximum number of messages per hour.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "displayName",
+          "maxMessageSizeKiB",
+          "maxMessagesPerHour"
+        ]
+      },
+      "create-intake-userPayload": {
+        "properties": {
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "password": {
+            "description": "A password chosen by the user.",
+            "maxLength": 128,
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/userType"
+          }
+        },
+        "required": [
+          "displayName",
+          "password"
+        ]
+      },
+      "create-intakePayload": {
+        "properties": {
+          "catalog": {
+            "$ref": "#/components/schemas/intakeCatalog"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "intakeRunnerId": {
+            "description": "The unique id of the intake runner this intake should run on.",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName",
+          "intakeRunnerId",
+          "catalog"
+        ]
+      },
+      "dremioAuth": {
+        "properties": {
+          "personalAccessToken": {
+            "description": "A Dremio personal access token for authentication",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "tokenEndpoint": {
+            "description": "The URL to the Dremio instance's OAuth 2.0 token endpoint",
+            "maxLength": 1024,
+            "type": "string"
+          }
+        },
+        "required": [
+          "tokenEndpoint",
+          "personalAccessToken"
+        ]
+      },
+      "dremioAuthPatch": {
+        "properties": {
+          "personalAccessToken": {
+            "description": "A Dremio personal access token for authentication",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "tokenEndpoint": {
+            "description": "The URL to the Dremio instance's OAuth 2.0 token endpoint",
+            "maxLength": 1024,
+            "type": "string"
+          }
+        }
+      },
+      "intakeCatalog": {
+        "description": "The Iceberg catalog configuration",
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/catalogAuth"
+          },
+          "namespace": {
+            "default": "intake",
+            "description": "The namespace to which data shall be written. It will be automatically created, if it does not exist.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "tableName": {
+            "description": "The table name is a short name chosen by the user to identify the table in Iceberg.",
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "uri": {
+            "description": "The URI to the Iceberg catalog endpoint",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "warehouse": {
+            "description": "The Iceberg warehouse to connect to, required when the catalog has no default warehouse configured.",
+            "maxLength": 1024,
+            "type": "string"
+          }
+        },
+        "required": [
+          "uri",
+          "warehouse"
+        ]
+      },
+      "intakeCatalogPatch": {
+        "description": "The Iceberg catalog configuration",
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/catalogAuthPatch"
+          },
+          "namespace": {
+            "default": "intake",
+            "description": "The namespace to which data shall be written. It will be automatically created, if it does not exist.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "tableName": {
+            "description": "The table name is a short name chosen by the user to identify the table in Iceberg.",
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "uri": {
+            "description": "The URI to the Iceberg catalog endpoint",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "warehouse": {
+            "description": "The Iceberg warehouse to connect to, required when the catalog has no default warehouse configured.",
+            "maxLength": 1024,
+            "type": "string"
+          }
+        }
+      },
+      "intakeResponse": {
+        "properties": {
+          "catalog": {
+            "$ref": "#/components/schemas/intakeCatalog"
+          },
+          "create_time": {
+            "description": "The point in time the resource was created.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "deadLetterTopic": {
+            "description": "The topic where undelivered messages are published (Dead Letter Queue).",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "failure_message": {
+            "description": "A human-readable description of the error, if the state is 'failed'.",
+            "type": "string"
+          },
+          "id": {
+            "description": "A auto generated unique id which identifies the resource.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "intakeRunnerId": {
+            "description": "The unique id of the intake runner this intake is running on.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "state": {
+            "description": "The current state of the resource.",
+            "enum": [
+              "reconciling",
+              "active",
+              "deleting",
+              "failed"
+            ],
+            "type": "string"
+          },
+          "topic": {
+            "description": "The topic to publish data to.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "undeliveredMessageCount": {
+            "description": "Number of messages that failed delivery and were sent to the Dead Letter Queue.",
+            "format": "int64",
+            "type": "integer"
+          },
+          "uri": {
+            "description": "The URI for reaching the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "state",
+          "create_time",
+          "intakeRunnerId",
+          "uri",
+          "topic",
+          "catalog",
+          "deadLetterTopic"
+        ]
+      },
+      "intakeRunnerResponse": {
+        "properties": {
+          "create_time": {
+            "description": "The point in time the resource was created.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "id": {
+            "description": "A auto generated unique id which identifies the resource.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxMessageSizeKiB": {
+            "description": "The maximum size of a message in kibibytes (1 KiB = 1024 bytes).",
+            "type": "integer"
+          },
+          "maxMessagesPerHour": {
+            "description": "The maximum number of messages per hour.",
+            "type": "integer"
+          },
+          "state": {
+            "description": "The current state of the resource.",
+            "enum": [
+              "reconciling",
+              "active",
+              "deleting"
+            ],
+            "type": "string"
+          },
+          "uri": {
+            "description": "The URI for reaching the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "state",
+          "create_time",
+          "uri",
+          "maxMessageSizeKiB",
+          "maxMessagesPerHour"
+        ]
+      },
+      "intakeUserResponse": {
+        "properties": {
+          "create_time": {
+            "description": "The point in time the resource was created.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "id": {
+            "description": "A auto generated unique id which identifies the resource.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "state": {
+            "description": "The current state of the resource.",
+            "enum": [
+              "reconciling",
+              "active",
+              "deleting"
+            ],
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/userType"
+          },
+          "user": {
+            "description": "The user to connect to the intake.",
+            "maxLength": 1024,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "state",
+          "create_time",
+          "user",
+          "type"
+        ]
+      },
+      "listIntakeRunnersResponse": {
+        "properties": {
+          "intakeRunners": {
+            "items": {
+              "$ref": "#/components/schemas/intakeRunnerResponse"
+            },
+            "type": "array"
+          },
+          "nextPageToken": {
+            "description": "A token to retrieve the next page of results.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "intakeRunners"
+        ]
+      },
+      "listIntakeUsersResponse": {
+        "properties": {
+          "intakeUsers": {
+            "items": {
+              "$ref": "#/components/schemas/intakeUserResponse"
+            },
+            "type": "array"
+          },
+          "nextPageToken": {
+            "description": "A token to retrieve the next page of results.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "intakeUsers"
+        ]
+      },
+      "listIntakesResponse": {
+        "properties": {
+          "intakes": {
+            "items": {
+              "$ref": "#/components/schemas/intakeResponse"
+            },
+            "type": "array"
+          },
+          "nextPageToken": {
+            "description": "A token to retrieve the next page of results.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "intakes"
+        ]
+      },
+      "update-intake-runnerPayload": {
+        "properties": {
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxMessageSizeKiB": {
+            "description": "The maximum size of a message in kibibytes (1 KiB = 1024 bytes).",
+            "type": "integer"
+          },
+          "maxMessagesPerHour": {
+            "description": "The maximum number of messages per hour.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "maxMessageSizeKiB",
+          "maxMessagesPerHour"
+        ]
+      },
+      "update-intake-userPayload": {
+        "properties": {
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "password": {
+            "description": "A password chosen by the user.",
+            "maxLength": 128,
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/userType"
+          }
+        }
+      },
+      "update-intakePayload": {
+        "properties": {
+          "catalog": {
+            "$ref": "#/components/schemas/intakeCatalogPatch"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "intakeRunnerId": {
+            "description": "The unique id of the intake runner this intake should run on.",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "intakeRunnerId"
+        ]
+      },
+      "userType": {
+        "default": "intake",
+        "description": "Type of user, 'intake' allows writing to the Intake, 'dead-letter' allows reading from the dead-letter queue",
+        "enum": [
+          "intake",
+          "dead-letter"
+        ],
+        "type": "string"
+      }
+    }
+  },
+  "info": {
+    "description": "This API provides endpoints for managing Intakes.\n",
+    "title": "STACKIT Intake API",
+    "version": "1beta.1.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1beta/projects/{projectId}/regions/{regionId}/intake-runners": {
+      "get": {
+        "description": "Returns a list of all intake runners within the project.",
+        "operationId": "list-intake-runners",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pageToken"
+          },
+          {
+            "$ref": "#/components/parameters/pageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/listIntakeRunnersResponse"
+                }
+              }
+            },
+            "description": "Successful response with all intake runners."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "intake.intake.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        }
+      ],
+      "post": {
+        "description": "Creates a new intake runner within the project.",
+        "operationId": "create-intake-runner",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/create-intake-runnerPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/intakeRunnerResponse"
+                }
+              }
+            },
+            "description": "Intake runner was created successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "intake.intake.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/intake-runners/{intakeRunnerId}": {
+      "delete": {
+        "description": "Deletes the given intake runner.",
+        "operationId": "delete-intake-runner",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/force"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Intake runner was deleted successfully."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "intake.intake.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns the details for the given intake runner.",
+        "operationId": "get-intake-runner",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/intakeRunnerResponse"
+                }
+              }
+            },
+            "description": "Intake runner details successfully retrieved."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "intake.intake.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/intakeRunnerId"
+        }
+      ],
+      "put": {
+        "description": "Updates a intake runner within the project.",
+        "operationId": "update-intake-runner",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/update-intake-runnerPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Intake runner was updated successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "intake.intake.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/intakes": {
+      "get": {
+        "description": "Returns a list of all intakes within the project.",
+        "operationId": "list-intakes",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pageToken"
+          },
+          {
+            "$ref": "#/components/parameters/pageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/listIntakesResponse"
+                }
+              }
+            },
+            "description": "Successful response with all intakes."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "intake.intake.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        }
+      ],
+      "post": {
+        "description": "Creates a new intake within the project.",
+        "operationId": "create-intake",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/create-intakePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/intakeResponse"
+                }
+              }
+            },
+            "description": "Intake was created successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "intake.intake.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/intakes/{intakeId}": {
+      "delete": {
+        "description": "Deletes the given intake.",
+        "operationId": "delete-intake",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/force"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Intake was deleted successfully."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "intake.intake.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns the details for the given intake.",
+        "operationId": "get-intake",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/intakeResponse"
+                }
+              }
+            },
+            "description": "Intake details successfully retrieved."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "intake.intake.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/intakeId"
+        }
+      ],
+      "put": {
+        "description": "Updates the given intake.",
+        "operationId": "update-intake",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/update-intakePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/intakeResponse"
+                }
+              }
+            },
+            "description": "Intake was updated successfully."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "intake.intake.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/intakes/{intakeId}/users": {
+      "get": {
+        "description": "Returns a list of all intake users within the project and intake.",
+        "operationId": "list-intake-users",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pageToken"
+          },
+          {
+            "$ref": "#/components/parameters/pageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/listIntakeUsersResponse"
+                }
+              }
+            },
+            "description": "Successful response with all intakes users."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "intake.intake.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/intakeId"
+        }
+      ],
+      "post": {
+        "description": "Creates a new user for this intake.",
+        "operationId": "create-intake-user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/create-intake-userPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/intakeUserResponse"
+                }
+              }
+            },
+            "description": "Intake user was created successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "intake.intake.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/intakes/{intakeId}/users/{intakeUserId}": {
+      "delete": {
+        "description": "Deletes the given intake user.",
+        "operationId": "delete-intake-user",
+        "responses": {
+          "204": {
+            "description": "Intake user was deleted successfully."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "intake.intake.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns the details for the given user.",
+        "operationId": "get-intake-user",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/intakeUserResponse"
+                }
+              }
+            },
+            "description": "Intake user details successfully retrieved."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "intake.intake.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/intakeId"
+        },
+        {
+          "$ref": "#/components/parameters/intakeUserId"
+        }
+      ],
+      "put": {
+        "description": "Updates the given intake user.",
+        "operationId": "update-intake-user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/update-intake-userPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Intake user was updated successfully."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "intake.intake.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://intake.api.{region}stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "eu01.",
+          "enum": [
+            "eu01."
+          ]
+        }
+      }
+    }
+  ]
+}

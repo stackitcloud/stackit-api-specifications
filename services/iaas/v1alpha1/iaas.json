@@ -1270,6 +1270,14 @@
           "addressFamily": {
             "$ref": "#/components/schemas/CreateNetworkAddressFamily"
           },
+          "dhcp": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DHCP"
+              }
+            ],
+            "default": true
+          },
           "labels": {
             "$ref": "#/components/schemas/Labels"
           },
@@ -1878,6 +1886,11 @@
         "example": "2017-07-21T17:32:28Z",
         "format": "date-time",
         "type": "string"
+      },
+      "DHCP": {
+        "description": "Enable or disable DHCP for a network.",
+        "example": true,
+        "type": "boolean"
       },
       "DeleteOnTermination": {
         "description": "Delete the volume during the termination of the server. Defaults to false.",
@@ -2657,6 +2670,9 @@
             ],
             "readOnly": true
           },
+          "dhcp": {
+            "$ref": "#/components/schemas/DHCP"
+          },
           "gateway": {
             "$ref": "#/components/schemas/NetworkGateway"
           },
@@ -2910,6 +2926,9 @@
         "properties": {
           "addressFamily": {
             "$ref": "#/components/schemas/UpdateNetworkAddressFamily"
+          },
+          "dhcp": {
+            "$ref": "#/components/schemas/DHCP"
           },
           "labels": {
             "$ref": "#/components/schemas/Labels"

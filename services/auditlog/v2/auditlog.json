@@ -111,6 +111,24 @@
         },
         "description": "Resource was not found"
       },
+      "TooManyRequests": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "Too Many Requests Example": {
+                "value": {
+                  "message": "Too many requests",
+                  "status": "429"
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/gatewayError"
+            }
+          }
+        },
+        "description": "Too many requests"
+      },
       "Unauthorized": {
         "content": {
           "application/json": {
@@ -310,7 +328,7 @@
       "error": {
         "properties": {
           "message": {
-            "description": "Message describing the error that occured",
+            "description": "Message describing the error that occurred",
             "type": "string"
           },
           "path": {
@@ -328,6 +346,20 @@
           }
         },
         "title": "error",
+        "type": "object"
+      },
+      "gatewayError": {
+        "properties": {
+          "message": {
+            "description": "Message describing the error that occurred",
+            "type": "string"
+          },
+          "status": {
+            "description": "Status Code in which the call resulted",
+            "type": "string"
+          }
+        },
+        "title": "gatewayError",
         "type": "object"
       },
       "initiator": {
@@ -405,7 +437,7 @@
       "name": "STACKIT Core Platform",
       "url": "https://support.stackit.cloud/servicedesk"
     },
-    "description": "API Endpoints to retrieve recorded actions and resulting changes in the system.\n\n### Documentation\nThe user documentation with explanations how to use the api can be found \n[here](https://docs.stackit.cloud/stackit/en/retrieve-audit-log-per-api-request-134415907.html).\n\n### Audit Logging\nChanges on organizations, folders and projects and respective cloud resources are logged and collected in the audit \nlog.\n\n### API Constraints\nThe audit log API allows to download messages from the last 90 days. The maximum duration that can be queried at \nonce is 24 hours. Requests are rate limited - the current maximum is 1 request per second.",
+    "description": "API Endpoints to retrieve recorded actions and resulting changes in the system.\n\n### Documentation\nThe user documentation with explanations how to use the api can be found \n[here](https://docs.stackit.cloud/stackit/en/retrieve-audit-log-per-api-request-134415907.html).\n\n### Audit Logging\nChanges on organizations, folders and projects and respective cloud resources are logged and collected in the audit \nlog.\n\n### API Constraints\nThe audit log API allows to download messages from the last 90 days. The maximum duration that can be queried at \nonce is 24 hours. Requests are rate limited - the current maximum is 60 requests per minute.",
     "termsOfService": "https://www.stackit.de/en/general-terms-and-conditions/terms-of-use/",
     "title": "Audit Log API",
     "version": "2.0"
@@ -442,6 +474,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
           }
         },
         "summary": "Folder - Download audit log entries",
@@ -497,6 +532,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
           }
         },
         "summary": "Organization - Download audit log entries",
@@ -552,6 +590,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
           }
         },
         "summary": "Project - Download audit log entries",

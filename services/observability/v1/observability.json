@@ -2142,6 +2142,37 @@
         ],
         "type": "object"
       },
+      "LogsConfig": {
+        "properties": {
+          "retention": {
+            "maxLength": 10,
+            "minLength": 2,
+            "title": "Retention",
+            "type": "string"
+          }
+        },
+        "required": [
+          "retention"
+        ],
+        "type": "object"
+      },
+      "LogsConfigResponse": {
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/LogsConfig"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "config",
+          "message"
+        ],
+        "type": "object"
+      },
       "Message": {
         "properties": {
           "message": {
@@ -2919,6 +2950,37 @@
             "type": "boolean"
           }
         },
+        "type": "object"
+      },
+      "TraceConfig": {
+        "properties": {
+          "retention": {
+            "maxLength": 10,
+            "minLength": 2,
+            "title": "Retention",
+            "type": "string"
+          }
+        },
+        "required": [
+          "retention"
+        ],
+        "type": "object"
+      },
+      "TracesConfigResponse": {
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/TraceConfig"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "config",
+          "message"
+        ],
         "type": "object"
       },
       "UpdateACLPayload": {
@@ -3824,6 +3886,20 @@
         ],
         "type": "object"
       },
+      "UpdateLogsConfigsPayload": {
+        "properties": {
+          "retention": {
+            "description": "How long to keep the logs\n`Additional Validators:`\n* Should be a valid time string\n* Should not be longer than 30 days",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          }
+        },
+        "required": [
+          "retention"
+        ],
+        "type": "object"
+      },
       "UpdateMetricsStorageRetentionPayload": {
         "properties": {
           "metricsRetentionTime1h": {
@@ -4027,6 +4103,20 @@
           "scrapeInterval",
           "scrapeTimeout",
           "staticConfigs"
+        ],
+        "type": "object"
+      },
+      "UpdateTracesConfigsPayload": {
+        "properties": {
+          "retention": {
+            "description": "How long to keep the traces\n`Additional Validators:`\n* Should be a valid time string\n* Should not be bigger than 30 days",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          }
+        },
+        "required": [
+          "retention"
         ],
         "type": "object"
       },
@@ -8690,6 +8780,150 @@
         }
       }
     },
+    "/v1/projects/{projectId}/instances/{instanceId}/logs-configs": {
+      "get": {
+        "description": "Get logs configuration.",
+        "operationId": "GetLogsConfigs",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "config": {
+                    "retention": "14d"
+                  },
+                  "message": "Successfully got logs config"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/LogsConfigResponse"
+                }
+              }
+            },
+            "description": "Get logs config."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You do not have permission to perform this action."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "put": {
+        "description": "Update logs config.",
+        "operationId": "UpdateLogsConfigs",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLogsConfigsPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully updated logs configuration"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Update logs config"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Something went wrong"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You do not have permission to perform this action."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
     "/v1/projects/{projectId}/instances/{instanceId}/metrics-storage-retentions": {
       "get": {
         "description": "Get metric storage retention time.",
@@ -9290,6 +9524,150 @@
               }
             },
             "description": "Scrape target not found."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/traces-configs": {
+      "get": {
+        "description": "Get traces config.",
+        "operationId": "GetTracesConfigs",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "config": {
+                    "retention": "14d"
+                  },
+                  "message": "Successfully got traces config"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/TracesConfigResponse"
+                }
+              }
+            },
+            "description": "Get traces config."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You do not have permission to perform this action."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "put": {
+        "description": "Update traces config.",
+        "operationId": "UpdateTracesConfigs",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTracesConfigsPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully updated traces configuration"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Update traces config."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Something went wrong"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You do not have permission to perform this action."
           }
         },
         "x-stackit-authorization": {

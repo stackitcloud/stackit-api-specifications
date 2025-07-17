@@ -135,6 +135,26 @@
         ],
         "type": "string"
       },
+      "clientConfig": {
+        "description": "Configuration properties for supported clients.",
+        "properties": {
+          "java": {
+            "description": "Configuration for Java Kafka clients.",
+            "example": "bootstrap.servers=5dce5c86-875b-41ad-b9cb-78972df3f54e.intake.eu01.test.onstackit.cloud:9094\nsecurity.protocol=SASL_SSL\nsasl.mechanism=SCRAM-SHA-512\nsasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required \\\n  username=\"intake-user-e9100a2a-932f-4c47-bb27-292231a20a2f\" \\\n  password=\"\u003cplain-text-intake-user-password\u003e\";\n",
+            "type": "string"
+          },
+          "librdkafka": {
+            "description": "Configuration for Kafka clients using librdkafka",
+            "example": "bootstrap.servers=5dce5c86-875b-41ad-b9cb-78972df3f54e.intake.eu01.test.onstackit.cloud:9094\nsecurity.protocol=SASL_SSL\nsasl.mechanism=SCRAM-SHA-512\nsasl.username=intake-user-e9100a2a-932f-4c47-bb27-292231a20a2f\nsasl.password=\u003cplain-text-intake-user-password\u003e\n",
+            "type": "string"
+          }
+        },
+        "required": [
+          "java",
+          "librdkafka"
+        ],
+        "type": "object"
+      },
       "create-intake-runnerPayload": {
         "properties": {
           "description": {
@@ -147,6 +167,14 @@
             "maxLength": 32,
             "minLength": 1,
             "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Labels are a set of key-value pairs assigned to resources.",
+            "nullable": true,
+            "type": "object"
           },
           "maxMessageSizeKiB": {
             "description": "The maximum size of a message in kibibytes (1 KiB = 1024 bytes).",
@@ -175,6 +203,14 @@
             "maxLength": 32,
             "minLength": 1,
             "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Labels are key-value pairs associated with the resource.",
+            "nullable": true,
+            "type": "object"
           },
           "password": {
             "description": "A password chosen by the user.",
@@ -210,6 +246,14 @@
             "description": "The unique id of the intake runner this intake should run on.",
             "format": "uuid",
             "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Labels are a set of key-value pairs assigned to resources.",
+            "nullable": true,
+            "type": "object"
           }
         },
         "required": [
@@ -261,6 +305,15 @@
             "description": "The namespace to which data shall be written. It will be automatically created, if it does not exist.",
             "maxLength": 1024,
             "type": "string"
+          },
+          "partitionBy": {
+            "items": {
+              "description": "Optional list of Iceberg partition field names to use when creating a table. This can only be set on creation of an intake and cannot be changed later.",
+              "maxLength": 1024,
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
           },
           "tableName": {
             "description": "The table name is a short name chosen by the user to identify the table in Iceberg.",
@@ -354,6 +407,14 @@
             "format": "uuid",
             "type": "string"
           },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Labels are a set of key-value pairs assigned to resources.",
+            "nullable": true,
+            "type": "object"
+          },
           "state": {
             "description": "The current state of the resource.",
             "enum": [
@@ -415,6 +476,14 @@
             "format": "uuid",
             "type": "string"
           },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Labels are a set of key-value pairs assigned to resources.",
+            "nullable": true,
+            "type": "object"
+          },
           "maxMessageSizeKiB": {
             "description": "The maximum size of a message in kibibytes (1 KiB = 1024 bytes).",
             "type": "integer"
@@ -450,6 +519,9 @@
       },
       "intakeUserResponse": {
         "properties": {
+          "clientConfig": {
+            "$ref": "#/components/schemas/clientConfig"
+          },
           "create_time": {
             "description": "The point in time the resource was created.",
             "format": "date-time",
@@ -470,6 +542,14 @@
             "description": "A auto generated unique id which identifies the resource.",
             "format": "uuid",
             "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Labels are a set of key-value pairs assigned to resources.",
+            "nullable": true,
+            "type": "object"
           },
           "state": {
             "description": "The current state of the resource.",
@@ -562,6 +642,14 @@
             "minLength": 1,
             "type": "string"
           },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Labels are key-value pairs associated with the resource. To update labels:\n  - Provide a new set of key-value pairs to replace the existing labels.\n  - Send empty object `{}` to remove all labels.\n  - Omit this field to leave the labels unchanged.\n",
+            "nullable": true,
+            "type": "object"
+          },
           "maxMessageSizeKiB": {
             "description": "The maximum size of a message in kibibytes (1 KiB = 1024 bytes).",
             "type": "integer"
@@ -588,6 +676,14 @@
             "maxLength": 32,
             "minLength": 1,
             "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Labels are key-value pairs associated with the resource. To update labels:\n  - Provide a new set of key-value pairs to replace the existing labels.\n  - Send empty object `{}` to remove all labels.\n  - Omit this field to leave the labels unchanged.\n",
+            "nullable": true,
+            "type": "object"
           },
           "password": {
             "description": "A password chosen by the user.",
@@ -619,6 +715,14 @@
             "description": "The unique id of the intake runner this intake should run on.",
             "format": "uuid",
             "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Labels are key-value pairs associated with the resource. To update labels:\n  - Provide a new set of key-value pairs to replace the existing labels.\n  - Send empty object `{}` to remove all labels.\n  - Omit this field to leave the labels unchanged.\n",
+            "nullable": true,
+            "type": "object"
           }
         },
         "required": [
@@ -639,7 +743,7 @@
   "info": {
     "description": "This API provides endpoints for managing Intakes.\n",
     "title": "STACKIT Intake API",
-    "version": "1beta.1.0"
+    "version": "1beta.2.0"
   },
   "openapi": "3.0.3",
   "paths": {

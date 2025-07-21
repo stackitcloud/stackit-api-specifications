@@ -2917,6 +2917,86 @@
         }
       }
     },
+    "/v1/projects/{projectId}/clusters/{clusterName}/wakeup": {
+      "post": {
+        "description": "Trigger immediate wake up of the cluster. If the cluster is already in running state, the method does nothing.",
+        "operationId": "TriggerWakeup",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "clusterName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Accepted, execution happens asynchronously. Use GetCluster endpoint to read the status of the cluster via status.conditions."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Cluster not found."
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RuntimeError"
+                }
+              }
+            },
+            "description": "An unexpected error response."
+          }
+        },
+        "summary": "Trigger cluster wakeup",
+        "x-stackit-authorization": {
+          "actions": [
+            "ske.cluster.wakeup"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.ske"
+            ]
+          }
+        }
+      }
+    },
     "/v1/provider-options": {
       "get": {
         "description": "Returns a list of supported Kubernetes versions and a list of supported machine types for the cluster nodes.",

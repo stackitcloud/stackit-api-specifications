@@ -1,0 +1,3662 @@
+{
+  "components": {
+    "schemas": {
+      "CreateOrgRolePayload": {
+        "properties": {
+          "type": {
+            "enum": [
+              "organization_user",
+              "organization_auditor",
+              "organization_manager",
+              "organization_billing_manager"
+            ],
+            "title": "Organization Role to assign",
+            "type": "string"
+          },
+          "userGuid": {
+            "$ref": "#/components/schemas/UserId"
+          },
+          "userName": {
+            "$ref": "#/components/schemas/UserName"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "CreateOrganizationPayload": {
+        "properties": {
+          "name": {
+            "example": "my-org",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name of the organization",
+            "type": "string"
+          },
+          "platformId": {
+            "$ref": "#/components/schemas/PlatformId"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "CreateSpacePayload": {
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/SpaceName"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "example": {
+          "code": 400,
+          "message": "Some information about what caused the Error"
+        },
+        "properties": {
+          "code": {
+            "example": "SCF_UNSPECIFIED",
+            "type": "string"
+          },
+          "message": {
+            "example": "space not found",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object"
+      },
+      "OrgId": {
+        "example": "00000000-0000-0000-0000-000000000000",
+        "format": "uuid",
+        "title": "The unique id of the organization",
+        "type": "string"
+      },
+      "OrgManager": {
+        "properties": {
+          "createdAt": {
+            "example": "2024-10-28T07:07:54.52Z",
+            "format": "date-time",
+            "title": "The time with zone when the organization manager was created.",
+            "type": "string"
+          },
+          "guid": {
+            "$ref": "#/components/schemas/UserId"
+          },
+          "platformId": {
+            "$ref": "#/components/schemas/PlatformId"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectId"
+          },
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          },
+          "updatedAt": {
+            "example": "2024-10-28T07:07:54.53Z",
+            "format": "date-time",
+            "title": "The time with zone when the organization manager was last updated.",
+            "type": "string"
+          },
+          "username": {
+            "example": "user0",
+            "title": "The name registered in UAA.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "guid",
+          "username",
+          "projectId",
+          "region",
+          "platformId",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object"
+      },
+      "OrgManagerCreateResponse": {
+        "properties": {
+          "createdAt": {
+            "example": "2024-10-28T07:07:54.52Z",
+            "format": "date-time",
+            "title": "The time with zone when the organization manager was created.",
+            "type": "string"
+          },
+          "guid": {
+            "$ref": "#/components/schemas/UserId"
+          },
+          "orgId": {
+            "$ref": "#/components/schemas/OrgId"
+          },
+          "password": {
+            "example": "password0",
+            "title": "The password for the returned username.",
+            "type": "string"
+          },
+          "platformId": {
+            "$ref": "#/components/schemas/PlatformId"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectId"
+          },
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          },
+          "updatedAt": {
+            "example": "2024-10-28T07:07:54.53Z",
+            "format": "date-time",
+            "title": "The time with zone when the organization manager was last updated.",
+            "type": "string"
+          },
+          "username": {
+            "example": "user0",
+            "title": "The name registered in UAA.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "guid",
+          "username",
+          "password",
+          "orgId",
+          "projectId",
+          "region",
+          "platformId",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object"
+      },
+      "OrgManagerDeleteResponse": {
+        "properties": {
+          "message": {
+            "example": "deleted",
+            "maxLength": 1024,
+            "pattern": "^[a-zA-Z0-9/_]+$",
+            "title": "human readable message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
+      "OrgRoleCreateResponse": {
+        "properties": {
+          "guid": {
+            "$ref": "#/components/schemas/RoleId"
+          },
+          "orgId": {
+            "$ref": "#/components/schemas/OrgId"
+          },
+          "platformId": {
+            "$ref": "#/components/schemas/PlatformId"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectId"
+          },
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          }
+        },
+        "required": [
+          "guid",
+          "orgId",
+          "projectId",
+          "region",
+          "platformId"
+        ],
+        "type": "object"
+      },
+      "OrgStatus": {
+        "description": "The organization's status. The status value starts with `deleting` when a deleting request is in progress. The status value starts with `delete_failed` when the deletion failed. The status value can be different from `deleting` and `delete_failed`. Additional details can be provided in the future. ",
+        "example": "deleting",
+        "title": "The organization's status",
+        "type": "string"
+      },
+      "Organization": {
+        "properties": {
+          "createdAt": {
+            "example": "2024-10-28T07:07:54.52Z",
+            "format": "date-time",
+            "title": "The time with zone when the space was created.",
+            "type": "string"
+          },
+          "guid": {
+            "$ref": "#/components/schemas/OrgId"
+          },
+          "name": {
+            "example": "my-org",
+            "title": "Name of the organization",
+            "type": "string"
+          },
+          "platformId": {
+            "$ref": "#/components/schemas/PlatformId"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectId"
+          },
+          "quotaId": {
+            "$ref": "#/components/schemas/QuotaId"
+          },
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          },
+          "status": {
+            "$ref": "#/components/schemas/OrgStatus"
+          },
+          "suspended": {
+            "example": false,
+            "title": "Indicates whether the organization is suspended.",
+            "type": "boolean"
+          },
+          "updatedAt": {
+            "example": "2024-10-28T07:07:54.53Z",
+            "format": "date-time",
+            "title": "The time with zone when the space was last updated.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "guid",
+          "name",
+          "status",
+          "projectId",
+          "region",
+          "platformId",
+          "createdAt",
+          "updatedAt",
+          "quotaId",
+          "suspended"
+        ],
+        "type": "object"
+      },
+      "OrganizationCreateResponse": {
+        "properties": {
+          "guid": {
+            "$ref": "#/components/schemas/OrgId"
+          },
+          "platformId": {
+            "$ref": "#/components/schemas/PlatformId"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectId"
+          },
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          }
+        },
+        "required": [
+          "guid",
+          "projectId",
+          "region",
+          "platformId"
+        ],
+        "type": "object"
+      },
+      "OrganizationDeleteResponse": {
+        "properties": {
+          "guid": {
+            "$ref": "#/components/schemas/OrgId"
+          },
+          "platformId": {
+            "$ref": "#/components/schemas/PlatformId"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectId"
+          },
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          }
+        },
+        "required": [
+          "guid",
+          "projectId",
+          "region",
+          "platformId"
+        ],
+        "type": "object"
+      },
+      "OrganizationName": {
+        "description": "Name of the organization",
+        "example": "organization0",
+        "maxLength": 255,
+        "minLength": 1,
+        "type": "string"
+      },
+      "OrganizationQuota": {
+        "properties": {
+          "orgId": {
+            "$ref": "#/components/schemas/OrgId"
+          },
+          "platformId": {
+            "$ref": "#/components/schemas/PlatformId"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectId"
+          },
+          "quotaId": {
+            "$ref": "#/components/schemas/QuotaId"
+          },
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          }
+        },
+        "required": [
+          "quotaId",
+          "orgId",
+          "projectId",
+          "region",
+          "platformId"
+        ],
+        "type": "object"
+      },
+      "OrganizationUsageSummary": {
+        "properties": {
+          "orgId": {
+            "$ref": "#/components/schemas/OrgId"
+          },
+          "platformId": {
+            "$ref": "#/components/schemas/PlatformId"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectId"
+          },
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          },
+          "usageSummary": {
+            "$ref": "#/components/schemas/UsageSummary"
+          }
+        },
+        "required": [
+          "orgId",
+          "projectId",
+          "region",
+          "platformId",
+          "usageSummary"
+        ],
+        "type": "object"
+      },
+      "OrganizationsList": {
+        "properties": {
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "resources": {
+            "items": {
+              "$ref": "#/components/schemas/OrganizationsListItem"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "resources",
+          "pagination"
+        ],
+        "type": "object"
+      },
+      "OrganizationsListItem": {
+        "properties": {
+          "createdAt": {
+            "example": "2024-10-28T07:07:54.52Z",
+            "format": "date-time",
+            "title": "The time with zone when the space was created.",
+            "type": "string"
+          },
+          "guid": {
+            "$ref": "#/components/schemas/OrgId"
+          },
+          "name": {
+            "example": "my-org",
+            "title": "Name of the organization",
+            "type": "string"
+          },
+          "platformId": {
+            "$ref": "#/components/schemas/PlatformId"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectId"
+          },
+          "quotaId": {
+            "$ref": "#/components/schemas/QuotaId"
+          },
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          },
+          "status": {
+            "$ref": "#/components/schemas/OrgStatus"
+          },
+          "suspended": {
+            "example": false,
+            "title": "Indicates whether the organization is suspended.",
+            "type": "boolean"
+          },
+          "updatedAt": {
+            "example": "2024-10-28T07:07:54.53Z",
+            "format": "date-time",
+            "title": "The time with zone when the space was last updated.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "guid",
+          "status",
+          "projectId",
+          "region",
+          "platformId"
+        ],
+        "type": "object"
+      },
+      "Pagination": {
+        "properties": {
+          "totalPages": {
+            "example": 4,
+            "format": "int64",
+            "minimum": 0,
+            "title": "Total number of pages",
+            "type": "integer"
+          },
+          "totalResults": {
+            "example": 400,
+            "format": "int64",
+            "minimum": 0,
+            "title": "Total number of resources for all pages",
+            "type": "integer"
+          }
+        },
+        "title": "pagination details",
+        "type": "object"
+      },
+      "PlatformId": {
+        "example": "00000000-0000-0000-0000-000000000000",
+        "format": "uuid",
+        "title": "The unique id of the platform",
+        "type": "string"
+      },
+      "PlatformList": {
+        "properties": {
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "resources": {
+            "items": {
+              "$ref": "#/components/schemas/Platforms"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "resources",
+          "pagination"
+        ],
+        "type": "object"
+      },
+      "Platforms": {
+        "properties": {
+          "apiUrl": {
+            "example": "https://api.system.01.cf.eu01.stackit.cloud",
+            "format": "uri",
+            "title": "CF API Url of the platform.",
+            "type": "string"
+          },
+          "consoleUrl": {
+            "example": "https://console.apps.01.cf.eu01.stackit.cloud/",
+            "format": "uri",
+            "title": "Stratos URL of the platform.",
+            "type": "string"
+          },
+          "displayName": {
+            "example": "SIT Dedicated",
+            "title": "Type of the platform can be displayed by STACKIT Portal.",
+            "type": "string"
+          },
+          "guid": {
+            "$ref": "#/components/schemas/PlatformId"
+          },
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          },
+          "systemId": {
+            "example": "004.scf.eu01",
+            "title": "The ID of the platform System",
+            "type": "string"
+          }
+        },
+        "required": [
+          "guid",
+          "region",
+          "systemId",
+          "displayName",
+          "apiUrl"
+        ],
+        "type": "object"
+      },
+      "ProjectId": {
+        "example": "00000000-0000-0000-0000-000000000000",
+        "format": "uuid",
+        "title": "The unique id of the STACKIT Project",
+        "type": "string"
+      },
+      "Quota": {
+        "properties": {
+          "apps": {
+            "$ref": "#/components/schemas/QuotaApps"
+          },
+          "createdAt": {
+            "example": "2024-10-28T07:07:54.52Z",
+            "format": "date-time",
+            "title": "The time with zone when the organization quota was created.",
+            "type": "string"
+          },
+          "domains": {
+            "$ref": "#/components/schemas/QuotaDomains"
+          },
+          "guid": {
+            "$ref": "#/components/schemas/QuotaId"
+          },
+          "name": {
+            "example": "Default Quota",
+            "title": "Name of the Quota.",
+            "type": "string"
+          },
+          "orgId": {
+            "$ref": "#/components/schemas/OrgId"
+          },
+          "platformId": {
+            "$ref": "#/components/schemas/PlatformId"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectId"
+          },
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          },
+          "routes": {
+            "$ref": "#/components/schemas/QuotaRoutes"
+          },
+          "services": {
+            "$ref": "#/components/schemas/QuotaServices"
+          },
+          "updatedAt": {
+            "example": "2024-10-28T07:07:54.53Z",
+            "format": "date-time",
+            "title": "The time with zone when the organization quota was last updated.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "guid",
+          "name",
+          "projectId",
+          "region",
+          "platformId",
+          "createdAt",
+          "updatedAt",
+          "apps",
+          "services",
+          "routes",
+          "domains"
+        ],
+        "type": "object"
+      },
+      "QuotaApps": {
+        "properties": {
+          "logRateLimitInBytesPerSecond": {
+            "description": "The value `null` means `unlimited`.\n",
+            "example": 1024,
+            "format": "int64",
+            "minimum": 0,
+            "nullable": true,
+            "title": "Total log rate limit allowed for all the started processes and running tasks in an organization.",
+            "type": "integer"
+          },
+          "perAppTasks": {
+            "description": "The value `null` means `unlimited`.\n",
+            "example": 15,
+            "format": "int64",
+            "minimum": 0,
+            "nullable": true,
+            "title": "Maximum number of running tasks in an organization.",
+            "type": "integer"
+          },
+          "perProcessMemoryInMb": {
+            "description": "The value `null` means `unlimited`.\n",
+            "example": 512,
+            "format": "int64",
+            "minimum": 0,
+            "nullable": true,
+            "title": "Maximum memory for a single process or task.",
+            "type": "integer"
+          },
+          "totalInstances": {
+            "description": "The value `null` means `unlimited`.\n",
+            "example": 10,
+            "format": "int64",
+            "minimum": 0,
+            "nullable": true,
+            "title": "Total instances of all the started processes allowed in an organization.",
+            "type": "integer"
+          },
+          "totalMemoryInMb": {
+            "description": "The value `null` means `unlimited`.\n",
+            "example": 1024,
+            "format": "int64",
+            "minimum": 0,
+            "nullable": true,
+            "title": "Total memory allowed for all the started processes and running tasks in an organization.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "perProcessMemoryInMb",
+          "totalMemoryInMb",
+          "totalInstances",
+          "logRateLimitInBytesPerSecond",
+          "perAppTasks"
+        ],
+        "title": "Quotas that affect applications and application sub-resources.",
+        "type": "object"
+      },
+      "QuotaDomains": {
+        "properties": {
+          "totalDomains": {
+            "description": "The value `null` means `unlimited`.\n",
+            "example": 10,
+            "format": "int64",
+            "minimum": 0,
+            "nullable": true,
+            "title": "Total number of domains that can be scoped to an organization.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "totalDomains"
+        ],
+        "title": "Quotas that affect domains.",
+        "type": "object"
+      },
+      "QuotaId": {
+        "example": "00000000-0000-0000-0000-000000000000",
+        "format": "uuid",
+        "title": "The unique id of the organization quota",
+        "type": "string"
+      },
+      "QuotaRoutes": {
+        "properties": {
+          "totalReservedPorts": {
+            "description": "The value `null` means `unlimited`.\n",
+            "example": 20,
+            "format": "int64",
+            "minimum": 0,
+            "nullable": true,
+            "title": "Total number of ports that are reservable by routes in an organization.",
+            "type": "integer"
+          },
+          "totalRoutes": {
+            "description": "The value `null` means `unlimited`.\n",
+            "example": 100,
+            "format": "int64",
+            "minimum": 0,
+            "nullable": true,
+            "title": "Total number of routes allowed in an organization.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "totalRoutes",
+          "totalReservedPorts"
+        ],
+        "title": "Quotas that affect routes.",
+        "type": "object"
+      },
+      "QuotaServices": {
+        "properties": {
+          "paidServicesAllowed": {
+            "example": false,
+            "title": "Specifies whether instances of paid service plans can be created.",
+            "type": "boolean"
+          },
+          "totalServiceInstances": {
+            "description": "The value `null` means `unlimited`.\n",
+            "example": 50,
+            "format": "int64",
+            "minimum": 0,
+            "nullable": true,
+            "title": "Total number of service instances allowed in an organization.",
+            "type": "integer"
+          },
+          "totalServiceKeys": {
+            "description": "The value `null` means `unlimited`.\n",
+            "example": 15,
+            "format": "int64",
+            "minimum": 0,
+            "nullable": true,
+            "title": "Total number of service keys allowed in an organization.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "paidServicesAllowed",
+          "totalServiceInstances",
+          "totalServiceKeys"
+        ],
+        "title": "Quotas that affect services.",
+        "type": "object"
+      },
+      "Region": {
+        "example": "eu01",
+        "title": "The region in which the resource is located",
+        "type": "string"
+      },
+      "RoleId": {
+        "example": "00000000-0000-0000-0000-000000000000",
+        "format": "uuid",
+        "title": "The unique id of the role",
+        "type": "string"
+      },
+      "Space": {
+        "properties": {
+          "createdAt": {
+            "example": "2024-10-28T07:07:54.52Z",
+            "format": "date-time",
+            "title": "The time with zone when the space was created.",
+            "type": "string"
+          },
+          "guid": {
+            "$ref": "#/components/schemas/SpaceId"
+          },
+          "name": {
+            "example": "myspace",
+            "title": "Name of the space",
+            "type": "string"
+          },
+          "orgId": {
+            "$ref": "#/components/schemas/OrgId"
+          },
+          "platformId": {
+            "$ref": "#/components/schemas/PlatformId"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectId"
+          },
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          },
+          "updatedAt": {
+            "example": "2024-10-28T07:07:54.53Z",
+            "format": "date-time",
+            "title": "The time with zone when the space was last updated.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "guid",
+          "orgId",
+          "projectId",
+          "region",
+          "platformId",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object"
+      },
+      "SpaceDeleteResponse": {
+        "properties": {
+          "message": {
+            "example": "deleting",
+            "maxLength": 1024,
+            "pattern": "^[a-zA-Z0-9/_]+$",
+            "title": "human readanble message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
+      "SpaceId": {
+        "example": "00000000-0000-0000-0000-000000000000",
+        "format": "uuid",
+        "title": "The unique id of the space",
+        "type": "string"
+      },
+      "SpaceName": {
+        "description": "Name of the space",
+        "example": "space0",
+        "maxLength": 255,
+        "minLength": 1,
+        "type": "string"
+      },
+      "SpaceRoleCreateResponse": {
+        "properties": {
+          "guid": {
+            "$ref": "#/components/schemas/RoleId"
+          },
+          "orgId": {
+            "$ref": "#/components/schemas/OrgId"
+          },
+          "platformId": {
+            "$ref": "#/components/schemas/PlatformId"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectId"
+          },
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          },
+          "spaceId": {
+            "$ref": "#/components/schemas/SpaceId"
+          }
+        },
+        "required": [
+          "guid",
+          "orgId",
+          "spaceId",
+          "projectId",
+          "region",
+          "platformId"
+        ],
+        "type": "object"
+      },
+      "SpacesList": {
+        "properties": {
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "resources": {
+            "items": {
+              "$ref": "#/components/schemas/Space"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "resources",
+          "pagination"
+        ],
+        "type": "object"
+      },
+      "UpdateOrganizationPayload": {
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/OrganizationName"
+          },
+          "suspended": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateSpacePayload": {
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/SpaceName"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "UsageSummary": {
+        "properties": {
+          "domains": {
+            "example": 2,
+            "format": "int64",
+            "minimum": 0,
+            "title": "Number of domains.",
+            "type": "integer"
+          },
+          "memoryInMb": {
+            "example": 512,
+            "format": "int64",
+            "minimum": 0,
+            "title": "Total memory (in megabytes) consumed by all started app instances.",
+            "type": "integer"
+          },
+          "perAppTasks": {
+            "example": 2,
+            "format": "int64",
+            "minimum": 0,
+            "title": "Number of tasks currently running across apps.",
+            "type": "integer"
+          },
+          "reservedPorts": {
+            "example": 5,
+            "format": "int64",
+            "minimum": 0,
+            "title": "Number of TCP ports reserved for apps.",
+            "type": "integer"
+          },
+          "routes": {
+            "example": 2,
+            "format": "int64",
+            "minimum": 0,
+            "title": "Number of routes.",
+            "type": "integer"
+          },
+          "serviceInstances": {
+            "example": 5,
+            "format": "int64",
+            "minimum": 0,
+            "title": "Number of service instances.",
+            "type": "integer"
+          },
+          "serviceKeys": {
+            "example": 5,
+            "format": "int64",
+            "minimum": 0,
+            "title": "Number of service keys.",
+            "type": "integer"
+          },
+          "startedInstances": {
+            "example": 5,
+            "format": "int64",
+            "minimum": 0,
+            "title": "Number of app instances running.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "startedInstances",
+          "memoryInMb",
+          "routes",
+          "serviceInstances",
+          "reservedPorts",
+          "domains",
+          "perAppTasks",
+          "serviceKeys"
+        ],
+        "title": "Usage Summary of an Organization.",
+        "type": "object"
+      },
+      "UserId": {
+        "example": "00000000-0000-0000-0000-000000000000",
+        "format": "uuid",
+        "title": "The unique id of the user",
+        "type": "string"
+      },
+      "UserName": {
+        "example": "example@stackit.cloud",
+        "title": "User name of the user, typically an email address",
+        "type": "string"
+      },
+      "applyOrganizationQuotaPayload": {
+        "properties": {
+          "quotaId": {
+            "$ref": "#/components/schemas/QuotaId"
+          }
+        },
+        "required": [
+          "quotaId"
+        ],
+        "type": "object"
+      },
+      "createSpaceRolePayload": {
+        "properties": {
+          "type": {
+            "enum": [
+              "space_auditor",
+              "space_developer",
+              "space_manager",
+              "space_supporter"
+            ],
+            "title": "Space Role to assign",
+            "type": "string"
+          },
+          "userGuid": {
+            "$ref": "#/components/schemas/UserId"
+          },
+          "userName": {
+            "$ref": "#/components/schemas/UserName"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "contact": {
+      "email": "support@stackit.cloud",
+      "name": "STACKIT Cloud Foundry Support",
+      "url": "https://www.stackit.de/en/product/cloud-foundry/"
+    },
+    "description": "API endpoints for managing STACKIT Cloud Foundry",
+    "termsOfService": "https://www.stackit.de/en/general-terms-and-conditions/",
+    "title": "STACKIT Cloud Foundry API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1/projects/{projectId}/regions/{region}/organizations": {
+      "get": {
+        "description": "Returns a list of organizations for a specific STACKIT project.",
+        "operationId": "ListOrganizations",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Adds the details to the response that can be queried from the Cloud Controller API",
+            "in": "query",
+            "name": "withDetails",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "In case `withDetails` is enabled, the organization list can be sorted by `name`.\n\nIn order to sort by `name`, you have to set the value `name`.\nThe default sort ordering is ascending.\nTo specify descending order for `name` field, you have to append ` desc` suffix; for example `name desc`.\n",
+            "in": "query",
+            "name": "orderBy",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Which page is returned",
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "default": 1,
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Elements to be returned per page",
+            "in": "query",
+            "name": "perPage",
+            "schema": {
+              "default": 100,
+              "format": "int64",
+              "maximum": 5000,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationsList"
+                }
+              }
+            },
+            "description": "List of organizations."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "List organizations",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.org.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Creates an organization without assigning any CF roles or creating a space.",
+        "operationId": "CreateOrganization",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrganizationPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationCreateResponse"
+                }
+              }
+            },
+            "description": "Created organization."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Create an organization",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.org.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.scf"
+            ]
+          }
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/organizations/{organizationId}": {
+      "delete": {
+        "description": "Delete an organization.",
+        "operationId": "DeleteOrganization",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "organizationId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDeleteResponse"
+                }
+              }
+            },
+            "description": "Accepted. Deletion happens asynchronously."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Delete organization",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.org.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns an organization.",
+        "operationId": "GetOrganization",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "organizationId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              }
+            },
+            "description": "Organization."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Get an organization",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.org.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "patch": {
+        "description": "Update organization.",
+        "operationId": "UpdateOrganization",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "organizationId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOrganizationPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              }
+            },
+            "description": "Updated organization."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Update organization",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.org.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/organizations/{organizationId}/organization_manager": {
+      "delete": {
+        "description": "Delete the organization manager.",
+        "operationId": "DeleteOrgManager",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "organizationId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgManagerDeleteResponse"
+                }
+              }
+            },
+            "description": "Deletion happens synchronsouly."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "410": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Gone (this happens even if the org manager never existed)."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Delete organization manager",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.org.manager.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns the organization manager within an organization.",
+        "operationId": "GetOrgManager",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "organizationId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgManager"
+                }
+              }
+            },
+            "description": "The organization manager."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Get organization manager",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.org.manager.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Creates organization manager within an organization.\n\nThe organization manager will be backed by a CF user.\nThere is only one organization manager per organization.\nThe organization manager gets assigned the CF role Org Manager.\n\nThis endpoint does synchronously several non-atomic steps behind the scenes.\nIf any of those steps fail, the 'Delete Organization Manager' needs to be called first to clean up the failed creation attempt and afterwards the creation can be retried.\n\nThe password needs to be stored by the API callee since it cannot be retrieved after creation.\n",
+        "operationId": "CreateOrgManager",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "organizationId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgManagerCreateResponse"
+                }
+              }
+            },
+            "description": "The created organization manager."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Create organization manager",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.org.manager.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/organizations/{organizationId}/quota": {
+      "post": {
+        "description": "Change the organization quota of an organization.",
+        "operationId": "applyOrganizationQuota",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "organizationId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/applyOrganizationQuotaPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationQuota"
+                }
+              }
+            },
+            "description": "Applied organization ID and organization quota ID."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Apply an organization quota",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.org.quota.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/organizations/{organizationId}/quotas": {
+      "get": {
+        "description": "Returns a list of organization quotas.",
+        "operationId": "ListOrganizationQuotas",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "organizationId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Quota"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "List of organization quotas."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "List organization quotas",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.org.quota.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/organizations/{organizationId}/quotas/{quotaId}": {
+      "get": {
+        "description": "Returns an organization quota.",
+        "operationId": "GetOrganizationQuota",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "organizationId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "quotaId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Quota"
+                }
+              }
+            },
+            "description": "Organization quota."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Get an organization quota",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.org.quota.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/organizations/{organizationId}/roles": {
+      "post": {
+        "description": "Assign organization role within an organization. If the role is already assigned, the existing role GUID gets returned.",
+        "operationId": "CreateOrgRole",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "organizationId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrgRolePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgRoleCreateResponse"
+                }
+              }
+            },
+            "description": "The assigned role information."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Assign organization role",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.org.roles.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/organizations/{organizationId}/spaces": {
+      "get": {
+        "description": "Returns a list of spaces for a specific organization.",
+        "operationId": "ListSpaces",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "organizationId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Which page is returned",
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "default": 1,
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Elements to be returned per page",
+            "in": "query",
+            "name": "perPage",
+            "schema": {
+              "default": 100,
+              "format": "int64",
+              "maximum": 5000,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpacesList"
+                }
+              }
+            },
+            "description": "List of spaces."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "List spaces",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.space.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create space.",
+        "operationId": "CreateSpace",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "organizationId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSpacePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Space"
+                }
+              }
+            },
+            "description": "Created space."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Create space",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.space.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/organizations/{organizationId}/spaces/{spaceId}": {
+      "delete": {
+        "description": "Delete space.",
+        "operationId": "DeleteSpace",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "organizationId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "spaceId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpaceDeleteResponse"
+                }
+              }
+            },
+            "description": "Accepted. Deletion happens asynchronously."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Delete space",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.space.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns a space.",
+        "operationId": "GetSpace",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "organizationId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "spaceId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Space"
+                }
+              }
+            },
+            "description": "Space."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Get a space",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.space.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "patch": {
+        "description": "Update space.",
+        "operationId": "UpdateSpace",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "organizationId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "spaceId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSpacePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Space"
+                }
+              }
+            },
+            "description": "Updated space."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Update space",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.space.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/organizations/{organizationId}/spaces/{spaceId}/roles": {
+      "post": {
+        "description": "Assign space role within an space. If the role is already assigned, the existing role GUID gets returned.",
+        "operationId": "createSpaceRole",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "organizationId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "spaceId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createSpaceRolePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpaceRoleCreateResponse"
+                }
+              }
+            },
+            "description": "Space role created."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Assign space role",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.space.roles.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/organizations/{organizationId}/usage_summary": {
+      "get": {
+        "description": "Returns an organization usage summary.",
+        "operationId": "GetOrganizationUsageSummary",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "organizationId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationUsageSummary"
+                }
+              }
+            },
+            "description": "Organization usage summary."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Get an organization usage summary",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.org.usage.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/platforms": {
+      "get": {
+        "description": "List all platforms available for a STACKIT project",
+        "operationId": "ListPlatforms",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Which page is returned",
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "default": 1,
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Elements to be returned per page",
+            "in": "query",
+            "name": "perPage",
+            "schema": {
+              "default": 100,
+              "format": "int64",
+              "maximum": 5000,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlatformList"
+                }
+              }
+            },
+            "description": "List of platforms."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "List all platforms",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.platform.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/platforms/{platformId}": {
+      "get": {
+        "description": "Fetch a single platform",
+        "operationId": "GetPlatform",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "platformId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Platforms"
+                }
+              }
+            },
+            "description": "Get platform."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Get platform",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.platform.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/platforms/{platformId}/quotas": {
+      "get": {
+        "description": "Returns a list of organization quotas on a platform.",
+        "operationId": "ListPlatformQuotas",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "platformId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Quota"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "List of organization quotas."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "List organization quotas on a platform",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.platform.quota.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/platforms/{platformId}/quotas/{quotaId}": {
+      "get": {
+        "description": "Returns an organization quota on a platform.",
+        "operationId": "GetPlatformQuota",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "platformId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "quotaId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Quota"
+                }
+              }
+            },
+            "description": "Organization quota."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication is required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Get organization quota on a platform",
+        "x-stackit-authorization": {
+          "actions": [
+            "scf.platform.quota.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://scf.api.stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "global"
+        }
+      }
+    }
+  ]
+}

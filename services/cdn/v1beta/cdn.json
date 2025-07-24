@@ -38,6 +38,19 @@
             "type": "string",
             "x-go-type": "string"
           },
+          "logSink": {
+            "discriminator": {
+              "mapping": {
+                "loki": "#/components/schemas/LokiLogSink"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LokiLogSink"
+              }
+            ]
+          },
           "monthlyLimitBytes": {
             "description": "Sets the monthly limit of bandwidth in bytes that the pullzone is allowed to use.\n",
             "format": "int64",
@@ -151,6 +164,19 @@
           "intentId": {
             "description": "While optional, it is greatly encouraged to provide an `intentId`. \nThis is used to deduplicate requests.  \nIf multiple POST-Requests with the same `intentId` for a given `projectId` are received, all but the first request are dropped.\n",
             "type": "string"
+          },
+          "logSink": {
+            "discriminator": {
+              "mapping": {
+                "loki": "#/components/schemas/PatchLokiLogSink"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PatchLokiLogSink"
+              }
+            ]
           },
           "monthlyLimitBytes": {
             "description": "Sets the monthly limit of bandwidth in bytes that the pullzone is allowed to use.\n",
@@ -629,8 +655,56 @@
         ],
         "type": "object"
       },
+      "GetCustomDomainCustomCertificate": {
+        "description": "Returned if a custom certificate is used. Response does not contain the certificate or key.",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "version": {
+            "description": "Whenever a new custom certificate is added the version is increased by 1.",
+            "format": "int32",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "type",
+          "version"
+        ],
+        "type": "object"
+      },
+      "GetCustomDomainManagedCertificate": {
+        "description": "This is returned when no custom certificate is used. We provision and manage a Let's Encrypt Certificate for you",
+        "properties": {
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
       "GetCustomDomainResponse": {
         "properties": {
+          "certificate": {
+            "discriminator": {
+              "mapping": {
+                "custom": "#/components/schemas/GetCustomDomainCustomCertificate",
+                "managed": "#/components/schemas/GetCustomDomainManagedCertificate"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/GetCustomDomainManagedCertificate"
+              },
+              {
+                "$ref": "#/components/schemas/GetCustomDomainCustomCertificate"
+              }
+            ]
+          },
           "customDomain": {
             "$ref": "#/components/schemas/CustomDomain"
           },
@@ -643,7 +717,8 @@
         },
         "required": [
           "domain",
-          "customDomain"
+          "customDomain",
+          "certificate"
         ],
         "type": "object"
       },
@@ -751,6 +826,21 @@
         ],
         "type": "object"
       },
+      "LokiLogSink": {
+        "properties": {
+          "pushUrl": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "pushUrl"
+        ],
+        "type": "object"
+      },
       "Optimizer": {
         "description": "Optimizer is paid feature, a real-time on the fly image manipulation and optimization service that automatically optimizes your images for faster image delivery.\n",
         "properties": {
@@ -796,6 +886,31 @@
         ],
         "type": "object"
       },
+      "PatchLokiLogSink": {
+        "properties": {
+          "password": {
+            "type": "string",
+            "x-go-type": "secret.Secret"
+          },
+          "pushUrl": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string",
+            "x-go-type": "secret.Secret"
+          }
+        },
+        "required": [
+          "type",
+          "pushUrl",
+          "username",
+          "password"
+        ],
+        "type": "object"
+      },
       "PurgeCachePayload": {
         "properties": {
           "path": {
@@ -808,8 +923,61 @@
       "PurgeCacheResponse": {
         "type": "object"
       },
+      "PutCustomDomainCustomCertificate": {
+        "description": "Returned if a custom certificate is used. Response does not contain the certificate or key.",
+        "properties": {
+          "certificate": {
+            "description": "base64-encoded certificate",
+            "type": "string"
+          },
+          "key": {
+            "description": "base64-encoded key",
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "certificate",
+          "key"
+        ],
+        "type": "object"
+      },
+      "PutCustomDomainManagedCertificate": {
+        "description": "This is returned when no custom certificate is used. We provision and manage a Let's Encrypt Certificate for you",
+        "properties": {
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
       "PutCustomDomainPayload": {
         "properties": {
+          "certificate": {
+            "description": "Pass a custom certificate to be served by the CDN when calling the custom domain. Will use a managed certificate when omitted",
+            "discriminator": {
+              "mapping": {
+                "custom": "#/components/schemas/PutCustomDomainCustomCertificate",
+                "managed": "#/components/schemas/PutCustomDomainManagedCertificate"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PutCustomDomainManagedCertificate"
+              },
+              {
+                "$ref": "#/components/schemas/PutCustomDomainCustomCertificate"
+              }
+            ],
+            "type": "object"
+          },
           "intentId": {
             "description": "While optional, it is greatly encouraged to provide an `intentId`. \nThis is used to deduplicate requests.  \nIf multiple modifying Requests with the same `intentId` for a given `projectId` are received, all but the first request are dropped.\n",
             "type": "string"
@@ -819,6 +987,25 @@
       },
       "PutCustomDomainResponse": {
         "properties": {
+          "certificate": {
+            "description": "Pass a custom certificate to be served by the CDN when calling the custom domain. Will use a managed certificate when omitted",
+            "discriminator": {
+              "mapping": {
+                "custom": "#/components/schemas/GetCustomDomainCustomCertificate",
+                "managed": "#/components/schemas/GetCustomDomainManagedCertificate"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/GetCustomDomainManagedCertificate"
+              },
+              {
+                "$ref": "#/components/schemas/GetCustomDomainCustomCertificate"
+              }
+            ],
+            "type": "object"
+          },
           "customDomain": {
             "$ref": "#/components/schemas/CustomDomain"
           },

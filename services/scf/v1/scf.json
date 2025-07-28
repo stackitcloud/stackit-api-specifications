@@ -4,14 +4,7 @@
       "CreateOrgRolePayload": {
         "properties": {
           "type": {
-            "enum": [
-              "organization_user",
-              "organization_auditor",
-              "organization_manager",
-              "organization_billing_manager"
-            ],
-            "title": "Organization Role to assign",
-            "type": "string"
+            "$ref": "#/components/schemas/OrgRoleType"
           },
           "userGuid": {
             "$ref": "#/components/schemas/UserId"
@@ -124,7 +117,22 @@
         ],
         "type": "object"
       },
-      "OrgManagerCreateResponse": {
+      "OrgManagerDeleteResponse": {
+        "properties": {
+          "message": {
+            "example": "deleted",
+            "maxLength": 1024,
+            "pattern": "^[a-zA-Z0-9/_]+$",
+            "title": "human readable message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
+      "OrgManagerResponse": {
         "properties": {
           "createdAt": {
             "example": "2024-10-28T07:07:54.52Z",
@@ -177,22 +185,18 @@
         ],
         "type": "object"
       },
-      "OrgManagerDeleteResponse": {
+      "OrgRoleCreateBffRequest": {
         "properties": {
-          "message": {
-            "example": "deleted",
-            "maxLength": 1024,
-            "pattern": "^[a-zA-Z0-9/_]+$",
-            "title": "human readable message",
-            "type": "string"
+          "type": {
+            "$ref": "#/components/schemas/OrgRoleType"
           }
         },
         "required": [
-          "message"
+          "type"
         ],
         "type": "object"
       },
-      "OrgRoleCreateResponse": {
+      "OrgRoleResponse": {
         "properties": {
           "guid": {
             "$ref": "#/components/schemas/RoleId"
@@ -208,6 +212,9 @@
           },
           "region": {
             "$ref": "#/components/schemas/Region"
+          },
+          "type": {
+            "$ref": "#/components/schemas/OrgRoleType"
           }
         },
         "required": [
@@ -215,9 +222,20 @@
           "orgId",
           "projectId",
           "region",
-          "platformId"
+          "platformId",
+          "type"
         ],
         "type": "object"
+      },
+      "OrgRoleType": {
+        "enum": [
+          "organization_user",
+          "organization_auditor",
+          "organization_manager",
+          "organization_billing_manager"
+        ],
+        "title": "Organization Role to assign",
+        "type": "string"
       },
       "OrgStatus": {
         "description": "The organization's status. The status value starts with `deleting` when a deleting request is in progress. The status value starts with `delete_failed` when the deletion failed. The status value can be different from `deleting` and `delete_failed`. Additional details can be provided in the future. ",
@@ -841,6 +859,31 @@
         "minLength": 1,
         "type": "string"
       },
+      "SpaceRoleCreateBffRequest": {
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/SpaceRoleType"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "SpaceRoleCreateBffResponse": {
+        "properties": {
+          "orgRole": {
+            "$ref": "#/components/schemas/OrgRoleResponse"
+          },
+          "spaceRole": {
+            "$ref": "#/components/schemas/SpaceRoleCreateResponse"
+          }
+        },
+        "required": [
+          "spaceRole"
+        ],
+        "type": "object"
+      },
       "SpaceRoleCreateResponse": {
         "properties": {
           "guid": {
@@ -860,6 +903,9 @@
           },
           "spaceId": {
             "$ref": "#/components/schemas/SpaceId"
+          },
+          "type": {
+            "$ref": "#/components/schemas/SpaceRoleType"
           }
         },
         "required": [
@@ -868,9 +914,20 @@
           "spaceId",
           "projectId",
           "region",
-          "platformId"
+          "platformId",
+          "type"
         ],
         "type": "object"
+      },
+      "SpaceRoleType": {
+        "enum": [
+          "space_auditor",
+          "space_developer",
+          "space_manager",
+          "space_supporter"
+        ],
+        "title": "Space Role to assign",
+        "type": "string"
       },
       "SpacesList": {
         "properties": {
@@ -1009,14 +1066,7 @@
       "createSpaceRolePayload": {
         "properties": {
           "type": {
-            "enum": [
-              "space_auditor",
-              "space_developer",
-              "space_manager",
-              "space_supporter"
-            ],
-            "title": "Space Role to assign",
-            "type": "string"
+            "$ref": "#/components/schemas/SpaceRoleType"
           },
           "userGuid": {
             "$ref": "#/components/schemas/UserId"
@@ -1864,7 +1914,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrgManagerCreateResponse"
+                  "$ref": "#/components/schemas/OrgManagerResponse"
                 }
               }
             },
@@ -2316,7 +2366,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrgRoleCreateResponse"
+                  "$ref": "#/components/schemas/OrgRoleResponse"
                 }
               }
             },

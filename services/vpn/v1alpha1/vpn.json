@@ -1,0 +1,2069 @@
+{
+  "components": {
+    "responses": {
+      "BadRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/APIErrorResponse"
+            }
+          }
+        },
+        "description": "Bad Request"
+      },
+      "Conflict": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/APIErrorResponse"
+            }
+          }
+        },
+        "description": "Conflict"
+      },
+      "Forbidden": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/APIErrorResponse"
+            }
+          }
+        },
+        "description": "Forbidden"
+      },
+      "InternalServerError": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/APIErrorResponse"
+            }
+          }
+        },
+        "description": "Internal Server Error"
+      },
+      "NotFound": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/APIErrorResponse"
+            }
+          }
+        },
+        "description": "Not Found"
+      },
+      "Unauthorized": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/APIErrorResponse"
+            }
+          }
+        },
+        "description": "Unauthorized"
+      }
+    },
+    "schemas": {
+      "APIError": {
+        "properties": {
+          "code": {
+            "description": "The HTTP status code.",
+            "example": 400,
+            "format": "int32",
+            "type": "integer"
+          },
+          "details": {
+            "description": "Can contain more details on the error.",
+            "items": {
+              "$ref": "#/components/schemas/APIErrorDetail"
+            },
+            "type": "array"
+          },
+          "message": {
+            "description": "A message describing the error.",
+            "example": "One or more fields are invalid.",
+            "type": "string"
+          },
+          "status": {
+            "description": "The HTTP status code text.",
+            "example": "BAD_REQUEST",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "string"
+        ],
+        "type": "object"
+      },
+      "APIErrorDetail": {
+        "properties": {
+          "domain": {
+            "default": "vpn.access.stackit.cloud",
+            "description": "The domain of the error source.",
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "description": "Metadata contains more information. For bad requests this would be field information.",
+            "type": "object"
+          },
+          "reason": {
+            "description": "The reason why the error occurs.",
+            "enum": [
+              "INVALID_FIELD",
+              "INVALID_PATH_PARAMETER"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason",
+          "domain"
+        ],
+        "type": "object"
+      },
+      "APIErrorResponse": {
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/APIError"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "AvailabilityZone": {
+        "description": "Object that represents an availability zone.",
+        "example": "eu01-1",
+        "type": "string"
+      },
+      "BGPGatewayConfig": {
+        "description": "BGP configuration effects all connections. (only if bgpEnabled=true)",
+        "properties": {
+          "localAsn": {
+            "description": "Local ASN for Private Use (reserved by IANA).",
+            "example": 65510,
+            "format": "int32",
+            "maximum": 65534,
+            "minimum": 64512,
+            "type": "integer"
+          },
+          "overrideAdvertisedRoutes": {
+            "description": "List of routes (IPv4 CIDR).",
+            "items": {
+              "$ref": "#/components/schemas/IPv4CIDR"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        }
+      },
+      "BGPStatus": {
+        "nullable": true,
+        "properties": {
+          "peers": {
+            "items": {
+              "$ref": "#/components/schemas/BGPStatusPeers"
+            },
+            "type": "array"
+          },
+          "routes": {
+            "items": {
+              "$ref": "#/components/schemas/BGPStatusRoutes"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "BGPStatusPeers": {
+        "properties": {
+          "localAs": {
+            "example": 65521,
+            "type": "number"
+          },
+          "peerUptime": {
+            "example": "00:36:41",
+            "type": "string"
+          },
+          "pfxRcd": {
+            "example": 1,
+            "type": "number"
+          },
+          "pfxSnt": {
+            "example": 2,
+            "type": "number"
+          },
+          "remoteAs": {
+            "example": 65510,
+            "type": "number"
+          },
+          "remoteIP": {
+            "example": "169.254.179.245",
+            "type": "string"
+          },
+          "state": {
+            "example": "Established",
+            "type": "string"
+          }
+        },
+        "required": [
+          "remoteIP",
+          "remoteAs",
+          "localAs",
+          "peerUptime",
+          "pfxRcd",
+          "pfxSnt",
+          "state"
+        ],
+        "type": "object"
+      },
+      "BGPStatusRoutes": {
+        "properties": {
+          "network": {
+            "example": "192.168.32.0/20",
+            "type": "string"
+          },
+          "origin": {
+            "example": "incomplete",
+            "type": "string"
+          },
+          "path": {
+            "example": "65510",
+            "type": "string"
+          },
+          "peerId": {
+            "example": "169.254.179.245",
+            "type": "string"
+          },
+          "weight": {
+            "example": 0,
+            "type": "number"
+          }
+        },
+        "required": [
+          "network",
+          "peerId",
+          "path",
+          "weight",
+          "origin"
+        ],
+        "type": "object"
+      },
+      "BGPTunnelConfig": {
+        "properties": {
+          "localBgpAddress": {
+            "$ref": "#/components/schemas/IPv4"
+          },
+          "remoteAsn": {
+            "description": "Remote ASN for Private Use (reserved by IANA) (required if enableBgp=true)",
+            "example": 65521,
+            "format": "int32",
+            "maximum": 65534,
+            "minimum": 64512,
+            "type": "integer"
+          },
+          "remoteBgpAddress": {
+            "$ref": "#/components/schemas/IPv4"
+          }
+        },
+        "type": "object"
+      },
+      "Connection": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ConnectionRequest"
+          }
+        ],
+        "type": "object"
+      },
+      "ConnectionList": {
+        "properties": {
+          "connections": {
+            "items": {
+              "$ref": "#/components/schemas/Connection"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "connections"
+        ],
+        "type": "object"
+      },
+      "ConnectionRequest": {
+        "properties": {
+          "enabled": {
+            "description": "This flag decides whether this connection should be enabled or disabled",
+            "type": "boolean"
+          },
+          "localSubnets": {
+            "description": "List of local subnets (IPv4 CIDR).",
+            "items": {
+              "$ref": "#/components/schemas/IPv4CIDR"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "type": "array"
+          },
+          "name": {
+            "description": "The name of the connection. Maximum 20 characters. The name of a connection must be unique.\nRenaming will delete the old connection and establish a new one.",
+            "example": "my-connection",
+            "pattern": "^([a-z0-9]{1}[a-z0-9-]{0,19}){1}(\\.[a-z0-9]{1}[a-z0-9-]{0,19})*?$",
+            "type": "string"
+          },
+          "remoteSubnets": {
+            "description": "List of remote subnets (IPv4 CIDR).",
+            "items": {
+              "$ref": "#/components/schemas/IPv4CIDR"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "type": "array"
+          },
+          "tunnel1": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TunnelConfiguration"
+              }
+            ]
+          },
+          "tunnel2": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TunnelConfiguration"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "localSubnets",
+          "remoteSubnets",
+          "tunnel1",
+          "tunnel2"
+        ],
+        "type": "object"
+      },
+      "ConnectionStatusResponse": {
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "name": {
+            "description": "The name of the connection.",
+            "example": "avocado-coffee",
+            "type": "string"
+          },
+          "tunnels": {
+            "items": {
+              "$ref": "#/components/schemas/TunnelStatus"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "CreateGatewayConnectionPayload": {
+        "properties": {
+          "enabled": {
+            "description": "This flag decides whether this connection should be enabled or disabled",
+            "type": "boolean"
+          },
+          "localSubnets": {
+            "description": "List of local subnets (IPv4 CIDR).",
+            "items": {
+              "$ref": "#/components/schemas/IPv4CIDR"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "type": "array"
+          },
+          "name": {
+            "description": "The name of the connection. Maximum 20 characters. The name of a connection must be unique.\nRenaming will delete the old connection and establish a new one.",
+            "example": "my-connection",
+            "pattern": "^([a-z0-9]{1}[a-z0-9-]{0,19}){1}(\\.[a-z0-9]{1}[a-z0-9-]{0,19})*?$",
+            "type": "string"
+          },
+          "remoteSubnets": {
+            "description": "List of remote subnets (IPv4 CIDR).",
+            "items": {
+              "$ref": "#/components/schemas/IPv4CIDR"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "type": "array"
+          },
+          "tunnel1": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TunnelConfiguration"
+              }
+            ]
+          },
+          "tunnel2": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TunnelConfiguration"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "localSubnets",
+          "remoteSubnets",
+          "tunnel1",
+          "tunnel2"
+        ],
+        "type": "object"
+      },
+      "CreateVPNGatewayPayload": {
+        "properties": {
+          "availabilityZones": {
+            "properties": {
+              "tunnel1": {
+                "$ref": "#/components/schemas/AvailabilityZone"
+              },
+              "tunnel2": {
+                "$ref": "#/components/schemas/AvailabilityZone"
+              }
+            },
+            "required": [
+              "tunnel1",
+              "tunnel2"
+            ],
+            "type": "object"
+          },
+          "bgpEnabled": {
+            "description": "Enable BGP routing. (This will require a BGPGatewayConfig and also a BGPTunnelConfig for each Tunnel in each Connection)",
+            "example": true,
+            "type": "boolean"
+          },
+          "bgpGatewayConfig": {
+            "$ref": "#/components/schemas/BGPGatewayConfig"
+          },
+          "name": {
+            "description": "The name of the VPN instance. Maximum 20 characters. Not changeable after creation.",
+            "example": "my-vpn",
+            "pattern": "^([a-z0-9]{1}[a-z0-9-]{0,19}){1}(\\.[a-z0-9]{1}[a-z0-9-]{0,19})*?$",
+            "type": "string"
+          },
+          "planId": {
+            "description": "Service Plan to configure the limits of the VPN instance. Currently supported plans are p50, p100, p200.\nThis list can change in the future where plan ids will be removed and new plans by added. That is the reason this is not an enum.",
+            "example": "p50",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "planId",
+          "availabilityZones",
+          "connections"
+        ],
+        "type": "object"
+      },
+      "DefaultPlanId": {
+        "description": "Default Plan ID for the current region",
+        "example": "p50",
+        "type": "string"
+      },
+      "Gateway": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GatewayRequest"
+          }
+        ],
+        "properties": {
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          },
+          "state": {
+            "$ref": "#/components/schemas/GatewayStatus"
+          }
+        },
+        "type": "object"
+      },
+      "GatewayList": {
+        "properties": {
+          "gateways": {
+            "items": {
+              "$ref": "#/components/schemas/GatewayWithStatus"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "gateways"
+        ],
+        "type": "object"
+      },
+      "GatewayRequest": {
+        "properties": {
+          "availabilityZones": {
+            "properties": {
+              "tunnel1": {
+                "$ref": "#/components/schemas/AvailabilityZone"
+              },
+              "tunnel2": {
+                "$ref": "#/components/schemas/AvailabilityZone"
+              }
+            },
+            "required": [
+              "tunnel1",
+              "tunnel2"
+            ],
+            "type": "object"
+          },
+          "bgpEnabled": {
+            "description": "Enable BGP routing. (This will require a BGPGatewayConfig and also a BGPTunnelConfig for each Tunnel in each Connection)",
+            "example": true,
+            "type": "boolean"
+          },
+          "bgpGatewayConfig": {
+            "$ref": "#/components/schemas/BGPGatewayConfig"
+          },
+          "name": {
+            "description": "The name of the VPN instance. Maximum 20 characters. Not changeable after creation.",
+            "example": "my-vpn",
+            "pattern": "^([a-z0-9]{1}[a-z0-9-]{0,19}){1}(\\.[a-z0-9]{1}[a-z0-9-]{0,19})*?$",
+            "type": "string"
+          },
+          "planId": {
+            "description": "Service Plan to configure the limits of the VPN instance. Currently supported plans are p50, p100, p200.\nThis list can change in the future where plan ids will be removed and new plans by added. That is the reason this is not an enum.",
+            "example": "p50",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "planId",
+          "availabilityZones",
+          "connections"
+        ],
+        "type": "object"
+      },
+      "GatewayStatus": {
+        "description": "Describes the status of the surrounding infrastructure.",
+        "enum": [
+          "PENDING",
+          "READY",
+          "ERROR",
+          "DELETING"
+        ],
+        "example": "READY",
+        "type": "string"
+      },
+      "GatewayStatusResponse": {
+        "properties": {
+          "gatewayName": {
+            "description": "VPN name",
+            "example": "coffee",
+            "type": "string"
+          },
+          "gatewayStatus": {
+            "$ref": "#/components/schemas/GatewayStatus"
+          },
+          "tunnels": {
+            "items": {
+              "$ref": "#/components/schemas/VPNTunnels"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "GatewayWithStatus": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GatewaysResponse"
+          }
+        ],
+        "properties": {
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          }
+        },
+        "type": "object"
+      },
+      "GatewaysResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GatewayRequest"
+          }
+        ],
+        "properties": {
+          "state": {
+            "$ref": "#/components/schemas/GatewayStatus"
+          }
+        },
+        "required": [
+          "state"
+        ],
+        "type": "object"
+      },
+      "IPv4": {
+        "example": "0.0.0.0",
+        "pattern": "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)\\.?\\b){4}$",
+        "type": "string"
+      },
+      "IPv4CIDR": {
+        "example": "10.10.10.10/32",
+        "pattern": "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)\\.?\\b){4}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
+        "type": "string"
+      },
+      "Phase": {
+        "properties": {
+          "dhGroups": {
+            "description": "The Diffie-Hellman Group. Required, except if AEAD algorithms are selected.",
+            "example": [
+              "ecp256",
+              "ecp384",
+              "modp2048s256"
+            ],
+            "items": {
+              "enum": [
+                "modp1024",
+                "modp2048",
+                "ecp256",
+                "ecp384",
+                "modp2048s256"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "encryptionAlgorithms": {
+            "example": [
+              "aes256",
+              "aes128gcm16"
+            ],
+            "items": {
+              "enum": [
+                "aes256",
+                "aes128gcm16",
+                "aes256gcm16"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "integrityAlgorithms": {
+            "example": [
+              "sha2_384"
+            ],
+            "items": {
+              "enum": [
+                "sha1",
+                "sha2_256",
+                "sha2_384"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "encryptionAlgorithms",
+          "integrityAlgorithms"
+        ],
+        "type": "object"
+      },
+      "Phase1Status": {
+        "properties": {
+          "dhGroup": {
+            "description": "Negotiated Diffie-Hellman Group",
+            "example": "MODP2048",
+            "type": "string"
+          },
+          "encryptionAlgorithm": {
+            "description": "Negotiated encryption algorithm.",
+            "example": "AES_GCM_16",
+            "type": "string"
+          },
+          "integrityAlgorithm": {
+            "description": "Negotiated integrity algorithm or pseudo-random-function.",
+            "example": "SHA_256",
+            "type": "string"
+          },
+          "state": {
+            "example": "INSTALLED",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Phase2Status": {
+        "properties": {
+          "bytesIn": {
+            "description": "Bytes received.",
+            "example": "453533",
+            "type": "string"
+          },
+          "bytesOut": {
+            "description": "Bytes sent.",
+            "example": "46459064",
+            "type": "string"
+          },
+          "dhGroup": {
+            "description": "Negotiated Diffie-Hellman Group",
+            "example": "MODP2048",
+            "type": "string"
+          },
+          "encap": {
+            "example": "yes",
+            "type": "string"
+          },
+          "encryptionAlgorithm": {
+            "description": "Negotiated encryption algorithm.",
+            "example": "AES_GCM_16",
+            "type": "string"
+          },
+          "integrityAlgorithm": {
+            "description": "Negotiated integrity algorithm or pseudo-random-function.",
+            "example": "SHA_256",
+            "type": "string"
+          },
+          "packetsIn": {
+            "description": "Packets received.",
+            "example": "1534134",
+            "type": "string"
+          },
+          "packetsOut": {
+            "description": "Packets sent.",
+            "example": "65847343",
+            "type": "string"
+          },
+          "protocol": {
+            "example": "ESP",
+            "type": "string"
+          },
+          "state": {
+            "example": "ESTABLISHED",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Plan": {
+        "properties": {
+          "maxBandwidth": {
+            "description": "Maximum bandwidth of a VPN instance.",
+            "example": 50,
+            "format": "int32",
+            "title": "VPN max supported throughput in Mbits.",
+            "type": "integer"
+          },
+          "maxConnections": {
+            "description": "Maximum concurrent connections of a VPN Gateway.",
+            "example": 2,
+            "format": "int32",
+            "title": "VPN max supported concurrent connections.",
+            "type": "integer"
+          },
+          "name": {
+            "description": "Service plan name",
+            "example": "VPN-IPSec-50-HA-EU01",
+            "type": "string"
+          },
+          "planId": {
+            "description": "Service plan identifier",
+            "example": "p50",
+            "type": "string"
+          },
+          "region": {
+            "description": "Region (read-only)",
+            "example": "eu01",
+            "type": "string"
+          },
+          "sku": {
+            "description": "Plan SKU",
+            "example": "ST-0174501",
+            "type": "string"
+          },
+          "type": {
+            "description": "Service plan type",
+            "enum": [
+              "high-availability",
+              "single"
+            ],
+            "example": "high-availability",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PlanList": {
+        "properties": {
+          "defaultPlanId": {
+            "$ref": "#/components/schemas/DefaultPlanId"
+          },
+          "plans": {
+            "items": {
+              "$ref": "#/components/schemas/Plan"
+            },
+            "type": "array"
+          },
+          "tunnel": {
+            "$ref": "#/components/schemas/VPNTunnelPlan"
+          }
+        }
+      },
+      "Quota": {
+        "properties": {
+          "limit": {
+            "type": "integer"
+          },
+          "usage": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "limit",
+          "usage"
+        ],
+        "type": "object"
+      },
+      "QuotaList": {
+        "properties": {
+          "gateways": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Quota"
+              }
+            ],
+            "description": "The number of gateways."
+          }
+        },
+        "required": [
+          "gateways"
+        ]
+      },
+      "QuotaListResponse": {
+        "properties": {
+          "quotas": {
+            "$ref": "#/components/schemas/QuotaList"
+          }
+        },
+        "required": [
+          "quotas"
+        ],
+        "type": "object"
+      },
+      "Region": {
+        "default": "eu01",
+        "description": "The region in which the resource is located.\n",
+        "enum": [
+          "eu01",
+          "eu02"
+        ],
+        "example": "eu01",
+        "type": "string"
+      },
+      "TunnelConfiguration": {
+        "properties": {
+          "bgpTunnelConfig": {
+            "$ref": "#/components/schemas/BGPTunnelConfig"
+          },
+          "phase1": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Phase"
+              },
+              {
+                "properties": {
+                  "rekeyTime": {
+                    "default": 14400,
+                    "description": "Time to schedule a IKE re-keying (in seconds).",
+                    "format": "int32",
+                    "maximum": 28800,
+                    "minimum": 900,
+                    "type": "integer"
+                  }
+                },
+                "type": "object"
+              }
+            ]
+          },
+          "phase2": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Phase"
+              },
+              {
+                "properties": {
+                  "dpdAction": {
+                    "default": "clear",
+                    "description": "Action to perform for this CHILD_SA on DPD timeout.\n\"clear\": Closes the CHILD_SA and does not take further action.\n\"trap\": installs a trap policy which will catch matching traffic and tries to re-negotiate the tunnel on-demand).\n\"restart\": immediately tries to re-negotiate the CILD_SA under a fresh IKE_SA.\n",
+                    "enum": [
+                      "clear",
+                      "trap",
+                      "restart"
+                    ],
+                    "example": "restart",
+                    "type": "string"
+                  },
+                  "rekeyTime": {
+                    "default": 3600,
+                    "description": "Time to schedule a Child SA re-keying (in seconds).",
+                    "format": "int32",
+                    "maximum": 3600,
+                    "minimum": 900,
+                    "type": "integer"
+                  },
+                  "startAction": {
+                    "default": "trap",
+                    "description": "Action to perform after loading the connection configuration.\n\"none\": The connection will be loaded but needs to be manually initiated.\n\"trap\": installs a trap policy which triggers the tunnel as soon as matching traffic has been detected.\n\"start\": initiates the connection actively.\n\"start|stop\": Immediately initiate a connection for which trap policies have been installed.\n",
+                    "enum": [
+                      "none",
+                      "trap",
+                      "start",
+                      "trap|start"
+                    ],
+                    "example": "start",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            ]
+          },
+          "preSharedKey": {
+            "description": "A Pre-Shared Key for authentication. \nRequired in create-requests, optional in update-requests and omitted in every response.",
+            "example": "Super1Secret2Shared3Key4",
+            "minLength": 20,
+            "type": "string"
+          },
+          "remoteAddress": {
+            "$ref": "#/components/schemas/IPv4"
+          }
+        },
+        "required": [
+          "remoteAddress",
+          "phase1",
+          "phase2"
+        ],
+        "type": "object"
+      },
+      "TunnelStatus": {
+        "description": "Describes the status of the VPN itself.",
+        "properties": {
+          "established": {
+            "type": "boolean"
+          },
+          "name": {
+            "enum": [
+              "tunnel1",
+              "tunnel2"
+            ],
+            "type": "string"
+          },
+          "phase1": {
+            "$ref": "#/components/schemas/Phase1Status"
+          },
+          "phase2": {
+            "$ref": "#/components/schemas/Phase2Status"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateGatewayConnectionPayload": {
+        "properties": {
+          "enabled": {
+            "description": "This flag decides whether this connection should be enabled or disabled",
+            "type": "boolean"
+          },
+          "localSubnets": {
+            "description": "List of local subnets (IPv4 CIDR).",
+            "items": {
+              "$ref": "#/components/schemas/IPv4CIDR"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "type": "array"
+          },
+          "name": {
+            "description": "The name of the connection. Maximum 20 characters. The name of a connection must be unique.\nRenaming will delete the old connection and establish a new one.",
+            "example": "my-connection",
+            "pattern": "^([a-z0-9]{1}[a-z0-9-]{0,19}){1}(\\.[a-z0-9]{1}[a-z0-9-]{0,19})*?$",
+            "type": "string"
+          },
+          "remoteSubnets": {
+            "description": "List of remote subnets (IPv4 CIDR).",
+            "items": {
+              "$ref": "#/components/schemas/IPv4CIDR"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "type": "array"
+          },
+          "tunnel1": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TunnelConfiguration"
+              }
+            ]
+          },
+          "tunnel2": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TunnelConfiguration"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "localSubnets",
+          "remoteSubnets",
+          "tunnel1",
+          "tunnel2"
+        ],
+        "type": "object"
+      },
+      "UpdateVPNGatewayPayload": {
+        "properties": {
+          "availabilityZones": {
+            "properties": {
+              "tunnel1": {
+                "$ref": "#/components/schemas/AvailabilityZone"
+              },
+              "tunnel2": {
+                "$ref": "#/components/schemas/AvailabilityZone"
+              }
+            },
+            "required": [
+              "tunnel1",
+              "tunnel2"
+            ],
+            "type": "object"
+          },
+          "bgpEnabled": {
+            "description": "Enable BGP routing. (This will require a BGPGatewayConfig and also a BGPTunnelConfig for each Tunnel in each Connection)",
+            "example": true,
+            "type": "boolean"
+          },
+          "bgpGatewayConfig": {
+            "$ref": "#/components/schemas/BGPGatewayConfig"
+          },
+          "name": {
+            "description": "The name of the VPN instance. Maximum 20 characters. Not changeable after creation.",
+            "example": "my-vpn",
+            "pattern": "^([a-z0-9]{1}[a-z0-9-]{0,19}){1}(\\.[a-z0-9]{1}[a-z0-9-]{0,19})*?$",
+            "type": "string"
+          },
+          "planId": {
+            "description": "Service Plan to configure the limits of the VPN instance. Currently supported plans are p50, p100, p200.\nThis list can change in the future where plan ids will be removed and new plans by added. That is the reason this is not an enum.",
+            "example": "p50",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "planId",
+          "availabilityZones",
+          "connections"
+        ],
+        "type": "object"
+      },
+      "VPNTunnelPlan": {
+        "properties": {
+          "name": {
+            "description": "Tunnel model name",
+            "example": "VPN-IPSec-Tunnel-EU01",
+            "type": "string"
+          },
+          "region": {
+            "description": "Tunnel model region",
+            "example": "eu01",
+            "type": "string"
+          },
+          "sku": {
+            "description": "Tunnel model SKU",
+            "example": "ST-0175001",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "VPNTunnels": {
+        "description": "List all available tunnels with public IP and status",
+        "properties": {
+          "bgpStatus": {
+            "$ref": "#/components/schemas/BGPStatus"
+          },
+          "instanceState": {
+            "$ref": "#/components/schemas/GatewayStatus"
+          },
+          "name": {
+            "enum": [
+              "tunnel1",
+              "tunnel2"
+            ],
+            "type": "string"
+          },
+          "publicIP": {
+            "example": "192.214.168.197",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "The STACKIT VPN API provides endpoints to provision and manage VPN instances in your STACKIT project.",
+    "title": "STACKIT VPN API",
+    "version": "1alpha1"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1alpha1/projects/{projectId}/regions/{region}/gateways": {
+      "get": {
+        "description": "List VPN gateways in a project.",
+        "operationId": "ListVPNGateways",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GatewayList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List VPN gateways in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.instance.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create a VPN gateway in a project.",
+        "operationId": "CreateVPNGateway",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVPNGatewayPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gateway"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create a VPN gateway in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.instance.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha1/projects/{projectId}/regions/{region}/gateways/{gatewayName}": {
+      "delete": {
+        "description": "Delete a existing VPN gateway and all it's connections in a project.",
+        "operationId": "DeleteVPNGateway",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete a existing VPN gateway in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.instance.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get details of a VPN instance in a project.",
+        "operationId": "GetVPNGateway",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gateway"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get details of a VPN instance in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "put": {
+        "description": "Update a VPN gateway in a project.",
+        "operationId": "UpdateVPNGateway",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVPNGatewayPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gateway"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update a VPN gateway in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha1/projects/{projectId}/regions/{region}/gateways/{gatewayName}/connections": {
+      "get": {
+        "description": "List connections for an existing VPN gateway.",
+        "operationId": "ListGatewayConnections",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List connections for an existing VPN gateway.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.connection.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create a connection for an existing VPN gateway.",
+        "operationId": "CreateGatewayConnection",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGatewayConnectionPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Connection"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create a connection for an existing VPN gateway.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.connection.add"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha1/projects/{projectId}/regions/{region}/gateways/{gatewayName}/connections/{connectionName}": {
+      "delete": {
+        "description": "Delete a certain connection from an existing VPN gateway.",
+        "operationId": "DeleteGatewayConnection",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "connectionName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete a certain connection from an existing VPN gateway.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.connection.remove"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get a certain connection for an existing VPN gateway.",
+        "operationId": "GetGatewayConnection",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "connectionName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Connection"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get a certain connection for an existing VPN gateway.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.connection.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "put": {
+        "description": "Update a connection for an existing VPN gateway.",
+        "operationId": "UpdateGatewayConnection",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "connectionName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateGatewayConnectionPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Connection"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update a connection for an existing VPN gateway.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.connection.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha1/projects/{projectId}/regions/{region}/gateways/{gatewayName}/connections/{connectionName}/status": {
+      "get": {
+        "description": "Gets the status for a specific connection in an existing VPN gateway.",
+        "operationId": "GetGatewayConnectionStatus",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "connectionName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionStatusResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Gets the status for a specific connection in an existing VPN gateway.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.connection.status.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha1/projects/{projectId}/regions/{region}/gateways/{gatewayName}/status": {
+      "get": {
+        "description": "Get the status of a VPN gateway in a project.",
+        "operationId": "GetVPNGatewayStatus",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GatewayStatusResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get the status of a VPN gateway in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.status.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha1/projects/{projectId}/regions/{region}/quotas": {
+      "get": {
+        "description": "List project quotas.",
+        "operationId": "ListQuotas",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuotaListResponse"
+                }
+              }
+            },
+            "description": "List quotas."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "summary": "List project quotas.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.quota.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha1/regions/{region}/plans": {
+      "get": {
+        "description": "List available service plans for a project.",
+        "operationId": "ListPlans",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanList"
+                }
+              }
+            },
+            "description": "Service plans response"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "summary": "List available service plans for a project.",
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://vpn.api.{region}stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "eu01.",
+          "enum": [
+            "eu01."
+          ]
+        }
+      }
+    }
+  ]
+}

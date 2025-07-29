@@ -428,6 +428,10 @@
       "TooManyRequests": {
         "content": {
           "application/json": {
+            "example": {
+              "code": 429,
+              "msg": "Too Many Requests"
+            },
             "schema": {
               "$ref": "#/components/schemas/Error"
             }
@@ -809,7 +813,7 @@
             "$ref": "#/components/schemas/Description"
           },
           "direction": {
-            "description": "The direction of the traffic which the rule should match.",
+            "description": "The direction of the traffic which the rule should match.\nPossible values: `ingress`, `egress`.",
             "type": "string",
             "x-extensible-enum": [
               "ingress",
@@ -818,7 +822,7 @@
           },
           "ethertype": {
             "default": "IPv4",
-            "description": "The ethertype which the rule should match.",
+            "description": "The ethertype which the rule should match.\nPossible values: `IPv4`, `IPv6`.",
             "type": "string",
             "x-extensible-enum": [
               "IPv4",
@@ -1019,6 +1023,9 @@
       "CreateImagePayload": {
         "description": "Object that represents an Image and its parameters. Used for Creating and returning (get/list).",
         "properties": {
+          "agent": {
+            "$ref": "#/components/schemas/ImageAgent"
+          },
           "checksum": {
             "allOf": [
               {
@@ -1070,8 +1077,7 @@
             "readOnly": true
           },
           "protected": {
-            "example": false,
-            "type": "boolean"
+            "$ref": "#/components/schemas/ImageProtected"
           },
           "scope": {
             "allOf": [
@@ -1334,6 +1340,7 @@
             "$ref": "#/components/schemas/UUIDList"
           },
           "status": {
+            "description": "Possible values: `ACTIVE`, `DOWN`.",
             "readOnly": true,
             "type": "string",
             "x-extensible-enum": [
@@ -1342,6 +1349,7 @@
             ]
           },
           "type": {
+            "description": "Possible values: `server`, `metadata`, `gateway`, `none`.",
             "readOnly": true,
             "type": "string",
             "x-extensible-enum": [
@@ -1734,7 +1742,7 @@
         "type": "object"
       },
       "CreateVolumePayload": {
-        "description": "Object that represents a volume and its parameters. Used for Creating and returning (get/list).",
+        "description": "Object that represents a volume and its parameters. Volumes sized up to 16000GB are supported.",
         "properties": {
           "availabilityZone": {
             "$ref": "#/components/schemas/AvailabilityZone"
@@ -1930,6 +1938,9 @@
       "Image": {
         "description": "Object that represents an Image and its parameters. Used for Creating and returning (get/list).",
         "properties": {
+          "agent": {
+            "$ref": "#/components/schemas/ImageAgent"
+          },
           "checksum": {
             "allOf": [
               {
@@ -1981,8 +1992,7 @@
             "readOnly": true
           },
           "protected": {
-            "example": false,
-            "type": "boolean"
+            "$ref": "#/components/schemas/ImageProtected"
           },
           "scope": {
             "allOf": [
@@ -2023,6 +2033,20 @@
         ],
         "type": "object"
       },
+      "ImageAgent": {
+        "description": "Support status and default provioning setting for the STACKIT server agent.",
+        "properties": {
+          "provisionByDefault": {
+            "description": "Default provioning of the STACKIT server agent for new servers. The default for new images is false. Can only be enabled when supported is also true.",
+            "type": "boolean"
+          },
+          "supported": {
+            "description": "Indicates the STACKIT server agent for the image. The default for new images is false.",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
       "ImageChecksum": {
         "description": "Representation of an image checksum.",
         "example": {
@@ -2031,7 +2055,7 @@
         },
         "properties": {
           "algorithm": {
-            "description": "Algorithm for the checksum of the image data.",
+            "description": "Algorithm for the checksum of the image data.\nPossible values: `md5`, `sha512`.",
             "example": "sha512",
             "type": "string",
             "x-extensible-enum": [
@@ -2056,7 +2080,7 @@
         "description": "Properties to set hardware and scheduling settings for an Image.",
         "properties": {
           "architecture": {
-            "description": "Represents CPU architecture. The default for new images is x86.",
+            "description": "Represents CPU architecture. The default for new images is x86.\nPossible values: `arm64`, `x86`.",
             "type": "string",
             "x-extensible-enum": [
               "arm64",
@@ -2068,7 +2092,7 @@
             "type": "boolean"
           },
           "cdromBus": {
-            "description": "Sets CDROM bus controller type.",
+            "description": "Sets CDROM bus controller type.\nPossible values: `scsi`, `virtio`, `ide`, `usb`.",
             "nullable": true,
             "type": "string",
             "x-extensible-enum": [
@@ -2079,7 +2103,7 @@
             ]
           },
           "diskBus": {
-            "description": "Sets Disk bus controller type.",
+            "description": "Sets Disk bus controller type.\nPossible values: `scsi`, `virtio`, `ide`, `usb`.",
             "nullable": true,
             "type": "string",
             "x-extensible-enum": [
@@ -2090,7 +2114,7 @@
             ]
           },
           "nicModel": {
-            "description": "Sets virtual nic model.",
+            "description": "Sets virtual nic model.\nPossible values: `e1000`, `e1000e`, `ne2k_pci`, `pcnet`, `rtl8139`, `virtio`, `vmxnet3`.",
             "nullable": true,
             "type": "string",
             "x-extensible-enum": [
@@ -2104,7 +2128,7 @@
             ]
           },
           "operatingSystem": {
-            "description": "Enables OS specific optimizations.",
+            "description": "Enables OS specific optimizations.\nPossible values: `windows`, `linux`.",
             "type": "string",
             "x-extensible-enum": [
               "windows",
@@ -2122,7 +2146,7 @@
             "type": "string"
           },
           "rescueBus": {
-            "description": "Sets the device bus when the image is used as a rescue image.",
+            "description": "Sets the device bus when the image is used as a rescue image.\nPossible values: `sata`, `scsi`, `virtio`, `usb`.",
             "nullable": true,
             "type": "string",
             "x-extensible-enum": [
@@ -2133,7 +2157,7 @@
             ]
           },
           "rescueDevice": {
-            "description": "Sets the device when the image is used as a rescue image.",
+            "description": "Sets the device when the image is used as a rescue image.\nPossible values: `cdrom`, `disk`.",
             "nullable": true,
             "type": "string",
             "x-extensible-enum": [
@@ -2150,7 +2174,7 @@
             "type": "boolean"
           },
           "videoModel": {
-            "description": "Sets Graphic device model.",
+            "description": "Sets Graphic device model.\nPossible values: `vga`, `cirrus`, `vmvga`, `qxl`, `virtio`, `none`.",
             "nullable": true,
             "type": "string",
             "x-extensible-enum": [
@@ -2204,6 +2228,11 @@
           "items"
         ],
         "type": "object"
+      },
+      "ImageProtected": {
+        "description": "When true the image is prevented from being deleted.",
+        "example": true,
+        "type": "boolean"
       },
       "ImageScope": {
         "description": "Scope of an Image.\nPossible values: `public`, `local`, `projects`, `organization`.",
@@ -2345,7 +2374,7 @@
         "type": "object"
       },
       "Labels": {
-        "description": "Object that represents the labels of an object. Regex for keys: `^[a-z]((-|_|[a-z0-9])){0,62}$`. Regex for values: `^(-|_|[a-z0-9]){0,63}$`.",
+        "description": "Object that represents the labels of an object. Regex for keys: `^[a-z]((-|_|[a-z0-9])){0,62}$`. Regex for values: `^(-|_|[a-z0-9]){0,63}$`. Providing a `null` value for a key will remove that key.",
         "example": {
           "key": "value"
         },
@@ -2460,7 +2489,7 @@
         "type": "object"
       },
       "Metadata": {
-        "description": "Object that represents the metadata of an object. Regex for keys: `^[a-zA-Z0-9-_:. ]{1,255}$`. Regex for values: `^.{0,255}$`.",
+        "description": "Object that represents the metadata of an object. Regex for keys: `^[a-zA-Z0-9-_:. ]{1,255}$`. Regex for values: `^.{0,255}$`. Providing a `null` value for a key will remove that key.",
         "example": {
           "key": "value"
         },
@@ -2529,6 +2558,7 @@
             "$ref": "#/components/schemas/UUIDList"
           },
           "status": {
+            "description": "Possible values: `ACTIVE`, `DOWN`.",
             "readOnly": true,
             "type": "string",
             "x-extensible-enum": [
@@ -2537,6 +2567,7 @@
             ]
           },
           "type": {
+            "description": "Possible values: `server`, `metadata`, `gateway`, `none`.",
             "readOnly": true,
             "type": "string",
             "x-extensible-enum": [
@@ -3826,6 +3857,7 @@
             "type": "string"
           },
           "status": {
+            "description": "Possible values: `PLANNED`, `ONGOING`.",
             "type": "string",
             "x-extensible-enum": [
               "PLANNED",
@@ -4239,6 +4271,9 @@
       "UpdateImagePayload": {
         "description": "Object that represents an update request body of an Image.",
         "properties": {
+          "agent": {
+            "$ref": "#/components/schemas/ImageAgent"
+          },
           "config": {
             "$ref": "#/components/schemas/ImageConfig"
           },
@@ -4258,8 +4293,7 @@
             "$ref": "#/components/schemas/GenericName"
           },
           "protected": {
-            "example": false,
-            "type": "boolean"
+            "$ref": "#/components/schemas/ImageProtected"
           }
         },
         "type": "object"
@@ -4424,7 +4458,7 @@
         "type": "object"
       },
       "UpdateVolumePayload": {
-        "description": "Object that represents an update request body of a  volume.",
+        "description": "Object that represents an update request body of a volume.",
         "properties": {
           "bootable": {
             "$ref": "#/components/schemas/VolumeBootable"
@@ -4458,7 +4492,7 @@
         "type": "integer"
       },
       "Volume": {
-        "description": "Object that represents a volume and its parameters. Used for Creating and returning (get/list).",
+        "description": "Object that represents a volume and its parameters. Volumes sized up to 16000GB are supported.",
         "properties": {
           "availabilityZone": {
             "$ref": "#/components/schemas/AvailabilityZone"
@@ -9478,6 +9512,7 @@
             "name": "action",
             "schema": {
               "default": "soft",
+              "description": "Possible values: `soft`, `hard`.",
               "type": "string",
               "x-extensible-enum": [
                 "soft",

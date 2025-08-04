@@ -3903,19 +3903,19 @@
       "UpdateMetricsStorageRetentionPayload": {
         "properties": {
           "metricsRetentionTime1h": {
-            "description": "Retention time of longtime storage of 1h sampled data. After that time the data will be deleted permanently.\n`Additional Validators:`\n* Should be a valid time string\n* Should not be bigger than metricsRetentionTime5m",
+            "description": "Retention time of longtime storage of 1h sampled data.\nAfter that time the 1h sampled data will be deleted permanently.\nThe goal of downsampling is to get fast results for queries over long time intervals.\nIt is recommended to set this value to be the same as metricsRetentionTimeRaw to ensure zoom-in\ncapabilities in your dashboards. The default value is 90 days.\n`Additional Validators:`\n* Should be a valid time string (e.g. '90d').\n* Should be between '10d' and '780d'.\n* Note: For compatibility reasons, values between '0d' and '792d' are also accepted. However, these will\nbe automatically adjusted in the backend to the recommended range of '10d' to '780d'.",
             "maxLength": 8,
             "minLength": 2,
             "type": "string"
           },
           "metricsRetentionTime5m": {
-            "description": "Retention time of longtime storage of 5m sampled data. After that time the data will be down sampled to 1h.\n`Additional Validators:`\n* Should be a valid time string\n* Should not be bigger than metricsRetentionTimeRaw",
+            "description": "Retention time of longtime storage of 5m sampled data.\nAfter that time the 5m sampled data will be deleted permanently.\nAll 5m resolution metrics older than 10 days are downsampled at a 1h resolution.\nThe goal of downsampling is to get fast results for queries over long time intervals.\nIt is recommended to set this value to be the same as metricsRetentionTimeRaw to ensure zoom-in \ncapabilities in your dashboards. The default value is 90 days.\n`Additional Validators:`\n* Should be a valid time string (e.g. '90d').\n* Should be between '10d' and '780d'.\n* Note: For compatibility reasons, values between '0d' and '792d' are also accepted. However, these will\nbe automatically adjusted in the backend to the recommended range of '10d' to '780d'.",
             "maxLength": 8,
             "minLength": 2,
             "type": "string"
           },
           "metricsRetentionTimeRaw": {
-            "description": "Retention time of longtime storage of raw sampled data. After that time the data will be down sampled to 5m.\nKeep in mind, that the initial goal of downsampling is not saving disk or object storage space. In fact, downsampling doesn't save you any space but instead, it adds 2 more blocks for each raw block which are only slightly smaller or relatively similar size to raw block. This is done by internal downsampling implementation which to be mathematically correct holds various aggregations. This means that downsampling can increase the size of your storage a bit (~3x), if you choose to store all resolutions (recommended). The goal of downsampling is to provide an opportunity to get fast results for range queries of big time intervals like months or years.\n`Additional Validators:`\n* Should be a valid time string\n* Should not be bigger than 13 months",
+            "description": "Retention time of longtime storage of raw data.\nAfter that time the raw data will be deleted permanently.\nAll raw resolution metrics that are older than 40 hours are downsampled at a 5m resolution.\nThe default value is 90 days.\n`Additional Validators:`\n* Should be a valid time string (e.g. '90d').\n* Should be between '2d' and '780d'.\n* Note: For compatibility reasons, values between '0d' and '792d' are also accepted. However, these will\nbe automatically adjusted in the backend to the recommended range of '2d' to '780d'.",
             "maxLength": 8,
             "minLength": 2,
             "type": "string"
@@ -4396,9 +4396,9 @@
                     "jaegerUiUrl": "https://9449de83-64ac-jui.traces.stackit.argus.eu01.cloud/instances/9449de83-64ac-45dc-9967-e7c75bbdca70",
                     "logsPushUrl": "https://logs.stackit.argus.eu01.cloud/instances/9449de83-64ac-45dc-9967-e7c75bbdca70/loki/api/v1/push",
                     "logsUrl": "https://logs.stackit.argus.eu01.cloud/instances/9449de83-64ac-45dc-9967-e7c75bbdca70",
-                    "metricsRetentionTime1h": 0,
-                    "metricsRetentionTime5m": 0,
-                    "metricsRetentionTimeRaw": 14,
+                    "metricsRetentionTime1h": 90,
+                    "metricsRetentionTime5m": 90,
+                    "metricsRetentionTimeRaw": 90,
                     "metricsUrl": "https://storage.api.stackit.argus.eu01.cloud/instances/9449de83-64ac-45dc-9967-e7c75bbdca70",
                     "name": "test",
                     "otlpTracesUrl": "9449de83-64ac-op.traces.stackit.argus.eu01.cloud:443",
@@ -8952,9 +8952,9 @@
               "application/json": {
                 "example": {
                   "message": "Successfully got metric storage retention",
-                  "metricsRetentionTime1h": "0d",
-                  "metricsRetentionTime5m": "0d",
-                  "metricsRetentionTimeRaw": "14d"
+                  "metricsRetentionTime1h": "90d",
+                  "metricsRetentionTime5m": "90d",
+                  "metricsRetentionTimeRaw": "90d"
                 },
                 "schema": {
                   "$ref": "#/components/schemas/GetMetricsStorageRetentionResponse"

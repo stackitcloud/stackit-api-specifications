@@ -72,6 +72,27 @@
           "traceId": "885bef8bbc18649c",
           "type": "UNAUTHORIZED_ERROR"
         }
+      },
+      "unprocessableEntityError": {
+        "summary": "Unprocessable Entity",
+        "value": {
+          "code": 422,
+          "message": "KMS_PARAMS_INVALID",
+          "traceId": "885bef8bbc18649c",
+          "type": "UNPROCESSABLE_ENTITY_ERROR"
+        }
+      },
+      "validationError": {
+        "summary": "Validation Error",
+        "value": {
+          "code": 422,
+          "validation": [
+            {
+              "field": "name",
+              "message": "this field is required"
+            }
+          ]
+        }
       }
     },
     "parameters": {
@@ -281,6 +302,16 @@
           "id"
         ],
         "type": "object"
+      },
+      "CreateInstanceUnprocessableEntity": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/Error"
+          },
+          {
+            "$ref": "#/components/schemas/ValidationError"
+          }
+        ]
       },
       "CreateUserResponse": {
         "properties": {
@@ -986,11 +1017,17 @@
           "backupSchedule": {
             "$ref": "#/components/schemas/backup.schedule"
           },
+          "encryption": {
+            "$ref": "#/components/schemas/instance.encryption"
+          },
           "flavorId": {
             "$ref": "#/components/schemas/flavor.flavorId"
           },
           "name": {
             "$ref": "#/components/schemas/instance.name"
+          },
+          "network": {
+            "$ref": "#/components/schemas/instance.network"
           },
           "replicas": {
             "$ref": "#/components/schemas/replicas"
@@ -1215,6 +1252,49 @@
         ],
         "type": "object"
       },
+      "instance.encryption": {
+        "description": "The configuration for instance's volume and backup storage encryption.\n\n⚠️ **Note:** This feature is in private preview. Supplying this object is only permitted for enabled accounts. If your account does not have access, the request will be rejected.\n",
+        "properties": {
+          "kekKeyId": {
+            "description": "The encryption-key key identifier",
+            "example": "48e3f816-3e38-44bb-bbff-22e05f0567de",
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,uuid_rfc4122"
+            }
+          },
+          "kekKeyRingId": {
+            "description": "The encryption-key keyring identifier",
+            "example": "48e3f816-3e38-44bb-bbff-22e05f0567de",
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,uuid_rfc4122"
+            }
+          },
+          "kekKeyVersion": {
+            "description": "The encryption-key version",
+            "example": "1",
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "serviceAccount": {
+            "example": "example@compute.sa.stackit.cloud",
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,email"
+            }
+          }
+        },
+        "required": [
+          "serviceAccount",
+          "kekKeyRingId",
+          "kekKeyId",
+          "kekKeyVersion"
+        ],
+        "type": "object"
+      },
       "instance.id": {
         "description": "The ID of the instance.",
         "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
@@ -1234,6 +1314,31 @@
         "description": "The name of the instance.",
         "example": "postgres-instance",
         "type": "string"
+      },
+      "instance.network": {
+        "description": "The network configuration of the instance.\n\n⚠️ **Note:** This feature is in private preview. Supplying this object is only permitted for enabled accounts. If your account does not have access, the request will be rejected.\n",
+        "properties": {
+          "accessScope": {
+            "default": "PUBLIC",
+            "description": "The access scope of the instance. It defines if the instance is public or airgapped.",
+            "enum": [
+              "PUBLIC",
+              "SNA"
+            ],
+            "type": "string",
+            "x-enum-descriptions": [
+              "defines networking for a public instance",
+              "defines networking for a private instance"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,oneof=PUBLIC SNA,instance_accessScope"
+            }
+          }
+        },
+        "required": [
+          "accessScope"
+        ],
+        "type": "object"
       },
       "instance.sort": {
         "enum": [
@@ -1267,15 +1372,15 @@
         "type": "object"
       },
       "instance.version": {
-        "description": "The Postgres version used for the instance. See [Versions Endpoint](/v3alpha1/projects/{projectId}/regions/{region}/versions) for supported version parameters.",
+        "description": "The Postgres version used for the instance. See [Versions Endpoint](/documentation/postgres-flex-service/version/v3alpha1#tag/Version) for supported version parameters.",
         "type": "string"
       },
       "instance.version.update": {
-        "description": "The Postgres version used for the instance. See [Versions Endpoint](/v3alpha1/projects/{projectId}/regions/{region}/versions) for supported version parameters.",
+        "description": "The Postgres version used for the instance. See [Versions Endpoint](/documentation/postgres-flex-service/version/v3alpha1#tag/Version) for supported version parameters.",
         "type": "string"
       },
       "instance.version.update.opt": {
-        "description": "The Postgres version used for the instance. See [Versions Endpoint](/v3alpha1/projects/{projectId}/regions/{region}/versions) for supported version parameters.",
+        "description": "The Postgres version used for the instance. See [Versions Endpoint](/documentation/postgres-flex-service/version/v3alpha1#tag/Version) for supported version parameters.",
         "type": "string"
       },
       "pointInTimeRecoveryRequestPayload": {
@@ -2034,12 +2139,20 @@
           "422": {
             "content": {
               "application/json": {
+                "examples": {
+                  "unprocessableEntityError": {
+                    "$ref": "#/components/examples/unprocessableEntityError"
+                  },
+                  "validationError": {
+                    "$ref": "#/components/examples/validationError"
+                  }
+                },
                 "schema": {
-                  "$ref": "#/components/schemas/ValidationError"
+                  "$ref": "#/components/schemas/CreateInstanceUnprocessableEntity"
                 }
               }
             },
-            "description": "Request failed due to body validation"
+            "description": "Unprocessable entity"
           },
           "500": {
             "content": {

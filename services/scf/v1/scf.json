@@ -85,6 +85,9 @@
           "guid": {
             "$ref": "#/components/schemas/UserId"
           },
+          "orgId": {
+            "$ref": "#/components/schemas/OrgId"
+          },
           "platformId": {
             "$ref": "#/components/schemas/PlatformId"
           },
@@ -113,7 +116,8 @@
           "region",
           "platformId",
           "createdAt",
-          "updatedAt"
+          "updatedAt",
+          "orgId"
         ],
         "type": "object"
       },
@@ -297,6 +301,24 @@
           "updatedAt",
           "quotaId",
           "suspended"
+        ],
+        "type": "object"
+      },
+      "OrganizationCreateBffResponse": {
+        "properties": {
+          "org": {
+            "$ref": "#/components/schemas/OrganizationCreateResponse"
+          },
+          "roles": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/OrgRoleResponse"
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "org",
+          "roles"
         ],
         "type": "object"
       },
@@ -828,6 +850,24 @@
           "platformId",
           "createdAt",
           "updatedAt"
+        ],
+        "type": "object"
+      },
+      "SpaceCreatedBffResponse": {
+        "properties": {
+          "orgRole": {
+            "$ref": "#/components/schemas/OrgRoleResponse"
+          },
+          "space": {
+            "$ref": "#/components/schemas/Space"
+          },
+          "spaceRole": {
+            "$ref": "#/components/schemas/SpaceRoleCreateResponse"
+          }
+        },
+        "required": [
+          "space",
+          "spaceRole"
         ],
         "type": "object"
       },

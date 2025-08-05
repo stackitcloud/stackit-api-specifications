@@ -637,6 +637,18 @@
         ],
         "type": "object"
       },
+      "CreateCredentialsPayload": {
+        "description": "Create new credentials with (optional) description",
+        "properties": {
+          "description": {
+            "description": "description",
+            "maxLength": 1000,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "CreateCredentialsResponse": {
         "properties": {
           "credentials": {
@@ -1103,6 +1115,12 @@
       },
       "Credentials": {
         "properties": {
+          "description": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
           "password": {
             "minLength": 1,
             "title": "Password",
@@ -2898,6 +2916,12 @@
             },
             "title": "Credentialsinfo",
             "type": "object"
+          },
+          "description": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
           },
           "id": {
             "maxLength": 200,
@@ -7503,6 +7527,7 @@
                   "credentials": [
                     {
                       "credentialsInfo": {
+                        "description": "description",
                         "username": "test"
                       },
                       "id": "test",
@@ -7562,12 +7587,22 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCredentialsPayload"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "content": {
               "application/json": {
                 "example": {
                   "credentials": {
+                    "description": "description",
                     "password": "1fasAELDB234ddeDAfdasfel787oplpj",
                     "username": "test"
                   },
@@ -7579,6 +7614,19 @@
               }
             },
             "description": "The technical credentials were successfully created."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Description must not exceed 1000 characters."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Provided description must not exceed 1000 characters."
           },
           "403": {
             "content": {
@@ -7732,6 +7780,7 @@
               "application/json": {
                 "example": {
                   "credentialsInfo": {
+                    "description": "description",
                     "username": "testing_9449de83-64ac-45dc-9967-e7c75bbdca70_4d92d3d9-d5c2-4c0b-98ad-950878101d9e"
                   },
                   "id": "testing_9449de83-64ac-45dc-9967-e7c75bbdca70_4d92d3d9-d5c2-4c0b-98ad-950878101d9e",

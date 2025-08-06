@@ -64,7 +64,7 @@
         },
         "description": "Bad Request"
       },
-      "DownloadAuditLogEntries": {
+      "DownloadAuditLogEntriesResponse": {
         "content": {
           "application/json": {
             "schema": {
@@ -89,7 +89,10 @@
             }
           }
         },
-        "description": "Contains an array of all matched audit log entries and a pagination cursor."
+        "description": "Contains an array of all matched audit log entries and a pagination cursor.",
+        "x-stackit-sdk": {
+          "schema-name": "ListAuditLogEntriesResponse"
+        }
       },
       "NotFound": {
         "content": {
@@ -450,7 +453,7 @@
     "/v2/folders/{folderId}": {
       "get": {
         "description": "Returns all audit log entries of the folder for the specified period. \\\nPeriod must not be longer than 24 hours within the last 90 days.\n",
-        "operationId": "download-folder-audit-entries",
+        "operationId": "ListFolderAuditLogEntries",
         "parameters": [
           {
             "$ref": "#/components/parameters/mandatory-start-time-range"
@@ -467,7 +470,7 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/DownloadAuditLogEntries"
+            "$ref": "#/components/responses/DownloadAuditLogEntriesResponse"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -508,7 +511,7 @@
     "/v2/organizations/{organizationId}": {
       "get": {
         "description": "Returns all audit log entries of the organization for the specified period. \\\nPeriod must not be longer than 24 hours within the last 90 days.\n",
-        "operationId": "download-organization-audit-entries",
+        "operationId": "ListOrganizationAuditLogEntries",
         "parameters": [
           {
             "$ref": "#/components/parameters/mandatory-start-time-range"
@@ -525,7 +528,7 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/DownloadAuditLogEntries"
+            "$ref": "#/components/responses/DownloadAuditLogEntriesResponse"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -566,7 +569,7 @@
     "/v2/projects/{projectId}": {
       "get": {
         "description": "Returns all audit log entries of the project for the specified period. \\\nPeriod must not be longer than 24 hours within the last 90 days.\n",
-        "operationId": "download-project-audit-entries",
+        "operationId": "ListProjectAuditLogEntries",
         "parameters": [
           {
             "$ref": "#/components/parameters/mandatory-start-time-range"
@@ -583,7 +586,7 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/DownloadAuditLogEntries"
+            "$ref": "#/components/responses/DownloadAuditLogEntriesResponse"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"

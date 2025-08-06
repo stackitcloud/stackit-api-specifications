@@ -607,6 +607,17 @@
         "minimum": 24,
         "type": "integer"
       },
+      "AreaId": {
+        "description": "The identifier (ID) of an area.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/UUID"
+          },
+          {
+            "$ref": "#/components/schemas/StaticAreaID"
+          }
+        ]
+      },
       "AreaMaxPrefixLengthIPv4": {
         "description": "The maximal prefix length for networks in the network area.",
         "example": 29,
@@ -2879,6 +2890,14 @@
         ],
         "type": "object"
       },
+      "OpenStackProjectId": {
+        "description": "The identifier (ID) of an OpenStack project.",
+        "example": "d61a8564c8dd4ffbbc15143e7d0c85ed",
+        "maxLength": 32,
+        "minLength": 32,
+        "pattern": "^[0-9a-f]{32}$",
+        "type": "string"
+      },
       "PartialUpdateNetworkAreaPayload": {
         "properties": {
           "addressFamily": {
@@ -2937,6 +2956,55 @@
         "required": [
           "min",
           "max"
+        ],
+        "type": "object"
+      },
+      "Project": {
+        "description": "Object that represents a STACKIT project.",
+        "properties": {
+          "areaId": {
+            "$ref": "#/components/schemas/AreaId"
+          },
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "internetAccess": {
+            "example": false,
+            "type": "boolean"
+          },
+          "openstackProjectId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OpenStackProjectId"
+              }
+            ],
+            "description": "The identifier (ID) of the OpenStack project in the main region eu01.",
+            "readOnly": true
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/UUID"
+          },
+          "state": {
+            "$ref": "#/components/schemas/ResourceState"
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "projectId",
+          "areaId",
+          "state"
         ],
         "type": "object"
       },
@@ -4058,6 +4126,15 @@
         "default": true,
         "description": "Shows if a security group is stateful or stateless. You can only have one type of security groups per network interface/server.",
         "type": "boolean"
+      },
+      "StaticAreaID": {
+        "description": "The identifier (ID) of a static area.",
+        "enum": [
+          "PUBLIC",
+          "SCHWARZ"
+        ],
+        "example": "PUBLIC",
+        "type": "string"
       },
       "ThroughputInMB": {
         "description": "Throughput in Megabyte per second.",
@@ -5888,6 +5965,53 @@
         },
         {
           "$ref": "#/components/parameters/v1RequestID"
+        }
+      ]
+    },
+    "/v1/projects/{projectId}": {
+      "get": {
+        "description": "Get details about a STACKIT project.",
+        "operationId": "GetProjectDetails",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            },
+            "description": "Show project details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get project details.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.project.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
         }
       ]
     },

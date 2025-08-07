@@ -58,11 +58,14 @@
               }
             },
             "schema": {
-              "$ref": "#/components/schemas/error"
+              "$ref": "#/components/schemas/ErrorResponse"
             }
           }
         },
-        "description": "Bad Request"
+        "description": "Bad Request",
+        "x-stackit-sdk": {
+          "schema-name": "BadRequestResponse"
+        }
       },
       "DownloadAuditLogEntriesResponse": {
         "content": {
@@ -75,7 +78,7 @@
                 },
                 "items": {
                   "items": {
-                    "$ref": "#/components/schemas/auditLogEntry"
+                    "$ref": "#/components/schemas/AuditLogEntryResponse"
                   },
                   "type": "array"
                 },
@@ -108,11 +111,14 @@
               }
             },
             "schema": {
-              "$ref": "#/components/schemas/error"
+              "$ref": "#/components/schemas/ErrorResponse"
             }
           }
         },
-        "description": "Resource was not found"
+        "description": "Resource was not found",
+        "x-stackit-sdk": {
+          "schema-name": "NotFoundResponse"
+        }
       },
       "TooManyRequests": {
         "content": {
@@ -126,11 +132,14 @@
               }
             },
             "schema": {
-              "$ref": "#/components/schemas/gatewayError"
+              "$ref": "#/components/schemas/GatewayErrorResponse"
             }
           }
         },
-        "description": "Too many requests"
+        "description": "Too many requests",
+        "x-stackit-sdk": {
+          "schema-name": "TooManyRequestsResponse"
+        }
       },
       "Unauthorized": {
         "content": {
@@ -146,18 +155,97 @@
               }
             },
             "schema": {
-              "$ref": "#/components/schemas/error"
+              "$ref": "#/components/schemas/ErrorResponse"
             }
           }
         },
-        "description": "Request could not be authorized"
+        "description": "Request could not be authorized",
+        "x-stackit-sdk": {
+          "schema-name": "UnauthorizedResponse"
+        }
       }
     },
     "schemas": {
-      "auditLogEntry": {
+      "AuditLogEntryContextResponse": {
+        "description": "Request context",
+        "properties": {
+          "folderId": {
+            "description": "Folder id",
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string"
+          },
+          "organizationId": {
+            "description": "Organization id",
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string"
+          },
+          "projectId": {
+            "description": "Project id",
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AuditLogEntryDetailsResponse": {
+        "description": "Additional information about the event that is not part of the request or response. May contain arbitrary data.",
+        "type": "object"
+      },
+      "AuditLogEntryInitiatorResponse": {
+        "description": "Information about who made the request.",
+        "properties": {
+          "email": {
+            "description": "E-Mail of the user or service account who triggered the request",
+            "format": "email",
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string"
+          },
+          "id": {
+            "description": "Unique identifier of the user",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "AuditLogEntryRequestResponse": {
+        "description": "Request, which mirrors the action of the user and the resulting changes within the system",
+        "properties": {
+          "body": {
+            "description": "Body used to make the request.",
+            "type": "object"
+          },
+          "endpoint": {
+            "description": "Endpoint which received the request.",
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string"
+          },
+          "headers": {
+            "description": "Headers used to make the request. May only contain (string -\u003e string) key-value pairs.",
+            "type": "object"
+          },
+          "parameters": {
+            "description": "Parameters used to make the request.",
+            "type": "object"
+          }
+        },
+        "required": [
+          "endpoint"
+        ],
+        "title": "request",
+        "type": "object"
+      },
+      "AuditLogEntryResponse": {
         "properties": {
           "context": {
-            "$ref": "#/components/schemas/context"
+            "$ref": "#/components/schemas/AuditLogEntryContextResponse"
           },
           "correlationId": {
             "description": "Unique ID which identifies the request from the sender point of view.",
@@ -166,7 +254,7 @@
             "type": "string"
           },
           "details": {
-            "$ref": "#/components/schemas/details"
+            "$ref": "#/components/schemas/AuditLogEntryDetailsResponse"
           },
           "eventName": {
             "description": "Name of the operation this event represents.",
@@ -201,7 +289,7 @@
             "type": "string"
           },
           "initiator": {
-            "$ref": "#/components/schemas/initiator"
+            "$ref": "#/components/schemas/AuditLogEntryInitiatorResponse"
           },
           "receivedTimeStamp": {
             "description": "Timestamp at which the event was received by the audit log.",
@@ -213,7 +301,7 @@
             "type": "string"
           },
           "request": {
-            "$ref": "#/components/schemas/request"
+            "$ref": "#/components/schemas/AuditLogEntryRequestResponse"
           },
           "resourceId": {
             "description": "Unique id of the resource that is target of the operation",
@@ -228,10 +316,10 @@
             "type": "string"
           },
           "result": {
-            "$ref": "#/components/schemas/result"
+            "$ref": "#/components/schemas/AuditLogEntryResultResponse"
           },
           "serviceAccountDelegationInfo": {
-            "$ref": "#/components/schemas/serviceAccountDelegationInfo"
+            "$ref": "#/components/schemas/AuditLogEntryServiceAccountDelegationInfoResponse"
           },
           "severity": {
             "description": "The severity of this request.",
@@ -280,55 +368,27 @@
         "title": "auditLogEntry",
         "type": "object"
       },
-      "context": {
-        "description": "Request context",
-        "properties": {
-          "folderId": {
-            "description": "Folder id",
-            "maxLength": 255,
-            "minLength": 1,
-            "type": "string"
-          },
-          "organizationId": {
-            "description": "Organization id",
-            "maxLength": 255,
-            "minLength": 1,
-            "type": "string"
-          },
-          "projectId": {
-            "description": "Project id",
-            "maxLength": 255,
-            "minLength": 1,
-            "type": "string"
-          }
-        },
+      "AuditLogEntryResultResponse": {
+        "description": "Object representing the change resulting from this event. May be omitted if no change has been applied. May contain arbitrary data.",
         "type": "object"
       },
-      "delegationPrincipal": {
-        "description": "Principal in delegation chain of a service account",
+      "AuditLogEntryServiceAccountDelegationInfoResponse": {
+        "description": "Information about service account delegation",
         "properties": {
-          "email": {
-            "description": "E-Mail of the subject",
-            "format": "email",
-            "maxLength": 255,
-            "minLength": 1,
-            "type": "string"
-          },
-          "id": {
-            "description": "Unique identifier of the subject",
-            "type": "string"
+          "principals": {
+            "description": "Delegation chain for the service account",
+            "items": {
+              "$ref": "#/components/schemas/ServiceAccountDelegationInfoPrincipalResponse"
+            },
+            "type": "array"
           }
         },
         "required": [
-          "id"
+          "principals"
         ],
         "type": "object"
       },
-      "details": {
-        "description": "Additional information about the event that is not part of the request or response. May contain arbitrary data.",
-        "type": "object"
-      },
-      "error": {
+      "ErrorResponse": {
         "properties": {
           "message": {
             "description": "Description of the error.",
@@ -354,7 +414,7 @@
         "title": "error",
         "type": "object"
       },
-      "gatewayError": {
+      "GatewayErrorResponse": {
         "properties": {
           "message": {
             "description": "Description of the error.",
@@ -368,71 +428,23 @@
         "title": "gatewayError",
         "type": "object"
       },
-      "initiator": {
-        "description": "Information about who made the request.",
+      "ServiceAccountDelegationInfoPrincipalResponse": {
+        "description": "Principal in delegation chain of a service account",
         "properties": {
           "email": {
-            "description": "E-Mail of the user or service account who triggered the request",
+            "description": "E-Mail of the subject",
             "format": "email",
             "maxLength": 255,
             "minLength": 1,
             "type": "string"
           },
           "id": {
-            "description": "Unique identifier of the user",
+            "description": "Unique identifier of the subject",
             "type": "string"
           }
         },
         "required": [
           "id"
-        ],
-        "type": "object"
-      },
-      "request": {
-        "description": "Request, which mirrors the action of the user and the resulting changes within the system",
-        "properties": {
-          "body": {
-            "description": "Body used to make the request.",
-            "type": "object"
-          },
-          "endpoint": {
-            "description": "Endpoint which received the request.",
-            "maxLength": 255,
-            "minLength": 1,
-            "type": "string"
-          },
-          "headers": {
-            "description": "Headers used to make the request. May only contain (string -\u003e string) key-value pairs.",
-            "type": "object"
-          },
-          "parameters": {
-            "description": "Parameters used to make the request.",
-            "type": "object"
-          }
-        },
-        "required": [
-          "endpoint"
-        ],
-        "title": "request",
-        "type": "object"
-      },
-      "result": {
-        "description": "Object representing the change resulting from this event. May be omitted if no change has been applied. May contain arbitrary data.",
-        "type": "object"
-      },
-      "serviceAccountDelegationInfo": {
-        "description": "Information about service account delegation",
-        "properties": {
-          "principals": {
-            "description": "Delegation chain for the service account",
-            "items": {
-              "$ref": "#/components/schemas/delegationPrincipal"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "principals"
         ],
         "type": "object"
       }

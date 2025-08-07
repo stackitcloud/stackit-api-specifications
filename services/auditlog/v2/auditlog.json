@@ -67,36 +67,6 @@
           "schema-name": "BadRequestResponse"
         }
       },
-      "DownloadAuditLogEntriesResponse": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "properties": {
-                "cursor": {
-                  "description": "Optional cursor if more entries are available",
-                  "type": "string"
-                },
-                "items": {
-                  "items": {
-                    "$ref": "#/components/schemas/AuditLogEntryResponse"
-                  },
-                  "type": "array"
-                },
-                "limit": {
-                  "default": 50,
-                  "description": "Maximum amount of entries requested.",
-                  "type": "number"
-                }
-              },
-              "type": "object"
-            }
-          }
-        },
-        "description": "Contains an array of all matched audit log entries and a pagination cursor.",
-        "x-stackit-sdk": {
-          "schema-name": "ListAuditLogEntriesResponse"
-        }
-      },
       "NotFound": {
         "content": {
           "application/json": {
@@ -428,6 +398,26 @@
         "title": "gatewayError",
         "type": "object"
       },
+      "ListAuditLogEntriesResponse": {
+        "properties": {
+          "cursor": {
+            "description": "Optional cursor if more entries are available",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AuditLogEntryResponse"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "default": 50,
+            "description": "Maximum amount of entries requested.",
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
       "ServiceAccountDelegationInfoPrincipalResponse": {
         "description": "Principal in delegation chain of a service account",
         "properties": {
@@ -482,7 +472,14 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/DownloadAuditLogEntriesResponse"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListAuditLogEntriesResponse"
+                }
+              }
+            },
+            "description": "Contains an array of all matched audit log entries and a pagination cursor."
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -540,7 +537,14 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/DownloadAuditLogEntriesResponse"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListAuditLogEntriesResponse"
+                }
+              }
+            },
+            "description": "Contains an array of all matched audit log entries and a pagination cursor."
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -598,7 +602,14 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/DownloadAuditLogEntriesResponse"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListAuditLogEntriesResponse"
+                }
+              }
+            },
+            "description": "Contains an array of all matched audit log entries and a pagination cursor."
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"

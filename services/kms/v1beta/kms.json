@@ -129,6 +129,9 @@
     "schemas": {
       "CreateKeyPayload": {
         "properties": {
+          "access_scope": {
+            "$ref": "#/components/schemas/access_scope"
+          },
           "algorithm": {
             "$ref": "#/components/schemas/algorithm"
           },
@@ -148,6 +151,9 @@
             "default": false,
             "description": "States whether versions can be created or only imported.",
             "type": "boolean"
+          },
+          "protection": {
+            "$ref": "#/components/schemas/protection"
           },
           "purpose": {
             "$ref": "#/components/schemas/purpose"
@@ -178,6 +184,9 @@
       },
       "CreateWrappingKeyPayload": {
         "properties": {
+          "access_scope": {
+            "$ref": "#/components/schemas/access_scope"
+          },
           "algorithm": {
             "$ref": "#/components/schemas/wrappingAlgorithm"
           },
@@ -192,6 +201,9 @@
             "description": "The display name to distinguish multiple wrapping keys.",
             "maxLength": 64,
             "type": "string"
+          },
+          "protection": {
+            "$ref": "#/components/schemas/protection"
           },
           "purpose": {
             "$ref": "#/components/schemas/wrappingPurpose"
@@ -275,6 +287,15 @@
           "signature"
         ]
       },
+      "access_scope": {
+        "default": "PUBLIC",
+        "description": "The access scope of the key.",
+        "enum": [
+          "PUBLIC",
+          "SNA"
+        ],
+        "type": "string"
+      },
       "algorithm": {
         "description": "The algorithm the key material uses.",
         "enum": [
@@ -293,7 +314,8 @@
         "type": "string"
       },
       "backend": {
-        "description": "The backend that is responsible for maintaining this key.",
+        "deprecated": true,
+        "description": "The backend that is responsible for maintaining this key. Deprecated - use `protection`.",
         "enum": [
           "software"
         ],
@@ -336,6 +358,9 @@
       },
       "key": {
         "properties": {
+          "access_scope": {
+            "$ref": "#/components/schemas/access_scope"
+          },
           "algorithm": {
             "$ref": "#/components/schemas/algorithm"
           },
@@ -377,6 +402,9 @@
             "format": "uuid",
             "type": "string"
           },
+          "protection": {
+            "$ref": "#/components/schemas/protection"
+          },
           "purpose": {
             "$ref": "#/components/schemas/purpose"
           },
@@ -401,7 +429,8 @@
           "keyRingId",
           "backend",
           "purpose",
-          "algorithm"
+          "algorithm",
+          "access_scope"
         ]
       },
       "keyList": {
@@ -468,6 +497,13 @@
         "required": [
           "keyRings"
         ]
+      },
+      "protection": {
+        "description": "The underlying system that is responsible for protecting the key material. Overrides the deprecated 'backend' field.",
+        "enum": [
+          "software"
+        ],
+        "type": "string"
       },
       "purpose": {
         "description": "The purpose of the key.",
@@ -594,6 +630,9 @@
       },
       "wrappingKey": {
         "properties": {
+          "access_scope": {
+            "$ref": "#/components/schemas/access_scope"
+          },
           "algorithm": {
             "$ref": "#/components/schemas/wrappingAlgorithm"
           },
@@ -630,6 +669,9 @@
             "format": "uuid",
             "type": "string"
           },
+          "protection": {
+            "$ref": "#/components/schemas/protection"
+          },
           "publicKey": {
             "description": "The public key of the wrapping key.",
             "type": "string"
@@ -658,7 +700,8 @@
           "keyRingId",
           "backend",
           "purpose",
-          "algorithm"
+          "algorithm",
+          "access_scope"
         ]
       },
       "wrappingKeyList": {

@@ -106,14 +106,12 @@ jobs:
         with:
           repository: "stackitcloud/stackit-sdk-generator"
           ref: "main"
-      - name: Build
-        uses: ./.github/actions/build/java
-        with:
-          go-version: ${{ env.GO_VERSION }}
       - name: Download OAS
         run: make download-oas
       - name: Generate SDK
-        run: make generate-sdk LANGUAGE=java
+        run: make generate-sdk
+        env:
+          LANGUAGE: "java"
       - name: Push Java SDK
         env:
           GH_REPO: "stackitcloud/stackit-sdk-java"

@@ -1901,6 +1901,11 @@
             "title": "Logsurl",
             "type": "string"
           },
+          "metricsEndpointUrl": {
+            "minLength": 1,
+            "title": "Metricsendpointurl",
+            "type": "string"
+          },
           "metricsRetentionTime1h": {
             "minimum": 0,
             "title": "Metricsretentiontime1h",
@@ -1955,6 +1960,7 @@
           "alertingUrl",
           "cluster",
           "dashboardUrl",
+          "error",
           "grafanaAdminPassword",
           "grafanaAdminUser",
           "grafanaPublicReadAccess",
@@ -1965,12 +1971,14 @@
           "jaegerUiUrl",
           "logsPushUrl",
           "logsUrl",
+          "metricsEndpointUrl",
           "metricsRetentionTime1h",
           "metricsRetentionTime5m",
           "metricsRetentionTimeRaw",
           "metricsUrl",
           "otlpTracesUrl",
           "plan",
+          "project_id",
           "pushMetricsUrl",
           "targetsUrl",
           "zipkinSpansUrl"
@@ -3313,7 +3321,7 @@
         "description": "Alert config",
         "properties": {
           "global": {
-            "description": "Global config. If nothing passed the default argus config will be used.",
+            "description": "Global config. If nothing passed the default argus config will be used. It is only possible to update the entire global part, not individual attributes.",
             "properties": {
               "opsgenieApiKey": {
                 "description": "Opsgenie api key\n`Additional Validators:`\n* should only include the characters: a-zA-Z0-9-",
@@ -4413,7 +4421,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "dashboardUrl": "https://portal-dev.stackit.cloud/projects/775eee9d-8565-48ab-9dcc-64a6ca55043a/observability/9449de83-64ac-45dc-9967-e7c75bbdca70/overview",
+                  "dashboardUrl": "https://portal.stackit.cloud/projects/775eee9d-8565-48ab-9dcc-64a6ca55043a/observability/9449de83-64ac-45dc-9967-e7c75bbdca70/overview",
+                  "error": null,
                   "id": "9449de83-64ac-45dc-9967-e7c75bbdca70",
                   "instance": {
                     "alertingUrl": "https://alerting.stackit.argus.eu01.cloud/instances/9449de83-64ac-45dc-9967-e7c75bbdca70",
@@ -4421,7 +4430,6 @@
                     "dashboardUrl": "dashboard.example.com",
                     "grafanaAdminPassword": "asdf313kles23450des0asdf313kles2",
                     "grafanaAdminUser": "admin",
-                    "grafanaPlugins": [],
                     "grafanaPublicReadAccess": false,
                     "grafanaUrl": "https://ui.stackit.argus.eu01.cloud/instances/9449de83-64ac-45dc-9967-e7c75bbdca70",
                     "grafanaUseStackitSso": false,
@@ -4430,6 +4438,7 @@
                     "jaegerUiUrl": "https://9449de83-64ac-jui.traces.stackit.argus.eu01.cloud/instances/9449de83-64ac-45dc-9967-e7c75bbdca70",
                     "logsPushUrl": "https://logs.stackit.argus.eu01.cloud/instances/9449de83-64ac-45dc-9967-e7c75bbdca70/loki/api/v1/push",
                     "logsUrl": "https://logs.stackit.argus.eu01.cloud/instances/9449de83-64ac-45dc-9967-e7c75bbdca70",
+                    "metricsEndpointUrl": "https://metrics-endpoint.stackit.argus.eu01.stackit.cloud/instances/9449de83-64ac-45dc-9967-e7c75bbdca70/metrics",
                     "metricsRetentionTime1h": 90,
                     "metricsRetentionTime5m": 90,
                     "metricsRetentionTimeRaw": 90,
@@ -4448,24 +4457,22 @@
                       "grafanaGlobalSessions": 10,
                       "grafanaGlobalUsers": 10,
                       "id": "7b1fbd9c-9acd-42ce-95d3-0f6822d6cabe",
-                      "isFree": false,
-                      "isPublic": true,
                       "logsAlert": 20,
                       "logsStorage": 20,
                       "name": "SmallPlan",
                       "planId": "7b1fbd9c-9acd-42ce-95d3-0f6822d6cabe",
                       "samplesPerScrape": 0,
-                      "schema": "",
                       "targetNumber": 2,
                       "totalMetricSamples": 5000,
                       "tracesStorage": 20
                     },
+                    "project_id": "5583650h-e972-9d5c-a776-4a0fffr88i98",
                     "pushMetricsUrl": "https://push.metrics.stackit.argus.eu01.cloud/instances/9449de83-64ac-45dc-9967-e7c75bbdca70/api/v1/receive",
                     "targetsUrl": "https://metrics.stackit.argus.eu01.cloud/instances/9449de83-64ac-45dc-9967-e7c75bbdca70",
                     "zipkinSpansUrl": "https://9449de83-64ac-zk.traces.stackit.argus.eu01.cloud/instances/9449de83-64ac-45dc-9967-e7c75bbdca70"
                   },
                   "isUpdatable": true,
-                  "message": "Successfully got instance",
+                  "message": "Successfully got instance data",
                   "name": "testing",
                   "parameters": {},
                   "planId": "a9d5b2df-82dd-40d6-91e9-d551f2de3dda",

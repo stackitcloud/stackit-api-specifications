@@ -263,6 +263,46 @@
         ],
         "type": "object"
       },
+      "CertCheckChildResponse": {
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "source": {
+            "minLength": 1,
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "source"
+        ],
+        "type": "object"
+      },
+      "CertCheckResponse": {
+        "properties": {
+          "certChecks": {
+            "items": {
+              "$ref": "#/components/schemas/CertCheckChildResponse"
+            },
+            "maxItems": 100,
+            "type": "array"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "certChecks",
+          "message"
+        ],
+        "type": "object"
+      },
       "CreateAlertConfigReceiverPayload": {
         "description": "Receivers",
         "properties": {
@@ -642,6 +682,20 @@
         ],
         "type": "object"
       },
+      "CreateCertCheckPayload": {
+        "description": "Cert check body.",
+        "properties": {
+          "source": {
+            "description": "cert to check",
+            "maxLength": 270,
+            "type": "string"
+          }
+        },
+        "required": [
+          "source"
+        ],
+        "type": "object"
+      },
       "CreateCredentialsPayload": {
         "description": "Create new credentials with (optional) description",
         "properties": {
@@ -668,6 +722,20 @@
         "required": [
           "credentials",
           "message"
+        ],
+        "type": "object"
+      },
+      "CreateHttpCheckPayload": {
+        "description": "Http check body.",
+        "properties": {
+          "url": {
+            "description": "url to check",
+            "maxLength": 400,
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
         ],
         "type": "object"
       },
@@ -1672,6 +1740,46 @@
         },
         "required": [
           "url"
+        ],
+        "type": "object"
+      },
+      "HttpCheckChildResponse": {
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "url": {
+            "minLength": 1,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "id"
+        ],
+        "type": "object"
+      },
+      "HttpCheckResponse": {
+        "properties": {
+          "httpChecks": {
+            "items": {
+              "$ref": "#/components/schemas/HttpCheckChildResponse"
+            },
+            "maxItems": 100,
+            "type": "array"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "httpChecks",
+          "message"
         ],
         "type": "object"
       },
@@ -7520,6 +7628,233 @@
         }
       }
     },
+    "/v1/projects/{projectId}/instances/{instanceId}/cert-checks": {
+      "get": {
+        "description": "Get all cert checks configured.",
+        "operationId": "ListCertChecks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "certChecks": [
+                    {
+                      "id": "cdb25317a9cdd3e640ed72d432cde7ea",
+                      "source": "tcp://example.org:443"
+                    }
+                  ],
+                  "message": "Successfully got all cert checks"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/CertCheckResponse"
+                }
+              }
+            },
+            "description": "Get all cert checks"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create cert check.",
+        "operationId": "CreateCertCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCertCheckPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "certChecks": [
+                    {
+                      "id": "cdb25317a9cdd3e640ed72d432cde7ea",
+                      "source": "tcp://example.org:443"
+                    }
+                  ],
+                  "message": "Successfully got all cert checks"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/CertCheckResponse"
+                }
+              }
+            },
+            "description": "Get all cert checks"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/cert-checks/{id}": {
+      "delete": {
+        "description": "Delete cert check.",
+        "operationId": "DeleteCertCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "certChecks": [
+                    {
+                      "id": "cdb25317a9cdd3e640ed72d432cde7ea",
+                      "source": "tcp://example.org:443"
+                    }
+                  ],
+                  "message": "Successfully deleted cert check"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/CertCheckResponse"
+                }
+              }
+            },
+            "description": "Delete cert check"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Cert check not found"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Did not found cert check"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
     "/v1/projects/{projectId}/instances/{instanceId}/credentials": {
       "get": {
         "description": "Get all technical user credentials.",
@@ -8304,6 +8639,233 @@
               }
             },
             "description": "You do not have permission to perform this action."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/http-checks": {
+      "get": {
+        "description": "Get all http checks configured.",
+        "operationId": "ListHttpChecks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "httpChecks": [
+                    {
+                      "id": "5564fd6a95028f02e52b38bb1743c816",
+                      "url": "https://example.org"
+                    }
+                  ],
+                  "message": "Successfully got all check check urls"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/HttpCheckResponse"
+                }
+              }
+            },
+            "description": "Get all http checks"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create http check.",
+        "operationId": "CreateHttpCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateHttpCheckPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "httpChecks": [
+                    {
+                      "id": "5564fd6a95028f02e52b38bb1743c816",
+                      "url": "https://example.org"
+                    }
+                  ],
+                  "message": "Successfully got all check check urls"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/HttpCheckResponse"
+                }
+              }
+            },
+            "description": "Get all http checks"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/http-checks/{id}": {
+      "delete": {
+        "description": "Delete http check.",
+        "operationId": "DeleteHttpCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "httpChecks": [
+                    {
+                      "id": "5564fd6a95028f02e52b38bb1743c816",
+                      "url": "https://example.org"
+                    }
+                  ],
+                  "message": "Successfully deleted ping check urls"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/HttpCheckResponse"
+                }
+              }
+            },
+            "description": "Delete http check"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Http check url not found"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Did not found http check"
           }
         },
         "x-stackit-authorization": {

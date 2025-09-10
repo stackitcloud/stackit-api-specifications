@@ -693,6 +693,40 @@
         "title": "registerTesting",
         "type": "object"
       },
+      "InquiryRequestPrivatePlan": {
+        "description": "Request a private plan.",
+        "properties": {
+          "companyName": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/vendorName"
+              }
+            ],
+            "description": "The company name."
+          },
+          "contactEmail": {
+            "$ref": "#/components/schemas/email"
+          },
+          "fullName": {
+            "$ref": "#/components/schemas/contactPersonName"
+          },
+          "message": {
+            "$ref": "#/components/schemas/message"
+          },
+          "productId": {
+            "$ref": "#/components/schemas/productId"
+          }
+        },
+        "required": [
+          "productId",
+          "fullName",
+          "companyName",
+          "contactEmail",
+          "message"
+        ],
+        "title": "requestPrivatePlan",
+        "type": "object"
+      },
       "InquirySuggestProduct": {
         "description": "Suggest a product.",
         "properties": {
@@ -1027,6 +1061,23 @@
             "type": "object"
           },
           {
+            "description": "Request a private plan.",
+            "properties": {
+              "requestPrivatePlan": {
+                "$ref": "#/components/schemas/InquiryRequestPrivatePlan"
+              },
+              "type": {
+                "$ref": "#/components/schemas/inquiryFormType"
+              }
+            },
+            "required": [
+              "type",
+              "requestPrivatePlan"
+            ],
+            "title": "requestPrivatePlan",
+            "type": "object"
+          },
+          {
             "description": "Register for testing.",
             "properties": {
               "registerTesting": {
@@ -1052,7 +1103,8 @@
           "SUGGEST_PRODUCT",
           "CONTACT_SALES",
           "BECOME_VENDOR",
-          "REGISTER_TESTING"
+          "REGISTER_TESTING",
+          "REQUEST_PRIVATE_PLAN"
         ],
         "format": "enum",
         "type": "string"
@@ -1433,7 +1485,7 @@
     },
     "/v1/inquiries": {
       "post": {
-        "description": "Create an inquiry to contact sales, become a vendor, or suggest a product. Requests are limited to 10 per 5 minutes.",
+        "description": "Create an inquiry to contact sales, become a vendor, request a private plan, register for testing, or suggest a product. Requests are limited to 10 per 5 minutes.",
         "operationId": "inquiries-create-inquiry",
         "requestBody": {
           "content": {

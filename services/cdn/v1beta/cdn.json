@@ -116,6 +116,20 @@
             "type": "string",
             "x-go-type": "string"
           },
+          "logSink": {
+            "discriminator": {
+              "mapping": {
+                "loki": "#/components/schemas/PatchLokiLogSink"
+              },
+              "propertyName": "type"
+            },
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PatchLokiLogSink"
+              }
+            ]
+          },
           "monthlyLimitBytes": {
             "description": "Sets the monthly limit of bandwidth in bytes that the pullzone is allowed to use.\n",
             "format": "int64",
@@ -160,6 +174,18 @@
             "description": "Sets the default cache duration for the distribution. \nThe default cache duration is applied when a 'Cache-Control' header is not presented in the origin's response.\nWe use ISO8601 duration format for cache duration (e.g. P1DT2H30M)\n",
             "type": "string",
             "x-go-type": "string"
+          },
+          "geofencing": {
+            "additionalProperties": {
+              "items": {
+                "description": "ISO 3166-1 alpha-2 country code (e.g., DE, ES, GB)",
+                "type": "string"
+              },
+              "type": "array",
+              "uniqueItems": true
+            },
+            "description": "An object mapping multiple alternative origins to country codes.\n\nAny request from one of those country codes will route to the alternative origin. Do note that\ncountry codes may only be used once. You can not have a country be assigned to multiple alternative origins.\n",
+            "type": "object"
           },
           "intentId": {
             "description": "While optional, it is greatly encouraged to provide an `intentId`. \nThis is used to deduplicate requests.  \nIf multiple POST-Requests with the same `intentId` for a given `projectId` are received, all but the first request are dropped.\n",
@@ -749,6 +775,19 @@
           "logs"
         ]
       },
+      "GetLogsSearchFiltersResponse": {
+        "properties": {
+          "filters": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "filters"
+        ]
+      },
       "GetStatisticsResponse": {
         "properties": {
           "records": {
@@ -764,6 +803,18 @@
       },
       "HttpBackend": {
         "properties": {
+          "geofencing": {
+            "additionalProperties": {
+              "items": {
+                "description": "ISO 3166-1 alpha-2 country code (e.g., DE, ES, GB)",
+                "type": "string"
+              },
+              "type": "array",
+              "uniqueItems": true
+            },
+            "description": "An object mapping multiple alternative origins to country codes.\n\nAny request from one of those country codes will route to the alternative origin. Do note that\ncountry codes may only be used once. You cannot have a country be assigned to multiple alternative origins.\n",
+            "type": "object"
+          },
           "originRequestHeaders": {
             "additionalProperties": {
               "type": "string"
@@ -781,13 +832,26 @@
         "required": [
           "type",
           "originUrl",
-          "originRequestHeaders"
+          "originRequestHeaders",
+          "geofencing"
         ],
         "type": "object"
       },
       "HttpBackendPatch": {
         "description": "A partial HTTP Backend",
         "properties": {
+          "geofencing": {
+            "additionalProperties": {
+              "items": {
+                "description": "ISO 3166-1 alpha-2 country code (e.g., DE, ES, GB)",
+                "type": "string"
+              },
+              "type": "array",
+              "uniqueItems": true
+            },
+            "description": "An object mapping multiple alternative origins to country codes.\n\nAny request from one of those country codes will route to the alternative origin. Do note that\ncountry codes may only be used once. You cannot have a country be assigned to multiple alternative origins.\n",
+            "type": "object"
+          },
           "originRequestHeaders": {
             "additionalProperties": {
               "type": "string"
@@ -927,11 +991,11 @@
         "description": "Returned if a custom certificate is used. Response does not contain the certificate or key.",
         "properties": {
           "certificate": {
-            "description": "base64-encoded certificate",
+            "description": "base64-encoded PEM-encoded certificate",
             "type": "string"
           },
           "key": {
-            "description": "base64-encoded key",
+            "description": "base64-encoded PEM encoded key",
             "type": "string"
           },
           "type": {
@@ -2689,13 +2753,20 @@
             }
           },
           {
-            "description": "The following sort options exist. We default to `timestamp`\n- `timestamp` - Sort by log message time stamp.\n",
+            "description": "Sorts the log messages by a specific field. Defaults to `timestamp`.\n\nSupported sort options:\n- `timestamp`\n- `dataCenterRegion`\n- `requestCountryCode`\n- `statusCode`\n- `cacheHit`\n- `size`\n- `path`\n- `host`\n",
             "in": "query",
             "name": "sortBy",
             "schema": {
               "default": "timestamp",
               "enum": [
-                "timestamp"
+                "timestamp",
+                "dataCenterRegion",
+                "requestCountryCode",
+                "statusCode",
+                "cacheHit",
+                "size",
+                "path",
+                "host"
               ],
               "format": "enum",
               "type": "string"
@@ -2804,6 +2875,112 @@
           }
         },
         "summary": "Retrieve distribution logs",
+        "x-stackit-authorization": {
+          "actions": [
+            "cdn.distribution.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/distributions/{distributionId}/logs/searchFilters": {
+      "get": {
+        "operationId": "GetLogsSearchFilters",
+        "parameters": [
+          {
+            "description": "Your STACKIT Project ID",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Your CDN distribution ID",
+            "in": "path",
+            "name": "distributionId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Required filter for search suggestions (e.g., status=4, requestCountry, cacheHit=tru, dataCenterRegion). The filter query cannot be empty.",
+            "in": "query",
+            "name": "filter",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLogsSearchFiltersResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJSONResponse"
+                }
+              }
+            },
+            "description": "Invalid request. Please check your queries or parameters."
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "unauthorized - please make sure the \"Authorization\" header is set and uses correct credentials"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJSONResponse"
+                }
+              }
+            },
+            "description": "unprocessable entity - please make sure the body you provided is constructed according to spec"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJSONResponse"
+                }
+              }
+            },
+            "description": "internal error - please try again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJSONResponse"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Get relevant search filters for this distribution based on user input",
         "x-stackit-authorization": {
           "actions": [
             "cdn.distribution.get"

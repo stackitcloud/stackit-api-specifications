@@ -798,6 +798,14 @@
       "BaseSecurityGroupRule": {
         "description": "The base schema for a security group rule.",
         "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
           "description": {
             "$ref": "#/components/schemas/Description"
           },
@@ -852,6 +860,14 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
               }
             ],
             "readOnly": true
@@ -1273,6 +1289,9 @@
           "allowedAddresses": {
             "$ref": "#/components/schemas/AllowedAddresses"
           },
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
           "device": {
             "allOf": [
               {
@@ -1499,6 +1518,9 @@
               }
             ],
             "description": "The affinity group the server is assigned to."
+          },
+          "agent": {
+            "$ref": "#/components/schemas/ServerAgent"
           },
           "availabilityZone": {
             "allOf": [
@@ -2386,7 +2408,7 @@
         "type": "object"
       },
       "Labels": {
-        "description": "Object that represents the labels of an object. Regex for keys: `^[a-z]((-|_|[a-z0-9])){0,62}$`. Regex for values: `^(-|_|[a-z0-9]){0,63}$`. Providing a `null` value for a key will remove that key.",
+        "description": "Object that represents the labels of an object. Regex for keys: `^(?=.{1,63}$)([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$`. Regex for values: `^(?=.{0,63}$)(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])*$`. Providing a `null` value for a key will remove that key.",
         "example": {
           "key": "value"
         },
@@ -2513,6 +2535,9 @@
         "properties": {
           "allowedAddresses": {
             "$ref": "#/components/schemas/AllowedAddresses"
+          },
+          "description": {
+            "$ref": "#/components/schemas/Description"
           },
           "device": {
             "allOf": [
@@ -3585,6 +3610,9 @@
             ],
             "description": "The affinity group the server is assigned to."
           },
+          "agent": {
+            "$ref": "#/components/schemas/ServerAgent"
+          },
           "availabilityZone": {
             "allOf": [
               {
@@ -3755,6 +3783,16 @@
           "name",
           "machineType"
         ],
+        "type": "object"
+      },
+      "ServerAgent": {
+        "description": "STACKIT server agent options for a server.",
+        "properties": {
+          "provisioned": {
+            "description": "Configure the STACKIT server agent provisioning during the first boot of the server. Only works when booting from an images that supports the STACKIT server agent. When `false` the agent IS NOT installed. When `true` the agent IS installed. When its not set the result depend on the used image and its default provisioning setting.",
+            "type": "boolean"
+          }
+        },
         "type": "object"
       },
       "ServerConsoleUrl": {
@@ -4320,6 +4358,9 @@
         "properties": {
           "allowedAddresses": {
             "$ref": "#/components/schemas/AllowedAddresses"
+          },
+          "description": {
+            "$ref": "#/components/schemas/Description"
           },
           "labels": {
             "$ref": "#/components/schemas/Labels"

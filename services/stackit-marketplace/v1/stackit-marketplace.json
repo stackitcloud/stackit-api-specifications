@@ -9,12 +9,35 @@
           "$ref": "#/components/schemas/cursor"
         }
       },
+      "filter": {
+        "description": "Filter the products based on attributes, e.g., `deliveryMethod eq \"SAAS\"`. The supported operators are:\n- `PR` (present; `name pr`)\n- `EQ` (equal)\n- `NE` (not equal)\n- `CO` (contains; `text co \"searching\"`)\n- `SW` (starts with)\n- `EW` (ends with)\n- `GT` (greater than)\n- `LT` (less than)\n- `GE` (greater than or equal)\n- `LE` (less than or equal). \n\nThese expressions can be logically linked with `AND` and `OR`. All attributes (and the special `text` attribute) can be used as filters, if the attribute type allows the operator.\n",
+        "example": "deliveryMethod eq \"SAAS\"",
+        "in": "query",
+        "name": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
       "limit": {
         "description": "The maximum number of items to return in the response. If maximum is exceeded, maximum is used.",
         "in": "query",
         "name": "limit",
         "schema": {
           "$ref": "#/components/schemas/limit"
+        }
+      },
+      "locale": {
+        "description": "The language of the response.",
+        "example": "de",
+        "in": "query",
+        "name": "locale",
+        "schema": {
+          "default": "en",
+          "enum": [
+            "en",
+            "de"
+          ],
+          "type": "string"
         }
       },
       "offset": {
@@ -25,6 +48,16 @@
         "schema": {
           "type": "number"
         }
+      },
+      "pathParamProductId": {
+        "description": "The product ID.",
+        "in": "path",
+        "name": "productId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/productId"
+        },
+        "style": "simple"
       },
       "pathParamProjectId": {
         "description": "The project ID.",
@@ -52,6 +85,15 @@
         "name": "productId",
         "schema": {
           "$ref": "#/components/schemas/productId"
+        }
+      },
+      "sort": {
+        "description": "Sort the products based on attributes and order e.g. `name:asc`. Attributes with scalar types (`createdAt`, `isProductListing`) or keywords (`name`, `deliveryMethod`, `lifecycleState`, `vendor.name`) can be used as sort criteria. To set the sort order, append `asc` (ascending) or `desc` (descending) to the attribute, e.g. `name:asc`. To sort by multiple attributes, separate them with a comma. E.g `name:asc,price:desc`.",
+        "example": "name:asc",
+        "in": "query",
+        "name": "sort",
+        "schema": {
+          "type": "string"
         }
       }
     },
@@ -156,6 +198,418 @@
         },
         "type": "object"
       },
+      "CatalogPricingOptionHighlight": {
+        "properties": {
+          "highlightContent": {
+            "$ref": "#/components/schemas/catalogHighlightContent"
+          }
+        },
+        "type": "object"
+      },
+      "CatalogProductDetail": {
+        "properties": {
+          "assets": {
+            "$ref": "#/components/schemas/assets"
+          },
+          "categories": {
+            "$ref": "#/components/schemas/productCategories"
+          },
+          "deliveryMethod": {
+            "$ref": "#/components/schemas/deliveryMethod"
+          },
+          "demoUrl": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/url"
+              }
+            ],
+            "description": "The URL to a demo if available."
+          },
+          "description": {
+            "$ref": "#/components/schemas/productDescription"
+          },
+          "documentationUrl": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/url"
+              }
+            ],
+            "description": "The documentation URL."
+          },
+          "email": {
+            "$ref": "#/components/schemas/email"
+          },
+          "hasDemo": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/bool"
+              }
+            ],
+            "description": "If the product has a demoUrl available."
+          },
+          "hasPrivatePlanOption": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/bool"
+              }
+            ],
+            "description": "If the product has a private plan option."
+          },
+          "highlights": {
+            "description": "The list of highlights.",
+            "items": {
+              "$ref": "#/components/schemas/CatalogProductHighlight"
+            },
+            "type": "array"
+          },
+          "industries": {
+            "$ref": "#/components/schemas/productIndustries"
+          },
+          "isProductListing": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/bool"
+              }
+            ],
+            "deprecated": true,
+            "description": "If true, the product is not fully integrated but only listed. Product listings may not have prices and support information. \n\nDeprecated: Will be removed after 16.12.2025. Please use `offerType` as replacement."
+          },
+          "lifecycleState": {
+            "$ref": "#/components/schemas/productLifecycleState"
+          },
+          "logo": {
+            "$ref": "#/components/schemas/logo"
+          },
+          "name": {
+            "$ref": "#/components/schemas/productName"
+          },
+          "offerType": {
+            "$ref": "#/components/schemas/offerType"
+          },
+          "pricingOptions": {
+            "description": "The list of pricing options.",
+            "items": {
+              "$ref": "#/components/schemas/CatalogProductPricingOption"
+            },
+            "type": "array"
+          },
+          "productId": {
+            "$ref": "#/components/schemas/productId"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/productSummary"
+          },
+          "supportFaq": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/url"
+              }
+            ],
+            "description": "The support FAQ URL."
+          },
+          "supportPhone": {
+            "$ref": "#/components/schemas/supportPhone"
+          },
+          "supportResources": {
+            "description": "The list of support resources.",
+            "items": {
+              "$ref": "#/components/schemas/CatalogProductSupportResource"
+            },
+            "type": "array"
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/CatalogProductDetailsVendor"
+          },
+          "vendorTerms": {
+            "description": "The list of terms of use.",
+            "items": {
+              "$ref": "#/components/schemas/CatalogProductVendorTerms"
+            },
+            "type": "array"
+          },
+          "videoUrl": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/url"
+              }
+            ],
+            "description": "The video URL."
+          }
+        },
+        "required": [
+          "productId",
+          "name",
+          "pricingOptions",
+          "deliveryMethod",
+          "logo",
+          "videoUrl",
+          "summary",
+          "description",
+          "documentationUrl",
+          "highlights",
+          "vendor",
+          "offerType",
+          "lifecycleState"
+        ],
+        "type": "object"
+      },
+      "CatalogProductDetailsVendor": {
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/vendorDescription"
+          },
+          "logo": {
+            "$ref": "#/components/schemas/logo"
+          },
+          "name": {
+            "$ref": "#/components/schemas/vendorName"
+          },
+          "vendorId": {
+            "$ref": "#/components/schemas/UUID"
+          },
+          "videoUrl": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/url"
+              }
+            ],
+            "description": "The vendor video URL."
+          },
+          "websiteUrl": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/url"
+              }
+            ],
+            "description": "The vendor website URL."
+          }
+        },
+        "required": [
+          "vendorId",
+          "name",
+          "description",
+          "logo",
+          "websiteUrl",
+          "videoUrl"
+        ],
+        "type": "object"
+      },
+      "CatalogProductFacets": {
+        "additionalProperties": {
+          "items": {
+            "properties": {
+              "count": {
+                "description": "The number of items associated with this facet value.",
+                "format": "int32",
+                "type": "integer"
+              },
+              "value": {
+                "description": "The value of the facet.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "value",
+              "count"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "description": "A collection of facets, where each key represents a facet category.",
+        "example": {
+          "categories": [
+            {
+              "count": 20,
+              "value": "Infrastructure Software"
+            },
+            {
+              "count": 5,
+              "value": "Data Products"
+            }
+          ],
+          "industries": [
+            {
+              "count": 15,
+              "value": "eGovernment"
+            },
+            {
+              "count": 12,
+              "value": "Retail"
+            }
+          ]
+        },
+        "type": "object"
+      },
+      "CatalogProductHighlight": {
+        "properties": {
+          "highlightContent": {
+            "$ref": "#/components/schemas/catalogHighlightContent"
+          },
+          "highlightIcon": {
+            "$ref": "#/components/schemas/catalogHighlightIcon"
+          },
+          "highlightTitle": {
+            "$ref": "#/components/schemas/catalogHighlightTitle"
+          }
+        },
+        "type": "object"
+      },
+      "CatalogProductOverview": {
+        "properties": {
+          "deliveryMethod": {
+            "$ref": "#/components/schemas/deliveryMethod"
+          },
+          "freeTrial": {
+            "$ref": "#/components/schemas/freeTrial"
+          },
+          "lifecycleState": {
+            "$ref": "#/components/schemas/productLifecycleState"
+          },
+          "logo": {
+            "$ref": "#/components/schemas/logo"
+          },
+          "name": {
+            "$ref": "#/components/schemas/productName"
+          },
+          "productId": {
+            "$ref": "#/components/schemas/productId"
+          },
+          "summary": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/message"
+              }
+            ],
+            "description": "The short summary of the product."
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/CatalogProductOverviewVendor"
+          }
+        },
+        "required": [
+          "productId",
+          "name",
+          "deliveryMethod",
+          "summary",
+          "vendor",
+          "lifecycleState"
+        ],
+        "type": "object"
+      },
+      "CatalogProductOverviewVendor": {
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/vendorName"
+          },
+          "vendorId": {
+            "$ref": "#/components/schemas/UUID"
+          },
+          "websiteUrl": {
+            "$ref": "#/components/schemas/url"
+          }
+        },
+        "required": [
+          "vendorId",
+          "name",
+          "websiteUrl"
+        ],
+        "type": "object"
+      },
+      "CatalogProductPricingOption": {
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/pricingOptionDescription"
+          },
+          "highlights": {
+            "description": "The list of highlights.",
+            "items": {
+              "$ref": "#/components/schemas/CatalogPricingOptionHighlight"
+            },
+            "type": "array"
+          },
+          "name": {
+            "$ref": "#/components/schemas/pricingOptionName"
+          },
+          "noticePeriod": {
+            "$ref": "#/components/schemas/noticePeriod"
+          },
+          "planId": {
+            "$ref": "#/components/schemas/planId"
+          },
+          "priceType": {
+            "$ref": "#/components/schemas/priceType"
+          },
+          "pricingPlan": {
+            "$ref": "#/components/schemas/pricingPlan"
+          },
+          "rate": {
+            "$ref": "#/components/schemas/pricingOptionRate"
+          },
+          "sku": {
+            "$ref": "#/components/schemas/sku"
+          },
+          "skuInfo": {
+            "$ref": "#/components/schemas/skuInfo"
+          },
+          "skuInfoDetails": {
+            "$ref": "#/components/schemas/skuInfoDetails"
+          },
+          "unit": {
+            "$ref": "#/components/schemas/pricingOptionUnit"
+          }
+        },
+        "required": [
+          "planId",
+          "name",
+          "description",
+          "sku",
+          "skuInfo",
+          "skuInfoDetails",
+          "highlights"
+        ],
+        "type": "object"
+      },
+      "CatalogProductSupportResource": {
+        "properties": {
+          "supportLink": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/url"
+              }
+            ],
+            "description": "The support resource link."
+          },
+          "supportLinkTitle": {
+            "$ref": "#/components/schemas/supportLinkTitle"
+          }
+        },
+        "type": "object"
+      },
+      "CatalogProductVendorTerms": {
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/tosDescription"
+          },
+          "title": {
+            "$ref": "#/components/schemas/tosTitle"
+          },
+          "url": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/url"
+              }
+            ],
+            "description": "The terms of use url."
+          }
+        },
+        "required": [
+          "url",
+          "title",
+          "description"
+        ],
+        "type": "object"
+      },
       "ErrorResponse": {
         "properties": {
           "error": {
@@ -192,6 +646,181 @@
           "path",
           "status",
           "timeStamp"
+        ],
+        "type": "object"
+      },
+      "InquiryBecomeVendor": {
+        "description": "Become a vendor.",
+        "properties": {
+          "contactEmail": {
+            "$ref": "#/components/schemas/email"
+          },
+          "message": {
+            "$ref": "#/components/schemas/message"
+          }
+        },
+        "required": [
+          "contactEmail",
+          "message"
+        ],
+        "title": "becomeVendor",
+        "type": "object"
+      },
+      "InquiryContactSales": {
+        "description": "Contact sales.",
+        "properties": {
+          "companyName": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/vendorName"
+              }
+            ],
+            "description": "The company name."
+          },
+          "contactEmail": {
+            "$ref": "#/components/schemas/email"
+          },
+          "fullName": {
+            "$ref": "#/components/schemas/contactPersonName"
+          },
+          "message": {
+            "$ref": "#/components/schemas/message"
+          },
+          "productId": {
+            "$ref": "#/components/schemas/productId"
+          }
+        },
+        "required": [
+          "productId",
+          "fullName",
+          "companyName",
+          "contactEmail",
+          "message"
+        ],
+        "title": "contactSales",
+        "type": "object"
+      },
+      "InquiryRegisterTesting": {
+        "description": "Register for testing.",
+        "properties": {
+          "contactEmail": {
+            "$ref": "#/components/schemas/email"
+          },
+          "fullName": {
+            "$ref": "#/components/schemas/contactPersonName"
+          },
+          "message": {
+            "$ref": "#/components/schemas/message"
+          }
+        },
+        "required": [
+          "fullName",
+          "contactEmail",
+          "message"
+        ],
+        "title": "registerTesting",
+        "type": "object"
+      },
+      "InquiryRequestPrivatePlan": {
+        "description": "Request a private plan.",
+        "properties": {
+          "companyName": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/vendorName"
+              }
+            ],
+            "description": "The company name."
+          },
+          "contactEmail": {
+            "$ref": "#/components/schemas/email"
+          },
+          "fullName": {
+            "$ref": "#/components/schemas/contactPersonName"
+          },
+          "message": {
+            "$ref": "#/components/schemas/message"
+          },
+          "productId": {
+            "$ref": "#/components/schemas/productId"
+          }
+        },
+        "required": [
+          "productId",
+          "fullName",
+          "companyName",
+          "contactEmail",
+          "message"
+        ],
+        "title": "requestPrivatePlan",
+        "type": "object"
+      },
+      "InquirySuggestProduct": {
+        "description": "Suggest a product.",
+        "properties": {
+          "companyName": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/vendorName"
+              }
+            ],
+            "description": "The suggested product's company name."
+          },
+          "message": {
+            "$ref": "#/components/schemas/message"
+          },
+          "name": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/productName"
+              }
+            ],
+            "description": "The suggested product name."
+          },
+          "url": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/url"
+              }
+            ],
+            "description": "The suggested product's website URL."
+          }
+        },
+        "required": [
+          "name",
+          "companyName",
+          "url"
+        ],
+        "title": "suggestProduct",
+        "type": "object"
+      },
+      "ListCatalogProductsResponse": {
+        "properties": {
+          "cursor": {
+            "$ref": "#/components/schemas/cursor"
+          },
+          "facets": {
+            "$ref": "#/components/schemas/CatalogProductFacets"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CatalogProductOverview"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/limit"
+              }
+            ],
+            "default": 50
+          }
+        },
+        "required": [
+          "items",
+          "cursor",
+          "limit"
         ],
         "type": "object"
       },
@@ -337,6 +966,33 @@
         },
         "type": "object"
       },
+      "bool": {
+        "description": "Boolean data type.",
+        "example": true,
+        "type": "boolean"
+      },
+      "catalogHighlightContent": {
+        "description": "The highlight content.",
+        "example": "this is the content of the best highlight ever",
+        "type": "string"
+      },
+      "catalogHighlightIcon": {
+        "description": "The highlight icon.",
+        "example": "rocket",
+        "type": "string"
+      },
+      "catalogHighlightTitle": {
+        "description": "The highlight title.",
+        "example": "best highlight ever",
+        "type": "string"
+      },
+      "contactPersonName": {
+        "description": "The full name of the contact person.",
+        "example": "Max Mustermann",
+        "maxLength": 512,
+        "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
+        "type": "string"
+      },
       "cursor": {
         "description": "A pagination cursor that represents a position in the dataset. If given, results will be returned from the item after the cursor. If not given, results will be returned from the beginning.",
         "example": "eyJrZXkiOiJ2YWx1ZSJ9",
@@ -359,10 +1015,130 @@
         "format": "enum",
         "type": "string"
       },
+      "email": {
+        "description": "A e-mail address.",
+        "example": "example@stackit.de",
+        "format": "email",
+        "type": "string"
+      },
       "fileName": {
         "description": "The file version matching the file name (localized).",
         "example": "2025_06_02_01_file-name_DE.pdf",
         "pattern": "^\\d{4}_\\d{2}_\\d{2}_\\d{3}_[a-zA-Z0-9_-]+_(DE|EN)\\.$",
+        "type": "string"
+      },
+      "freeTrial": {
+        "description": "The amount of days of free trial highlighted in the product card.",
+        "example": {
+          "value": 7
+        },
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "inquiries-create-inquiryPayload": {
+        "oneOf": [
+          {
+            "description": "Suggest a product.",
+            "properties": {
+              "suggestProduct": {
+                "$ref": "#/components/schemas/InquirySuggestProduct"
+              },
+              "type": {
+                "$ref": "#/components/schemas/inquiryFormType"
+              }
+            },
+            "required": [
+              "type",
+              "suggestProduct"
+            ],
+            "title": "suggestProduct",
+            "type": "object"
+          },
+          {
+            "description": "Contact sales.",
+            "properties": {
+              "contactSales": {
+                "$ref": "#/components/schemas/InquiryContactSales"
+              },
+              "type": {
+                "$ref": "#/components/schemas/inquiryFormType"
+              }
+            },
+            "required": [
+              "type",
+              "contactSales"
+            ],
+            "title": "contactSales",
+            "type": "object"
+          },
+          {
+            "description": "Become a Vendor.",
+            "properties": {
+              "becomeVendor": {
+                "$ref": "#/components/schemas/InquiryBecomeVendor"
+              },
+              "type": {
+                "$ref": "#/components/schemas/inquiryFormType"
+              }
+            },
+            "required": [
+              "type",
+              "becomeVendor"
+            ],
+            "title": "becomeVendor",
+            "type": "object"
+          },
+          {
+            "description": "Request a private plan.",
+            "properties": {
+              "requestPrivatePlan": {
+                "$ref": "#/components/schemas/InquiryRequestPrivatePlan"
+              },
+              "type": {
+                "$ref": "#/components/schemas/inquiryFormType"
+              }
+            },
+            "required": [
+              "type",
+              "requestPrivatePlan"
+            ],
+            "title": "requestPrivatePlan",
+            "type": "object"
+          },
+          {
+            "description": "Register for testing.",
+            "properties": {
+              "registerTesting": {
+                "$ref": "#/components/schemas/InquiryRegisterTesting"
+              },
+              "type": {
+                "$ref": "#/components/schemas/inquiryFormType"
+              }
+            },
+            "required": [
+              "type",
+              "registerTesting"
+            ],
+            "title": "registerTesting",
+            "type": "object"
+          }
+        ],
+        "type": "object"
+      },
+      "inquiryFormType": {
+        "description": "The form type.",
+        "enum": [
+          "SUGGEST_PRODUCT",
+          "CONTACT_SALES",
+          "BECOME_VENDOR",
+          "REGISTER_TESTING",
+          "REQUEST_PRIVATE_PLAN"
+        ],
+        "format": "enum",
         "type": "string"
       },
       "limit": {
@@ -383,6 +1159,50 @@
           }
         },
         "type": "object"
+      },
+      "logo": {
+        "description": "The logo information.",
+        "type": "string"
+      },
+      "message": {
+        "description": "A custom message.",
+        "example": "A very custom message.",
+        "maxLength": 512,
+        "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
+        "type": "string"
+      },
+      "noticePeriod": {
+        "description": "The notice period for a product and plan.",
+        "example": {
+          "type": "DAYS",
+          "value": 14
+        },
+        "properties": {
+          "type": {
+            "description": "The notice period type.",
+            "enum": [
+              "SAME_DAY",
+              "DAYS",
+              "MONTHS"
+            ],
+            "type": "string"
+          },
+          "value": {
+            "description": "The value of the corresponding type. Omitted for _SAME_DAY_.",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "offerType": {
+        "description": "The offer type of a product reflecting the business model.",
+        "enum": [
+          "OFFER_LISTING",
+          "OFFER_RESELLING"
+        ],
+        "example": "OFFER_LISTING",
+        "format": "enum",
+        "type": "string"
       },
       "planId": {
         "description": "The user-readable plan ID of a pricing option.",
@@ -405,9 +1225,46 @@
         "format": "enum",
         "type": "string"
       },
+      "pricingOptionDescription": {
+        "description": "The pricing option description.",
+        "example": "Product Premium Plan.",
+        "type": "string"
+      },
+      "pricingOptionName": {
+        "description": "The pricing option name.",
+        "example": "Premium Plan",
+        "type": "string"
+      },
+      "pricingOptionRate": {
+        "description": "The price of the product (per unit).",
+        "example": "9,90€",
+        "type": "string"
+      },
+      "pricingOptionUnit": {
+        "description": "The interval to which the rate applies.",
+        "enum": [
+          "month"
+        ],
+        "example": "month",
+        "format": "enum",
+        "type": "string"
+      },
       "pricingPlan": {
         "description": "Additional price type information.",
         "example": "Monthly subscription",
+        "type": "string"
+      },
+      "productCategories": {
+        "description": "The list of categories associated to the product.",
+        "items": {
+          "example": "Infrastructure Software",
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "productDescription": {
+        "description": "The product description.",
+        "example": "very nice description!",
         "type": "string"
       },
       "productId": {
@@ -417,6 +1274,14 @@
         "minLength": 10,
         "pattern": "^[a-z0-9-]{1,20}-[0-9a-f]{8}$",
         "type": "string"
+      },
+      "productIndustries": {
+        "description": "The list of industries associated to the product.",
+        "items": {
+          "example": "Healthcare \u0026 Science",
+          "type": "string"
+        },
+        "type": "array"
       },
       "productLifecycleState": {
         "description": "The lifecycle state of the product.",
@@ -435,6 +1300,11 @@
         "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:=\\n\\t -]+$",
         "type": "string"
       },
+      "productSummary": {
+        "description": "The short summary of the product.",
+        "example": "short summary of product subscription.",
+        "type": "string"
+      },
       "serviceCertificate": {
         "description": "The related service certificate of the (subscription) product.",
         "properties": {
@@ -443,6 +1313,21 @@
           }
         },
         "type": "object"
+      },
+      "sku": {
+        "description": "The concrete variant of the product.",
+        "example": "MP-1234",
+        "type": "string"
+      },
+      "skuInfo": {
+        "description": "Short description of this offering.",
+        "example": "Flexible and scalable",
+        "type": "string"
+      },
+      "skuInfoDetails": {
+        "description": "More details about what this offering entails.",
+        "example": "Access the full suite of the Product features with this plan.",
+        "type": "string"
       },
       "subscriptionId": {
         "allOf": [
@@ -466,11 +1351,36 @@
         "format": "enum",
         "type": "string"
       },
+      "supportLinkTitle": {
+        "description": "The support resource link title.",
+        "example": "contact our support",
+        "type": "string"
+      },
+      "supportPhone": {
+        "description": "The phone number for support inquiries.",
+        "example": "+49 800 187187187",
+        "type": "string"
+      },
+      "tosDescription": {
+        "description": "The terms of service description.",
+        "example": "See the terms and conditions of this product.",
+        "type": "string"
+      },
+      "tosTitle": {
+        "description": "The terms of service title.",
+        "example": "Vendor Terms of Service",
+        "type": "string"
+      },
       "url": {
         "description": "Uniform Resource Locator.",
         "example": "https://example.com",
         "maxLength": 512,
         "pattern": "^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$",
+        "type": "string"
+      },
+      "vendorDescription": {
+        "description": "The vendor description.",
+        "example": "This is the example vendor.",
         "type": "string"
       },
       "vendorId": {
@@ -514,6 +1424,133 @@
   },
   "openapi": "3.0.3",
   "paths": {
+    "/v1/catalog/products": {
+      "get": {
+        "description": "List all products.",
+        "operationId": "ListCatalogProducts",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/cursor"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/filter"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListCatalogProductsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        },
+        "summary": "List all products",
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      }
+    },
+    "/v1/catalog/products/{productId}": {
+      "get": {
+        "description": "Get a product.",
+        "operationId": "GetCatalogProduct",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pathParamProductId"
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogProductDetail"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "Get a product",
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      }
+    },
+    "/v1/inquiries": {
+      "post": {
+        "description": "Create an inquiry to contact sales, become a vendor, request a private plan, register for testing, or suggest a product. Requests are limited to 10 per 5 minutes.",
+        "operationId": "inquiries-create-inquiry",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/inquiries-create-inquiryPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "Create inquiry",
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      }
+    },
     "/v1/vendors/projects/{projectId}/resolve-customer": {
       "post": {
         "description": "Get details about the requested subscription.",

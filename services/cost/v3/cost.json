@@ -1,0 +1,858 @@
+{
+  "components": {
+    "parameters": {
+      "depth": {
+        "description": "Depth of desired cost information. \"project\" provides costs grouped by project, without services. \"service\" provides costs separated on service level.",
+        "in": "query",
+        "name": "depth",
+        "schema": {
+          "default": "auto",
+          "enum": [
+            "project",
+            "service",
+            "auto"
+          ],
+          "example": "project",
+          "type": "string"
+        }
+      },
+      "from": {
+        "description": "Start date (including)",
+        "in": "query",
+        "name": "from",
+        "required": true,
+        "schema": {
+          "example": "2020-05-30",
+          "format": "date",
+          "type": "string"
+        }
+      },
+      "granularity": {
+        "description": "Define granularity of costs – Default is \"none\" which does NOT include detailed report data.\n\nIf \"monthly\", \"weekly\" or \"yearly\" is requested, the \"from\" parameter SHOULD be the first day and the \"to\" parameter SHOULD be the last day of that time period.\nIf not, they are normalized accordingly.\n\nIf \"daily\" is requested, the date range defined by \"from\" and \"to\" MUST NOT be longer than 92 days.",
+        "in": "query",
+        "name": "granularity",
+        "schema": {
+          "default": "none",
+          "enum": [
+            "daily",
+            "weekly",
+            "monthly",
+            "yearly",
+            "none"
+          ],
+          "example": "daily",
+          "type": "string"
+        }
+      },
+      "includeZeroCosts": {
+        "description": "Whether costs of 0 should be included in the response",
+        "in": "query",
+        "name": "includeZeroCosts",
+        "schema": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "to": {
+        "description": "End date (including)",
+        "in": "query",
+        "name": "to",
+        "required": true,
+        "schema": {
+          "example": "2020-05-30",
+          "format": "date",
+          "type": "string"
+        }
+      }
+    },
+    "schemas": {
+      "DetailedServiceCosts": {
+        "description": "Costs for a single service",
+        "properties": {
+          "reportData": {
+            "description": "Detailed service costs which are ONLY included if granularity is provided",
+            "items": {
+              "$ref": "#/components/schemas/ReportData"
+            },
+            "type": "array"
+          },
+          "serviceCategoryName": {
+            "description": "Service category name",
+            "example": "Compute Engine",
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "serviceName": {
+            "description": "Name of the service",
+            "example": "SAP_DB",
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "sku": {
+            "description": "Service key",
+            "example": "ST-0010801",
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "totalCharge": {
+            "description": "Total charge for the whole requested date range (value in cents)",
+            "example": 20103023.912003,
+            "format": "double",
+            "type": "number"
+          },
+          "totalDiscount": {
+            "description": "Total discount for the whole requested date range (value in cents)",
+            "example": 103023.912003,
+            "format": "double",
+            "type": "number"
+          },
+          "totalQuantity": {
+            "description": "Total quantity",
+            "example": 321,
+            "format": "int32",
+            "type": "integer"
+          },
+          "unitLabel": {
+            "description": "Label for unit",
+            "example": "Giga Hours",
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "totalQuantity",
+          "totalCharge",
+          "totalDiscount",
+          "unitLabel",
+          "sku",
+          "serviceName",
+          "serviceCategoryName"
+        ],
+        "title": "Service Costs",
+        "type": "object"
+      },
+      "ProjectCostsWithDetailedServices": {
+        "description": "Detailed costs for a project including service costs",
+        "properties": {
+          "customerAccountId": {
+            "example": "9caede67-72ce-4ce1-be58-90b6d1216540",
+            "format": "uuid",
+            "type": "string"
+          },
+          "projectId": {
+            "example": "ba04b091-ec32-4423-81e6-976f1b8a8363",
+            "format": "uuid",
+            "type": "string"
+          },
+          "projectName": {
+            "example": "sit.dev",
+            "type": "string"
+          },
+          "services": {
+            "description": "Total discount for all services and the whole requested date range (value in cents). Please see \"depth\" parameter for more details.",
+            "items": {
+              "$ref": "#/components/schemas/DetailedServiceCosts"
+            },
+            "type": "array"
+          },
+          "totalCharge": {
+            "description": "Total charge for all services and the whole requested date range (value in cents)",
+            "example": 20103023.912003,
+            "format": "double",
+            "type": "number"
+          },
+          "totalDiscount": {
+            "description": "Total discount rounded for all services and the whole requested date range (value in cents)",
+            "example": 103023.912003,
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "customerAccountId",
+          "projectId",
+          "projectName",
+          "totalCharge",
+          "totalDiscount"
+        ],
+        "title": "V3 Project Costs with detailed service costs",
+        "type": "object"
+      },
+      "ProjectCostsWithReports": {
+        "description": "Detailed costs for a project",
+        "properties": {
+          "customerAccountId": {
+            "example": "9caede67-72ce-4ce1-be58-90b6d1216540",
+            "format": "uuid",
+            "type": "string"
+          },
+          "projectId": {
+            "example": "ba04b091-ec32-4423-81e6-976f1b8a8363",
+            "format": "uuid",
+            "type": "string"
+          },
+          "projectName": {
+            "example": "sit.dev",
+            "type": "string"
+          },
+          "reportData": {
+            "description": "Detailed project costs which are ONLY included if granularity is provided AND depth is \"project\"",
+            "items": {
+              "$ref": "#/components/schemas/ReportData"
+            },
+            "type": "array"
+          },
+          "totalCharge": {
+            "description": "Total charge for all services and the whole requested date range (value in cents)",
+            "example": 20103023.912003,
+            "format": "double",
+            "type": "number"
+          },
+          "totalDiscount": {
+            "description": "Total discount for all services and the whole requested date range (value in cents)",
+            "example": 103023.912003,
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "customerAccountId",
+          "projectId",
+          "projectName",
+          "totalCharge",
+          "totalDiscount"
+        ],
+        "title": "v3 Project costs with report data",
+        "type": "object"
+      },
+      "ProjectCostsWithSummarizedServices": {
+        "description": "Costs for a project including summarized service costs",
+        "properties": {
+          "customerAccountId": {
+            "example": "9caede67-72ce-4ce1-be58-90b6d1216540",
+            "format": "uuid",
+            "type": "string"
+          },
+          "projectId": {
+            "example": "ba04b091-ec32-4423-81e6-976f1b8a8363",
+            "format": "uuid",
+            "type": "string"
+          },
+          "projectName": {
+            "example": "sit.dev",
+            "type": "string"
+          },
+          "services": {
+            "description": "Summarized service costs",
+            "items": {
+              "$ref": "#/components/schemas/SummarizedServiceCosts"
+            },
+            "type": "array"
+          },
+          "totalCharge": {
+            "description": "Total charge for all services and the whole requested date range (value in cents)",
+            "example": 20103023.912003,
+            "format": "double",
+            "type": "number"
+          },
+          "totalDiscount": {
+            "description": "Total discount for all services and the whole requested date range (value in cents)",
+            "example": 103023.912003,
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "customerAccountId",
+          "projectId",
+          "projectName",
+          "totalCharge",
+          "totalDiscount"
+        ],
+        "title": "v3 Project costs with summarized services",
+        "type": "object"
+      },
+      "ReportData": {
+        "description": "Costs report for a certain period of time",
+        "properties": {
+          "charge": {
+            "description": "Charge, value in cents",
+            "example": 20103023.912003,
+            "format": "double",
+            "type": "number"
+          },
+          "discount": {
+            "description": "Discount, value in cents",
+            "example": 103023.912003,
+            "format": "double",
+            "type": "number"
+          },
+          "quantity": {
+            "description": "Quantity",
+            "example": 123,
+            "format": "int32",
+            "type": "integer"
+          },
+          "timePeriod": {
+            "description": "Time period according to desired granularity",
+            "format": "date",
+            "properties": {
+              "end": {
+                "example": "2021-11-30",
+                "format": "date",
+                "type": "string"
+              },
+              "start": {
+                "example": "2021-11-29",
+                "format": "date",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "timePeriod",
+          "charge",
+          "discount",
+          "quantity"
+        ],
+        "title": "Costs",
+        "type": "object"
+      },
+      "SummarizedProjectCosts": {
+        "description": "Summarized costs for a project",
+        "properties": {
+          "customerAccountId": {
+            "example": "9caede67-72ce-4ce1-be58-90b6d1216540",
+            "format": "uuid",
+            "type": "string"
+          },
+          "projectId": {
+            "example": "ba04b091-ec32-4423-81e6-976f1b8a8363",
+            "format": "uuid",
+            "type": "string"
+          },
+          "projectName": {
+            "example": "sit.dev",
+            "type": "string"
+          },
+          "totalCharge": {
+            "description": "Total charge for all services and the whole requested date range (value in cents)",
+            "example": 20103023.912003,
+            "format": "double",
+            "type": "number"
+          },
+          "totalDiscount": {
+            "description": "Total discount for all services and the whole requested date range (value in cents)",
+            "example": 103023.912003,
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "customerAccountId",
+          "projectId",
+          "projectName",
+          "totalCharge",
+          "totalDiscount"
+        ],
+        "title": "v3 Summarized Project Costs",
+        "type": "object"
+      },
+      "SummarizedServiceCosts": {
+        "description": "Summarized costs for a project",
+        "properties": {
+          "customerAccountId": {
+            "example": "9caede67-72ce-4ce1-be58-90b6d1216540",
+            "format": "uuid",
+            "type": "string"
+          },
+          "projectId": {
+            "example": "ba04b091-ec32-4423-81e6-976f1b8a8363",
+            "format": "uuid",
+            "type": "string"
+          },
+          "projectName": {
+            "example": "sit.dev",
+            "type": "string"
+          },
+          "totalCharge": {
+            "description": "Total charge for all services and the whole requested date range (value in cents)",
+            "example": 20103023.912003,
+            "format": "double",
+            "type": "number"
+          },
+          "totalDiscount": {
+            "description": "Total discount for all services and the whole requested date range (value in cents)",
+            "example": 103023.912003,
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "customerAccountId",
+          "projectId",
+          "projectName",
+          "totalCharge",
+          "totalDiscount"
+        ],
+        "title": "V3 Summarized Project Costs",
+        "type": "object"
+      },
+      "defaultError": {
+        "description": "A standard error object.",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "title": "Error",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "The cost API provides detailed reports on the costs for a customer or project over a certain amount of time\n",
+    "termsOfService": "https://stackit.de/en/imprint",
+    "title": "STACKIT Cost API",
+    "version": "3.0"
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/v3/costs/{customerAccountId}": {
+      "get": {
+        "description": "Get costs for all projects in a customer account",
+        "operationId": "ListCostsForCustomer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/from"
+          },
+          {
+            "$ref": "#/components/parameters/to"
+          },
+          {
+            "$ref": "#/components/parameters/depth"
+          },
+          {
+            "$ref": "#/components/parameters/granularity"
+          },
+          {
+            "$ref": "#/components/parameters/includeZeroCosts"
+          },
+          {
+            "description": "Desired content type",
+            "in": "header",
+            "name": "Accept",
+            "schema": {
+              "enum": [
+                "application/json",
+                "text/csv"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/components/schemas/SummarizedProjectCosts"
+                      },
+                      {
+                        "$ref": "#/components/schemas/ProjectCostsWithReports"
+                      },
+                      {
+                        "$ref": "#/components/schemas/ProjectCostsWithSummarizedServices"
+                      },
+                      {
+                        "$ref": "#/components/schemas/ProjectCostsWithDetailedServices"
+                      }
+                    ]
+                  },
+                  "type": "array"
+                }
+              },
+              "text/csv": {
+                "examples": {
+                  "Project Costs with detailed service costs": {
+                    "value": "customerAccountId,projectId,projectName,sku,serviceName,serviceCategoryName,start,end,charge,discount,quantity,unitLabel\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku 2,service 2,bar,2022-02-28,2022-02-28,234.56789012,345.67890123,1,hour\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku name,service name,foo,2022-02-28,2022-02-28,234.56789012,345.67890123,1,giga\n"
+                  },
+                  "Project costs with report data": {
+                    "value": "customerAccountId,projectId,projectName,start,end,charge,discount,quantity\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,2022-02-28,2022-02-28,469.13578024,691.35780246,2\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,2022-03-01,2022-03-01,469.13578024,691.35780246,2\n"
+                  },
+                  "Project costs with summarized services": {
+                    "value": "customerAccountId,projectId,projectName,sku,serviceName,serviceCategoryName,totalCharge,totalDiscount,totalQuantity,unitLabel\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku 2,service 2,bar,703.70367036,1037.03670369,3,hour\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku name,service name,foo,703.70367036,1037.03670369,3,giga\n"
+                  },
+                  "Summarized Project Costs": {
+                    "value": "customerAccountId,projectId,projectName,totalCharge,totalDiscount\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,1407.4073407199998,2074.07340738\n"
+                  }
+                },
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Customer account not found"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/defaultError"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Not Implemented"
+          }
+        },
+        "summary": "V3 Costs for all projects",
+        "x-stackit-authorization": {
+          "actions": [
+            "cost-management.billing.get"
+          ],
+          "resource-id": "customerAccountId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      },
+      "parameters": [
+        {
+          "description": "ID of a customer account",
+          "in": "path",
+          "name": "customerAccountId",
+          "required": true,
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v3/costs/{customerAccountId}/customers": {
+      "get": {
+        "description": "Get costs for all projects of all related sub-customer accounts",
+        "operationId": "ListCostsForReseller",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/from"
+          },
+          {
+            "$ref": "#/components/parameters/to"
+          },
+          {
+            "$ref": "#/components/parameters/depth"
+          },
+          {
+            "$ref": "#/components/parameters/granularity"
+          },
+          {
+            "$ref": "#/components/parameters/includeZeroCosts"
+          },
+          {
+            "description": "Desired content type",
+            "in": "header",
+            "name": "Accept",
+            "schema": {
+              "enum": [
+                "application/json",
+                "text/csv"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/components/schemas/SummarizedProjectCosts"
+                      },
+                      {
+                        "$ref": "#/components/schemas/ProjectCostsWithReports"
+                      },
+                      {
+                        "$ref": "#/components/schemas/ProjectCostsWithSummarizedServices"
+                      },
+                      {
+                        "$ref": "#/components/schemas/ProjectCostsWithDetailedServices"
+                      }
+                    ]
+                  },
+                  "type": "array"
+                }
+              },
+              "text/csv": {
+                "examples": {
+                  "Project Costs with detailed service costs": {
+                    "value": "customerAccountId,projectId,projectName,sku,serviceName,serviceCategoryName,start,end,charge,discount,quantity,unitLabel\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku 2,service 2,bar,2022-02-28,2022-02-28,234.56789012,345.67890123,1,hour\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku name,service name,foo,2022-02-28,2022-02-28,234.56789012,345.67890123,1,giga\n"
+                  },
+                  "Project costs with report data": {
+                    "value": "customerAccountId,projectId,projectName,start,end,charge,discount,quantity\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,2022-02-28,2022-02-28,469.13578024,691.35780246,2\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,2022-03-01,2022-03-01,469.13578024,691.35780246,2\n"
+                  },
+                  "Project costs with summarized services": {
+                    "value": "customerAccountId,projectId,projectName,sku,serviceName,serviceCategoryName,totalCharge,totalDiscount,totalQuantity,unitLabel\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku 2,service 2,bar,703.70367036,1037.03670369,3,hour\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku name,service name,foo,703.70367036,1037.03670369,3,giga\n"
+                  },
+                  "Summarized Project Costs": {
+                    "value": "customerAccountId,projectId,projectName,totalCharge,totalDiscount\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,1407.4073407199998,2074.07340738\n"
+                  }
+                },
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Customer account not found"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/defaultError"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Not Implemented"
+          }
+        },
+        "summary": "V3 Costs for all projects of all related sub-customers",
+        "x-stackit-authorization": {
+          "actions": [
+            "cost-management.partner-cost.get"
+          ],
+          "resource-id": "customerAccountId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      },
+      "parameters": [
+        {
+          "description": "ID of a customer account",
+          "in": "path",
+          "name": "customerAccountId",
+          "required": true,
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v3/costs/{customerAccountId}/projects/{projectId}": {
+      "get": {
+        "description": "Get costs for a certain project in a customer account",
+        "operationId": "ListCostsForProject",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/from"
+          },
+          {
+            "$ref": "#/components/parameters/to"
+          },
+          {
+            "$ref": "#/components/parameters/depth"
+          },
+          {
+            "$ref": "#/components/parameters/granularity"
+          },
+          {
+            "$ref": "#/components/parameters/includeZeroCosts"
+          },
+          {
+            "description": "Desired content type",
+            "in": "header",
+            "name": "Accept",
+            "schema": {
+              "enum": [
+                "application/json",
+                "text/csv"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/SummarizedProjectCosts"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ProjectCostsWithReports"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ProjectCostsWithSummarizedServices"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ProjectCostsWithDetailedServices"
+                    }
+                  ]
+                }
+              },
+              "text/csv": {
+                "examples": {
+                  "Project Costs with detailed service costs": {
+                    "value": "customerAccountId,projectId,projectName,sku,serviceName,serviceCategoryName,start,end,charge,discount,quantity,unitLabel\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku 2,service 2,bar,2022-02-28,2022-02-28,234.56789012,345.67890123,1,hour\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku name,service name,foo,2022-02-28,2022-02-28,234.56789012,345.67890123,1,giga\n"
+                  },
+                  "Project costs with report data": {
+                    "value": "customerAccountId,projectId,projectName,start,end,charge,discount,quantity\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,2022-02-28,2022-02-28,469.13578024,691.35780246,2\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,2022-03-01,2022-03-01,469.13578024,691.35780246,2\n"
+                  },
+                  "Project costs with summarized services": {
+                    "value": "customerAccountId,projectId,projectName,sku,serviceName,serviceCategoryName,totalCharge,totalDiscount,totalQuantity,unitLabel\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku 2,service 2,bar,703.70367036,1037.03670369,3,hour\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku name,service name,foo,703.70367036,1037.03670369,3,giga\n"
+                  },
+                  "Summarized Project Costs": {
+                    "value": "customerAccountId,projectId,projectName,totalCharge,totalDiscount\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,1407.4073407199998,2074.07340738\n"
+                  }
+                },
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Customer account or project not found"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/defaultError"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Not Implemented"
+          }
+        },
+        "summary": "V3 Costs for a certain project",
+        "x-stackit-authorization": {
+          "actions": [
+            "cost-management.billing.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "description": "ID of a customer account",
+          "in": "path",
+          "name": "customerAccountId",
+          "required": true,
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        {
+          "description": "ID of a project",
+          "in": "path",
+          "name": "projectId",
+          "required": true,
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        }
+      ]
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://cost.api.stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "global"
+        }
+      }
+    }
+  ]
+}

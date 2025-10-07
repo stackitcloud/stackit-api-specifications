@@ -711,6 +711,31 @@
         ],
         "type": "object"
       },
+      "ListRolesResponse": {
+        "properties": {
+          "roles": {
+            "description": "List of all role names available in the instance",
+            "example": [
+              "createdb",
+              "nocreatedb",
+              "nocreaterole",
+              "login",
+              "nologin",
+              "replication"
+            ],
+            "items": {
+              "description": "The name of the role",
+              "example": "createdb",
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "roles"
+        ],
+        "type": "object"
+      },
       "ListUser": {
         "properties": {
           "id": {
@@ -4151,6 +4176,119 @@
         "x-stackit-authorization": {
           "actions": [
             "postgres-flex.instance.protect"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}/roles": {
+      "get": {
+        "description": "List available roles for an instance.",
+        "operationId": "listRolesRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListRolesResponse"
+                }
+              }
+            },
+            "description": "OK: Contains a list of all roles for a specific instance."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "badRequestError": {
+                    "$ref": "#/components/examples/badRequestError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "unauthorizedError": {
+                    "$ref": "#/components/examples/unauthorizedError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "forbiddenError": {
+                    "$ref": "#/components/examples/forbiddenError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "notFoundError": {
+                    "$ref": "#/components/examples/notFoundError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/internalServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          }
+        },
+        "summary": "List Roles",
+        "x-stackit-authorization": {
+          "actions": [
+            "postgres-flex.role.list"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

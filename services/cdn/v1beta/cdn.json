@@ -69,13 +69,17 @@
             "minItems": 1,
             "type": "array",
             "uniqueItems": true
+          },
+          "waf": {
+            "$ref": "#/components/schemas/WafConfig"
           }
         },
         "required": [
           "regions",
           "backend",
           "blockedIPs",
-          "blockedCountries"
+          "blockedCountries",
+          "waf"
         ],
         "type": "object"
       },
@@ -148,6 +152,9 @@
             "minItems": 1,
             "type": "array",
             "uniqueItems": true
+          },
+          "waf": {
+            "$ref": "#/components/schemas/WafConfigPatch"
           }
         },
         "type": "object"
@@ -234,6 +241,9 @@
             "minItems": 1,
             "type": "array",
             "uniqueItems": true
+          },
+          "waf": {
+            "$ref": "#/components/schemas/WafConfig"
           }
         },
         "required": [
@@ -342,6 +352,35 @@
             "description": "RFC3339 string which returns the last time the distribution configuration was modified.\n",
             "format": "date-time",
             "type": "string"
+          },
+          "waf": {
+            "description": "For this property to be present two pre-conditions must be met:  \n- the WAF was enabled at least once\n- the query parameter ?withWafStatus is truthy\n\nThis property contains the waf Status. At this point in time, this contains all resolved rules.\nRules are split into 3 groups: \n- enabledRules\n- logOnlyRules \n- disabledRules\n\n**Do note that the global waf mode (Disabled, LogOnly, Enabled) is *NOT* reflected in this list!**\n",
+            "properties": {
+              "disabledRules": {
+                "items": {
+                  "$ref": "#/components/schemas/WAFStatusRuleBlock"
+                },
+                "type": "array"
+              },
+              "enabledRules": {
+                "items": {
+                  "$ref": "#/components/schemas/WAFStatusRuleBlock"
+                },
+                "type": "array"
+              },
+              "logOnlyRules": {
+                "items": {
+                  "$ref": "#/components/schemas/WAFStatusRuleBlock"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "enabledRules",
+              "logOnlyRules",
+              "disabledRules"
+            ],
+            "type": "object"
           }
         },
         "required": [
@@ -890,6 +929,27 @@
         ],
         "type": "object"
       },
+      "ListWAFCollectionsResponse": {
+        "properties": {
+          "collections": {
+            "items": {
+              "$ref": "#/components/schemas/WAFRuleCollection"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "collections"
+        ],
+        "type": "object"
+      },
+      "LocalizedString": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "description": "LocalizedString is a map from language to string value",
+        "type": "object"
+      },
       "LokiLogSink": {
         "properties": {
           "pushUrl": {
@@ -1127,6 +1187,134 @@
           "key"
         ],
         "type": "object"
+      },
+      "WAFRule": {
+        "properties": {
+          "code": {
+            "description": "Optional CoreRuleSet rule ID in case this is a CRS rule",
+            "type": "string"
+          },
+          "description": {
+            "$ref": "#/components/schemas/LocalizedString"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "description"
+        ],
+        "type": "object"
+      },
+      "WAFRuleCollection": {
+        "properties": {
+          "groups": {
+            "items": {
+              "$ref": "#/components/schemas/WAFRuleGroup"
+            },
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LocalizedString"
+          }
+        },
+        "required": [
+          "name",
+          "id",
+          "groups"
+        ],
+        "type": "object"
+      },
+      "WAFRuleGroup": {
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/LocalizedString"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LocalizedString"
+          },
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/WAFRule"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "rules"
+        ],
+        "type": "object"
+      },
+      "WAFStatusRuleBlock": {
+        "properties": {
+          "id": {
+            "description": "Specifies the ID of the Rule.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "WafConfig": {
+        "description": "Configuration of the WAF of a distribution",
+        "properties": {
+          "enabledRuleIds": {
+            "description": "IDs of the WAF rules that are **explicitly** enabled for this distribution. \nIf this rule is in a disabled / log Only RuleGroup or Collection,\nit will be enabled regardless as `enabledRuleIds` overrides those in specificity.\n\nDo note that rules can also be enabled because a Rulegroup or Collection is enabled. \n**DO NOT** use this property to find all active rules. Instead, pass `?withWafStatus=true` as a query parameter\nto `GetDistribution` or `ListDistributions`. This will expose the `waf` Property on distribution Level.\n\nFrom there you can `$.waf.enabledRules.map(e =\u003e e.id)` to get a list of all enabled rules.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/WafMode"
+          },
+          "type": {
+            "$ref": "#/components/schemas/WafType"
+          }
+        },
+        "required": [
+          "mode",
+          "type",
+          "enabledRuleIds"
+        ],
+        "type": "object"
+      },
+      "WafConfigPatch": {
+        "properties": {
+          "mode": {
+            "$ref": "#/components/schemas/WafMode"
+          },
+          "type": {
+            "$ref": "#/components/schemas/WafType"
+          }
+        },
+        "type": "object"
+      },
+      "WafMode": {
+        "enum": [
+          "DISABLED",
+          "ENABLED",
+          "LOG_ONLY"
+        ],
+        "format": "enum",
+        "type": "string"
+      },
+      "WafType": {
+        "description": "Enable or disable the Premium WAF. Do note that enabling the Premium WAF will cause additional fees. \n\nSome features are gated behind the Premium WAF, like additional, **premium-only rules** and the ability to create **custom rules** (not yet implemented)\n",
+        "enum": [
+          "FREE",
+          "PREMIUM"
+        ],
+        "format": "enum",
+        "type": "string"
       }
     }
   },
@@ -1161,6 +1349,15 @@
               "maximum": 100,
               "minimum": 1,
               "type": "integer"
+            }
+          },
+          {
+            "description": "If set, the top level of a distribution contains a `waf` property, which defines the status of the waf. This includes a list of all resolved rules.",
+            "in": "query",
+            "name": "withWafStatus",
+            "schema": {
+              "default": false,
+              "type": "boolean"
             }
           },
           {
@@ -1655,6 +1852,15 @@
             "schema": {
               "format": "uuid",
               "type": "string"
+            }
+          },
+          {
+            "description": "If set, the top level of a distribution contains a `waf` property, which defines the status of the waf. This includes a list of all resolved rules.",
+            "in": "query",
+            "name": "withWafStatus",
+            "schema": {
+              "default": false,
+              "type": "boolean"
             }
           }
         ],
@@ -3212,6 +3418,115 @@
           }
         },
         "summary": "Retrieve the statistics of a distribution",
+        "x-stackit-authorization": {
+          "actions": [
+            "cdn.distribution.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/waf/collections": {
+      "get": {
+        "description": "Returns all WAF rule collections available to the project",
+        "operationId": "ListWAFCollections",
+        "parameters": [
+          {
+            "description": "Your STACKIT Project ID",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "default": {
+                    "value": {
+                      "collections": [
+                        {
+                          "groups": [
+                            {
+                              "description": {},
+                              "name": {
+                                "en": "Method Enforcement"
+                              },
+                              "rules": [
+                                {
+                                  "code": "911100",
+                                  "description": {
+                                    "en": "Method is not allowed by policy"
+                                  },
+                                  "id": "@builtin/crs/request/911100"
+                                }
+                              ]
+                            }
+                          ],
+                          "id": "@builtin/crs/request",
+                          "name": {
+                            "en": "CRS Request"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ListWAFCollectionsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "unauthorized - please make sure the \"Authorization\" header is set and uses correct credentials"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJSONResponse"
+                }
+              }
+            },
+            "description": "unprocessable entity - please make sure the body you provided is constructed according to spec"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJSONResponse"
+                }
+              }
+            },
+            "description": "internal error - please try again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJSONResponse"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "List all WAF rule collections of the project",
         "x-stackit-authorization": {
           "actions": [
             "cdn.distribution.get"

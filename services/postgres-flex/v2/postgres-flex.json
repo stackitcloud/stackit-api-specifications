@@ -427,7 +427,7 @@
             "type": "integer"
           },
           "storage": {
-            "$ref": "#/components/schemas/Storage"
+            "$ref": "#/components/schemas/StorageUpdate"
           },
           "version": {
             "example": "1.0",
@@ -472,9 +472,7 @@
             "type": "string"
           },
           "size": {
-            "example": 10,
-            "format": "int64",
-            "type": "integer"
+            "$ref": "#/components/schemas/instance.StorageSize"
           }
         },
         "type": "object"
@@ -490,6 +488,20 @@
             "example": 10,
             "format": "int64",
             "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "StorageUpdate": {
+        "properties": {
+          "class": {
+            "deprecated": true,
+            "description": "\n⚠️ **DEPRECATED AND NON-FUNCTIONAL:** Updating the performance class field is not possible.\n",
+            "type": "string",
+            "x-deprecation-reason": "Never worked correctly"
+          },
+          "size": {
+            "$ref": "#/components/schemas/instance.StorageSize"
           }
         },
         "type": "object"
@@ -541,7 +553,7 @@
             "type": "integer"
           },
           "storage": {
-            "$ref": "#/components/schemas/Storage"
+            "$ref": "#/components/schemas/StorageUpdate"
           },
           "version": {
             "example": "1.0",
@@ -843,6 +855,11 @@
           }
         },
         "type": "object"
+      },
+      "instance.StorageSize": {
+        "example": 10,
+        "format": "int64",
+        "type": "integer"
       },
       "postgres.DatabaseParameter": {
         "properties": {

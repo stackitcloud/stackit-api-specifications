@@ -66,7 +66,7 @@
       }
     },
     "schemas": {
-      "DetailedServiceCosts": {
+      "DetailedServiceCost": {
         "description": "Costs for a single service",
         "properties": {
           "reportData": {
@@ -135,7 +135,25 @@
         "title": "Service Costs",
         "type": "object"
       },
-      "ProjectCostsWithDetailedServices": {
+      "ProjectCost": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/SummarizedProjectCost"
+          },
+          {
+            "$ref": "#/components/schemas/ProjectCostWithReports"
+          },
+          {
+            "$ref": "#/components/schemas/ProjectCostWithSummarizedServices"
+          },
+          {
+            "$ref": "#/components/schemas/ProjectCostWithDetailedServices"
+          }
+        ],
+        "title": "v3 Project Costs",
+        "type": "object"
+      },
+      "ProjectCostWithDetailedServices": {
         "description": "Detailed costs for a project including service costs",
         "properties": {
           "customerAccountId": {
@@ -155,7 +173,7 @@
           "services": {
             "description": "Total discount for all services and the whole requested date range (value in cents). Please see \"depth\" parameter for more details.",
             "items": {
-              "$ref": "#/components/schemas/DetailedServiceCosts"
+              "$ref": "#/components/schemas/DetailedServiceCost"
             },
             "type": "array"
           },
@@ -182,7 +200,7 @@
         "title": "V3 Project Costs with detailed service costs",
         "type": "object"
       },
-      "ProjectCostsWithReports": {
+      "ProjectCostWithReports": {
         "description": "Detailed costs for a project",
         "properties": {
           "customerAccountId": {
@@ -229,7 +247,7 @@
         "title": "v3 Project costs with report data",
         "type": "object"
       },
-      "ProjectCostsWithSummarizedServices": {
+      "ProjectCostWithSummarizedServices": {
         "description": "Costs for a project including summarized service costs",
         "properties": {
           "customerAccountId": {
@@ -249,7 +267,7 @@
           "services": {
             "description": "Summarized service costs",
             "items": {
-              "$ref": "#/components/schemas/SummarizedServiceCosts"
+              "$ref": "#/components/schemas/SummarizedServiceCost"
             },
             "type": "array"
           },
@@ -324,7 +342,7 @@
         "title": "Costs",
         "type": "object"
       },
-      "SummarizedProjectCosts": {
+      "SummarizedProjectCost": {
         "description": "Summarized costs for a project",
         "properties": {
           "customerAccountId": {
@@ -364,7 +382,7 @@
         "title": "v3 Summarized Project Costs",
         "type": "object"
       },
-      "SummarizedServiceCosts": {
+      "SummarizedServiceCost": {
         "description": "Summarized costs for a project",
         "properties": {
           "customerAccountId": {
@@ -401,7 +419,7 @@
           "totalCharge",
           "totalDiscount"
         ],
-        "title": "V3 Summarized Project Costs",
+        "title": "V3 Summarized Service Costs",
         "type": "object"
       },
       "defaultError": {
@@ -469,20 +487,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "anyOf": [
-                      {
-                        "$ref": "#/components/schemas/SummarizedProjectCosts"
-                      },
-                      {
-                        "$ref": "#/components/schemas/ProjectCostsWithReports"
-                      },
-                      {
-                        "$ref": "#/components/schemas/ProjectCostsWithSummarizedServices"
-                      },
-                      {
-                        "$ref": "#/components/schemas/ProjectCostsWithDetailedServices"
-                      }
-                    ]
+                    "$ref": "#/components/schemas/ProjectCost"
                   },
                   "type": "array"
                 }
@@ -603,20 +608,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "anyOf": [
-                      {
-                        "$ref": "#/components/schemas/SummarizedProjectCosts"
-                      },
-                      {
-                        "$ref": "#/components/schemas/ProjectCostsWithReports"
-                      },
-                      {
-                        "$ref": "#/components/schemas/ProjectCostsWithSummarizedServices"
-                      },
-                      {
-                        "$ref": "#/components/schemas/ProjectCostsWithDetailedServices"
-                      }
-                    ]
+                    "$ref": "#/components/schemas/ProjectCost"
                   },
                   "type": "array"
                 }
@@ -736,20 +728,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/SummarizedProjectCosts"
-                    },
-                    {
-                      "$ref": "#/components/schemas/ProjectCostsWithReports"
-                    },
-                    {
-                      "$ref": "#/components/schemas/ProjectCostsWithSummarizedServices"
-                    },
-                    {
-                      "$ref": "#/components/schemas/ProjectCostsWithDetailedServices"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/ProjectCost"
                 }
               },
               "text/csv": {

@@ -582,7 +582,7 @@
         "type": "object"
       },
       "CreateAlertgroupsPayload": {
-        "description": "Alert group that should be created or updated\n`Additional Validators:`\n* total config should not be bigger than 500000 characters as string since this the limitation of prometheus.\n",
+        "description": "Alert group that should be created or updated.\n`Additional Validators:`\n* total config should not be bigger than 500000 characters as string since this the limitation of prometheus.",
         "properties": {
           "interval": {
             "default": "60s",
@@ -600,38 +600,43 @@
           "rules": {
             "description": "rules for the alert group",
             "items": {
-              "description": "Alert rule.\n`Additional Validators:`\n* total config (all alert groups/rules) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
+              "description": "Rule definition. Must be either an Alerting Rule (using 'alert') or a Recording Rule (using 'record').\n`Additional Validators:`\n* total config (all alert groups/rules) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
               "properties": {
                 "alert": {
-                  "description": "The name of the alert.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9-",
+                  "description": "The name of the alert. When this attribute is used, an Alerting Rule will\nbe  created.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9-\n* required when 'record' is not used in this rule, otherwise not allowed",
                   "maxLength": 200,
                   "minLength": 1,
                   "type": "string"
                 },
                 "annotations": {
-                  "description": "map of key:value. Annotations to add to each alert.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+                  "description": "Map of key:value. Annotations to add to each alert.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters\n* is not allowed to use when 'record' is used in this rule",
                   "type": "object"
                 },
                 "expr": {
-                  "description": "The PromQL expression to evaluate. Every evaluation cycle this is evaluated at the current time, and all resultant time series become pending/firing alerts.",
+                  "description": "The PromQL expression to evaluate to create alerts when using the\n'alert' attribute in this rule, or to create a metric when using the 'record'\nattribute.",
                   "maxLength": 600,
                   "minLength": 1,
                   "type": "string"
                 },
                 "for": {
                   "default": "0s",
-                  "description": "Alerts are considered firing once they have been returned for this long. Alerts which have not yet fired for long enough are considered pending.\n`Additional Validators:`\n* must be a valid time string",
+                  "description": "Alerts are considered firing once they have been returned for this long.\nAlerts which have not yet fired for long enough are considered pending.\n`Additional Validators:`\n* must be a valid time string\n* is not allowed to use when 'record' is used in this rule",
                   "maxLength": 8,
                   "minLength": 2,
                   "type": "string"
                 },
                 "labels": {
-                  "description": "map of key:value. Labels to add or overwrite for each alert.\n`Additional Validators:`\n* should not contain more than 10 keys\n* each key and value should not be longer than 200 characters",
+                  "description": "Map of key:value. Labels to add or overwrite for each alert or metric.\n`Additional Validators:`\n* should not contain more than 10 keys\n* each key and value should not be longer than 200 characters",
                   "type": "object"
+                },
+                "record": {
+                  "description": "The name of the metric. When this attribute is used, an Recording Rule will\nbe  created.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9:_\n* required when 'alert' is not used in this rule, otherwise not allowed",
+                  "maxLength": 300,
+                  "minLength": 1,
+                  "type": "string"
                 }
               },
               "required": [
-                "alert",
                 "expr"
               ],
               "type": "object"
@@ -788,7 +793,7 @@
         "type": "object"
       },
       "CreateLogsAlertgroupsPayload": {
-        "description": "Alert group that should be created or updated\n`Additional Validators:`\n* total config should not be bigger than 500000 characters as string since this the limitation of prometheus.\n",
+        "description": "Alert group that should be created or updated.\n`Additional Validators:`\n* total config should not be bigger than 500000 characters as string since this the limitation of prometheus.",
         "properties": {
           "interval": {
             "default": "60s",
@@ -806,38 +811,43 @@
           "rules": {
             "description": "rules for the alert group",
             "items": {
-              "description": "Alert rule.\n`Additional Validators:`\n* total config (all alert groups/rules) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
+              "description": "Rule definition. Must be either an Alerting Rule (using 'alert') or a Recording Rule (using 'record').\n`Additional Validators:`\n* total config (all alert groups/rules) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
               "properties": {
                 "alert": {
-                  "description": "The name of the alert.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9-",
+                  "description": "The name of the alert. When this attribute is used, an Alerting Rule will\nbe  created.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9-\n* required when 'record' is not used in this rule, otherwise not allowed",
                   "maxLength": 200,
                   "minLength": 1,
                   "type": "string"
                 },
                 "annotations": {
-                  "description": "map of key:value. Annotations to add to each alert.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+                  "description": "Map of key:value. Annotations to add to each alert.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters\n* is not allowed to use when 'record' is used in this rule",
                   "type": "object"
                 },
                 "expr": {
-                  "description": "The PromQL expression to evaluate. Every evaluation cycle this is evaluated at the current time, and all resultant time series become pending/firing alerts.",
+                  "description": "The LogQL expression to evaluate to create alerts when using the\n'alert' attribute in this rule, or to create a metric when using the 'record'\nattribute.",
                   "maxLength": 600,
                   "minLength": 1,
                   "type": "string"
                 },
                 "for": {
                   "default": "0s",
-                  "description": "Alerts are considered firing once they have been returned for this long. Alerts which have not yet fired for long enough are considered pending.\n`Additional Validators:`\n* must be a valid time string",
+                  "description": "Alerts are considered firing once they have been returned for this long.\nAlerts which have not yet fired for long enough are considered pending.\n`Additional Validators:`\n* must be a valid time string\n* is not allowed to use when 'record' is used in this rule",
                   "maxLength": 8,
                   "minLength": 2,
                   "type": "string"
                 },
                 "labels": {
-                  "description": "map of key:value. Labels to add or overwrite for each alert.\n`Additional Validators:`\n* should not contain more than 10 keys\n* each key and value should not be longer than 200 characters",
+                  "description": "Map of key:value. Labels to add or overwrite for each alert or metric.\n`Additional Validators:`\n* should not contain more than 10 keys\n* each key and value should not be longer than 200 characters",
                   "type": "object"
+                },
+                "record": {
+                  "description": "The name of the metric. When this attribute is used, an Recording Rule will\nbe  created.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9:_\n* required when 'alert' is not used in this rule, otherwise not allowed",
+                  "maxLength": 300,
+                  "minLength": 1,
+                  "type": "string"
                 }
               },
               "required": [
-                "alert",
                 "expr"
               ],
               "type": "object"
@@ -3835,7 +3845,7 @@
         "type": "object"
       },
       "UpdateAlertgroupPayload": {
-        "description": "Alert group that should be created or updated\n`Additional Validators:`\n* total config should not be bigger than 500000 characters as string since this the limitation of prometheus.\n",
+        "description": "Alert group that should be created or updated.\n`Additional Validators:`\n* total config should not be bigger than 500000 characters as string since this the limitation of prometheus.",
         "properties": {
           "interval": {
             "default": "60s",
@@ -3847,38 +3857,43 @@
           "rules": {
             "description": "rules for the alert group",
             "items": {
-              "description": "Alert rule.\n`Additional Validators:`\n* total config (all alert groups/rules) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
+              "description": "Rule definition. Must be either an Alerting Rule (using 'alert') or a Recording Rule (using 'record').\n`Additional Validators:`\n* total config (all alert groups/rules) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
               "properties": {
                 "alert": {
-                  "description": "The name of the alert.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9-",
+                  "description": "The name of the alert. When this attribute is used, an Alerting Rule will\nbe  created.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9-\n* required when 'record' is not used in this rule, otherwise not allowed",
                   "maxLength": 200,
                   "minLength": 1,
                   "type": "string"
                 },
                 "annotations": {
-                  "description": "map of key:value. Annotations to add to each alert.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+                  "description": "Map of key:value. Annotations to add to each alert.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters\n* is not allowed to use when 'record' is used in this rule",
                   "type": "object"
                 },
                 "expr": {
-                  "description": "The PromQL expression to evaluate. Every evaluation cycle this is evaluated at the current time, and all resultant time series become pending/firing alerts.",
+                  "description": "The PromQL expression to evaluate to create alerts when using the\n'alert' attribute in this rule, or to create a metric when using the 'record'\nattribute.",
                   "maxLength": 600,
                   "minLength": 1,
                   "type": "string"
                 },
                 "for": {
                   "default": "0s",
-                  "description": "Alerts are considered firing once they have been returned for this long. Alerts which have not yet fired for long enough are considered pending.\n`Additional Validators:`\n* must be a valid time string",
+                  "description": "Alerts are considered firing once they have been returned for this long.\nAlerts which have not yet fired for long enough are considered pending.\n`Additional Validators:`\n* must be a valid time string\n* is not allowed to use when 'record' is used in this rule",
                   "maxLength": 8,
                   "minLength": 2,
                   "type": "string"
                 },
                 "labels": {
-                  "description": "map of key:value. Labels to add or overwrite for each alert.\n`Additional Validators:`\n* should not contain more than 10 keys\n* each key and value should not be longer than 200 characters",
+                  "description": "Map of key:value. Labels to add or overwrite for each alert or metric.\n`Additional Validators:`\n* should not contain more than 10 keys\n* each key and value should not be longer than 200 characters",
                   "type": "object"
+                },
+                "record": {
+                  "description": "The name of the metric. When this attribute is used, an Recording Rule will\nbe  created.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9:_\n* required when 'alert' is not used in this rule, otherwise not allowed",
+                  "maxLength": 300,
+                  "minLength": 1,
+                  "type": "string"
                 }
               },
               "required": [
-                "alert",
                 "expr"
               ],
               "type": "object"
@@ -3999,7 +4014,7 @@
         "type": "object"
       },
       "UpdateLogsAlertgroupPayload": {
-        "description": "Alert group that should be created or updated\n`Additional Validators:`\n* total config should not be bigger than 500000 characters as string since this the limitation of prometheus.\n",
+        "description": "Alert group that should be created or updated.\n`Additional Validators:`\n* total config should not be bigger than 500000 characters as string since this the limitation of prometheus.",
         "properties": {
           "interval": {
             "default": "60s",
@@ -4011,38 +4026,43 @@
           "rules": {
             "description": "rules for the alert group",
             "items": {
-              "description": "Alert rule.\n`Additional Validators:`\n* total config (all alert groups/rules) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
+              "description": "Rule definition. Must be either an Alerting Rule (using 'alert') or a Recording Rule (using 'record').\n`Additional Validators:`\n* total config (all alert groups/rules) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
               "properties": {
                 "alert": {
-                  "description": "The name of the alert.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9-",
+                  "description": "The name of the alert. When this attribute is used, an Alerting Rule will\nbe  created.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9-\n* required when 'record' is not used in this rule, otherwise not allowed",
                   "maxLength": 200,
                   "minLength": 1,
                   "type": "string"
                 },
                 "annotations": {
-                  "description": "map of key:value. Annotations to add to each alert.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+                  "description": "Map of key:value. Annotations to add to each alert.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters\n* is not allowed to use when 'record' is used in this rule",
                   "type": "object"
                 },
                 "expr": {
-                  "description": "The PromQL expression to evaluate. Every evaluation cycle this is evaluated at the current time, and all resultant time series become pending/firing alerts.",
+                  "description": "The LogQL expression to evaluate to create alerts when using the\n'alert' attribute in this rule, or to create a metric when using the 'record'\nattribute.",
                   "maxLength": 600,
                   "minLength": 1,
                   "type": "string"
                 },
                 "for": {
                   "default": "0s",
-                  "description": "Alerts are considered firing once they have been returned for this long. Alerts which have not yet fired for long enough are considered pending.\n`Additional Validators:`\n* must be a valid time string",
+                  "description": "Alerts are considered firing once they have been returned for this long.\nAlerts which have not yet fired for long enough are considered pending.\n`Additional Validators:`\n* must be a valid time string\n* is not allowed to use when 'record' is used in this rule",
                   "maxLength": 8,
                   "minLength": 2,
                   "type": "string"
                 },
                 "labels": {
-                  "description": "map of key:value. Labels to add or overwrite for each alert.\n`Additional Validators:`\n* should not contain more than 10 keys\n* each key and value should not be longer than 200 characters",
+                  "description": "Map of key:value. Labels to add or overwrite for each alert or metric.\n`Additional Validators:`\n* should not contain more than 10 keys\n* each key and value should not be longer than 200 characters",
                   "type": "object"
+                },
+                "record": {
+                  "description": "The name of the metric. When this attribute is used, an Recording Rule will\nbe  created.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9:_\n* required when 'alert' is not used in this rule, otherwise not allowed",
+                  "maxLength": 300,
+                  "minLength": 1,
+                  "type": "string"
                 }
               },
               "required": [
-                "alert",
                 "expr"
               ],
               "type": "object"
@@ -6486,10 +6506,30 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": [
+                {
+                  "interval": "60s",
+                  "name": "string",
+                  "rules": [
+                    {
+                      "alert": "string",
+                      "annotations": {},
+                      "expr": "string",
+                      "for": "0s",
+                      "labels": {}
+                    },
+                    {
+                      "expr": "string",
+                      "labels": {},
+                      "record": "string"
+                    }
+                  ]
+                }
+              ],
               "schema": {
                 "description": "Array of alert groups that should be created or updated",
                 "items": {
-                  "description": "Alert group that should be created or updated\n`Additional Validators:`\n* total config should not be bigger than 500000 characters as string since this the limitation of prometheus.\n",
+                  "description": "Alert group that should be created or updated.\n`Additional Validators:`\n* total config should not be bigger than 500000 characters as string since this the limitation of prometheus.",
                   "properties": {
                     "interval": {
                       "default": "60s",
@@ -6507,38 +6547,43 @@
                     "rules": {
                       "description": "rules for the alert group",
                       "items": {
-                        "description": "Alert rule.\n`Additional Validators:`\n* total config (all alert groups/rules) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
+                        "description": "Rule definition. Must be either an Alerting Rule (using 'alert') or a Recording Rule (using 'record').\n`Additional Validators:`\n* total config (all alert groups/rules) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
                         "properties": {
                           "alert": {
-                            "description": "The name of the alert.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9-",
+                            "description": "The name of the alert. When this attribute is used, an Alerting Rule will\nbe  created.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9-\n* required when 'record' is not used in this rule, otherwise not allowed",
                             "maxLength": 200,
                             "minLength": 1,
                             "type": "string"
                           },
                           "annotations": {
-                            "description": "map of key:value. Annotations to add to each alert.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+                            "description": "Map of key:value. Annotations to add to each alert.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters\n* is not allowed to use when 'record' is used in this rule",
                             "type": "object"
                           },
                           "expr": {
-                            "description": "The PromQL expression to evaluate. Every evaluation cycle this is evaluated at the current time, and all resultant time series become pending/firing alerts.",
+                            "description": "The PromQL expression to evaluate to create alerts when using the\n'alert' attribute in this rule, or to create a metric when using the 'record'\nattribute.",
                             "maxLength": 600,
                             "minLength": 1,
                             "type": "string"
                           },
                           "for": {
                             "default": "0s",
-                            "description": "Alerts are considered firing once they have been returned for this long. Alerts which have not yet fired for long enough are considered pending.\n`Additional Validators:`\n* must be a valid time string",
+                            "description": "Alerts are considered firing once they have been returned for this long.\nAlerts which have not yet fired for long enough are considered pending.\n`Additional Validators:`\n* must be a valid time string\n* is not allowed to use when 'record' is used in this rule",
                             "maxLength": 8,
                             "minLength": 2,
                             "type": "string"
                           },
                           "labels": {
-                            "description": "map of key:value. Labels to add or overwrite for each alert.\n`Additional Validators:`\n* should not contain more than 10 keys\n* each key and value should not be longer than 200 characters",
+                            "description": "Map of key:value. Labels to add or overwrite for each alert or metric.\n`Additional Validators:`\n* should not contain more than 10 keys\n* each key and value should not be longer than 200 characters",
                             "type": "object"
+                          },
+                          "record": {
+                            "description": "The name of the metric. When this attribute is used, an Recording Rule will\nbe  created.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9:_\n* required when 'alert' is not used in this rule, otherwise not allowed",
+                            "maxLength": 300,
+                            "minLength": 1,
+                            "type": "string"
                           }
                         },
                         "required": [
-                          "alert",
                           "expr"
                         ],
                         "type": "object"
@@ -6652,6 +6697,26 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": [
+                {
+                  "interval": "60s",
+                  "name": "string",
+                  "rules": [
+                    {
+                      "alert": "string",
+                      "annotations": {},
+                      "expr": "string",
+                      "for": "0s",
+                      "labels": {}
+                    },
+                    {
+                      "expr": "string",
+                      "labels": {},
+                      "record": "string"
+                    }
+                  ]
+                }
+              ],
               "schema": {
                 "$ref": "#/components/schemas/CreateAlertgroupsPayload"
               }
@@ -6753,10 +6818,30 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": [
+                {
+                  "interval": "60s",
+                  "name": "string",
+                  "rules": [
+                    {
+                      "alert": "string",
+                      "annotations": {},
+                      "expr": "string",
+                      "for": "0s",
+                      "labels": {}
+                    },
+                    {
+                      "expr": "string",
+                      "labels": {},
+                      "record": "string"
+                    }
+                  ]
+                }
+              ],
               "schema": {
                 "description": "Array of alert groups that should be set. It will override all existing alert groups.",
                 "items": {
-                  "description": "Alert group that should be created or updated\n`Additional Validators:`\n* total config should not be bigger than 500000 characters as string since this the limitation of prometheus.\n",
+                  "description": "Alert group that should be created or updated.\n`Additional Validators:`\n* total config should not be bigger than 500000 characters as string since this the limitation of prometheus.",
                   "properties": {
                     "interval": {
                       "default": "60s",
@@ -6774,38 +6859,43 @@
                     "rules": {
                       "description": "rules for the alert group",
                       "items": {
-                        "description": "Alert rule.\n`Additional Validators:`\n* total config (all alert groups/rules) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
+                        "description": "Rule definition. Must be either an Alerting Rule (using 'alert') or a Recording Rule (using 'record').\n`Additional Validators:`\n* total config (all alert groups/rules) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
                         "properties": {
                           "alert": {
-                            "description": "The name of the alert.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9-",
+                            "description": "The name of the alert. When this attribute is used, an Alerting Rule will\nbe  created.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9-\n* required when 'record' is not used in this rule, otherwise not allowed",
                             "maxLength": 200,
                             "minLength": 1,
                             "type": "string"
                           },
                           "annotations": {
-                            "description": "map of key:value. Annotations to add to each alert.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+                            "description": "Map of key:value. Annotations to add to each alert.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters\n* is not allowed to use when 'record' is used in this rule",
                             "type": "object"
                           },
                           "expr": {
-                            "description": "The PromQL expression to evaluate. Every evaluation cycle this is evaluated at the current time, and all resultant time series become pending/firing alerts.",
+                            "description": "The PromQL expression to evaluate to create alerts when using the\n'alert' attribute in this rule, or to create a metric when using the 'record'\nattribute.",
                             "maxLength": 600,
                             "minLength": 1,
                             "type": "string"
                           },
                           "for": {
                             "default": "0s",
-                            "description": "Alerts are considered firing once they have been returned for this long. Alerts which have not yet fired for long enough are considered pending.\n`Additional Validators:`\n* must be a valid time string",
+                            "description": "Alerts are considered firing once they have been returned for this long.\nAlerts which have not yet fired for long enough are considered pending.\n`Additional Validators:`\n* must be a valid time string\n* is not allowed to use when 'record' is used in this rule",
                             "maxLength": 8,
                             "minLength": 2,
                             "type": "string"
                           },
                           "labels": {
-                            "description": "map of key:value. Labels to add or overwrite for each alert.\n`Additional Validators:`\n* should not contain more than 10 keys\n* each key and value should not be longer than 200 characters",
+                            "description": "Map of key:value. Labels to add or overwrite for each alert or metric.\n`Additional Validators:`\n* should not contain more than 10 keys\n* each key and value should not be longer than 200 characters",
                             "type": "object"
+                          },
+                          "record": {
+                            "description": "The name of the metric. When this attribute is used, an Recording Rule will\nbe  created.\n`Additional Validators:`\n* is the identifier and so unique in the group\n* should only include the characters: a-zA-Z0-9:_\n* required when 'alert' is not used in this rule, otherwise not allowed",
+                            "maxLength": 300,
+                            "minLength": 1,
+                            "type": "string"
                           }
                         },
                         "required": [
-                          "alert",
                           "expr"
                         ],
                         "type": "object"
@@ -7149,6 +7239,26 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": [
+                {
+                  "interval": "60s",
+                  "name": "string",
+                  "rules": [
+                    {
+                      "alert": "string",
+                      "annotations": {},
+                      "expr": "string",
+                      "for": "0s",
+                      "labels": {}
+                    },
+                    {
+                      "expr": "string",
+                      "labels": {},
+                      "record": "string"
+                    }
+                  ]
+                }
+              ],
               "schema": {
                 "$ref": "#/components/schemas/UpdateAlertgroupPayload"
               }
@@ -9020,6 +9130,26 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": [
+                {
+                  "interval": "60s",
+                  "name": "string",
+                  "rules": [
+                    {
+                      "alert": "string",
+                      "annotations": {},
+                      "expr": "string",
+                      "for": "0s",
+                      "labels": {}
+                    },
+                    {
+                      "expr": "string",
+                      "labels": {},
+                      "record": "string"
+                    }
+                  ]
+                }
+              ],
               "schema": {
                 "$ref": "#/components/schemas/CreateLogsAlertgroupsPayload"
               }
@@ -9351,6 +9481,26 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": [
+                {
+                  "interval": "60s",
+                  "name": "string",
+                  "rules": [
+                    {
+                      "alert": "string",
+                      "annotations": {},
+                      "expr": "string",
+                      "for": "0s",
+                      "labels": {}
+                    },
+                    {
+                      "expr": "string",
+                      "labels": {},
+                      "record": "string"
+                    }
+                  ]
+                }
+              ],
               "schema": {
                 "$ref": "#/components/schemas/UpdateLogsAlertgroupPayload"
               }

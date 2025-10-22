@@ -284,6 +284,9 @@
       },
       "CertCheckResponse": {
         "properties": {
+          "certCheck": {
+            "$ref": "#/components/schemas/CertCheckChildResponse"
+          },
           "certChecks": {
             "items": {
               "$ref": "#/components/schemas/CertCheckChildResponse"
@@ -301,6 +304,21 @@
           "certChecks",
           "message"
         ],
+        "type": "object"
+      },
+      "CheckArrayError": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "CheckObjectError": {
+        "additionalProperties": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
         "type": "object"
       },
       "CreateAlertConfigReceiverPayload": {
@@ -1774,6 +1792,9 @@
       },
       "HttpCheckResponse": {
         "properties": {
+          "httpCheck": {
+            "$ref": "#/components/schemas/HttpCheckChildResponse"
+          },
           "httpChecks": {
             "items": {
               "$ref": "#/components/schemas/HttpCheckChildResponse"
@@ -7805,7 +7826,20 @@
                 }
               }
             },
-            "description": "Get all cert checks"
+            "description": "Get all cert checks."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
           },
           "403": {
             "content": {
@@ -7818,7 +7852,7 @@
                 }
               }
             },
-            "description": "You are not authorized"
+            "description": "You are not authorized."
           }
         },
         "x-stackit-authorization": {
@@ -7866,20 +7900,61 @@
             "content": {
               "application/json": {
                 "example": {
+                  "certCheck": {
+                    "id": "bedcfb8ce34aafd00d7b7b09bca37edc",
+                    "source": "tcp://example.org:80"
+                  },
                   "certChecks": [
                     {
                       "id": "cdb25317a9cdd3e640ed72d432cde7ea",
                       "source": "tcp://example.org:443"
+                    },
+                    {
+                      "id": "bedcfb8ce34aafd00d7b7b09bca37edc",
+                      "source": "tcp://example.org:80"
                     }
                   ],
-                  "message": "Successfully got all cert checks"
+                  "message": "Successfully created cert check"
                 },
                 "schema": {
                   "$ref": "#/components/schemas/CertCheckResponse"
                 }
               }
             },
-            "description": "Get all cert checks"
+            "description": "Get added check (certCheck) and all configured checks (certChecks)."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "CheckArrayError": {
+                    "summary": "Global error",
+                    "value": [
+                      "instance is not ready"
+                    ]
+                  },
+                  "CheckObjectError": {
+                    "summary": "Field specific error",
+                    "value": {
+                      "source": [
+                        "This field may not be blank."
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/CheckObjectError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CheckArrayError"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Something went wrong."
           },
           "403": {
             "content": {
@@ -7892,7 +7967,7 @@
                 }
               }
             },
-            "description": "You are not authorized"
+            "description": "You are not authorized."
           }
         },
         "x-stackit-authorization": {
@@ -7953,7 +8028,20 @@
                 }
               }
             },
-            "description": "Delete cert check"
+            "description": "Delete cert check."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
           },
           "403": {
             "content": {
@@ -7966,20 +8054,7 @@
                 }
               }
             },
-            "description": "You are not authorized"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": "Cert check not found"
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Message"
-                }
-              }
-            },
-            "description": "Did not found cert check"
+            "description": "You are not authorized."
           }
         },
         "x-stackit-authorization": {
@@ -8821,14 +8896,27 @@
                       "url": "https://example.org"
                     }
                   ],
-                  "message": "Successfully got all check check urls"
+                  "message": "Successfully got all http checks"
                 },
                 "schema": {
                   "$ref": "#/components/schemas/HttpCheckResponse"
                 }
               }
             },
-            "description": "Get all http checks"
+            "description": "Get all http checks."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
           },
           "403": {
             "content": {
@@ -8841,7 +8929,7 @@
                 }
               }
             },
-            "description": "You are not authorized"
+            "description": "You are not authorized."
           }
         },
         "x-stackit-authorization": {
@@ -8889,20 +8977,61 @@
             "content": {
               "application/json": {
                 "example": {
+                  "httpCheck": {
+                    "id": "8cb80949d33b768d4ef61f94f3f54cba",
+                    "url": "https://example-2.org"
+                  },
                   "httpChecks": [
                     {
                       "id": "5564fd6a95028f02e52b38bb1743c816",
                       "url": "https://example.org"
+                    },
+                    {
+                      "id": "8cb80949d33b768d4ef61f94f3f54cba",
+                      "url": "https://example-2.org"
                     }
                   ],
-                  "message": "Successfully got all check check urls"
+                  "message": "Successfully created http check"
                 },
                 "schema": {
                   "$ref": "#/components/schemas/HttpCheckResponse"
                 }
               }
             },
-            "description": "Get all http checks"
+            "description": "Get added check (httpCheck) and all configured checks (httpChecks)."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "CheckArrayError": {
+                    "summary": "Global error",
+                    "value": [
+                      "instance is not ready"
+                    ]
+                  },
+                  "CheckObjectError": {
+                    "summary": "Field specific error",
+                    "value": {
+                      "url": [
+                        "This field may not be blank."
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/CheckObjectError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CheckArrayError"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Something went wrong."
           },
           "403": {
             "content": {
@@ -8915,7 +9044,7 @@
                 }
               }
             },
-            "description": "You are not authorized"
+            "description": "You are not authorized."
           }
         },
         "x-stackit-authorization": {
@@ -8969,14 +9098,27 @@
                       "url": "https://example.org"
                     }
                   ],
-                  "message": "Successfully deleted ping check urls"
+                  "message": "Successfully deleted http check"
                 },
                 "schema": {
                   "$ref": "#/components/schemas/HttpCheckResponse"
                 }
               }
             },
-            "description": "Delete http check"
+            "description": "Delete http check."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
           },
           "403": {
             "content": {
@@ -8989,20 +9131,7 @@
                 }
               }
             },
-            "description": "You are not authorized"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": "Http check url not found"
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Message"
-                }
-              }
-            },
-            "description": "Did not found http check"
+            "description": "You are not authorized."
           }
         },
         "x-stackit-authorization": {

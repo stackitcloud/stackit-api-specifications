@@ -209,7 +209,7 @@
         "type": "object"
       },
       "ListFlavors": {
-        "description": "A list of STACKIT Git flavors.",
+        "description": "A list of STACKIT Git Flavors.",
         "properties": {
           "flavors": {
             "items": {
@@ -235,6 +235,20 @@
         },
         "required": [
           "instances"
+        ]
+      },
+      "ListRunnerLabels": {
+        "description": "A list of STACKIT Git RunnerLabels.",
+        "properties": {
+          "runner-labels": {
+            "items": {
+              "$ref": "#/components/schemas/RunnerLabel"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "runner-labels"
         ]
       },
       "PatchOperation": {
@@ -264,6 +278,30 @@
           "path"
         ],
         "type": "object"
+      },
+      "RunnerLabel": {
+        "description": "Describes a STACKIT Git RunnerLabel.",
+        "properties": {
+          "description": {
+            "description": "RunnerLabel description.",
+            "type": "string"
+          },
+          "id": {
+            "description": "RunnerLabel id.",
+            "maxLength": 36,
+            "type": "string"
+          },
+          "label": {
+            "description": "RunnerLabel label.",
+            "maxLength": 64,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "description"
+        ]
       },
       "UUID": {
         "description": "Universally Unique Identifier (UUID).",
@@ -706,6 +744,71 @@
           "resource-type": "project"
         }
       }
+    },
+    "/v1beta/projects/{projectId}/runner-labels": {
+      "get": {
+        "description": "Type of runners we can use for running jobs.\n",
+        "operationId": "ListRunnerLabels",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListRunnerLabels"
+                }
+              }
+            },
+            "description": "Git RunnerLabels."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedResponse"
+                }
+              }
+            },
+            "description": "Unauthorized."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "Returns the details for the given STACKIT Git RunnerLabels.",
+        "x-stackit-authorization": {
+          "actions": [
+            "git.flavor.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ProjectId"
+        }
+      ]
     }
   },
   "security": [

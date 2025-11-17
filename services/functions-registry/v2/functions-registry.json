@@ -7,7 +7,7 @@
   },
   "openapi": "3.0.3",
   "paths": {
-    "/v2/{name}/blobs/{digest}": {
+    "/v2/{namespace}/{name}/blobs/{digest}": {
       "head": {
         "description": "Checks for the existence of a blob.\nReturns the blob's digest and content type in the headers if it exists.\n",
         "operationId": "headBlob",
@@ -57,6 +57,9 @@
       },
       "parameters": [
         {
+          "$ref": "#/components/parameters/Namespace"
+        },
+        {
           "$ref": "#/components/parameters/RepositoryName"
         },
         {
@@ -64,7 +67,7 @@
         }
       ]
     },
-    "/v2/{name}/manifests/{reference}": {
+    "/v2/{namespace}/{name}/manifests/{reference}": {
       "head": {
         "description": "Checks for the existence of an image manifest or image index.\nReturns the manifest's digest and content type in the headers if it exists.\n",
         "operationId": "headManifest",
@@ -113,6 +116,9 @@
         }
       },
       "parameters": [
+        {
+          "$ref": "#/components/parameters/Namespace"
+        },
         {
           "$ref": "#/components/parameters/RepositoryName"
         },

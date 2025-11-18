@@ -619,9 +619,7 @@
           "dhGroups": {
             "description": "The Diffie-Hellman Group. Required, except if AEAD algorithms are selected.",
             "example": [
-              "ecp256",
-              "ecp384",
-              "modp2048s256"
+              "ecp384"
             ],
             "items": {
               "enum": [
@@ -637,8 +635,7 @@
           },
           "encryptionAlgorithms": {
             "example": [
-              "aes256",
-              "aes128gcm16"
+              "aes256"
             ],
             "items": {
               "enum": [
@@ -895,7 +892,7 @@
               {
                 "properties": {
                   "dpdAction": {
-                    "default": "clear",
+                    "default": "restart",
                     "description": "Action to perform for this CHILD_SA on DPD timeout.\n\"clear\": Closes the CHILD_SA and does not take further action.\n\"trap\": installs a trap policy which will catch matching traffic and tries to re-negotiate the tunnel on-demand).\n\"restart\": immediately tries to re-negotiate the CILD_SA under a fresh IKE_SA.\n",
                     "enum": [
                       "clear",
@@ -914,7 +911,7 @@
                     "type": "integer"
                   },
                   "startAction": {
-                    "default": "trap",
+                    "default": "start",
                     "description": "Action to perform after loading the connection configuration.\n\"none\": The connection will be loaded but needs to be manually initiated.\n\"trap\": installs a trap policy which triggers the tunnel as soon as matching traffic has been detected.\n\"start\": initiates the connection actively.\n\"start|stop\": Immediately initiate a connection for which trap policies have been installed.\n",
                     "enum": [
                       "none",

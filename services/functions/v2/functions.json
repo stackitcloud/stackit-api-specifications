@@ -1,0 +1,316 @@
+{
+  "components": {
+    "parameters": {
+      "force": {
+        "description": "If true, deletes all child resources. If false, the resource remains in a 'deletion state' while child resources exist.",
+        "in": "query",
+        "name": "force",
+        "schema": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "page": {
+        "description": "A page to retrieve the next page of results.",
+        "in": "query",
+        "name": "page",
+        "schema": {
+          "maxLength": 1024,
+          "type": "string"
+        }
+      },
+      "pageSize": {
+        "description": "Maximum number of items to return",
+        "in": "query",
+        "name": "pageSize",
+        "schema": {
+          "default": 10,
+          "format": "int32",
+          "maximum": 100,
+          "minimum": 1,
+          "type": "integer"
+        }
+      }
+    },
+    "responses": {
+      "conflict": {
+        "description": "Conflict. The resource has been modified by some other client. Please try again."
+      },
+      "internalServerError": {
+        "description": "Internal server error. The application experienced some unexpected situation."
+      },
+      "notFound": {
+        "description": "Not found. The resource has not been found."
+      }
+    },
+    "schemas": {
+      "DockerManifestV2": {
+        "description": "Docker Manifest Schema 2, often supported by OCI registries for compatibility.\n",
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/Descriptor"
+          },
+          "layers": {
+            "items": {
+              "$ref": "#/components/schemas/Descriptor"
+            },
+            "type": "array"
+          },
+          "mediaType": {
+            "enum": [
+              "application/vnd.docker.distribution.manifest.v2+json"
+            ],
+            "type": "string"
+          },
+          "schemaVersion": {
+            "enum": [
+              2
+            ],
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "mediaType",
+          "config",
+          "layers"
+        ],
+        "type": "object"
+      },
+      "OCIImageIndex": {
+        "description": "The OCI Image Index provides a schema for a manifest list,\nwhich allows a single image reference to refer to a set of manifests\nfor different platforms.\n",
+        "properties": {
+          "annotations": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Arbitrary metadata for the image index.",
+            "type": "object"
+          },
+          "manifests": {
+            "items": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Descriptor"
+                },
+                {
+                  "properties": {
+                    "platform": {
+                      "description": "The platform object describes the platform which the image in the manifest runs on.\n",
+                      "properties": {
+                        "architecture": {
+                          "description": "The CPU architecture.",
+                          "example": "amd64",
+                          "type": "string"
+                        },
+                        "features": {
+                          "description": "The CPU features.",
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "os": {
+                          "description": "The operating system.",
+                          "example": "linux",
+                          "type": "string"
+                        },
+                        "os.features": {
+                          "description": "The operating system features.",
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "os.version": {
+                          "description": "The operating system version.",
+                          "type": "string"
+                        },
+                        "variant": {
+                          "description": "The CPU architecture variant.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "architecture",
+                        "os"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              ]
+            },
+            "type": "array"
+          },
+          "mediaType": {
+            "description": "The media type of the image index.",
+            "enum": [
+              "application/vnd.oci.image.index.v1+json"
+            ],
+            "example": "application/vnd.oci.image.index.v1+json",
+            "type": "string"
+          },
+          "schemaVersion": {
+            "description": "The schema version of the image index. Must be 2.",
+            "enum": [
+              2
+            ],
+            "example": 2,
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "mediaType",
+          "manifests"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "This API provides endpoints for managing STACKIT Functions.\n",
+    "title": "STACKIT Functions Infra API",
+    "version": "2.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v2/{namespace}/{name}/blobs/{digest}": {
+      "head": {
+        "description": "Checks for the existence of a blob.\nReturns the blob's digest and content type in the headers if it exists.\n",
+        "operationId": "headBlob",
+        "responses": {
+          "200": {
+            "description": "Blob exists.",
+            "headers": {
+              "Content-Length": {
+                "description": "The length of the blob in bytes.",
+                "schema": {
+                  "format": "int64",
+                  "type": "integer"
+                }
+              },
+              "Content-Type": {
+                "description": "The media type of the blob.",
+                "schema": {
+                  "example": "application/octet-stream",
+                  "type": "string"
+                }
+              },
+              "Docker-Content-Digest": {
+                "$ref": "#/components/headers/DockerContentDigestHeader"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/OciBadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/OciUnauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/OciNotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/OciInternalServerError"
+          }
+        },
+        "summary": "Check Blob Existence",
+        "tags": [
+          "Blobs"
+        ],
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/Namespace"
+        },
+        {
+          "$ref": "#/components/parameters/RepositoryName"
+        },
+        {
+          "$ref": "#/components/parameters/BlobDigest"
+        }
+      ]
+    },
+    "/v2/{namespace}/{name}/manifests/{reference}": {
+      "head": {
+        "description": "Checks for the existence of an image manifest or image index.\nReturns the manifest's digest and content type in the headers if it exists.\n",
+        "operationId": "headManifest",
+        "responses": {
+          "200": {
+            "description": "Manifest exists.",
+            "headers": {
+              "Content-Length": {
+                "description": "The length of the manifest in bytes.",
+                "schema": {
+                  "format": "int64",
+                  "type": "integer"
+                }
+              },
+              "Content-Type": {
+                "description": "The media type of the manifest.",
+                "schema": {
+                  "example": "application/vnd.oci.image.manifest.v1+json",
+                  "type": "string"
+                }
+              },
+              "Docker-Content-Digest": {
+                "$ref": "#/components/headers/DockerContentDigestHeader"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/OciBadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/OciUnauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/OciNotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/OciInternalServerError"
+          }
+        },
+        "summary": "Check Manifest Existence",
+        "tags": [
+          "Manifests"
+        ],
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/Namespace"
+        },
+        {
+          "$ref": "#/components/parameters/RepositoryName"
+        },
+        {
+          "$ref": "#/components/parameters/ManifestReference"
+        }
+      ]
+    }
+  },
+  "servers": [
+    {
+      "url": "https://functions.api.{region}stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "eu01.",
+          "enum": [
+            "eu01."
+          ]
+        }
+      }
+    }
+  ]
+}

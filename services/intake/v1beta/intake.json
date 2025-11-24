@@ -316,7 +316,7 @@
             "type": "string"
           },
           "partitionBy": {
-            "description": "List of Iceberg partitioning expressions to use when creating the target table.\nThis setting can only be used when `partitioning` is set to `manual`.\nPartitioning configuration of an Intake cannot be changed after creation.\nSee the [Apache Iceberg spec](https://iceberg.apache.org/spec/#partitioning) for more details.\n",
+            "description": "List of Iceberg partitioning expressions to use when creating the target table.\nThis setting can only be used when `partitioning` is set to `manual`.\nPartitioning configuration of an Intake can be changed after creation, but will only take effect once the\ntable has been changed as well. In case of not updating the table to a new one, the old partitioning configuration \nwill remain.\nSee the [Apache Iceberg spec](https://iceberg.apache.org/spec/#partitioning) for more details.\n",
             "items": {
               "maxLength": 1024,
               "type": "string"
@@ -363,6 +363,18 @@
             "description": "The namespace to which data shall be written. It will be automatically created, if it does not exist.",
             "maxLength": 1024,
             "type": "string"
+          },
+          "partitionBy": {
+            "description": "List of Iceberg partitioning expressions to use when creating the target table.\nThis setting can only be used when `partitioning` is set to `manual`.\nSee the [Apache Iceberg spec](https://iceberg.apache.org/spec/#partitioning) for more details.\n",
+            "items": {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "partitioning": {
+            "$ref": "#/components/schemas/partitioningUpdateType"
           },
           "tableName": {
             "description": "The table name is a short name chosen by the user to identify the table in Iceberg.",
@@ -662,6 +674,15 @@
         ],
         "type": "string"
       },
+      "partitioningUpdateType": {
+        "description": "The target table's partitioning.\n* `none` disables partitioning.\n* `intake-time` configures daily partitioning based on the automatically created ingestion time column `__intake_ts`.\n* `manual` allows arbitrary Iceberg partitioning expression to be set via `partitionBy`.\n",
+        "enum": [
+          "none",
+          "intake-time",
+          "manual"
+        ],
+        "type": "string"
+      },
       "update-intake-runnerPayload": {
         "properties": {
           "description": {
@@ -772,7 +793,7 @@
   "info": {
     "description": "This API provides endpoints for managing Intakes.\n",
     "title": "STACKIT Intake API",
-    "version": "1beta.3.4"
+    "version": "1beta.3.5"
   },
   "openapi": "3.0.3",
   "paths": {

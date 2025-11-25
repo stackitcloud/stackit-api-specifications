@@ -166,6 +166,55 @@
         ],
         "type": "object"
       },
+      "ComputeEngineGPUSpecificAttributes": {
+        "properties": {
+          "discriminator": {
+            "type": "string"
+          },
+          "flavor": {
+            "description": "Flavor",
+            "example": "c1.1",
+            "nullable": true,
+            "type": "string"
+          },
+          "hardware": {
+            "description": "Hardware",
+            "example": "Intel",
+            "nullable": true,
+            "type": "string"
+          },
+          "metro": {
+            "description": "metro",
+            "example": false,
+            "nullable": true,
+            "type": "boolean"
+          },
+          "os": {
+            "description": "Operating System (e.g. `windows`, `windows-managed`)",
+            "example": "windows",
+            "nullable": true,
+            "type": "string"
+          },
+          "ram": {
+            "description": "RAM (in GB)",
+            "example": 2,
+            "format": "float",
+            "nullable": true,
+            "type": "number"
+          },
+          "vCPU": {
+            "description": "Number of vCPU",
+            "example": 1,
+            "format": "int64",
+            "nullable": true,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "discriminator"
+        ],
+        "type": "object"
+      },
       "ComputeEngineSpecificAttributes": {
         "properties": {
           "discriminator": {
@@ -836,6 +885,7 @@
                   "mapping": {
                     "Archiving": "#/components/schemas/ArchivingSpecificAttributes",
                     "ComputeEngine": "#/components/schemas/ComputeEngineSpecificAttributes",
+                    "ComputeEngineGPU": "#/components/schemas/ComputeEngineGPUSpecificAttributes",
                     "ConfidentialComputing": "#/components/schemas/ConfidentialComputingSpecificAttributes",
                     "Data\u0026AI": "#/components/schemas/DataAndAI",
                     "Database": "#/components/schemas/PublicDatabaseSpecificAttributes",
@@ -857,6 +907,9 @@
                   },
                   {
                     "$ref": "#/components/schemas/ComputeEngineSpecificAttributes"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ComputeEngineGPUSpecificAttributes"
                   },
                   {
                     "$ref": "#/components/schemas/NetworkSpecificAttributes"

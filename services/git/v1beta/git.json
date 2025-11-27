@@ -30,7 +30,7 @@
       "Acl": {
         "description": "A list of CIDR network addresses that are allowed to access the instance.",
         "items": {
-          "example": "192.168.100.0/24",
+          "example": "1.2.3.4/1",
           "format": "cidr",
           "type": "string"
         },
@@ -44,13 +44,11 @@
             "$ref": "#/components/schemas/Acl"
           },
           "flavor": {
-            "description": "Desired instance flavor. Must be one of the defined enum values",
-            "enum": [
-              "git-10",
-              "git-100"
-            ],
-            "maxLength": 255,
-            "type": "string"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/InstanceFlavor"
+              }
+            ]
           },
           "name": {
             "description": "A user chosen name to distinguish multiple STACKIT Git instances.",
@@ -198,6 +196,15 @@
           "acl"
         ]
       },
+      "InstanceFlavor": {
+        "description": "Desired instance flavor. Must be one of the defined enum values.",
+        "enum": [
+          "git-10",
+          "git-100"
+        ],
+        "maxLength": 255,
+        "type": "string"
+      },
       "InternalServerErrorResponse": {
         "description": "Internal server error.",
         "properties": {
@@ -250,6 +257,20 @@
         "required": [
           "runner-labels"
         ]
+      },
+      "PatchInstancePayload": {
+        "description": "Properties to patch on an instance. All fields are optional.",
+        "properties": {
+          "acl": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Acl"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "type": "object"
       },
       "PatchOperation": {
         "description": "Request a STACKIT Git instance to be patch with these properties.",
@@ -665,6 +686,17 @@
         "operationId": "PatchInstance",
         "requestBody": {
           "content": {
+            "application/json": {
+              "example": {
+                "acl": [
+                  "1.1.1.1/1",
+                  "1.2.3.4/5"
+                ]
+              },
+              "schema": {
+                "$ref": "#/components/schemas/PatchInstancePayload"
+              }
+            },
             "application/json-patch+json": {
               "schema": {
                 "example": [

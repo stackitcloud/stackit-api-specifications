@@ -1,0 +1,4305 @@
+{
+  "components": {
+    "schemas": {
+      "BucketBackend": {
+        "properties": {
+          "bucketUrl": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "bucketUrl",
+          "region"
+        ],
+        "type": "object"
+      },
+      "BucketBackendCreate": {
+        "properties": {
+          "bucketUrl": {
+            "type": "string"
+          },
+          "credentials": {
+            "$ref": "#/components/schemas/BucketCredentials"
+          },
+          "region": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "bucketUrl",
+          "region",
+          "credentials"
+        ],
+        "type": "object"
+      },
+      "BucketBackendPatch": {
+        "properties": {
+          "bucketUrl": {
+            "type": "string"
+          },
+          "credentials": {
+            "$ref": "#/components/schemas/BucketCredentials"
+          },
+          "region": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "BucketCredentials": {
+        "properties": {
+          "accessKeyId": {
+            "type": "string",
+            "x-go-type": "secret.Secret"
+          },
+          "secretAccessKey": {
+            "type": "string",
+            "x-go-type": "secret.Secret"
+          }
+        },
+        "required": [
+          "accessKeyId",
+          "secretAccessKey"
+        ],
+        "type": "object"
+      },
+      "Config": {
+        "properties": {
+          "backend": {
+            "discriminator": {
+              "mapping": {
+                "bucket": "#/components/schemas/BucketBackend",
+                "http": "#/components/schemas/HttpBackend"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/HttpBackend"
+              },
+              {
+                "$ref": "#/components/schemas/BucketBackend"
+              }
+            ]
+          },
+          "blockedCountries": {
+            "description": "Restricts access to your content based on country. \nWe use the ISO 3166-1 alpha-2 standard for country codes (e.g. DE, ES, GB). \nThis setting blocks users from the specified countries.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "blockedIps": {
+            "description": "Restricts access to your content by specifying a list of blocked IPv4 addresses. \nThis feature enhances security and privacy by preventing these addresses from accessing your distribution.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "defaultCacheDuration": {
+            "description": "Sets the default cache duration for the distribution. \nThe default cache duration is applied when a 'Cache-Control' header is not presented in the origin's response.\nWe use ISO8601 duration format for cache duration (e.g. P1DT2H30M)\n",
+            "nullable": true,
+            "type": "string",
+            "x-go-type": "string"
+          },
+          "logSink": {
+            "discriminator": {
+              "mapping": {
+                "loki": "#/components/schemas/LokiLogSink"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LokiLogSink"
+              }
+            ]
+          },
+          "monthlyLimitBytes": {
+            "description": "Sets the monthly limit of bandwidth in bytes that the pullzone is allowed to use.\n",
+            "format": "int64",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer",
+            "x-go-type": "uint64"
+          },
+          "optimizer": {
+            "$ref": "#/components/schemas/Optimizer"
+          },
+          "regions": {
+            "items": {
+              "$ref": "#/components/schemas/Region"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "waf": {
+            "$ref": "#/components/schemas/WafConfig"
+          }
+        },
+        "required": [
+          "regions",
+          "backend",
+          "blockedIps",
+          "blockedCountries",
+          "waf"
+        ],
+        "type": "object"
+      },
+      "ConfigPatch": {
+        "properties": {
+          "backend": {
+            "discriminator": {
+              "mapping": {
+                "bucket": "#/components/schemas/BucketBackendPatch",
+                "http": "#/components/schemas/HttpBackendPatch"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/HttpBackendPatch"
+              },
+              {
+                "$ref": "#/components/schemas/BucketBackendPatch"
+              }
+            ]
+          },
+          "blockedCountries": {
+            "description": "Restricts access to your content based on country. \nWe use the ISO 3166-1 alpha-2 standard for country codes (e.g., DE, ES, GB). \nThis setting blocks users from the specified countries.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "blockedIps": {
+            "description": "Restricts access to your content by specifying a list of blocked IPv4 addresses. \nThis feature enhances security and privacy by preventing these addresses from accessing your distribution.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "defaultCacheDuration": {
+            "description": "Sets the default cache duration for the distribution. \nThe default cache duration is applied when a 'Cache-Control' header is not presented in the origin's response.\nWe use ISO8601 duration format for cache duration (e.g. P1DT2H30M)\n",
+            "nullable": true,
+            "type": "string",
+            "x-go-type": "string"
+          },
+          "logSink": {
+            "discriminator": {
+              "mapping": {
+                "loki": "#/components/schemas/LokiLogSinkPatch"
+              },
+              "propertyName": "type"
+            },
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LokiLogSinkPatch"
+              }
+            ]
+          },
+          "monthlyLimitBytes": {
+            "description": "Sets the monthly limit of bandwidth in bytes that the pullzone is allowed to use.\n",
+            "format": "int64",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer",
+            "x-go-type": "uint64"
+          },
+          "optimizer": {
+            "$ref": "#/components/schemas/OptimizerPatch"
+          },
+          "regions": {
+            "items": {
+              "$ref": "#/components/schemas/Region"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "waf": {
+            "$ref": "#/components/schemas/WafConfigPatch"
+          }
+        },
+        "type": "object"
+      },
+      "CreateDistributionPayload": {
+        "properties": {
+          "backend": {
+            "description": "Configuration for the content origin backend.",
+            "discriminator": {
+              "mapping": {
+                "bucket": "#/components/schemas/BucketBackendCreate",
+                "http": "#/components/schemas/HttpBackendCreate"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/HttpBackendCreate"
+              },
+              {
+                "$ref": "#/components/schemas/BucketBackendCreate"
+              }
+            ]
+          },
+          "blockedCountries": {
+            "description": "Restricts access to your content based on country. \nWe use the ISO 3166-1 alpha-2 standard for country codes (e.g., DE, ES, GB). \nThis setting blocks users from the specified countries.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "blockedIps": {
+            "description": "Restricts access to your content by specifying a list of blocked IPv4 addresses. \nThis feature enhances security and privacy by preventing these addresses from accessing your distribution.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "defaultCacheDuration": {
+            "description": "Sets the default cache duration for the distribution. \nThe default cache duration is applied when a 'Cache-Control' header is not presented in the origin's response.\nWe use ISO8601 duration format for cache duration (e.g. P1DT2H30M)\n",
+            "type": "string",
+            "x-go-type": "string"
+          },
+          "intentId": {
+            "description": "While optional, it is greatly encouraged to provide an `intentId`. \nThis is used to deduplicate requests.  \nIf multiple POST-Requests with the same `intentId` for a given `projectId` are received, all but the first request are dropped.\n",
+            "type": "string"
+          },
+          "logSink": {
+            "discriminator": {
+              "mapping": {
+                "loki": "#/components/schemas/LokiLogSinkCreate"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LokiLogSinkCreate"
+              }
+            ]
+          },
+          "monthlyLimitBytes": {
+            "description": "Sets the monthly limit of bandwidth in bytes that the pullzone is allowed to use.\n",
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer",
+            "x-go-type": "uint64"
+          },
+          "optimizer": {
+            "$ref": "#/components/schemas/Optimizer"
+          },
+          "regions": {
+            "description": "Define in which regions you would like your content to be cached.\n",
+            "items": {
+              "$ref": "#/components/schemas/Region"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "waf": {
+            "$ref": "#/components/schemas/WafConfig"
+          }
+        },
+        "required": [
+          "backend",
+          "regions"
+        ],
+        "type": "object"
+      },
+      "CreateDistributionResponse": {
+        "properties": {
+          "distribution": {
+            "$ref": "#/components/schemas/Distribution"
+          }
+        },
+        "required": [
+          "distribution"
+        ],
+        "type": "object"
+      },
+      "CustomDomain": {
+        "description": "Definition of a custom domain",
+        "properties": {
+          "errors": {
+            "description": "This object is present if the custom domain has errors.",
+            "items": {
+              "$ref": "#/components/schemas/StatusError"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "name": {
+            "description": "The domain. Can be used as input for the GetCustomDomain endpoint",
+            "maxLength": 72,
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DomainStatus"
+          }
+        },
+        "required": [
+          "name",
+          "status"
+        ],
+        "type": "object"
+      },
+      "DeleteCustomDomainResponse": {
+        "description": "Returns the custom domain that was deleted while the deletion has not completed yet. After the deletion was successful the response will be empty.",
+        "properties": {
+          "customDomain": {
+            "$ref": "#/components/schemas/CustomDomain"
+          }
+        },
+        "type": "object"
+      },
+      "DeleteDistributionResponse": {
+        "properties": {
+          "distribution": {
+            "$ref": "#/components/schemas/Distribution"
+          }
+        },
+        "type": "object"
+      },
+      "Distribution": {
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/Config"
+          },
+          "createdAt": {
+            "description": "RFC3339 string defining when the distribution was created",
+            "format": "date-time",
+            "type": "string"
+          },
+          "domains": {
+            "items": {
+              "$ref": "#/components/schemas/Domain"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "errors": {
+            "description": "This object may be present if, and only if the distribution has encountered an error state.\n",
+            "items": {
+              "$ref": "#/components/schemas/StatusError"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "status": {
+            "description": "- `CREATING`: The distribution was just created. \n  All the relevant resources are created in the background. Once fully reconciled,\n  this switches to `ACTIVE`. If there are any issues, the status changes to \n  `ERROR`. You can look at the `errors` array to get more infos.\n- `ACTIVE`: The usual state. The desired configuration is synced, there are no errors\n- `UPDATING`: The state when there is a discrepancy between the desired and \n  actual configuration state. This occurs right after an update. Will switch to \n  `ACTIVE` or `ERROR`, depending on if synchronizing succeeds or not.\n- `DELETING`: The state right after a delete request was received. The distribution will stay in this status\n  until all resources have been successfully removed, or until we encounter an `ERROR` state.\n\n  **NOTE:** You can keep fetching the distribution while it is deleting. \n  After successful deletion, trying to get a distribution will return a 404 Not Found response\n- `ERROR`: The error state. Look at the `errors` array for more info.\n",
+            "enum": [
+              "CREATING",
+              "ACTIVE",
+              "UPDATING",
+              "DELETING",
+              "ERROR"
+            ],
+            "type": "string"
+          },
+          "updatedAt": {
+            "description": "RFC3339 string which returns the last time the distribution configuration was modified.\n",
+            "format": "date-time",
+            "type": "string"
+          },
+          "waf": {
+            "description": "For this property to be present two pre-conditions must be met:  \n- the WAF was enabled at least once\n- the query parameter ?withWafStatus is truthy\n\nThis property contains the waf Status. At this point in time, this contains all resolved rules.\nRules are split into 3 groups: \n- enabledRules\n- logOnlyRules \n- disabledRules\n\n**Do note that the global waf mode (Disabled, LogOnly, Enabled) is *NOT* reflected in this list!**\n",
+            "properties": {
+              "disabledRules": {
+                "items": {
+                  "$ref": "#/components/schemas/WafStatusRuleBlock"
+                },
+                "type": "array"
+              },
+              "enabledRules": {
+                "items": {
+                  "$ref": "#/components/schemas/WafStatusRuleBlock"
+                },
+                "type": "array"
+              },
+              "logOnlyRules": {
+                "items": {
+                  "$ref": "#/components/schemas/WafStatusRuleBlock"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "enabledRules",
+              "logOnlyRules",
+              "disabledRules"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "projectId",
+          "createdAt",
+          "updatedAt",
+          "config",
+          "status",
+          "domains"
+        ],
+        "type": "object"
+      },
+      "DistributionLogsRecord": {
+        "properties": {
+          "cacheHit": {
+            "type": "boolean"
+          },
+          "dataCenterRegion": {
+            "type": "string"
+          },
+          "distributionId": {
+            "type": "string"
+          },
+          "host": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "requestCountryCode": {
+            "description": "ISO 3166-1 A2 compliant country code",
+            "maxLength": 2,
+            "minLength": 2,
+            "type": "string"
+          },
+          "size": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer",
+            "x-go-type": "uint64"
+          },
+          "statusCode": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "timestamp": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "wafViolation": {
+            "$ref": "#/components/schemas/WAFViolation"
+          }
+        },
+        "required": [
+          "distributionId",
+          "statusCode",
+          "path",
+          "cacheHit",
+          "timestamp",
+          "size",
+          "requestCountryCode",
+          "dataCenterRegion",
+          "host"
+        ]
+      },
+      "DistributionStatisticsRecord": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DistributionStatisticsRecordEntry"
+          },
+          {
+            "properties": {
+              "end": {
+                "description": "Exclusive end of the time interval the statistics refer to",
+                "format": "date-time",
+                "type": "string"
+              },
+              "regions": {
+                "$ref": "#/components/schemas/DistributionStatisticsRecordRegions"
+              },
+              "start": {
+                "description": "Start of the time interval the statistics refer to",
+                "format": "date-time",
+                "type": "string"
+              }
+            },
+            "required": [
+              "start",
+              "end",
+              "regions"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "Aggregated statistics of a distribution during a time interval",
+        "required": [
+          "start",
+          "end",
+          "totalTrafficBytes",
+          "totalRequests",
+          "cachedRequests",
+          "regions"
+        ]
+      },
+      "DistributionStatisticsRecordEntry": {
+        "properties": {
+          "cachedRequests": {
+            "description": "Number of cached requests that were served",
+            "format": "int64",
+            "type": "integer",
+            "x-go-type": "uint64"
+          },
+          "totalRequests": {
+            "description": "Total number of requests that were served",
+            "format": "int64",
+            "type": "integer",
+            "x-go-type": "uint64"
+          },
+          "totalTrafficBytes": {
+            "description": "Total traffic in bytes that occurred during the time interval",
+            "format": "int64",
+            "type": "integer",
+            "x-go-type": "uint64"
+          }
+        },
+        "required": [
+          "totalTrafficBytes",
+          "totalRequests",
+          "cachedRequests"
+        ],
+        "type": "object"
+      },
+      "DistributionStatisticsRecordRegions": {
+        "description": "Mapping of regions to the metrics for this region for the defined time interval\nAll regions are always present. If no traffic was reported for a region, it will \nstill contain 0-filled properties\n",
+        "properties": {
+          "AF": {
+            "$ref": "#/components/schemas/DistributionStatisticsRecordEntry"
+          },
+          "ASIA": {
+            "$ref": "#/components/schemas/DistributionStatisticsRecordEntry"
+          },
+          "EU": {
+            "$ref": "#/components/schemas/DistributionStatisticsRecordEntry"
+          },
+          "SA": {
+            "$ref": "#/components/schemas/DistributionStatisticsRecordEntry"
+          },
+          "US": {
+            "$ref": "#/components/schemas/DistributionStatisticsRecordEntry"
+          }
+        },
+        "required": [
+          "EU",
+          "US",
+          "AF",
+          "SA",
+          "ASIA"
+        ],
+        "type": "object"
+      },
+      "Domain": {
+        "description": "Definition of a custom or managed domain without any certificates or keys",
+        "properties": {
+          "errors": {
+            "description": "This object is present if the custom domain has errors.",
+            "items": {
+              "$ref": "#/components/schemas/StatusError"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "name": {
+            "description": "The domain. If this is a custom domain, you can call the GetCustomDomain Endpoint",
+            "maxLength": 72,
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DomainStatus"
+          },
+          "type": {
+            "description": "Specifies the type of this Domain. Custom Domain can be further queries using the GetCustomDomain Endpoint",
+            "enum": [
+              "managed",
+              "custom"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "status"
+        ],
+        "type": "object"
+      },
+      "DomainStatus": {
+        "description": "The status of the domain: CREATING indicates that the custom domain is being set up. UPDATING means that requested changes are being applied to the custom domain. ACTIVE means the custom domain is currently configured and active. DELETING means that the domain is in the process of being removed from the distribution. In case the domain has the ERROR state, more information will be available in the errors list.",
+        "enum": [
+          "CREATING",
+          "ACTIVE",
+          "UPDATING",
+          "DELETING",
+          "ERROR"
+        ],
+        "type": "string"
+      },
+      "ErrorDetails": {
+        "properties": {
+          "de": {
+            "description": "German description of the error",
+            "minLength": 1,
+            "type": "string"
+          },
+          "en": {
+            "description": "English description of the error",
+            "minLength": 1,
+            "type": "string"
+          },
+          "field": {
+            "description": "Optional field in the request this error detail refers to",
+            "minLength": 1,
+            "type": "string"
+          },
+          "key": {
+            "enum": [
+              "UNKNOWN",
+              "CUSTOM_DOMAIN_CNAME_MISSING",
+              "INVALID_ARGUMENT",
+              "LOG_SINK_INSTANCE_UNAVAILABLE"
+            ],
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "en"
+        ],
+        "type": "object"
+      },
+      "FindCachePathsResponse": {
+        "properties": {
+          "response": {
+            "items": {
+              "$ref": "#/components/schemas/FindCachePathsResponseEntry"
+            },
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "response"
+        ],
+        "type": "object"
+      },
+      "FindCachePathsResponseEntry": {
+        "properties": {
+          "path": {
+            "description": "Defines one path that was previously used as part of a granular purge",
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "GenericJsonResponse": {
+        "properties": {
+          "details": {
+            "description": "Listing of issues with your request",
+            "items": {
+              "$ref": "#/components/schemas/ErrorDetails"
+            },
+            "minLength": 1,
+            "type": "array"
+          },
+          "message": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
+      "GetCacheInfoResponse": {
+        "properties": {
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/GetCacheInfoResponseHistoryEntry"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "lastPurgeTime": {
+            "description": "Returns the last time the cache was purged by calling the PurgeCache endpoint. \nTime represented as RFC3339 compliant string. If the cache was never purged, this returns `null`\n",
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "lastPurgeTime",
+          "history"
+        ],
+        "type": "object"
+      },
+      "GetCacheInfoResponseHistoryEntry": {
+        "properties": {
+          "occurredAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "full",
+              "granular"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "occurredAt",
+          "type"
+        ],
+        "type": "object"
+      },
+      "GetCustomDomainCustomCertificate": {
+        "description": "Returned if a custom certificate is used. Response does not contain the certificate or key.",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "version": {
+            "description": "Whenever a new custom certificate is added the version is increased by 1.",
+            "format": "int32",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "type",
+          "version"
+        ],
+        "type": "object"
+      },
+      "GetCustomDomainManagedCertificate": {
+        "description": "This is returned when no custom certificate is used. We provision and manage a Let's Encrypt Certificate for you",
+        "properties": {
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "GetCustomDomainResponse": {
+        "properties": {
+          "certificate": {
+            "discriminator": {
+              "mapping": {
+                "custom": "#/components/schemas/GetCustomDomainCustomCertificate",
+                "managed": "#/components/schemas/GetCustomDomainManagedCertificate"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/GetCustomDomainManagedCertificate"
+              },
+              {
+                "$ref": "#/components/schemas/GetCustomDomainCustomCertificate"
+              }
+            ]
+          },
+          "customDomain": {
+            "$ref": "#/components/schemas/CustomDomain"
+          }
+        },
+        "required": [
+          "customDomain",
+          "certificate"
+        ],
+        "type": "object"
+      },
+      "GetDistributionResponse": {
+        "properties": {
+          "distribution": {
+            "$ref": "#/components/schemas/Distribution"
+          }
+        },
+        "required": [
+          "distribution"
+        ],
+        "type": "object"
+      },
+      "GetLogsResponse": {
+        "properties": {
+          "logs": {
+            "items": {
+              "$ref": "#/components/schemas/DistributionLogsRecord"
+            },
+            "type": "array"
+          },
+          "nextPageIdentifier": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "logs"
+        ]
+      },
+      "GetLogsSearchFiltersResponse": {
+        "properties": {
+          "cache": {
+            "items": {
+              "enum": [
+                "HIT",
+                "MISS"
+              ],
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "dataCenter": {
+            "$ref": "#/components/schemas/GetLogsSearchFiltersResponseDatacenterBlock"
+          },
+          "remoteCountry": {
+            "description": "List of ISO-3166 Alpha2 Country Codes matching the input filter. Response is ordered in ascending order. \n\nFor more Info about the country codes, see https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2\n",
+            "items": {
+              "description": "ISO-3166 A2 Country Code",
+              "format": "[A-Z]{2}",
+              "maxLength": 2,
+              "minLength": 2,
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "status": {
+            "description": "List of Status Codes matching the input filter. Response is ordered in ascending order.",
+            "items": {
+              "description": "Non-negative integer representing an HTTP Status Code.",
+              "format": "int32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "status",
+          "remoteCountry",
+          "cache",
+          "dataCenter"
+        ],
+        "type": "object"
+      },
+      "GetLogsSearchFiltersResponseDatacenterBlock": {
+        "description": "Object containing Datacenters to filter for. Each datacenter is grouped to the respective region.",
+        "properties": {
+          "AF": {
+            "items": {
+              "$ref": "#/components/schemas/GetLogsSearchFiltersResponseDatacenterBlockItem"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "ASIA": {
+            "items": {
+              "$ref": "#/components/schemas/GetLogsSearchFiltersResponseDatacenterBlockItem"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "EU": {
+            "items": {
+              "$ref": "#/components/schemas/GetLogsSearchFiltersResponseDatacenterBlockItem"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "NA": {
+            "items": {
+              "$ref": "#/components/schemas/GetLogsSearchFiltersResponseDatacenterBlockItem"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "SA": {
+            "items": {
+              "$ref": "#/components/schemas/GetLogsSearchFiltersResponseDatacenterBlockItem"
+            },
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "EU",
+          "NA",
+          "AF",
+          "SA",
+          "ASIA"
+        ],
+        "type": "object"
+      },
+      "GetLogsSearchFiltersResponseDatacenterBlockItem": {
+        "description": "A datacenter. The `id` defines the key needed to filter against the logs endpoint, while the `displayName` defines a human-readable Name.",
+        "properties": {
+          "displayName": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName"
+        ],
+        "type": "object"
+      },
+      "GetStatisticsResponse": {
+        "properties": {
+          "records": {
+            "items": {
+              "$ref": "#/components/schemas/DistributionStatisticsRecord"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "records"
+        ]
+      },
+      "HttpBackend": {
+        "properties": {
+          "geofencing": {
+            "additionalProperties": {
+              "items": {
+                "description": "ISO 3166-1 alpha-2 country code (e.g., DE, ES, GB)",
+                "type": "string"
+              },
+              "type": "array",
+              "uniqueItems": true
+            },
+            "description": "An object mapping multiple alternative origins to country codes.\n\nAny request from one of those country codes will route to the alternative origin. Do note that\ncountry codes may only be used once. You cannot have a country be assigned to multiple alternative origins.\n",
+            "type": "object"
+          },
+          "originRequestHeaders": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Headers that will be sent with every request to the configured origin.\n\n**WARNING**: Do not store sensitive values in the headers. \nThe configuration is stored as plain text.\n",
+            "type": "object"
+          },
+          "originUrl": {
+            "description": "The origin of the content that should be made available through the CDN.  \nNote that the path and query parameters are ignored. Ports are allowed. If no protocol is provided, `https` is assumed.  \nSo `www.example.com:1234/somePath?q=123` is normalized to `https://www.example.com:1234`\n",
+            "format": "uri",
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "originUrl",
+          "originRequestHeaders",
+          "geofencing"
+        ],
+        "type": "object"
+      },
+      "HttpBackendCreate": {
+        "properties": {
+          "geofencing": {
+            "additionalProperties": {
+              "items": {
+                "description": "ISO 3166-1 alpha-2 country code (e.g., DE, ES, GB)",
+                "type": "string"
+              },
+              "type": "array",
+              "uniqueItems": true
+            },
+            "description": "An object mapping multiple alternative origins to country codes.\n\nAny request from one of those country codes will route to the alternative origin. Do note that\ncountry codes may only be used once. You cannot have a country be assigned to multiple alternative origins.\n",
+            "type": "object"
+          },
+          "originRequestHeaders": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Headers that will be sent with every request to the configured origin.\n\n**WARNING**: Do not store sensitive values in the headers. \nThe configuration is stored as plain text.\n",
+            "type": "object"
+          },
+          "originUrl": {
+            "description": "The origin of the content that should be made available through the CDN.  \nNote that the path and query parameters are ignored. Ports are allowed. If no protocol is provided, `https` is assumed.  \nSo `www.example.com:1234/somePath?q=123` is normalized to `https://www.example.com:1234`\n",
+            "format": "uri",
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "originUrl"
+        ],
+        "type": "object"
+      },
+      "HttpBackendPatch": {
+        "description": "A partial HTTP Backend",
+        "properties": {
+          "geofencing": {
+            "additionalProperties": {
+              "items": {
+                "description": "ISO 3166-1 alpha-2 country code (e.g., DE, ES, GB)",
+                "type": "string"
+              },
+              "type": "array",
+              "uniqueItems": true
+            },
+            "description": "An object mapping multiple alternative origins to country codes.\n\nAny request from one of those country codes will route to the alternative origin. Do note that\ncountry codes may only be used once. You cannot have a country be assigned to multiple alternative origins.\n",
+            "type": "object"
+          },
+          "originRequestHeaders": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Headers that will be sent with every request to the configured origin.\n\n**WARNING**: Do not store sensitive values in the headers. \nThe configuration is stored as plain text.\n",
+            "type": "object"
+          },
+          "originUrl": {
+            "format": "uri",
+            "type": "string"
+          },
+          "type": {
+            "description": "This property is required to determine the used backend type.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "ListDistributionsResponse": {
+        "properties": {
+          "distributions": {
+            "items": {
+              "$ref": "#/components/schemas/Distribution"
+            },
+            "type": "array"
+          },
+          "nextPageIdentifier": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "distributions"
+        ],
+        "type": "object"
+      },
+      "ListWafCollectionsResponse": {
+        "properties": {
+          "collections": {
+            "items": {
+              "$ref": "#/components/schemas/WafRuleCollection"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "collections"
+        ],
+        "type": "object"
+      },
+      "LocalizedString": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "description": "LocalizedString is a map from language to string value",
+        "type": "object"
+      },
+      "LokiLogSink": {
+        "properties": {
+          "pushUrl": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "pushUrl"
+        ],
+        "type": "object"
+      },
+      "LokiLogSinkCreate": {
+        "properties": {
+          "credentials": {
+            "$ref": "#/components/schemas/LokiLogSinkCredentials"
+          },
+          "pushUrl": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "pushUrl",
+          "credentials"
+        ],
+        "type": "object"
+      },
+      "LokiLogSinkCredentials": {
+        "properties": {
+          "password": {
+            "type": "string",
+            "x-go-type": "secret.Secret"
+          },
+          "username": {
+            "type": "string",
+            "x-go-type": "secret.Secret"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ],
+        "type": "object"
+      },
+      "LokiLogSinkPatch": {
+        "properties": {
+          "credentials": {
+            "$ref": "#/components/schemas/LokiLogSinkCredentials"
+          },
+          "pushUrl": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "Optimizer": {
+        "description": "Optimizer is paid feature, a real-time on the fly image manipulation and optimization service that automatically optimizes your images for faster image delivery.\n",
+        "properties": {
+          "enabled": {
+            "description": "Determines if the optimizer should be enabled for this distribution and incurs a monthly fee",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "type": "object"
+      },
+      "OptimizerPatch": {
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "PatchDistributionPayload": {
+        "description": "Defines a partial distribution. Set values ",
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/ConfigPatch"
+          },
+          "intentId": {
+            "description": "While optional, it is greatly encouraged to provide an `intentId`. \nThis is used to deduplicate requests.  \nIf multiple modifying requests with the same `intentId` for a given `projectId` are received, all but the first request are dropped.\n",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PatchDistributionResponse": {
+        "properties": {
+          "distribution": {
+            "$ref": "#/components/schemas/Distribution"
+          }
+        },
+        "required": [
+          "distribution"
+        ],
+        "type": "object"
+      },
+      "PurgeCachePayload": {
+        "properties": {
+          "path": {
+            "description": "Defines an optional path. If this is set, a granular purge is done. If missing, the entire cache is invalidated. \nDuring a granular cache purge, only the provided path is purged. \n\nPlease do not that for example `/some/path` and `/some/path.txt` are considered different paths.\n",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PurgeCacheResponse": {
+        "type": "object"
+      },
+      "PutCustomDomainCustomCertificate": {
+        "description": "Returned if a custom certificate is used. Response does not contain the certificate or key.",
+        "properties": {
+          "certificate": {
+            "description": "base64-encoded PEM-encoded certificate",
+            "type": "string",
+            "x-go-type": "secret.Secret"
+          },
+          "key": {
+            "description": "base64-encoded PEM encoded key",
+            "type": "string",
+            "x-go-type": "secret.Secret"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "certificate",
+          "key"
+        ],
+        "type": "object"
+      },
+      "PutCustomDomainManagedCertificate": {
+        "description": "This is returned when no custom certificate is used. We provision and manage a Let's Encrypt Certificate for you",
+        "properties": {
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "PutCustomDomainPayload": {
+        "properties": {
+          "certificate": {
+            "description": "Pass a custom certificate to be served by the CDN when calling the custom domain. Will use a managed certificate when omitted",
+            "discriminator": {
+              "mapping": {
+                "custom": "#/components/schemas/PutCustomDomainCustomCertificate",
+                "managed": "#/components/schemas/PutCustomDomainManagedCertificate"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PutCustomDomainManagedCertificate"
+              },
+              {
+                "$ref": "#/components/schemas/PutCustomDomainCustomCertificate"
+              }
+            ],
+            "type": "object"
+          },
+          "intentId": {
+            "description": "While optional, it is greatly encouraged to provide an `intentId`. \nThis is used to deduplicate requests.  \nIf multiple modifying Requests with the same `intentId` for a given `projectId` are received, all but the first request are dropped.\n",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PutCustomDomainResponse": {
+        "properties": {
+          "certificate": {
+            "description": "Pass a custom certificate to be served by the CDN when calling the custom domain. Will use a managed certificate when omitted",
+            "discriminator": {
+              "mapping": {
+                "custom": "#/components/schemas/GetCustomDomainCustomCertificate",
+                "managed": "#/components/schemas/GetCustomDomainManagedCertificate"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/GetCustomDomainManagedCertificate"
+              },
+              {
+                "$ref": "#/components/schemas/GetCustomDomainCustomCertificate"
+              }
+            ],
+            "type": "object"
+          },
+          "customDomain": {
+            "$ref": "#/components/schemas/CustomDomain"
+          }
+        },
+        "required": [
+          "customDomain"
+        ],
+        "type": "object"
+      },
+      "Region": {
+        "description": "The following regions exist:\n- `EU` - Europe\n- `US` - United States / North America\n- `AF` - Africa\n- `SA` - South America\n- `ASIA` - Asia and Oceania\n",
+        "enum": [
+          "EU",
+          "US",
+          "AF",
+          "SA",
+          "ASIA"
+        ],
+        "format": "enum",
+        "type": "string"
+      },
+      "StatusError": {
+        "properties": {
+          "de": {
+            "description": "A german translation string corresponding to the error key. Note that we do not guarantee german translations are present.",
+            "minLength": 1,
+            "type": "string"
+          },
+          "en": {
+            "description": "An english translation string corresponding to the error key. An english translation key is always present.",
+            "minLength": 1,
+            "type": "string"
+          },
+          "key": {
+            "description": "An enum value that describes a Status Error.",
+            "enum": [
+              "UNKNOWN",
+              "CUSTOM_DOMAIN_CNAME_MISSING",
+              "CUSTOM_DOMAIN_ALREADY_IN_USE",
+              "PUBLIC_BETA_QUOTA_REACHED",
+              "LOG_SINK_INSTANCE_UNAVAILABLE"
+            ],
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "en",
+          "key"
+        ],
+        "type": "object"
+      },
+      "WAFRuleAction": {
+        "description": "The action a WAF rule can take based on a request",
+        "enum": [
+          "BLOCKED",
+          "LOGGED",
+          "ALLOWED"
+        ],
+        "type": "string"
+      },
+      "WAFViolation": {
+        "description": "Information about a violated WAF rule in case the WAF is enabled and a rule was triggered (either in BLOCK or LOG_ONLY mode)",
+        "properties": {
+          "action": {
+            "$ref": "#/components/schemas/WAFRuleAction"
+          },
+          "asn": {
+            "description": "ASN for the request",
+            "type": "string"
+          },
+          "message": {
+            "description": "Rule specific message explaining the violation",
+            "type": "string"
+          },
+          "method": {
+            "description": "HTTP Method of the request that triggered the violation",
+            "type": "string"
+          },
+          "requestHeaders": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "ruleId": {
+            "description": "ID of the WAF rule that was triggered",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ruleId",
+          "method",
+          "message",
+          "asn",
+          "requestHeaders",
+          "action"
+        ],
+        "type": "object"
+      },
+      "WafConfig": {
+        "description": "Configuration of the WAF of a distribution\n\nA WAF Config always contains a WAF Mode and Type. If a WAF was never enabled, most of the properties are not present.\nTo **enable** the WAF for your Distribution, you must set the `mode` to `ENABLED` or `LOG_ONLY`. \n\nThis causes the other properties to be populated.\n\n## Rules\nThere are 9 properties used to control which Rules are enabled, disabled or set to Log-Only. These properties can be grouped in 3 groups of 3. Each of these groups varies in specificity:\nRules are more specific than Rule Groups, which in turn are more specific than Collections. More specific definitions override more generic definitions.\n\n### Collections\n- `enabledRuleCollectionIds`\n- `disabledRuleCollectionIds`\n- `logOnlyRuleCollectionIds`\nThese are the least specific selectors. As of 2025, only two collections exist:\n  - `@builtin/crs/response`, containing all Rules regarding Responses\n  - `@builtin/crs/request`, containing all Rules regarding Requests  \n  More collections may be added in the future\n### Rule Groups\n- `enabledRuleGroupIds`\n- `disabledRuleGroupIds`\n- `logOnlyRuleGroupIds`  \nThese are more specific than Collections and will override their selector. You can find all available Rule Groups by calling the\n`ListWafCollections` Operation.\n### Rules\n- `enabledRuleIds`\n- `disabledRuleIds`\n- `logOnlyRuleGds`  \nBeing the most specific selectors, these will override both Collection and Rule Group selectors. You can find all available Rule Groups by calling the\n`ListWafCollections` Operation.\n\n### TIP: Review resolved config\nIf you call `GetDistribution` with `?withWafStatus=true`, you get back a resolved WAF Rules Config which contains a `waf` property which you can inspect to see why a Rule is either enabled, disabled or logOnly.\n",
+        "properties": {
+          "allowedHttpMethods": {
+            "description": "This whitelist restricts which HTTP methods the distribution accepts. Requests using\nnon-whitelisted methods are blocked by the WAF before reaching the origin.\n\nCommon methods: `GET`, `POST`, `PUT`, `DELETE`, `PATCH`, `HEAD`, `OPTIONS`, `CONNECT`, `TRACE`\n\nValidation ensures:\n1. At least one method is allowed\n2. No duplicate methods (e.g., `GET` appearing twice)\n3. Each method is valid per HTTP standards\n",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "allowedHttpVersions": {
+            "items": {
+              "description": "This whitelist restricts which HTTP protocol versions are accepted. \n may have security vulnerabilities or lack modern security features.\n\n Supported versions:\n - HTTP/0.9\n - HTTP/1.0\n - HTTP/1.1\n - HTTP/2.0\n - HTTP/3.0\n",
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "allowedRequestContentTypes": {
+            "description": "This allow list restricts which Content-Type headers are accepted in request bodies.\n\nFormat: Must be `type/subtype` with no spaces.\n\nCommon content types:\n- `application/json`\n- `application/x-www-form-urlencoded`\n- `multipart/form-data`\n- `text/html`\n- `text/plain`\n- `application/xml`\n",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "disabledRuleCollectionIds": {
+            "description": "Ids of WAF Collections to mark as disabled\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "disabledRuleGroupIds": {
+            "description": "Ids of WAF Rule Groups to mark as disabled\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "disabledRuleIds": {
+            "description": "Ids of WAF Rules that are **explicitly** disabled for this distribution.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "enabledRuleCollectionIds": {
+            "description": "Ids of WAF Collections to mark as enabled\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "enabledRuleGroupIds": {
+            "description": "Ids of WAF Rule Groups to mark as enabled\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "enabledRuleIds": {
+            "description": "Ids of the WAF rules that are **explicitly** enabled for this distribution. \nIf this rule is in a disabled / log Only RuleGroup or Collection,\nit will be enabled regardless as `enabledRuleIds` overrides those in specificity.\n\nDo note that rules can also be enabled because a Rulegroup or Collection is enabled. \n**DO NOT** use this property to find all active rules. Instead, pass `?withWafStatus=true` as a query parameter\nto `GetDistribution` or `ListDistributions`. This will expose the `waf` Property on distribution Level.\n\nFrom there you can `$.waf.enabledRules.map(e =\u003e e.id)` to get a list of all enabled rules.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "logOnlyRuleCollectionIds": {
+            "description": "Ids of WAF Collections to mark as log Only.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "logOnlyRuleGroupIds": {
+            "description": "Ids of WAF Rule Groups to mark as log Only.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "logOnlyRuleIds": {
+            "description": "Ids of WAF Rules that are **explicitly** marked as Log Only for this distribution.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/WafMode"
+          },
+          "paranoiaLevel": {
+            "$ref": "#/components/schemas/WafParanoiaLevel"
+          },
+          "type": {
+            "$ref": "#/components/schemas/WafType"
+          }
+        },
+        "required": [
+          "mode",
+          "type",
+          "enabledRuleIds"
+        ],
+        "type": "object"
+      },
+      "WafConfigPatch": {
+        "description": "Modify the WAF Configuration\n\n## WAF Rules\nYou can modify the set of enabled, disabled and log-only Rules by modifying these 9 properties:\n- enabledRuleIds\n- disabledRuleIds\n- logOnlyRuleIds\n- enabledRuleGroupIds\n- disabledRuleGroupIds\n- logOnlyRuleGroupIds\n- enabledRuleCollectionIds\n- disabledRuleCollectionIds\n- logOnlyRuleCollectionIds\n\nPlease inquire the `WafConfig` Description on how the effective configuration is determined.\n\nFor patching, if an ID is already used in one of the properties, it will be removed (and effectively moved) to the new property.\nIf patching multiple properties with the same ID (e.g. writing `@builtin/crs/response` to `logOnlyRuleCollectionIds` and `enabledRuleCollectionIds`), the request will be rejected with a 400.\n",
+        "properties": {
+          "allowedHttpMethods": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "allowedHttpVersions": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "allowedRequestContentTypes": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "disabledRuleCollectionIds": {
+            "description": "Ids of WAF Collections to mark as disabled\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "disabledRuleGroupIds": {
+            "description": "Ids of WAF Rule Groups to mark as disabled\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "disabledRuleIds": {
+            "description": "Ids of WAF Rules that are **explicitly** disabled for this distribution.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "enabledRuleCollectionIds": {
+            "description": "Ids of WAF Collections to mark as enabled\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "enabledRuleGroupIds": {
+            "description": "Ids of WAF Rule Groups to mark as enabled\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "enabledRuleIds": {
+            "description": "Ids of WAF Rules that are **explicitly** enabled for this distribution.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "logOnlyRuleCollectionIds": {
+            "description": "Ids of WAF Collections to mark as log Only.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "logOnlyRuleGroupIds": {
+            "description": "Ids of WAF Rule Groups to mark as log Only.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "logOnlyRuleIds": {
+            "description": "Ids of WAF Rules that are **explicitly** marked as Log Only for this distribution.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/WafMode"
+          },
+          "paranoiaLevel": {
+            "$ref": "#/components/schemas/WafParanoiaLevel"
+          },
+          "type": {
+            "$ref": "#/components/schemas/WafType"
+          }
+        },
+        "type": "object"
+      },
+      "WafMode": {
+        "description": "- `ENABLED`: The WAF actively inspects and blocks malicious requests.\n- `DISABLED`: The WAF is completely off. No inspection occurs.\n- `LOG_ONLY`: The WAF inspects requests and logs matches but never blocks.\n",
+        "enum": [
+          "DISABLED",
+          "ENABLED",
+          "LOG_ONLY"
+        ],
+        "format": "enum",
+        "type": "string"
+      },
+      "WafParanoiaLevel": {
+        "description": "The paranoia level defines how aggressively the WAF should action on requests.  \nIt ranges from `L1` (least strict, lowest chance of false positives) to `L4` (most strict, highest chance of false positives).\nA higher paranoia level is more effective at catching attacks but can also block legitimate traffic.\n",
+        "enum": [
+          "L1",
+          "L2",
+          "L3",
+          "L4"
+        ],
+        "format": "enum",
+        "type": "string"
+      },
+      "WafRule": {
+        "properties": {
+          "code": {
+            "description": "Optional CoreRuleSet rule Id in case this is a CRS rule",
+            "type": "string"
+          },
+          "description": {
+            "$ref": "#/components/schemas/LocalizedString"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "description"
+        ],
+        "type": "object"
+      },
+      "WafRuleCollection": {
+        "properties": {
+          "groups": {
+            "items": {
+              "$ref": "#/components/schemas/WafRuleGroup"
+            },
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LocalizedString"
+          }
+        },
+        "required": [
+          "name",
+          "id",
+          "groups"
+        ],
+        "type": "object"
+      },
+      "WafRuleGroup": {
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/LocalizedString"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LocalizedString"
+          },
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/WafRule"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "rules"
+        ],
+        "type": "object"
+      },
+      "WafStatusRuleBlock": {
+        "properties": {
+          "id": {
+            "description": "Specifies the Id of the Rule.",
+            "type": "string"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/WafStatusRuleBlockReason"
+          }
+        },
+        "required": [
+          "id",
+          "reason"
+        ],
+        "type": "object"
+      },
+      "WafStatusRuleBlockReason": {
+        "description": "Defines the Reason why a Rule is in the specified state (set to be enabled, disabled or logOnly).",
+        "discriminator": {
+          "mapping": {
+            "directlyDefined": "#/components/schemas/WafStatusRuleBlockReasonDirectlyDefined",
+            "inheritedFromCollection": "#/components/schemas/WafStatusRuleBlockReasonInheritedFromCollection",
+            "inheritedFromGroup": "#/components/schemas/WafStatusRuleBlockReasonInheritedFromGroup",
+            "invalidWafType": "#/components/schemas/WafStatusRuleBlockReasonInvalidWafType",
+            "neverDefined": "#/components/schemas/WafStatusRuleBlockReasonNeverDefined"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/WafStatusRuleBlockReasonNeverDefined"
+          },
+          {
+            "$ref": "#/components/schemas/WafStatusRuleBlockReasonDirectlyDefined"
+          },
+          {
+            "$ref": "#/components/schemas/WafStatusRuleBlockReasonInvalidWafType"
+          },
+          {
+            "$ref": "#/components/schemas/WafStatusRuleBlockReasonInheritedFromCollection"
+          },
+          {
+            "$ref": "#/components/schemas/WafStatusRuleBlockReasonInheritedFromGroup"
+          }
+        ]
+      },
+      "WafStatusRuleBlockReasonDirectlyDefined": {
+        "properties": {
+          "type": {
+            "description": "This is always `directlyDefined`",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "WafStatusRuleBlockReasonInheritedFromCollection": {
+        "properties": {
+          "collectionId": {
+            "description": "The Collection that caused this rule to be in its current state.",
+            "type": "string"
+          },
+          "type": {
+            "description": "This is always `inheritedFromCollection`",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "collectionId"
+        ],
+        "type": "object"
+      },
+      "WafStatusRuleBlockReasonInheritedFromGroup": {
+        "properties": {
+          "groupId": {
+            "description": "The Group that caused this rule to be in its current state.",
+            "type": "string"
+          },
+          "type": {
+            "description": "This is always `inheritedFromGroup`",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "groupId"
+        ],
+        "type": "object"
+      },
+      "WafStatusRuleBlockReasonInvalidWafType": {
+        "properties": {
+          "allowedWafTypes": {
+            "description": "A list containing all WAF Types which can use this Rule. You must patch you WAF to one of these WAF Types to make use of this rule.\nRules show up with this state if they would have been enabled or logOnly otherwise.\n",
+            "items": {
+              "$ref": "#/components/schemas/WafType"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "type": {
+            "description": "This is always `invalidWafType`",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "allowedWafTypes"
+        ],
+        "type": "object"
+      },
+      "WafStatusRuleBlockReasonNeverDefined": {
+        "description": "This object only ever shows up in the disabled rules section. \nIf rules are never defined (e.g. no collection, rule group, or the rule itself is ever mentioned), they are implicitly disabled\n",
+        "properties": {
+          "type": {
+            "description": "This is always `neverDefined`",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "WafType": {
+        "description": "Enable or disable the Premium WAF. Do note that enabling the Premium WAF will cause additional fees. \n\nSome features are gated behind the Premium WAF, like additional, **premium-only rules** and the ability to create **custom rules** (not yet implemented)\n",
+        "enum": [
+          "FREE",
+          "PREMIUM"
+        ],
+        "format": "enum",
+        "type": "string"
+      }
+    }
+  },
+  "info": {
+    "description": "API used to create and manage your CDN distributions.",
+    "title": "CDN API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1/projects/{projectId}/distributions": {
+      "get": {
+        "description": "ListDistributions returns a list of all CDN distributions associated with \na given project, ordered by their distribution Id.\n",
+        "operationId": "ListDistributions",
+        "parameters": [
+          {
+            "description": "Your STACKIT Project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Quantifies how many distributions should be returned on this \npage. Must be a natural number between 1 and 100 (inclusive)\n",
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "default": 20,
+              "format": "int32",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "If set, the top level of a distribution contains a `waf` property, which defines the status of the waf. This includes a list of all resolved rules.",
+            "in": "query",
+            "name": "withWafStatus",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "Identifier is returned by the previous response and is used to request the next page.\n\nAs the `pageIdentifier` encodes an element, inserts during pagination will *not* shift the result.\nSo a scenario like:  \n- Start listing first page\n- Insert new element\n- Start listing second page\nwill *never* result in an element from the first page to get \"pushed\" to the second page, like it could \noccur with basic limit + offset pagination.\n\nThe identifier should be treated as an opaque string and never modified. Only pass values returned by the API.\n",
+            "in": "query",
+            "name": "pageIdentifier",
+            "schema": {
+              "example": "CiQ0NjExMDY1MS1kNDQ1LTQ3NjgtOTc3YS00MTIzMjlmMjliYjYgAQ",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The following sort options exist. We default to `createdAt`\n- `id` - Sort by distribution Id using String comparison\n- `updatedAt` - Sort by when the distribution configuration was last modified, \n  for example by changing the regions or response headers\n- `createdAt` - Sort by when the distribution was initially created.\n- `originUrl` - Sort by originUrl using String comparison\n- `status` - Sort by distribution status, using String comparison\n- `originUrlRelated` - The originUrl is segmented and reversed before sorting. E.g. `www.example.com` is converted to `com.example.www` for sorting. This way, distributions pointing to the same domain trees are grouped next to each other.\n",
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "default": "createdAt",
+              "enum": [
+                "id",
+                "updatedAt",
+                "createdAt",
+                "originUrl",
+                "status",
+                "originUrlRelated"
+              ],
+              "format": "enum",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "enum": [
+                "ascending",
+                "descending"
+              ],
+              "format": "enum",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "content - no extra pages": {
+                    "description": "There are distributions present, but not enough to start a new page.\nBecause of that no `nextPageIdentifier` is present.\n",
+                    "value": {
+                      "distributions": [
+                        {
+                          "config": {
+                            "backend": {
+                              "geofencing": {},
+                              "originRequestHeaders": {},
+                              "originUrl": "https://httpbin.org",
+                              "type": "http"
+                            },
+                            "blockedCountries": [],
+                            "blockedIps": [],
+                            "regions": [
+                              "EU",
+                              "ASIA"
+                            ],
+                            "waf": {
+                              "enabledRuleIds": [
+                                "@builtin/crs/request/942511",
+                                "@builtin/crs/request/942512"
+                              ],
+                              "mode": "LOG_ONLY",
+                              "type": "FREE"
+                            }
+                          },
+                          "createdAt": "2024-09-26T09:00:00.12345Z",
+                          "domains": [],
+                          "id": "8bfaecd1-f880-4fa1-9884-1fb492aa4647",
+                          "projectId": "d043e216-af6e-445f-b5a5-cd67b2593278",
+                          "status": "CREATING",
+                          "updatedAt": "2024-09-26T09:00:00.12345Z"
+                        },
+                        {
+                          "config": {
+                            "backend": {
+                              "geofencing": {},
+                              "originRequestHeaders": {},
+                              "originUrl": "https://httpbin.org",
+                              "type": "http"
+                            },
+                            "blockedCountries": [],
+                            "blockedIps": [],
+                            "regions": [
+                              "EU",
+                              "ASIA"
+                            ],
+                            "waf": {
+                              "enabledRuleIds": [
+                                "@builtin/crs/request/942511",
+                                "@builtin/crs/request/942512"
+                              ],
+                              "mode": "LOG_ONLY",
+                              "type": "FREE"
+                            }
+                          },
+                          "createdAt": "2024-08-26T09:00:00.12345Z",
+                          "domains": [
+                            {
+                              "name": "hwx6z5y5msddf57g0zg22c2pkr.aa.dev.cdn.onstackit.cloud",
+                              "status": "ACTIVE",
+                              "type": "managed"
+                            }
+                          ],
+                          "id": "8bfaecd1-f880-4fa1-1234-1fb492aa4647",
+                          "projectId": "d043e216-af6e-445f-b5a5-cd67b2593278",
+                          "status": "ACTIVE",
+                          "updatedAt": "2024-08-26T09:00:00.12345Z"
+                        }
+                      ]
+                    }
+                  },
+                  "content - with extra pages": {
+                    "description": "There are distributions present, with more distributions on subsequent pages. \nAs such, the `nextPageIdentifier` is present.\n",
+                    "value": {
+                      "distributions": [
+                        {
+                          "config": {
+                            "backend": {
+                              "geofencing": {},
+                              "originRequestHeaders": {
+                                "exampleHeader": "Example Value"
+                              },
+                              "originUrl": "https://httpbin.org",
+                              "type": "http"
+                            },
+                            "blockedCountries": [],
+                            "blockedIps": [],
+                            "regions": [
+                              "EU",
+                              "ASIA"
+                            ],
+                            "waf": {
+                              "enabledRuleIds": [
+                                "@builtin/crs/request/942511",
+                                "@builtin/crs/request/942512"
+                              ],
+                              "mode": "LOG_ONLY",
+                              "type": "FREE"
+                            }
+                          },
+                          "createdAt": "2024-09-26T09:00:00.12345Z",
+                          "domains": [],
+                          "id": "8bfaecd1-f880-4fa1-9884-1fb492aa4647",
+                          "projectId": "d043e216-af6e-445f-b5a5-cd67b2593278",
+                          "status": "CREATING",
+                          "updatedAt": "2024-09-26T09:00:00.12345Z"
+                        },
+                        {
+                          "config": {
+                            "backend": {
+                              "geofencing": {},
+                              "originRequestHeaders": {},
+                              "originUrl": "https://httpbin.org",
+                              "type": "http"
+                            },
+                            "blockedCountries": [],
+                            "blockedIps": [],
+                            "regions": [
+                              "EU",
+                              "ASIA"
+                            ],
+                            "waf": {
+                              "enabledRuleIds": [
+                                "@builtin/crs/request/942511",
+                                "@builtin/crs/request/942512"
+                              ],
+                              "mode": "LOG_ONLY",
+                              "type": "FREE"
+                            }
+                          },
+                          "createdAt": "2024-08-26T09:00:00.12345Z",
+                          "domains": [
+                            {
+                              "name": "hwx6z5y5msddf57g0zg22c2pkr.aa.dev.cdn.onstackit.cloud",
+                              "status": "ACTIVE",
+                              "type": "managed"
+                            }
+                          ],
+                          "id": "8bfaecd1-f880-4fa1-1234-1fb492aa4647",
+                          "projectId": "d043e216-af6e-445f-b5a5-cd67b2593278",
+                          "status": "ACTIVE",
+                          "updatedAt": "2024-08-26T09:00:00.12345Z"
+                        }
+                      ],
+                      "nextPageIdentifier": "CiQ0NjExMDY1MS1kNDQ1LTQ3NjgtOTc3YS00MTIzMjlmMjliYjYgAQ"
+                    }
+                  },
+                  "empty": {
+                    "description": "If no distributions are assigned to a project, this returns an empty list.\n\n**NOTE: An empty list is not returned as a 404. The 'resource' exists, it just happens to be empty**\n\nBecause no further pages are available, there is no `nextPageIdentifier`\n",
+                    "value": {
+                      "distributions": []
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ListDistributionsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "unauthorized - please make sure the \"Authorization\" header is set and uses correct credentials"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "unprocessable entity - please make sure the body you provided is constructed according to spec"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "internal error - please try again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "List all distributions belonging to a specific project",
+        "x-stackit-authorization": {
+          "actions": [
+            "cdn.distribution.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "CreateDistribution will create a new CDN distribution",
+        "operationId": "CreateDistribution",
+        "parameters": [
+          {
+            "description": "Your STACKIT Project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "full HTTP distribution": {
+                  "description": "Creates a minimal distribution which is served in `EU` and `ASIA`.\nThe upstream host for this example is `httpbin.org`. \nThis enables some features in the initial request like\n- waf\n- geofencing\n- geoblocking\n- originRequestHeaders\n- traffic limiting\n",
+                  "value": {
+                    "backend": {
+                      "geofencing": {
+                        "https://alternativeUrl.com": [
+                          "DE",
+                          "GB"
+                        ]
+                      },
+                      "originUrl": "https://httpbin.org",
+                      "type": "http"
+                    },
+                    "blockedCountries": [
+                      "ES"
+                    ],
+                    "blockedIps": [
+                      "1.2.3.4"
+                    ],
+                    "intentId": "someRandomValue",
+                    "monthlyLimitBytes": 123000000,
+                    "regions": [
+                      "EU",
+                      "ASIA"
+                    ],
+                    "waf": {
+                      "enabledRuleIds": [],
+                      "mode": "ENABLED",
+                      "type": "FREE"
+                    }
+                  }
+                },
+                "minimal Bucket distribution": {
+                  "description": "Creates a minimal distribution which is served in `EU` and `US`. \nThe host is a protected S3 Bucket. By using the Bucket backend, \nwe can provide credentials which the CDN will use to fetch\nassets from the Bucket.\n",
+                  "value": {
+                    "backend": {
+                      "bucketUrl": "https://s3.example.com",
+                      "credentials": {
+                        "accessKeyId": "The access key",
+                        "secretAccessKey": "This is a secret"
+                      },
+                      "region": "eu01",
+                      "type": "bucket"
+                    },
+                    "regions": [
+                      "EU",
+                      "US"
+                    ]
+                  }
+                },
+                "minimal HTTP distribution": {
+                  "description": "Creates a minimal distribution which is served in `EU` and `ASIA`.\nThe upstream host for this example is `httpbin.org`.\n",
+                  "value": {
+                    "backend": {
+                      "originUrl": "https://httpbin.org",
+                      "type": "http"
+                    },
+                    "regions": [
+                      "EU",
+                      "ASIA"
+                    ]
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/CreateDistributionPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "created": {
+                    "description": "The distribution in its initial state. \nThis will have the status `CREATING`.\n\nUsing the `GET` endpoint and the `id` you can poll the status of the distribution.\nMore info about the contents can be found in the *Get distribution by Id* response example.\n",
+                    "value": {
+                      "distribution": {
+                        "config": {
+                          "backend": {
+                            "geofencing": {},
+                            "originRequestHeaders": {},
+                            "originUrl": "https://httpbin.org",
+                            "type": "http"
+                          },
+                          "blockedCountries": [],
+                          "blockedIps": [],
+                          "regions": [
+                            "EU",
+                            "ASIA"
+                          ],
+                          "waf": {
+                            "enabledRuleIds": [],
+                            "mode": "LOG_ONLY",
+                            "type": "FREE"
+                          }
+                        },
+                        "createdAt": "2024-09-26T09:00:00.12345Z",
+                        "domains": [],
+                        "id": "8bfaecd1-f880-4fa1-9884-1fb492aa4647",
+                        "projectId": "d043e216-af6e-445f-b5a5-cd67b2593278",
+                        "status": "CREATING",
+                        "updatedAt": "2024-09-26T09:00:00.12345Z"
+                      }
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/CreateDistributionResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "bad request"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "unauthorized - please make sure the \"Authorization\" header is set and uses correct credentials"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "unprocessable entity - please make sure the body you provided is constructed according to spec"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "internal error - please try again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Create new distribution",
+        "x-stackit-authorization": {
+          "actions": [
+            "cdn.distribution.edit"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/distributions/{distributionId}": {
+      "delete": {
+        "description": "DeleteDistribution accepts a project- and distribution-Id and will delete a distribution.\n",
+        "operationId": "DeleteDistribution",
+        "parameters": [
+          {
+            "description": "Your STACKIT Project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "distributionId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "While optional, it is greatly encouraged to provide an `intentId`. \nThis is used to deduplicate requests.  \nIf multiple DELETE-Requests with the same `intentId` are received, all but the first request are dropped.\n",
+            "in": "query",
+            "name": "intentId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "deleted": {
+                    "description": "In case the distribution has already finished deleting, an empty response is returned",
+                    "value": {}
+                  },
+                  "deleting": {
+                    "description": "Similar to `UPDATING`, this status is set when a Delete-Request was received.\nIt will remain with this status until the deletion was synchronized.\n\nOnce synchronized, the distribution is deleted. \nFurther attempts to delete this response will return an empty response.\n",
+                    "value": {
+                      "distribution": {
+                        "config": {
+                          "backend": {
+                            "geofencing": {},
+                            "originRequestHeaders": {},
+                            "originUrl": "https://httpbin.org",
+                            "type": "http"
+                          },
+                          "blockedCountries": [],
+                          "blockedIps": [],
+                          "regions": [
+                            "EU",
+                            "ASIA"
+                          ],
+                          "waf": {
+                            "enabledRuleIds": [],
+                            "mode": "LOG_ONLY",
+                            "type": "FREE"
+                          }
+                        },
+                        "createdAt": "2024-09-26T09:00:00.12345Z",
+                        "domains": [],
+                        "id": "8bfaecd1-f880-4fa1-9884-1fb492aa4647",
+                        "projectId": "d043e216-af6e-445f-b5a5-cd67b2593278",
+                        "status": "DELETING",
+                        "updatedAt": "2024-09-26T09:00:00.12345Z"
+                      }
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteDistributionResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "unauthorized - please make sure the \"Authorization\" header is set and uses correct credentials"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "unprocessable entity - please make sure the body you provided is constructed according to spec"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "internal error - please try again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Delete distribution",
+        "x-stackit-authorization": {
+          "actions": [
+            "cdn.distribution.edit"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "This returns a specific distribution by its Id. If no distribution with the given Id exists the endpoint returns 404. Trying to get a deleted distributions also return 404.",
+        "operationId": "GetDistribution",
+        "parameters": [
+          {
+            "description": "Your STACKIT Project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "distributionId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "If set, the top level of a distribution contains a `waf` property, which defines the status of the waf. This includes a list of all resolved rules.",
+            "in": "query",
+            "name": "withWafStatus",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "active": {
+                    "description": "After a CDN distribution was created and properly initialized, \nit switches into the `ACTIVE` status.  \nThe notable difference is the `domains` field is populated and contains\nthe STACKIT CDN domain through which your content is made available.\n",
+                    "value": {
+                      "distribution": {
+                        "config": {
+                          "backend": {
+                            "geofencing": {},
+                            "originRequestHeaders": {},
+                            "originUrl": "https://httpbin.org",
+                            "type": "http"
+                          },
+                          "blockedCountries": [],
+                          "blockedIps": [],
+                          "regions": [
+                            "EU",
+                            "ASIA"
+                          ],
+                          "waf": {
+                            "enabledRuleIds": [],
+                            "mode": "DISABLED",
+                            "type": "FREE"
+                          }
+                        },
+                        "createdAt": "2024-09-26T09:00:00.12345Z",
+                        "domains": [
+                          {
+                            "name": "hwx6z5y5msddf57g0zg22c2pkr.aa.dev.cdn.onstackit.cloud",
+                            "status": "ACTIVE",
+                            "type": "managed"
+                          }
+                        ],
+                        "id": "8bfaecd1-f880-4fa1-9884-1fb492aa4647",
+                        "projectId": "d043e216-af6e-445f-b5a5-cd67b2593278",
+                        "status": "ACTIVE",
+                        "updatedAt": "2024-09-26T09:00:00.12345Z"
+                      }
+                    }
+                  },
+                  "creating": {
+                    "description": "The distribution is in status \"creating\" while provisioning the resource. It is not ready to use yet.\n",
+                    "value": {
+                      "distribution": {
+                        "config": {
+                          "backend": {
+                            "geofencing": {},
+                            "originRequestHeaders": {},
+                            "originUrl": "https://httpbin.org",
+                            "type": "http"
+                          },
+                          "blockedCountries": [],
+                          "blockedIps": [],
+                          "regions": [
+                            "EU",
+                            "ASIA"
+                          ],
+                          "waf": {
+                            "enabledRuleIds": [],
+                            "mode": "LOG_ONLY",
+                            "type": "FREE"
+                          }
+                        },
+                        "createdAt": "2024-09-26T09:00:00.12345Z",
+                        "domains": [],
+                        "id": "8bfaecd1-f880-4fa1-9884-1fb492aa4647",
+                        "projectId": "d043e216-af6e-445f-b5a5-cd67b2593278",
+                        "status": "CREATING",
+                        "updatedAt": "2024-09-26T09:00:00.12345Z"
+                      }
+                    }
+                  },
+                  "deleting": {
+                    "description": "Similar to `UPDATING`, this status is set when a Delete-Request was received.\nIt will remain with this status until the deletion was synchronized.\n\nOnce synchronized, the distribution is deleted. \nFurther attempts to get this distributions result in a 404.\n",
+                    "value": {
+                      "distribution": {
+                        "config": {
+                          "backend": {
+                            "geofencing": {},
+                            "originRequestHeaders": {},
+                            "originUrl": "https://httpbin.org",
+                            "type": "http"
+                          },
+                          "blockedCountries": [],
+                          "blockedIps": [],
+                          "regions": [
+                            "EU",
+                            "ASIA"
+                          ],
+                          "waf": {
+                            "enabledRuleIds": [],
+                            "mode": "LOG_ONLY",
+                            "type": "FREE"
+                          }
+                        },
+                        "createdAt": "2024-09-26T09:00:00.12345Z",
+                        "domains": [],
+                        "id": "8bfaecd1-f880-4fa1-9884-1fb492aa4647",
+                        "projectId": "d043e216-af6e-445f-b5a5-cd67b2593278",
+                        "status": "DELETING",
+                        "updatedAt": "2024-09-26T09:00:00.12345Z"
+                      }
+                    }
+                  },
+                  "updating": {
+                    "description": "This status is set after a modification \non the configuration was issued until the update was synchronized.\n\nOnce synchronized, the status goes back to `ACTIVE`.\n",
+                    "value": {
+                      "distribution": {
+                        "config": {
+                          "backend": {
+                            "geofencing": {},
+                            "originRequestHeaders": {},
+                            "originUrl": "https://httpbin.org",
+                            "type": "http"
+                          },
+                          "blockedCountries": [],
+                          "blockedIps": [],
+                          "regions": [
+                            "EU",
+                            "ASIA"
+                          ],
+                          "waf": {
+                            "enabledRuleIds": [],
+                            "mode": "LOG_ONLY",
+                            "type": "FREE"
+                          }
+                        },
+                        "createdAt": "2024-09-26T09:00:00.12345Z",
+                        "domains": [],
+                        "id": "8bfaecd1-f880-4fa1-9884-1fb492aa4647",
+                        "projectId": "d043e216-af6e-445f-b5a5-cd67b2593278",
+                        "status": "UPDATING",
+                        "updatedAt": "2024-09-26T09:00:00.12345Z"
+                      }
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GetDistributionResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "unauthorized - please make sure the \"Authorization\" header is set and uses correct credentials"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "The distribution was not found. It either never existed or was deleted."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "unprocessable entity - please make sure the body you provided is constructed according to spec"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "internal error - please try again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Get distribution by Id",
+        "x-stackit-authorization": {
+          "actions": [
+            "cdn.distribution.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "patch": {
+        "description": "Modify a CDN distribution with a partial update. Only the fields specified in the request will be modified.",
+        "operationId": "PatchDistribution",
+        "parameters": [
+          {
+            "description": "Your STACKIT Project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "distributionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "error - empty patch": {
+                  "description": "Trying to do an empty patch will result in a 422 Response. No changes will be pushed",
+                  "value": {}
+                },
+                "error - patch with no changes": {
+                  "description": "Changing backend type is currently *not supported*. If the patch only contains the type, it will also return a 422 as no changes are pushed",
+                  "value": {
+                    "config": {
+                      "backend": {
+                        "type": "http"
+                      }
+                    }
+                  }
+                },
+                "originUrl and regions": {
+                  "description": "Both regions and originUrl are modified in the same Patch Request",
+                  "value": {
+                    "config": {
+                      "backend": {
+                        "originUrl": "https://newOrigin.com",
+                        "type": "http"
+                      },
+                      "regions": [
+                        "EU",
+                        "SA"
+                      ]
+                    },
+                    "intentId": "someIntent"
+                  }
+                },
+                "originUrl only": {
+                  "description": "Only the originUrl (http backend) is modified",
+                  "value": {
+                    "config": {
+                      "backend": {
+                        "originUrl": "https://newOrigin.com",
+                        "type": "http"
+                      }
+                    },
+                    "intentId": "someIntent"
+                  }
+                },
+                "regions only": {
+                  "description": "Regions are modified",
+                  "value": {
+                    "config": {
+                      "regions": [
+                        "EU",
+                        "SA"
+                      ]
+                    },
+                    "intentId": "someIntent"
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/PatchDistributionPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "success": {
+                    "description": "The update was successful. The response body contains the updated distribution.",
+                    "value": {
+                      "distribution": {
+                        "config": {
+                          "backend": {
+                            "geofencing": {},
+                            "originRequestHeaders": {},
+                            "originUrl": "https://httpbin.org",
+                            "type": "http"
+                          },
+                          "blockedCountries": [],
+                          "blockedIps": [],
+                          "regions": [
+                            "EU",
+                            "ASIA"
+                          ],
+                          "waf": {
+                            "enabledRuleIds": [],
+                            "mode": "LOG_ONLY",
+                            "type": "FREE"
+                          }
+                        },
+                        "createdAt": "2024-09-26T09:00:00.12345Z",
+                        "domains": [],
+                        "id": "8bfaecd1-f880-4fa1-9884-1fb492aa4647",
+                        "projectId": "d043e216-af6e-445f-b5a5-cd67b2593278",
+                        "status": "CREATING",
+                        "updatedAt": "2024-09-26T09:00:00.12345Z"
+                      }
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PatchDistributionResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "unauthorized - please make sure the \"Authorization\" header is set and uses correct credentials"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "unprocessable entity - please make sure the body you provided is constructed according to spec"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "internal error - please try again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Update existing distribution",
+        "x-stackit-authorization": {
+          "actions": [
+            "cdn.distribution.edit"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/distributions/{distributionId}/cache": {
+      "get": {
+        "description": "Return caching info metadata, which contains the last cache purging time and a history of the most recent *full* purges.\n\nIf (and only if) you provide the path query parameter, the history will also contain granular cache purges. \nThe request will not fail if no data about a path is found.\n",
+        "operationId": "GetCacheInfo",
+        "parameters": [
+          {
+            "description": "Your STACKIT Project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "distributionId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "purgePath",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "hasData": {
+                    "description": "Request was successful, returning the last time the entire cache was purged",
+                    "value": {
+                      "history": [
+                        {
+                          "occurredAt": "2024-11-29T12:34:56Z",
+                          "type": "full"
+                        }
+                      ],
+                      "lastPurgeTime": "2024-11-29T12:34:56Z"
+                    }
+                  },
+                  "noPurgeBefore": {
+                    "description": "PurgeCache was never called before, hence no lastPurgeTime is set",
+                    "value": {
+                      "history": [],
+                      "lastPurgeTime": null
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GetCacheInfoResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "unauthorized - please make sure the \"Authorization\" header is set and uses correct credentials"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "unprocessable entity - please make sure the body you provided is constructed according to spec"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "internal error - please try again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Get Infos about the Caching State",
+        "x-stackit-authorization": {
+          "actions": [
+            "cdn.distribution.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/distributions/{distributionId}/cache/paths": {
+      "get": {
+        "description": "This returns paths that are present in the cache purging history. \nOnly substrings of the provided input are returned. \nThe response is sorted in descending order by the most recent purge.\n\nSo, assuming you have have the following purged for a distribution\n- `/test/1` at `2025-01-01`\n- `/test/2` at `2025-01-02`\n- `/someOtherPath/1` at `2025-01-03`\n- `/test/1` at `2025-01-04`\n- `/test/3` at `2025-01-05`,\nthis would return the following paths, in the following order, assuming `/te` was the search parameter:\n- `/test/3`\n- `/test/1`\n- `/test/2`\n",
+        "operationId": "FindCachePaths",
+        "parameters": [
+          {
+            "description": "Your STACKIT Project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "distributionId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "A substring of the search query.\n",
+            "in": "query",
+            "name": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "hasData": {
+                    "description": "There are some paths that were purged for the current distribution and\nmatch the user-provided search string. The response is sorted time-descending\nby the last time said path was purged. There are no duplicates in the response.\n",
+                    "value": {
+                      "response": [
+                        {
+                          "path": "/some/path"
+                        },
+                        {
+                          "path": "/some/path/123"
+                        }
+                      ]
+                    }
+                  },
+                  "noPaths": {
+                    "description": "There are no paths that match the substring that the user provided",
+                    "value": {
+                      "response": []
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/FindCachePathsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "unauthorized - please make sure the \"Authorization\" header is set and uses correct credentials"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "unprocessable entity - please make sure the body you provided is constructed according to spec"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "internal error - please try again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Return Paths that were purged",
+        "x-stackit-authorization": {
+          "actions": [
+            "cdn.distribution.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/distributions/{distributionId}/cache/purge": {
+      "post": {
+        "description": "Clear the cache for this distribution. \nAll content, regardless of its staleness, will get refetched from the host.\n",
+        "operationId": "PurgeCache",
+        "parameters": [
+          {
+            "description": "Your STACKIT Project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "distributionId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "full purge": {
+                  "description": "Purges the entire distribution cache",
+                  "value": {}
+                },
+                "granular purge": {
+                  "description": "Purges the path /example/path from the cache.",
+                  "value": {
+                    "path": "/example/path"
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/PurgeCachePayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "success": {
+                    "description": "Request was successful, which is indicated by the Status code. No data is returned",
+                    "value": {}
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PurgeCacheResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "unauthorized - please make sure the \"Authorization\" header is set and uses correct credentials"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "unprocessable entity - please make sure the body you provided is constructed according to spec"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "internal error - please try again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Clear distribution cache",
+        "x-stackit-authorization": {
+          "actions": [
+            "cdn.distribution.edit"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/distributions/{distributionId}/customDomains/{domain}": {
+      "delete": {
+        "description": "Removes a custom domain\n",
+        "operationId": "DeleteCustomDomain",
+        "parameters": [
+          {
+            "description": "Your STACKIT Project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "distributionId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "domain",
+            "required": true,
+            "schema": {
+              "format": "domain",
+              "maxLength": 72,
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "intentId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "success": {
+                    "description": "Custom Domain was deleted",
+                    "value": {}
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteCustomDomainResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "unauthorized - please make sure the \"Authorization\" header is set and uses correct credentials"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "unprocessable entity - please make sure the body you provided is constructed according to spec"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "internal error - please try again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Delete a custom domain",
+        "x-stackit-authorization": {
+          "actions": [
+            "cdn.distribution.edit"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns a 200 and the custom domain if this custom domain was associated to this distribution, else 404\n",
+        "operationId": "GetCustomDomain",
+        "parameters": [
+          {
+            "description": "Your STACKIT Project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "distributionId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "domain",
+            "required": true,
+            "schema": {
+              "format": "domain",
+              "maxLength": 72,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "success": {
+                    "description": "Custom Domain was returned",
+                    "value": {
+                      "certificate": {
+                        "type": "managed"
+                      },
+                      "customDomain": {
+                        "name": "example.com",
+                        "status": "ACTIVE"
+                      }
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GetCustomDomainResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "unauthorized - please make sure the \"Authorization\" header is set and uses correct credentials"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "not found - This custom domain does not exist"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "unprocessable entity - please make sure the body you provided is constructed according to spec"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "internal error - please try again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Retrieve a specific custom domain",
+        "x-stackit-authorization": {
+          "actions": [
+            "cdn.distribution.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "put": {
+        "description": "Creates a new custom domain. If it already exists, this will overwrite the previous custom domain's properties.\n",
+        "operationId": "PutCustomDomain",
+        "parameters": [
+          {
+            "description": "Your STACKIT Project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "distributionId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "domain",
+            "required": true,
+            "schema": {
+              "format": "domain",
+              "maxLength": 72,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutCustomDomainPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "success": {
+                    "description": "Custom Domain was returned",
+                    "value": {
+                      "certificate": {
+                        "type": "custom",
+                        "version": 123
+                      },
+                      "customDomain": {
+                        "name": "example.com",
+                        "status": "ACTIVE"
+                      }
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PutCustomDomainResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "unauthorized - please make sure the \"Authorization\" header is set and uses correct credentials"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "unprocessable entity - please make sure the body you provided is constructed according to spec"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "internal error - please try again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Create or update a custom domain",
+        "x-stackit-authorization": {
+          "actions": [
+            "cdn.distribution.edit"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/distributions/{distributionId}/logs": {
+      "get": {
+        "operationId": "GetLogs",
+        "parameters": [
+          {
+            "description": "Your STACKIT Project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Your CDN distribution Id",
+            "in": "path",
+            "name": "distributionId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "the start of the time range for which logs should be returned",
+            "in": "query",
+            "name": "from",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "description": "the end of the time range for which logs should be returned. If not specified, \n\"now\" is used.\n",
+            "in": "query",
+            "name": "to",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Quantifies how many log entries should be returned on this \npage. Must be a natural number between 1 and 1000 (inclusive)\n",
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "default": 20,
+              "format": "int32",
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Identifier is returned by the previous response and is used to request the next page.\n\nAs the `pageIdentifier` encodes an element, inserts during pagination will *not* shift the result.\nSo a scenario like:  \n- Start listing first page\n- Insert new element\n- Start listing second page\nwill *never* result in an element from the first page to get \"pushed\" to the second page, like it could \noccur with basic limit + offset pagination.\n\nThe identifier should be treated as an opaque string and never modified. Only pass values returned by the API.\n",
+            "in": "query",
+            "name": "pageIdentifier",
+            "schema": {
+              "example": "CiQ0NjExMDY1MS1kNDQ1LTQ3NjgtOTc3YS00MTIzMjlmMjliYjYgAQ",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sorts the log messages by a specific field. Defaults to `timestamp`.\n\nSupported sort options:\n- `timestamp`\n- `dataCenterRegion`\n- `requestCountryCode`\n- `statusCode`\n- `cacheHit`\n- `size`\n- `path`\n- `host`\n",
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "default": "timestamp",
+              "enum": [
+                "timestamp",
+                "dataCenterRegion",
+                "requestCountryCode",
+                "statusCode",
+                "cacheHit",
+                "size",
+                "path",
+                "host"
+              ],
+              "format": "enum",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "enum": [
+                "ascending",
+                "descending"
+              ],
+              "format": "enum",
+              "type": "string"
+            }
+          },
+          {
+            "description": "If this is set then only log entries with the chosen WAF rule action/outcome are returned.\nSpecifically, if `ALLOWED` then all requests with no violation are returned. If `BLOCKED` then those where\na WAF rule blocked a request and if `LOGGED` then only those requests where the WAF violation was only logged \nbut the request not blocked\n",
+            "in": "query",
+            "name": "wafAction",
+            "schema": {
+              "$ref": "#/components/schemas/WAFRuleAction"
+            }
+          },
+          {
+            "description": "Filters by the CDN data center region that served the request. Can be combined with other filters\n",
+            "in": "query",
+            "name": "dataCenterRegion",
+            "schema": {
+              "example": "AMS",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filters by the originating country of the user request. Can be combined with other filters\n",
+            "in": "query",
+            "name": "requestCountryCode",
+            "schema": {
+              "example": "DE",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filters by the HTTP status code returned to the client. Can be combined with other filters\n",
+            "in": "query",
+            "name": "statusCode",
+            "schema": {
+              "example": 202,
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Filters based on whether the request was served from the CDN cache. Can be combined with other filters\n",
+            "in": "query",
+            "name": "cacheHit",
+            "schema": {
+              "example": true,
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLogsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "unauthorized - please make sure the \"Authorization\" header is set and uses correct credentials"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "unprocessable entity - please make sure the body you provided is constructed according to spec"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "internal error - please try again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Retrieve distribution logs",
+        "x-stackit-authorization": {
+          "actions": [
+            "cdn.distribution.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/distributions/{distributionId}/logs/searchFilters": {
+      "get": {
+        "operationId": "GetLogsSearchFilters",
+        "parameters": [
+          {
+            "description": "Your STACKIT Project ID.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Your CDN distribution ID.",
+            "in": "path",
+            "name": "distributionId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Optional search string. Will search the **values** for the text input.",
+            "in": "query",
+            "name": "filter",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLogsSearchFiltersResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "Invalid request. Please check your queries or parameters."
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "unauthorized - please make sure the \"Authorization\" header is set and uses correct credentials"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "unprocessable entity - please make sure the body you provided is constructed according to spec"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "internal error - please try again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Get relevant search filters for this distribution based on user input.",
+        "x-stackit-authorization": {
+          "actions": [
+            "cdn.distribution.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/distributions/{distributionId}/statistics": {
+      "get": {
+        "description": "Returns the statistics of the distribution in the given\ntime range. The response is a list of statistics records. Each record aggregates the statistics for its time interval.\nIn case no statistics for a time interval exist, no record is returned.\nThe time range for which statistics should be returned can be configured using query parameters.\n\nTimestamps are assumed to be UTC. This is especially important for the \"buckets\" when you, for example, return daily information. A day always starts and ends at 00:00Z.\n\n**Important Note:** Lower bounds are inclusive, upper bounds are exclusive. If you, for example, want a daily grouped which starts on the 1st Jan and also contains the full 10th Jan day, you would define `2025-01-01T00:00:00Z` as the lower and `2025-01-11T00:00:00Z` as the upper bound.\n\nThe upper bound is optional. If you omit it, the API will use the start of the next interval as the upper bound.  \nExample: if `interval` is `hourly`, `from` would default to the start of the next hour, if it's `daily`, `from` would default to the start of the next day, etc.\n",
+        "operationId": "GetStatistics",
+        "parameters": [
+          {
+            "description": "Your STACKIT Project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "distributionId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "the start of the time range for which statistics should be returned",
+            "in": "query",
+            "name": "from",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "description": "the end of the time range for which statistics should be returned. If not specified, \nthe end of the current time interval is used, e.g. next day for daily, \nnext month for monthly, and so on.\n",
+            "in": "query",
+            "name": "to",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Over which interval should statistics be aggregated? \ndefaults to hourly resolution\n\n**NOTE**: Intervals are grouped in buckets that start and end based on a day in UTC+0 time.\nSo for the `daily` interval, the group starts (inclusive) and ends (exclusive) at `00:00Z`\n",
+            "in": "query",
+            "name": "interval",
+            "schema": {
+              "enum": [
+                "hourly",
+                "daily",
+                "monthly",
+                "yearly"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "success": {
+                    "description": "Request was successful, which is indicated by the Status code. No data is returned",
+                    "value": {
+                      "records": [
+                        {
+                          "cachedRequests": 1,
+                          "end": "2024-09-26T10:00:00Z",
+                          "regions": {
+                            "AF": {
+                              "cachedRequests": 0,
+                              "totalRequests": 0,
+                              "totalTrafficBytes": 0
+                            },
+                            "ASIA": {
+                              "cachedRequests": 0,
+                              "totalRequests": 0,
+                              "totalTrafficBytes": 0
+                            },
+                            "EU": {
+                              "cachedRequests": 1,
+                              "totalRequests": 2,
+                              "totalTrafficBytes": 100
+                            },
+                            "SA": {
+                              "cachedRequests": 0,
+                              "totalRequests": 0,
+                              "totalTrafficBytes": 0
+                            },
+                            "US": {
+                              "cachedRequests": 0,
+                              "totalRequests": 0,
+                              "totalTrafficBytes": 0
+                            }
+                          },
+                          "start": "2024-09-26T09:00:00Z",
+                          "totalRequests": 2,
+                          "totalTrafficBytes": 100
+                        },
+                        {
+                          "cachedRequests": 10,
+                          "end": "2024-09-26T11:00:00Z",
+                          "regions": {
+                            "AF": {
+                              "cachedRequests": 0,
+                              "totalRequests": 0,
+                              "totalTrafficBytes": 0
+                            },
+                            "ASIA": {
+                              "cachedRequests": 0,
+                              "totalRequests": 0,
+                              "totalTrafficBytes": 0
+                            },
+                            "EU": {
+                              "cachedRequests": 10,
+                              "totalRequests": 20,
+                              "totalTrafficBytes": 1000
+                            },
+                            "SA": {
+                              "cachedRequests": 0,
+                              "totalRequests": 0,
+                              "totalTrafficBytes": 0
+                            },
+                            "US": {
+                              "cachedRequests": 0,
+                              "totalRequests": 0,
+                              "totalTrafficBytes": 0
+                            }
+                          },
+                          "start": "2024-09-26T10:00:00Z",
+                          "totalRequests": 20,
+                          "totalTrafficBytes": 1000
+                        },
+                        {
+                          "cachedRequests": 20,
+                          "end": "2024-09-26T14:00:00Z",
+                          "regions": {
+                            "AF": {
+                              "cachedRequests": 0,
+                              "totalRequests": 0,
+                              "totalTrafficBytes": 0
+                            },
+                            "ASIA": {
+                              "cachedRequests": 10,
+                              "totalRequests": 20,
+                              "totalTrafficBytes": 100
+                            },
+                            "EU": {
+                              "cachedRequests": 10,
+                              "totalRequests": 20,
+                              "totalTrafficBytes": 100
+                            },
+                            "SA": {
+                              "cachedRequests": 0,
+                              "totalRequests": 0,
+                              "totalTrafficBytes": 0
+                            },
+                            "US": {
+                              "cachedRequests": 0,
+                              "totalRequests": 0,
+                              "totalTrafficBytes": 0
+                            }
+                          },
+                          "start": "2024-09-26T13:00:00Z",
+                          "totalRequests": 40,
+                          "totalTrafficBytes": 200
+                        }
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GetStatisticsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "unauthorized - please make sure the \"Authorization\" header is set and uses correct credentials"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "unprocessable entity - please make sure the body you provided is constructed according to spec"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "internal error - please try again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Retrieve the statistics of a distribution",
+        "x-stackit-authorization": {
+          "actions": [
+            "cdn.distribution.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/waf/collections": {
+      "get": {
+        "description": "Returns all WAF rule collections available to the project",
+        "operationId": "ListWafCollections",
+        "parameters": [
+          {
+            "description": "Your STACKIT Project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "default": {
+                    "value": {
+                      "collections": [
+                        {
+                          "groups": [
+                            {
+                              "description": {},
+                              "name": {
+                                "en": "Method Enforcement"
+                              },
+                              "rules": [
+                                {
+                                  "code": "911100",
+                                  "description": {
+                                    "en": "Method is not allowed by policy"
+                                  },
+                                  "id": "@builtin/crs/request/911100"
+                                }
+                              ]
+                            }
+                          ],
+                          "id": "@builtin/crs/request",
+                          "name": {
+                            "en": "CRS Request"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ListWafCollectionsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "unauthorized - please make sure the \"Authorization\" header is set and uses correct credentials"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "unprocessable entity - please make sure the body you provided is constructed according to spec"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "internal error - please try again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "List all WAF rule collections of the project",
+        "x-stackit-authorization": {
+          "actions": [
+            "cdn.distribution.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://cdn.api.stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "global"
+        }
+      }
+    }
+  ]
+}

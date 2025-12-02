@@ -1667,6 +1667,11 @@
       },
       "GrafanaOauth": {
         "properties": {
+          "allowAssignGrafanaAdmin": {
+            "default": false,
+            "title": "Allowassigngrafanaadmin",
+            "type": "boolean"
+          },
           "apiUrl": {
             "maxLength": 300,
             "minLength": 1,
@@ -3942,6 +3947,11 @@
         "properties": {
           "genericOauth": {
             "properties": {
+              "allowAssignGrafanaAdmin": {
+                "default": false,
+                "description": "Set to true to enable automatic sync of the Grafana server administrator role. \nIf this option is set to true and the result of evaluating role_attribute_path for \na user is GrafanaAdmin, Grafana grants the user the server administrator privileges and \norganization administrator role. If this option is set to false and the result of \nevaluating role_attribute_path for a user is GrafanaAdmin, Grafana grants the user \nonly organization administrator role.",
+                "type": "boolean"
+              },
               "apiUrl": {
                 "description": "Set api_url to the resource that returns OpenID UserInfo compatible information.",
                 "type": "string"
@@ -3951,7 +3961,7 @@
                 "type": "string"
               },
               "enabled": {
-                "description": "enable or disable generic oauth login",
+                "description": "Enable or disable generic oauth login",
                 "type": "boolean"
               },
               "name": {
@@ -3967,12 +3977,12 @@
                 "type": "string"
               },
               "roleAttributePath": {
-                "description": "Grafana checks for the presence of a role using the JMESPath specified via the role_attribute_path configuration option. The JMESPath is applied to the id_token first. If there is no match, then the UserInfo endpoint specified via the api_url configuration option is tried next. The result after evaluation of the role_attribute_path JMESPath expression should be a valid Grafana role, for example, Viewer, Editor or Admin\nFor example: contains(roles[\\*], 'grafana-admin') \u0026\u0026 'Admin' || contains(roles[\\*], 'grafana-editor') \u0026\u0026 'Editor' || contains(roles[\\*], 'grafana-viewer') \u0026\u0026 'Viewer'",
+                "description": "Grafana checks for the presence of a role using the JMESPath specified via the \nrole_attribute_path configuration option. The JMESPath is applied to the id_token first. \nIf there is no match, then the UserInfo endpoint specified via the api_url configuration \noption is tried next. The result after evaluation of the role_attribute_path JMESPath \nexpression should be a valid Grafana role, for example, Viewer, Editor or Admin\nFor example: contains(roles[\\*], 'grafana-admin') \u0026\u0026 'Admin' || contains(roles[\\*], \n'grafana-editor') \u0026\u0026 'Editor' || contains(roles[\\*], 'grafana-viewer') \u0026\u0026 'Viewer'",
                 "type": "string"
               },
               "roleAttributeStrict": {
                 "default": true,
-                "description": "If  therole_attribute_path property does not return a role, then the user is assigned the Viewer role by default. You can disable the role assignment by setting role_attribute_strict = true. It denies user access if no role or an invalid role is returned.",
+                "description": "If the role_attribute_path property does not return a role, then the user is assigned the Viewer role by default. You can disable the role assignment by setting role_attribute_strict = true. It denies user access if no role or an invalid role is returned.",
                 "type": "boolean"
               },
               "scopes": {
@@ -3985,7 +3995,7 @@
                 "type": "string"
               },
               "usePkce": {
-                "description": "enable or disable Proof Key for Code Exchange",
+                "description": "Enable or disable Proof Key for Code Exchange",
                 "type": "boolean"
               }
             },
@@ -4001,11 +4011,11 @@
             "type": "object"
           },
           "publicReadAccess": {
-            "description": "If it's true, anyone can access the Grafana dashboards without logging in. If it is wrong, a login is required.",
+            "description": "If it's true, anyone can access the Grafana dashboards without logging in. \nIf it is wrong, a login is required.",
             "type": "boolean"
           },
           "useStackitSso": {
-            "description": "If it's true, it overwrites the current genericOauth config and configures STACKIT SSO for this instance.",
+            "description": "If it's true, it overwrites the current genericOauth config and configures \nSTACKIT SSO for this instance.",
             "type": "boolean"
           }
         },

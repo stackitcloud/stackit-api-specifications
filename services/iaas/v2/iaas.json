@@ -526,8 +526,7 @@
             "$ref": "#/components/schemas/GenericName"
           },
           "systemRoutes": {
-            "default": true,
-            "type": "boolean"
+            "$ref": "#/components/schemas/SystemRoutes"
           },
           "updatedAt": {
             "allOf": [
@@ -1146,6 +1145,32 @@
         "required": [
           "name",
           "diskFormat"
+        ],
+        "type": "object"
+      },
+      "CreateIsolatedNetworkPayload": {
+        "description": "Object that represents the request body for a single isolated network create.",
+        "properties": {
+          "dhcp": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DHCP"
+              }
+            ],
+            "default": true
+          },
+          "ipv4": {
+            "$ref": "#/components/schemas/CreateNetworkIPv4"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          }
+        },
+        "required": [
+          "name"
         ],
         "type": "object"
       },
@@ -2233,6 +2258,24 @@
         "required": [
           "uploadUrl",
           "id"
+        ],
+        "type": "object"
+      },
+      "ImageFromVolumePayload": {
+        "description": "Object that represents the upload request of an image to a volume. Used for creating an image from a volume.",
+        "properties": {
+          "diskFormat": {
+            "$ref": "#/components/schemas/DiskFormat"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "protected": {
+            "$ref": "#/components/schemas/VolumeUploadProtected"
+          }
+        },
+        "required": [
+          "name"
         ],
         "type": "object"
       },
@@ -3850,8 +3893,7 @@
             "$ref": "#/components/schemas/GenericName"
           },
           "systemRoutes": {
-            "default": true,
-            "type": "boolean"
+            "$ref": "#/components/schemas/SystemRoutes"
           },
           "updatedAt": {
             "allOf": [
@@ -4510,6 +4552,11 @@
         "example": "PUBLIC",
         "type": "string"
       },
+      "SystemRoutes": {
+        "default": true,
+        "description": "A config setting for a routing table which allows installation of automatic system routes for connectivity between projects in the same SNA.",
+        "type": "boolean"
+      },
       "ThroughputInMB": {
         "description": "Throughput in Megabyte per second.",
         "example": 200,
@@ -4640,6 +4687,10 @@
           }
         },
         "type": "object"
+      },
+      "UpdateDynamicRoutes": {
+        "description": "The update config setting for a routing table which allows propagation of dynamic routes to this routing table.",
+        "type": "boolean"
       },
       "UpdateImagePayload": {
         "description": "Object that represents an update request body of an Image.",
@@ -4834,13 +4885,16 @@
             "$ref": "#/components/schemas/Description"
           },
           "dynamicRoutes": {
-            "$ref": "#/components/schemas/DynamicRoutes"
+            "$ref": "#/components/schemas/UpdateDynamicRoutes"
           },
           "labels": {
             "$ref": "#/components/schemas/Labels"
           },
           "name": {
             "$ref": "#/components/schemas/GenericName"
+          },
+          "systemRoutes": {
+            "$ref": "#/components/schemas/UpdateSystemRoutes"
           }
         },
         "type": "object"
@@ -4886,6 +4940,10 @@
           }
         },
         "type": "object"
+      },
+      "UpdateSystemRoutes": {
+        "description": "The update config setting for a routing table which allows installation of automatic system routes for connectivity between projects in the same SNA.",
+        "type": "boolean"
       },
       "UpdateVolumePayload": {
         "description": "Object that represents an update request body of a volume.",
@@ -5227,6 +5285,12 @@
         "example": "ATTACHED",
         "type": "string"
       },
+      "VolumeUploadProtected": {
+        "default": false,
+        "description": "When true the created image is prevented from being deleted.",
+        "example": true,
+        "type": "boolean"
+      },
       "errorMessage": {
         "description": "An error message.",
         "example": "Project not found",
@@ -5253,7 +5317,7 @@
     },
     "description": "This API allows you to create and modify IaaS resources.",
     "termsOfService": "https://stackit.de/en/imprint",
-    "title": "IaaS-API",
+    "title": "STACKIT IaaS API",
     "version": "2"
   },
   "openapi": "3.0.1",
@@ -5554,7 +5618,7 @@
         }
       ],
       "post": {
-        "description": "Create a new network area in an organization.",
+        "description": "Create a new network area in an organization. You can specify `\"preview/routingtables\"=\"true\"` as a label to enable the preview routing tables feature. This feature cannot be enabled or disabled afterwards.",
         "operationId": "CreateNetworkArea",
         "requestBody": {
           "content": {
@@ -8234,6 +8298,70 @@
           "$ref": "#/components/parameters/v1ConsumerProjectID"
         }
       ]
+    },
+    "/v2/projects/{projectId}/regions/{region}/isolated-network": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        }
+      ],
+      "post": {
+        "description": "Creates an isolated network which is not connected to other networks in this project. We recommend using this endpoint only if you are fully aware of its purpose and the consequences of its execution.",
+        "operationId": "CreateIsolatedNetwork",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateIsolatedNetworkPayload"
+              }
+            }
+          },
+          "description": "Request a single isolated network creation.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Network"
+                }
+              }
+            },
+            "description": "Isolated Network create has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create a single isolated network.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.isolated-network.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
     },
     "/v2/projects/{projectId}/regions/{region}/machine-types": {
       "get": {
@@ -12132,6 +12260,72 @@
         "x-stackit-authorization": {
           "actions": [
             "iaas.volume.resize"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v2/projects/{projectId}/regions/{region}/volumes/{volumeId}/upload": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1VolumeID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        }
+      ],
+      "post": {
+        "description": "Create an image out a a volume.",
+        "operationId": "ImageFromVolume",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImageFromVolumePayload"
+              }
+            }
+          },
+          "description": "Create an image from a volume."
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Image"
+                }
+              }
+            },
+            "description": "Image creation details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create an image out of a volume.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.volume.upload"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

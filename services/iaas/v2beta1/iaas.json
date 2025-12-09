@@ -526,8 +526,7 @@
             "$ref": "#/components/schemas/GenericName"
           },
           "systemRoutes": {
-            "default": true,
-            "type": "boolean"
+            "$ref": "#/components/schemas/SystemRoutes"
           },
           "updatedAt": {
             "allOf": [
@@ -1146,6 +1145,32 @@
         "required": [
           "name",
           "diskFormat"
+        ],
+        "type": "object"
+      },
+      "CreateIsolatedNetworkPayload": {
+        "description": "Object that represents the request body for a single isolated network create.",
+        "properties": {
+          "dhcp": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DHCP"
+              }
+            ],
+            "default": true
+          },
+          "ipv4": {
+            "$ref": "#/components/schemas/CreateNetworkIPv4"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          }
+        },
+        "required": [
+          "name"
         ],
         "type": "object"
       },
@@ -3775,8 +3800,7 @@
             "$ref": "#/components/schemas/GenericName"
           },
           "systemRoutes": {
-            "default": true,
-            "type": "boolean"
+            "$ref": "#/components/schemas/SystemRoutes"
           },
           "updatedAt": {
             "allOf": [
@@ -4435,6 +4459,11 @@
         "example": "PUBLIC",
         "type": "string"
       },
+      "SystemRoutes": {
+        "default": true,
+        "description": "A config setting for a routing table which allows installation of automatic system routes for connectivity between projects in the same SNA.",
+        "type": "boolean"
+      },
       "ThroughputInMB": {
         "description": "Throughput in Megabyte per second.",
         "example": 200,
@@ -4481,6 +4510,10 @@
           }
         },
         "type": "object"
+      },
+      "UpdateDynamicRoutes": {
+        "description": "The update config setting for a routing table which allows propagation of dynamic routes to this routing table.",
+        "type": "boolean"
       },
       "UpdateImagePayload": {
         "description": "Object that represents an update request body of an Image.",
@@ -4657,13 +4690,16 @@
             "$ref": "#/components/schemas/Description"
           },
           "dynamicRoutes": {
-            "$ref": "#/components/schemas/DynamicRoutes"
+            "$ref": "#/components/schemas/UpdateDynamicRoutes"
           },
           "labels": {
             "$ref": "#/components/schemas/Labels"
           },
           "name": {
             "$ref": "#/components/schemas/GenericName"
+          },
+          "systemRoutes": {
+            "$ref": "#/components/schemas/UpdateSystemRoutes"
           }
         },
         "type": "object"
@@ -4682,6 +4718,10 @@
           }
         },
         "type": "object"
+      },
+      "UpdateSystemRoutes": {
+        "description": "The update config setting for a routing table which allows installation of automatic system routes for connectivity between projects in the same SNA.",
+        "type": "boolean"
       },
       "UpdateVolumePayload": {
         "description": "Object that represents an update request body of a volume.",
@@ -5253,7 +5293,7 @@
     },
     "description": "This API allows you to create and modify IaaS resources.",
     "termsOfService": "https://stackit.de/en/imprint",
-    "title": "IaaS-API",
+    "title": "STACKIT IaaS API",
     "version": "2beta1"
   },
   "openapi": "3.0.1",
@@ -8234,6 +8274,70 @@
           "$ref": "#/components/parameters/v1ConsumerProjectID"
         }
       ]
+    },
+    "/v2beta1/projects/{projectId}/regions/{region}/isolated-network": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        }
+      ],
+      "post": {
+        "description": "Creates an isolated network which is not connected to other networks in this project. We recommend using this endpoint only if you are fully aware of its purpose and the consequences of its execution.",
+        "operationId": "CreateIsolatedNetwork",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateIsolatedNetworkPayload"
+              }
+            }
+          },
+          "description": "Request a single isolated network creation.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Network"
+                }
+              }
+            },
+            "description": "Isolated Network create has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create a single isolated network.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.isolated-network.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
     },
     "/v2beta1/projects/{projectId}/regions/{region}/machine-types": {
       "get": {

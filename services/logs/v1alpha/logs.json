@@ -364,7 +364,7 @@
   "info": {
     "description": "This API provides endpoints for managing STACKIT Logs.\n",
     "title": "STACKIT Logs API",
-    "version": "1alpha.0.2"
+    "version": "1alpha.0.3"
   },
   "openapi": "3.0.3",
   "paths": {
@@ -819,6 +819,46 @@
         "x-stackit-authorization": {
           "actions": [
             "logs.instance.credentials.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get the information of the given access token.",
+        "operationId": "GetAccessToken",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/accessToken"
+                }
+              }
+            },
+            "description": "Returns the information of the access token."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Get Access Token",
+        "x-stackit-authorization": {
+          "actions": [
+            "logs.instance.credentials.get"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

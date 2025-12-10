@@ -1,0 +1,4574 @@
+{
+  "components": {
+    "parameters": {
+      "backup": {
+        "description": "The ID of the backup.",
+        "example": 123,
+        "explode": false,
+        "in": "path",
+        "name": "backupId",
+        "required": true,
+        "schema": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "style": "simple"
+      },
+      "backup.sort": {
+        "description": "Sorting of the backups to be returned on each page.",
+        "example": "index.desc",
+        "explode": true,
+        "in": "query",
+        "name": "sort",
+        "schema": {
+          "$ref": "#/components/schemas/backup.sort"
+        },
+        "style": "form",
+        "x-oapi-codegen-extra-tags": {
+          "validate": "omitempty,backup_sort"
+        }
+      },
+      "database": {
+        "description": "The name of the database.",
+        "example": "database",
+        "explode": false,
+        "in": "path",
+        "name": "databaseName",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "style": "simple"
+      },
+      "database.sort": {
+        "description": "Sorting of the databases to be returned on each page.",
+        "example": "index.desc",
+        "explode": true,
+        "in": "query",
+        "name": "sort",
+        "schema": {
+          "$ref": "#/components/schemas/database.sort"
+        },
+        "style": "form",
+        "x-oapi-codegen-extra-tags": {
+          "validate": "omitempty,database_sort"
+        }
+      },
+      "flavor": {
+        "description": "The id of an instance flavor.",
+        "example": "4.16-Single",
+        "explode": false,
+        "in": "path",
+        "name": "flavorId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "style": "simple"
+      },
+      "flavor.sort": {
+        "description": "Sorting of the flavors to be returned on each page.",
+        "example": "index.desc",
+        "explode": true,
+        "in": "query",
+        "name": "sort",
+        "schema": {
+          "$ref": "#/components/schemas/flavor.sort"
+        },
+        "style": "form",
+        "x-oapi-codegen-extra-tags": {
+          "validate": "omitempty,flavor_sort"
+        }
+      },
+      "instance": {
+        "description": "The ID of the instance.",
+        "example": "fb30fa7e-b7d8-4c75-9f04-489e0ba2fe51",
+        "explode": false,
+        "in": "path",
+        "name": "instanceId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "style": "simple"
+      },
+      "instance.sort": {
+        "description": "Sorting of the items to be returned on each page.",
+        "example": "index.desc",
+        "explode": true,
+        "in": "query",
+        "name": "sort",
+        "schema": {
+          "$ref": "#/components/schemas/instance.sort"
+        },
+        "style": "form",
+        "x-oapi-codegen-extra-tags": {
+          "validate": "omitempty,instance_sort"
+        }
+      },
+      "page": {
+        "description": "Number of the page of items list to be returned.",
+        "example": 1,
+        "explode": true,
+        "in": "query",
+        "name": "page",
+        "schema": {
+          "default": 1,
+          "format": "int64",
+          "type": "integer"
+        },
+        "style": "form"
+      },
+      "project": {
+        "description": "The STACKIT project ID.",
+        "example": "19feb036-9b61-11ee-b9d1-0242ac120002",
+        "explode": false,
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "style": "simple"
+      },
+      "region": {
+        "description": "The region which should be addressed",
+        "example": "eu01",
+        "explode": false,
+        "in": "path",
+        "name": "region",
+        "required": true,
+        "schema": {
+          "enum": [
+            "eu01"
+          ],
+          "type": "string"
+        },
+        "style": "simple"
+      },
+      "size": {
+        "description": "Number of items to be returned on each page.",
+        "example": 10,
+        "explode": true,
+        "in": "query",
+        "name": "size",
+        "schema": {
+          "default": 10,
+          "format": "int64",
+          "type": "integer"
+        },
+        "style": "form"
+      },
+      "user": {
+        "description": "The ID of the user.",
+        "example": 16999,
+        "explode": false,
+        "in": "path",
+        "name": "userId",
+        "required": true,
+        "schema": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "style": "simple"
+      },
+      "user.sort": {
+        "description": "Sorting of the users to be returned on each page.",
+        "example": "index.desc",
+        "explode": true,
+        "in": "query",
+        "name": "sort",
+        "schema": {
+          "$ref": "#/components/schemas/user.sort"
+        },
+        "style": "form",
+        "x-oapi-codegen-extra-tags": {
+          "validate": "omitempty,user_sort"
+        }
+      }
+    },
+    "schemas": {
+      "CreateDatabaseResponse": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/database.id"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "CreateInstanceResponse": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/instance.id"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "CreateUserResponse": {
+        "properties": {
+          "default_database": {
+            "$ref": "#/components/schemas/user.database"
+          },
+          "host": {
+            "$ref": "#/components/schemas/user.host"
+          },
+          "id": {
+            "$ref": "#/components/schemas/user.id"
+          },
+          "password": {
+            "$ref": "#/components/schemas/user.password"
+          },
+          "port": {
+            "$ref": "#/components/schemas/user.port"
+          },
+          "roles": {
+            "items": {
+              "$ref": "#/components/schemas/user.role"
+            },
+            "type": "array"
+          },
+          "status": {
+            "$ref": "#/components/schemas/user.status"
+          },
+          "uri": {
+            "$ref": "#/components/schemas/user.uri"
+          },
+          "username": {
+            "$ref": "#/components/schemas/user.name"
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "password",
+          "default_database",
+          "host",
+          "uri",
+          "status",
+          "port",
+          "roles"
+        ],
+        "type": "object"
+      },
+      "Error": {
+        "properties": {
+          "code": {
+            "description": "The http error code of the error.",
+            "example": 400,
+            "format": "int32",
+            "type": "integer",
+            "x-go-custom-tag": "validate:\"required,errorCode\""
+          },
+          "message": {
+            "description": "More detailed information about the error.",
+            "example": "database not found",
+            "type": "string",
+            "x-go-custom-tag": "validate:\"required,errorMsg\""
+          },
+          "traceId": {
+            "description": "The trace id of the request.",
+            "example": "885bef8bbc18649c",
+            "type": "string",
+            "x-go-custom-tag": "validate:\"required,traceID\""
+          },
+          "type": {
+            "description": "Describes in which state the api was when the error happened.",
+            "example": "INTERNAL_ERROR",
+            "type": "string",
+            "x-go-custom-tag": "validate:\"required,errorType\""
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "type",
+          "traceId"
+        ],
+        "type": "object"
+      },
+      "GetBackupResponse": {
+        "properties": {
+          "completionTime": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/backup.completionTime"
+              },
+              {
+                "x-go-custom-tag": "validate:\"required,time\""
+              }
+            ]
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/backup.id"
+              },
+              {
+                "x-go-custom-tag": "validate:\"required,backupId\""
+              }
+            ]
+          },
+          "name": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/backup.name"
+              },
+              {
+                "x-go-custom-tag": "validate:\"required,backupName\""
+              }
+            ]
+          },
+          "retainedUntil": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/backup.retainedUntil"
+              },
+              {
+                "x-go-custom-tag": "validate:\"required,time\""
+              }
+            ]
+          },
+          "size": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/backup.size"
+              },
+              {
+                "x-go-custom-tag": "validate:\"required,min=1,max=1073741824000\""
+              }
+            ]
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/backup.type"
+              },
+              {
+                "x-go-custom-tag": "validate:\"required,backupType\""
+              }
+            ]
+          }
+        },
+        "required": [
+          "completionTime",
+          "id",
+          "name",
+          "retainedUntil",
+          "size",
+          "type"
+        ],
+        "type": "object"
+      },
+      "GetCollationsResponse": {
+        "properties": {
+          "collations": {
+            "description": "List of collations available for the instance.",
+            "items": {
+              "$ref": "#/components/schemas/database.getcollation"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "collations"
+        ],
+        "type": "object"
+      },
+      "GetDatabaseResponse": {
+        "properties": {
+          "collationName": {
+            "$ref": "#/components/schemas/database.collation"
+          },
+          "compatibilityLevel": {
+            "$ref": "#/components/schemas/database.compatibility"
+          },
+          "id": {
+            "$ref": "#/components/schemas/database.id"
+          },
+          "name": {
+            "$ref": "#/components/schemas/database.name"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/database.owner"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "collationName",
+          "compatibilityLevel",
+          "owner"
+        ],
+        "type": "object"
+      },
+      "GetFlavorsResponse": {
+        "properties": {
+          "flavors": {
+            "description": "List of flavors available for the project.",
+            "items": {
+              "$ref": "#/components/schemas/ListFlavors"
+            },
+            "type": "array"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        },
+        "required": [
+          "pagination",
+          "flavors"
+        ],
+        "type": "object"
+      },
+      "GetInstanceResponse": {
+        "properties": {
+          "acl": {
+            "$ref": "#/components/schemas/acl"
+          },
+          "backupSchedule": {
+            "$ref": "#/components/schemas/backup.schedule"
+          },
+          "edition": {
+            "$ref": "#/components/schemas/instance.edition"
+          },
+          "encryption": {
+            "$ref": "#/components/schemas/instance.encryption"
+          },
+          "flavorId": {
+            "$ref": "#/components/schemas/flavor.flavorId"
+          },
+          "id": {
+            "$ref": "#/components/schemas/instance.id"
+          },
+          "isDeletable": {
+            "$ref": "#/components/schemas/instance.isDeletable"
+          },
+          "name": {
+            "$ref": "#/components/schemas/instance.name"
+          },
+          "network": {
+            "$ref": "#/components/schemas/instance.network"
+          },
+          "replicas": {
+            "$ref": "#/components/schemas/replicas"
+          },
+          "retentionDays": {
+            "$ref": "#/components/schemas/instance.retentionDays"
+          },
+          "status": {
+            "$ref": "#/components/schemas/status"
+          },
+          "storage": {
+            "$ref": "#/components/schemas/storage"
+          },
+          "version": {
+            "$ref": "#/components/schemas/instance.version"
+          }
+        },
+        "required": [
+          "acl",
+          "backupSchedule",
+          "flavorId",
+          "id",
+          "isDeletable",
+          "name",
+          "replicas",
+          "edition",
+          "retentionDays",
+          "status",
+          "storage",
+          "version",
+          "network"
+        ],
+        "type": "object"
+      },
+      "GetStoragesResponse": {
+        "properties": {
+          "storageClasses": {
+            "$ref": "#/components/schemas/flavor.storageClasses"
+          },
+          "storageRange": {
+            "$ref": "#/components/schemas/flavor.storageRange"
+          }
+        },
+        "required": [
+          "storageClasses",
+          "storageRange"
+        ],
+        "type": "object"
+      },
+      "GetUserResponse": {
+        "properties": {
+          "default_database": {
+            "$ref": "#/components/schemas/user.database"
+          },
+          "host": {
+            "$ref": "#/components/schemas/user.host"
+          },
+          "id": {
+            "$ref": "#/components/schemas/user.id"
+          },
+          "port": {
+            "$ref": "#/components/schemas/user.port"
+          },
+          "roles": {
+            "description": "A list of user roles.",
+            "example": [
+              "##STACKIT_LoginManager##",
+              "##STACKIT_DatabaseManager##"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/user.role"
+            },
+            "type": "array"
+          },
+          "status": {
+            "$ref": "#/components/schemas/user.status"
+          },
+          "username": {
+            "$ref": "#/components/schemas/user.name"
+          }
+        },
+        "required": [
+          "default_database",
+          "host",
+          "id",
+          "port",
+          "roles",
+          "status",
+          "username"
+        ],
+        "type": "object"
+      },
+      "GetVersionsResponse": {
+        "properties": {
+          "versions": {
+            "description": "A list containing available sqlserver versions.",
+            "items": {
+              "$ref": "#/components/schemas/version"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "versions"
+        ],
+        "type": "object"
+      },
+      "ListBackup": {
+        "properties": {
+          "completionTime": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/backup.completionTime"
+              },
+              {
+                "x-go-custom-tag": "validate:\"required,time\""
+              }
+            ]
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/backup.id"
+              },
+              {
+                "x-go-custom-tag": "validate:\"required,backupId\""
+              }
+            ]
+          },
+          "name": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/backup.name"
+              },
+              {
+                "x-go-custom-tag": "validate:\"required,backupName\""
+              }
+            ]
+          },
+          "retainedUntil": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/backup.retainedUntil"
+              },
+              {
+                "x-go-custom-tag": "validate:\"required,time\""
+              }
+            ]
+          },
+          "size": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/backup.size"
+              },
+              {
+                "x-go-custom-tag": "validate:\"required,min=1,max=1073741824000\""
+              }
+            ]
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/backup.type"
+              },
+              {
+                "x-go-custom-tag": "validate:\"required,backupType\""
+              }
+            ]
+          }
+        },
+        "required": [
+          "completionTime",
+          "id",
+          "name",
+          "retainedUntil",
+          "size",
+          "type"
+        ],
+        "type": "object"
+      },
+      "ListBackupResponse": {
+        "properties": {
+          "backups": {
+            "description": "The list containing the information about the backups.",
+            "items": {
+              "$ref": "#/components/schemas/ListBackupsResponse"
+            },
+            "type": "array"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        },
+        "required": [
+          "pagination",
+          "backups"
+        ],
+        "type": "object"
+      },
+      "ListBackupsResponse": {
+        "properties": {
+          "backups": {
+            "description": "List of the backups beloning to that database",
+            "items": {
+              "$ref": "#/components/schemas/ListBackup"
+            },
+            "type": "array",
+            "x-go-custom-tag": "validate:\"required,dive\""
+          },
+          "databaseName": {
+            "description": "Name of the database the backups belong to",
+            "example": "lummerland",
+            "type": "string",
+            "x-go-custom-tag": "validate:\"required,databaseName\""
+          }
+        },
+        "required": [
+          "databaseName",
+          "backups"
+        ],
+        "type": "object"
+      },
+      "ListCompatibilityResponse": {
+        "properties": {
+          "compatibilities": {
+            "description": "List of compatibilities available for a d",
+            "items": {
+              "$ref": "#/components/schemas/database.getcompatibility"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "compatibilities"
+        ],
+        "type": "object"
+      },
+      "ListCurrentRunningRestoreJobs": {
+        "properties": {
+          "runningRestores": {
+            "description": "List of the currently running Restore jobs",
+            "items": {
+              "$ref": "#/components/schemas/backup.runningRestore"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "runningRestores"
+        ],
+        "type": "object"
+      },
+      "ListDatabase": {
+        "properties": {
+          "created": {
+            "$ref": "#/components/schemas/database.created"
+          },
+          "id": {
+            "$ref": "#/components/schemas/database.id"
+          },
+          "name": {
+            "$ref": "#/components/schemas/database.name"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/database.owner"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "created",
+          "owner"
+        ],
+        "type": "object"
+      },
+      "ListDatabasesResponse": {
+        "properties": {
+          "databases": {
+            "description": "A list containing all databases for the instance.",
+            "items": {
+              "$ref": "#/components/schemas/ListDatabase"
+            },
+            "type": "array"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        },
+        "required": [
+          "databases",
+          "pagination"
+        ],
+        "type": "object"
+      },
+      "ListFlavors": {
+        "description": "The flavor of the instance containing the technical features.",
+        "properties": {
+          "cpu": {
+            "$ref": "#/components/schemas/flavor.cpu"
+          },
+          "description": {
+            "$ref": "#/components/schemas/flavor.description"
+          },
+          "id": {
+            "$ref": "#/components/schemas/flavor.flavorId"
+          },
+          "maxGB": {
+            "$ref": "#/components/schemas/flavor.maxGB"
+          },
+          "memory": {
+            "$ref": "#/components/schemas/flavor.memory"
+          },
+          "minGB": {
+            "$ref": "#/components/schemas/flavor.minGB"
+          },
+          "nodeType": {
+            "$ref": "#/components/schemas/flavor.nodeType"
+          },
+          "storageClasses": {
+            "$ref": "#/components/schemas/flavor.storageClasses"
+          }
+        },
+        "required": [
+          "id",
+          "cpu",
+          "memory",
+          "description",
+          "nodeType",
+          "minGB",
+          "maxGB",
+          "storageClasses"
+        ],
+        "type": "object"
+      },
+      "ListInstance": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/instance.id"
+          },
+          "isDeletable": {
+            "$ref": "#/components/schemas/instance.isDeletable"
+          },
+          "name": {
+            "$ref": "#/components/schemas/instance.name"
+          },
+          "status": {
+            "$ref": "#/components/schemas/status"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "isDeletable"
+        ],
+        "type": "object"
+      },
+      "ListInstancesResponse": {
+        "properties": {
+          "instances": {
+            "description": "List of owned instances and their current status.",
+            "items": {
+              "$ref": "#/components/schemas/ListInstance"
+            },
+            "type": "array"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        },
+        "required": [
+          "pagination",
+          "instances"
+        ],
+        "type": "object"
+      },
+      "ListRolesResponse": {
+        "properties": {
+          "roles": {
+            "description": "List of roles available for an instance.",
+            "items": {
+              "$ref": "#/components/schemas/user.role"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "roles"
+        ],
+        "type": "object"
+      },
+      "ListUser": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/user.id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/user.status"
+          },
+          "username": {
+            "$ref": "#/components/schemas/user.name"
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "status"
+        ],
+        "type": "object"
+      },
+      "ListUserResponse": {
+        "properties": {
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "users": {
+            "description": "List of all users inside an instance",
+            "items": {
+              "$ref": "#/components/schemas/ListUser"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "pagination",
+          "users"
+        ],
+        "type": "object"
+      },
+      "Pagination": {
+        "properties": {
+          "page": {
+            "format": "int64",
+            "type": "integer",
+            "x-go-custom-tag": "validate:\"required\""
+          },
+          "size": {
+            "format": "int64",
+            "type": "integer",
+            "x-go-custom-tag": "validate:\"required\""
+          },
+          "sort": {
+            "type": "string",
+            "x-go-custom-tag": "validate:\"required\""
+          },
+          "totalPages": {
+            "format": "int64",
+            "type": "integer",
+            "x-go-custom-tag": "validate:\"required\""
+          },
+          "totalRows": {
+            "format": "int64",
+            "type": "integer",
+            "x-go-custom-tag": "validate:\"required\""
+          }
+        },
+        "required": [
+          "size",
+          "page",
+          "totalRows",
+          "totalPages",
+          "sort"
+        ],
+        "type": "object"
+      },
+      "ProtectInstanceResponse": {
+        "properties": {
+          "isDeletable": {
+            "$ref": "#/components/schemas/protect.isDeletable"
+          }
+        },
+        "required": [
+          "isDeletable"
+        ],
+        "type": "object"
+      },
+      "ResetUserResponse": {
+        "properties": {
+          "password": {
+            "$ref": "#/components/schemas/user.password"
+          },
+          "status": {
+            "$ref": "#/components/schemas/user.status"
+          },
+          "uri": {
+            "$ref": "#/components/schemas/user.uri"
+          },
+          "username": {
+            "$ref": "#/components/schemas/user.name"
+          }
+        },
+        "required": [
+          "username",
+          "password",
+          "uri",
+          "status"
+        ],
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "code": {
+            "description": "the http error should be always 422 for validationError",
+            "example": 422,
+            "format": "int32",
+            "type": "integer"
+          },
+          "validation": {
+            "description": "errors for all fields where the error happened",
+            "items": {
+              "properties": {
+                "field": {
+                  "example": "name",
+                  "type": "string"
+                },
+                "message": {
+                  "example": "this field is required",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "field",
+                "message"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "code",
+          "validation"
+        ],
+        "type": "object"
+      },
+      "acl": {
+        "description": "List of IPV4 cidr.",
+        "example": [
+          "198.51.100.0/24"
+        ],
+        "items": {
+          "description": "A IPV4 cidr.",
+          "example": "198.51.100.0/24",
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "acl.deprecated": {
+        "deprecated": true,
+        "description": "List of IPV4 cidr.",
+        "example": [
+          "198.51.100.0/24"
+        ],
+        "items": {
+          "description": "A IPV4 cidr.",
+          "example": "198.51.100.0/24",
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "acl.opt": {
+        "description": "List of IPV4 cidr.",
+        "example": [
+          "198.51.100.0/24"
+        ],
+        "items": {
+          "description": "A IPV4 cidr.",
+          "example": "198.51.100.0/24",
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "backup.completionTime": {
+        "description": "The time when the backup was completed in RFC3339 format.",
+        "example": "2023-12-14T23:25:03Z",
+        "type": "string"
+      },
+      "backup.id": {
+        "description": "The ID of the backup.",
+        "example": 1,
+        "format": "int64",
+        "type": "integer"
+      },
+      "backup.name": {
+        "description": "The name of the backup.",
+        "example": "0000002B0000000000000083",
+        "type": "string"
+      },
+      "backup.restoreTime": {
+        "description": "the time for the restore it will be calculated between first backup and last backup",
+        "example": "2023-12-30T23:25:05Z",
+        "type": "string"
+      },
+      "backup.retainedUntil": {
+        "description": "The time until the backup will be retained.",
+        "example": "2023-12-30T23:25:05Z",
+        "type": "string"
+      },
+      "backup.runningRestore": {
+        "properties": {
+          "command": {
+            "description": "the command that was executed",
+            "example": "RESTORE DATABASE",
+            "type": "string",
+            "x-go-custom-tag": "validate:\"required,restoreCommand\""
+          },
+          "database_name": {
+            "description": "the name of the database that is being restored",
+            "example": "Peter_PAN",
+            "type": "string",
+            "x-go-custom-tag": "validate:\"required,databaseName\""
+          },
+          "estimated_completion_time": {
+            "description": "the projected time when the restore should be completed",
+            "example": "2023-09-25T12:17:30",
+            "type": "string",
+            "x-go-custom-tag": "validate:\"required,time\""
+          },
+          "percent_complete": {
+            "description": "the percentage of the current running restore job",
+            "example": 20,
+            "format": "int32",
+            "type": "integer",
+            "x-go-custom-tag": "validate:\"required,min=0,max=100\""
+          },
+          "start_time": {
+            "description": "the start time of the current running restore job",
+            "example": "2023-09-25T12:14:48",
+            "type": "string",
+            "x-go-custom-tag": "validate:\"required,time\""
+          }
+        },
+        "required": [
+          "command",
+          "database_name",
+          "estimated_completion_time",
+          "percent_complete",
+          "start_time"
+        ],
+        "type": "object"
+      },
+      "backup.schedule": {
+        "description": "The schedule for on what time and how often the database backup will be created. The schedule is written as a cron schedule.",
+        "example": "6 6 * * *",
+        "type": "string"
+      },
+      "backup.schedule.opt": {
+        "description": "The schedule for on what time and how often the database backup will be created. The schedule is written as a cron schedule.",
+        "example": "6 6 * * *",
+        "type": "string"
+      },
+      "backup.size": {
+        "description": "The size of the backup in bytes.",
+        "example": 8394655,
+        "format": "int64",
+        "type": "integer"
+      },
+      "backup.sort": {
+        "enum": [
+          "end_time.desc",
+          "end_time.asc",
+          "index.desc",
+          "index.asc",
+          "name.desc",
+          "name.asc",
+          "retained_until.desc",
+          "retained_until.asc",
+          "size.desc",
+          "size.asc",
+          "type.desc",
+          "type.asc"
+        ],
+        "type": "string"
+      },
+      "backup.type": {
+        "description": "The type of the backup, which can be automated or manual triggered.",
+        "example": "AUTOMATED",
+        "type": "string"
+      },
+      "createDatabaseRequestPayload": {
+        "properties": {
+          "collation": {
+            "$ref": "#/components/schemas/database.collation"
+          },
+          "compatibility": {
+            "$ref": "#/components/schemas/database.compatibility"
+          },
+          "name": {
+            "$ref": "#/components/schemas/database.name"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/database.owner"
+          }
+        },
+        "required": [
+          "name",
+          "owner"
+        ],
+        "type": "object"
+      },
+      "createInstanceRequestPayload": {
+        "properties": {
+          "acl": {
+            "$ref": "#/components/schemas/acl.deprecated"
+          },
+          "backupSchedule": {
+            "$ref": "#/components/schemas/backup.schedule"
+          },
+          "encryption": {
+            "$ref": "#/components/schemas/instance.encryption"
+          },
+          "flavorId": {
+            "$ref": "#/components/schemas/flavor.flavorId"
+          },
+          "name": {
+            "$ref": "#/components/schemas/instance.name"
+          },
+          "network": {
+            "description": "the network configuration of the instance.",
+            "properties": {
+              "accessScope": {
+                "$ref": "#/components/schemas/instance.network.accessScope"
+              }
+            },
+            "type": "object",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          },
+          "retentionDays": {
+            "$ref": "#/components/schemas/instance.retentionDays"
+          },
+          "storage": {
+            "$ref": "#/components/schemas/storage.create"
+          },
+          "version": {
+            "$ref": "#/components/schemas/instance.version"
+          }
+        },
+        "required": [
+          "acl",
+          "backupSchedule",
+          "flavorId",
+          "name",
+          "storage",
+          "version",
+          "retentionDays"
+        ],
+        "type": "object"
+      },
+      "createUserRequestPayload": {
+        "properties": {
+          "default_database": {
+            "$ref": "#/components/schemas/user.database"
+          },
+          "roles": {
+            "description": "A list containing the user roles for the instance.",
+            "example": [
+              "##STACKIT_LoginManager##",
+              "##STACKIT_DatabaseManager##"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/user.role"
+            },
+            "type": "array",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "username": {
+            "$ref": "#/components/schemas/user.name"
+          }
+        },
+        "required": [
+          "roles",
+          "username"
+        ],
+        "type": "object"
+      },
+      "database.collation": {
+        "description": "The collation of the database. This database collation should match the *collation_name* of one of the collations given by the **Get database collation list** endpoint.",
+        "example": "Albanian_BIN",
+        "type": "string"
+      },
+      "database.compatibility": {
+        "description": "CompatibilityLevel of the Database.",
+        "example": 160,
+        "format": "int32",
+        "type": "integer"
+      },
+      "database.created": {
+        "description": "The date when the database was created in RFC3339 format.",
+        "example": "2003-04-08T09:13:36.39Z",
+        "type": "string"
+      },
+      "database.getcollation": {
+        "properties": {
+          "collation_name": {
+            "example": "Albanian_BIN",
+            "type": "string"
+          },
+          "description": {
+            "example": "Albanian, binary sort",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "database.getcompatibility": {
+        "properties": {
+          "compatibility_level": {
+            "example": 110,
+            "format": "int32",
+            "type": "integer"
+          },
+          "description": {
+            "example": "SQL Server 2011",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "database.id": {
+        "description": "The id of the database.",
+        "example": 1,
+        "format": "int64",
+        "type": "integer"
+      },
+      "database.name": {
+        "description": "The name of the database.",
+        "example": "MyDatabase",
+        "type": "string"
+      },
+      "database.name.opt": {
+        "description": "The name of the database.",
+        "example": "MyDatabase",
+        "type": "string"
+      },
+      "database.owner": {
+        "description": "The owner of the database.",
+        "example": "MyUser",
+        "type": "string"
+      },
+      "database.owner.opt": {
+        "description": "The owner of the database.",
+        "example": "MyUser",
+        "type": "string"
+      },
+      "database.roles": {
+        "description": "The name and the roles for a database for a user.",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/database.name"
+          },
+          "roles": {
+            "description": "The name and the roles for a database",
+            "items": {
+              "description": "The name of the role.",
+              "example": "myRole",
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "roles"
+        ],
+        "type": "object"
+      },
+      "database.sort": {
+        "enum": [
+          "created_at.desc",
+          "created_at.asc",
+          "database_id.desc",
+          "database_id.asc",
+          "database_name.desc",
+          "database_name.asc",
+          "database_owner.desc",
+          "database_owner.asc",
+          "index.asc",
+          "index.desc"
+        ],
+        "type": "string"
+      },
+      "flavor.cpu": {
+        "description": "The cpu count of the instance.",
+        "example": 4,
+        "format": "int64",
+        "type": "integer"
+      },
+      "flavor.description": {
+        "description": "The flavor description.",
+        "example": "Small, Compute optimized",
+        "type": "string"
+      },
+      "flavor.flavorId": {
+        "description": "The id of the instance flavor.",
+        "example": "4.16-Single",
+        "type": "string"
+      },
+      "flavor.flavorId.opt": {
+        "description": "The id of the instance flavor.",
+        "example": "4.16-Single",
+        "type": "string"
+      },
+      "flavor.maxGB": {
+        "description": "maximum storage which can be ordered for the flavor in Gigabyte.",
+        "example": 1000,
+        "format": "int32",
+        "type": "integer"
+      },
+      "flavor.memory": {
+        "description": "The memory of the instance in Gibibyte.",
+        "example": 16,
+        "format": "int64",
+        "type": "integer"
+      },
+      "flavor.minGB": {
+        "description": "minimum storage which is required to order in Gigabyte.",
+        "example": 10,
+        "format": "int32",
+        "type": "integer"
+      },
+      "flavor.nodeType": {
+        "description": "defines the nodeType it can be either single or HA",
+        "example": "single",
+        "type": "string"
+      },
+      "flavor.sort": {
+        "enum": [
+          "index.desc",
+          "index.asc",
+          "cpu.desc",
+          "cpu.asc",
+          "flavor_description.asc",
+          "flavor_description.desc",
+          "id.desc",
+          "id.asc",
+          "size_max.desc",
+          "size_max.asc",
+          "ram.desc",
+          "ram.asc",
+          "size_min.desc",
+          "size_min.asc",
+          "storage_class.asc",
+          "storage_class.desc",
+          "node_type.asc",
+          "node_type.desc"
+        ],
+        "type": "string"
+      },
+      "flavor.storageClasses": {
+        "description": "maximum storage which can be ordered for the flavor in Gigabyte.",
+        "items": {
+          "$ref": "#/components/schemas/flavor.storageClasses.storageClass"
+        },
+        "type": "array"
+      },
+      "flavor.storageClasses.storageClass": {
+        "description": "a storageClass defines how efficient the storage can work",
+        "properties": {
+          "class": {
+            "example": "premium-perf2-stackit",
+            "type": "string"
+          },
+          "maxIoPerSec": {
+            "example": 1000,
+            "format": "int32",
+            "type": "integer"
+          },
+          "maxThroughInMb": {
+            "example": 100,
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "maxIoPerSec",
+          "maxThroughInMb",
+          "class"
+        ],
+        "type": "object"
+      },
+      "flavor.storageRange": {
+        "description": "range of maximum and minimum storage which can be ordered for the flavor in Gigabyte.",
+        "properties": {
+          "max": {
+            "$ref": "#/components/schemas/flavor.maxGB"
+          },
+          "min": {
+            "$ref": "#/components/schemas/flavor.minGB"
+          }
+        },
+        "required": [
+          "max",
+          "min"
+        ],
+        "type": "object"
+      },
+      "instance.edition": {
+        "description": "Edition of the MSSQL server instance",
+        "enum": [
+          "Standard",
+          "EnterpriseCore",
+          "developer"
+        ],
+        "example": "EnterpriseCore",
+        "type": "string"
+      },
+      "instance.encryption": {
+        "description": "this defines which key to use for storage encryption",
+        "properties": {
+          "kekKeyId": {
+            "description": "The key identifier",
+            "example": "b710a4d0-6694-4cd3-b55d-16446375174e",
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,uuid_rfc4122"
+            }
+          },
+          "kekKeyRingId": {
+            "description": "The keyring identifier",
+            "example": "48e3f816-3e38-44bb-bbff-22e05f0567de",
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,uuid_rfc4122"
+            }
+          },
+          "kekKeyVersion": {
+            "description": "The key version",
+            "example": "1",
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "serviceAccount": {
+            "example": "example@compute.sa.stackit.cloud",
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,email"
+            }
+          }
+        },
+        "required": [
+          "serviceAccount",
+          "kekKeyRingId",
+          "kekKeyId",
+          "kekKeyVersion"
+        ],
+        "type": "object"
+      },
+      "instance.id": {
+        "description": "The ID of the instance.",
+        "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
+        "type": "string"
+      },
+      "instance.isDeletable": {
+        "description": "Whether the instance can be deleted or not.",
+        "example": true,
+        "type": "boolean"
+      },
+      "instance.label": {
+        "description": "Label for the instance",
+        "type": "object"
+      },
+      "instance.labels": {
+        "description": "Labels for the instance",
+        "items": {
+          "$ref": "#/components/schemas/instance.label"
+        },
+        "type": "array"
+      },
+      "instance.name": {
+        "description": "The name of the instance.",
+        "example": "mssql-instance",
+        "type": "string"
+      },
+      "instance.name.opt": {
+        "description": "The name of the instance.",
+        "example": "mssql-instance",
+        "type": "string"
+      },
+      "instance.network": {
+        "description": "The access configuration of the instance",
+        "properties": {
+          "accessScope": {
+            "$ref": "#/components/schemas/instance.network.accessScope"
+          },
+          "acl": {
+            "$ref": "#/components/schemas/acl"
+          },
+          "instanceAddress": {
+            "example": "10.0.0.2",
+            "type": "string"
+          },
+          "routerAddress": {
+            "example": "10.0.0.1",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "instance.network.accessScope": {
+        "default": "PUBLIC",
+        "description": "The network access scope of the instance\n\n⚠️ **Note:** This feature is in private preview. Supplying this object is only permitted for enabled accounts. If your account does not have access, the request will be rejected.\n",
+        "enum": [
+          "PUBLIC",
+          "SNA"
+        ],
+        "type": "string"
+      },
+      "instance.retentionDays": {
+        "description": "The days for how long the backup files should be stored before cleaned up. 30 to 365",
+        "example": 64,
+        "format": "int32",
+        "type": "integer"
+      },
+      "instance.retentionDays.opt": {
+        "example": 64,
+        "format": "int32",
+        "type": "integer"
+      },
+      "instance.sort": {
+        "enum": [
+          "index.desc",
+          "index.asc",
+          "id.desc",
+          "id.asc",
+          "is_deletable.desc",
+          "is_deletable.asc",
+          "name.asc",
+          "name.desc",
+          "status.asc",
+          "status.desc"
+        ],
+        "type": "string"
+      },
+      "instance.version": {
+        "description": "The sqlserver version used for the instance.",
+        "enum": [
+          "2022"
+        ],
+        "type": "string"
+      },
+      "instance.version.opt": {
+        "enum": [
+          "2022"
+        ],
+        "type": "string"
+      },
+      "protect.isDeletable": {
+        "description": "Protect instance from deletion.",
+        "example": true,
+        "type": "boolean"
+      },
+      "protectInstanceRequestPayload": {
+        "properties": {
+          "isDeletable": {
+            "$ref": "#/components/schemas/protect.isDeletable"
+          }
+        },
+        "required": [
+          "isDeletable"
+        ],
+        "type": "object"
+      },
+      "replicas": {
+        "description": "How many replicas the instance should have.",
+        "enum": [
+          1,
+          3
+        ],
+        "format": "int32",
+        "type": "integer"
+      },
+      "replicas.opt": {
+        "description": "How many replicas the instance should have.",
+        "enum": [
+          1,
+          3
+        ],
+        "format": "int32",
+        "type": "integer"
+      },
+      "status": {
+        "enum": [
+          "READY",
+          "PENDING",
+          "PROGRESSING",
+          "FAILURE",
+          "UNKNOWN",
+          "TERMINATING"
+        ]
+      },
+      "storage": {
+        "description": "The object containing information about the storage size and class.",
+        "properties": {
+          "class": {
+            "$ref": "#/components/schemas/storage.class"
+          },
+          "size": {
+            "$ref": "#/components/schemas/storage.size"
+          }
+        },
+        "type": "object"
+      },
+      "storage.class": {
+        "description": "The storage class for the storage.",
+        "example": "premium-perf2-stackit",
+        "type": "string"
+      },
+      "storage.create": {
+        "description": "The object containing information about the storage size and class.",
+        "properties": {
+          "class": {
+            "$ref": "#/components/schemas/storage.class"
+          },
+          "size": {
+            "$ref": "#/components/schemas/storage.size.create"
+          }
+        },
+        "required": [
+          "class",
+          "size"
+        ],
+        "type": "object"
+      },
+      "storage.size": {
+        "description": "The storage size in Gigabytes.",
+        "example": 10,
+        "format": "int64",
+        "type": "integer"
+      },
+      "storage.size.create": {
+        "description": "The storage size in Gigabytes.",
+        "example": 10,
+        "format": "int64",
+        "type": "integer"
+      },
+      "storage.update": {
+        "description": "The object containing information about the storage size and class.",
+        "properties": {
+          "size": {
+            "$ref": "#/components/schemas/storage.size"
+          }
+        },
+        "type": "object"
+      },
+      "triggerRestoreRequestPayload": {
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/database.name"
+          },
+          "restoreDateTime": {
+            "$ref": "#/components/schemas/backup.restoreTime"
+          }
+        },
+        "required": [
+          "name",
+          "restoreDateTime"
+        ],
+        "type": "object"
+      },
+      "updateInstancePartiallyRequestPayload": {
+        "properties": {
+          "acl": {
+            "$ref": "#/components/schemas/acl.opt"
+          },
+          "backupSchedule": {
+            "$ref": "#/components/schemas/backup.schedule.opt"
+          },
+          "flavorId": {
+            "$ref": "#/components/schemas/flavor.flavorId.opt"
+          },
+          "name": {
+            "$ref": "#/components/schemas/instance.name.opt"
+          },
+          "replicas": {
+            "$ref": "#/components/schemas/replicas.opt"
+          },
+          "retentionDays": {
+            "$ref": "#/components/schemas/instance.retentionDays.opt"
+          },
+          "storage": {
+            "$ref": "#/components/schemas/storage.update"
+          },
+          "version": {
+            "$ref": "#/components/schemas/instance.version.opt"
+          }
+        },
+        "type": "object"
+      },
+      "updateInstanceRequestPayload": {
+        "properties": {
+          "acl": {
+            "$ref": "#/components/schemas/acl"
+          },
+          "backupSchedule": {
+            "$ref": "#/components/schemas/backup.schedule"
+          },
+          "flavorId": {
+            "$ref": "#/components/schemas/flavor.flavorId"
+          },
+          "name": {
+            "$ref": "#/components/schemas/instance.name"
+          },
+          "replicas": {
+            "$ref": "#/components/schemas/replicas"
+          },
+          "retentionDays": {
+            "$ref": "#/components/schemas/instance.retentionDays"
+          },
+          "storage": {
+            "$ref": "#/components/schemas/storage.update"
+          },
+          "version": {
+            "$ref": "#/components/schemas/instance.version"
+          }
+        },
+        "required": [
+          "acl",
+          "backupSchedule",
+          "flavorId",
+          "name",
+          "replicas",
+          "storage",
+          "version",
+          "retentionDays"
+        ],
+        "type": "object"
+      },
+      "user.database": {
+        "description": "The default database for a user of the instance.",
+        "example": "tempdb",
+        "type": "string"
+      },
+      "user.host": {
+        "description": "The host of the instance in which the user belongs to.",
+        "example": "a6e8ab31-e6c3-4d98-bc5a-e8d99c3fa851.sqlserver.eu01.onstackit.cloud",
+        "type": "string"
+      },
+      "user.id": {
+        "description": "The ID of the user.",
+        "example": 1,
+        "format": "int64",
+        "type": "integer"
+      },
+      "user.name": {
+        "description": "The name of the user.",
+        "example": "myUser",
+        "type": "string"
+      },
+      "user.password": {
+        "description": "The password for the user.",
+        "example": "password123",
+        "type": "string"
+      },
+      "user.port": {
+        "description": "The port of the instance in which the user belongs to.",
+        "example": 5432,
+        "format": "int32",
+        "type": "integer"
+      },
+      "user.role": {
+        "description": "The user role for the instance.",
+        "enum": [
+          "##STACKIT_LoginManager##",
+          "##STACKIT_DatabaseManager##"
+        ],
+        "example": "##STACKIT_LoginManager##",
+        "type": "string"
+      },
+      "user.sort": {
+        "enum": [
+          "id.asc",
+          "id.desc",
+          "index.desc",
+          "index.asc",
+          "name.desc",
+          "name.asc",
+          "status.desc",
+          "status.asc"
+        ],
+        "type": "string"
+      },
+      "user.status": {
+        "description": "The current status of the user.",
+        "example": "ACTIVE",
+        "type": "string"
+      },
+      "user.uri": {
+        "description": "The connection string for the user to the instance.",
+        "example": "jdbc:sqlserver//user@localhost",
+        "type": "string"
+      },
+      "version": {
+        "description": "The version of the sqlserver instance and more details.",
+        "properties": {
+          "beta": {
+            "description": "Flag if the version is a beta version. If set the version may contain bugs and is not fully tested.",
+            "example": true,
+            "type": "boolean"
+          },
+          "deprecated": {
+            "description": "Timestamp in RFC3339 format which says when the version will no longer be supported by STACKIT.",
+            "example": "2023-12-14T23:25:00Z",
+            "type": "string"
+          },
+          "recommend": {
+            "description": "Flag if the version is recommend by the STACKIT Team.",
+            "example": true,
+            "type": "boolean"
+          },
+          "version": {
+            "description": "The sqlserver version used for the instance.",
+            "example": "2022",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "recommend",
+          "deprecated",
+          "beta"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "contact": {
+      "email": "support@stackit.cloud",
+      "name": "STACKIT MSSQL Service Support",
+      "url": "https://www.stackit.de/en/contact"
+    },
+    "description": "This is the documentation for the STACKIT MSSQL service",
+    "termsOfService": "https://www.stackit.de/en/general-terms-and-conditions/",
+    "title": "STACKIT MSSQL Service API",
+    "version": "3alpha1"
+  },
+  "openapi": "3.0.1",
+  "paths": {
+    "/v3alpha1/projects/{projectId}/regions/{region}/flavors": {
+      "get": {
+        "description": "Get all available flavors for a project.",
+        "operationId": "getFlavorsRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/size"
+          },
+          {
+            "$ref": "#/components/parameters/flavor.sort"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetFlavorsResponse"
+                }
+              }
+            },
+            "description": "OK: The response contains a list with all available flavors for the project."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Endpoint not implemented yet"
+          }
+        },
+        "summary": "Get Flavors",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.flavor.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/instances": {
+      "get": {
+        "description": "List all available instances for your project.",
+        "operationId": "listInstancesRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/size"
+          },
+          {
+            "$ref": "#/components/parameters/instance.sort"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListInstancesResponse"
+                }
+              }
+            },
+            "description": "OK: contains a list of all project instances"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later"
+          }
+        },
+        "summary": "List Instances",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.instance.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create a new instance of a sqlserver database instance.",
+        "operationId": "createInstanceRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createInstanceRequestPayload"
+              }
+            }
+          },
+          "description": "The request body with the parameters for the instance creation. Every parameter is required.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateInstanceResponse"
+                }
+              }
+            },
+            "description": "Accepted: The request was accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Request failed due to body validation"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          }
+        },
+        "summary": "Create Instance",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.instance.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}": {
+      "delete": {
+        "description": "Delete an available sqlserver instance.",
+        "operationId": "deleteInstanceRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted: The request was accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: Could not find an instance with the provided Id."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          }
+        },
+        "summary": "Delete Instance",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.instance.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get information about a specific available instance",
+        "operationId": "getInstanceRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetInstanceResponse"
+                }
+              }
+            },
+            "description": "OK: The response contains the properties of the instance."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: Could not find an instance with the provided Id."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          }
+        },
+        "summary": "Get Specific Instance",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "patch": {
+        "description": "Update an available instance of a mssql database. No fields are required.\n\n**Please note that any changes applied via PUT or PATCH requests will initiate a reboot of the SQL Server Flex Instance.**\n",
+        "operationId": "updateInstancePartiallyRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/updateInstancePartiallyRequestPayload"
+              }
+            }
+          },
+          "description": "The request body with the parameters for updating the instance.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted: The request was accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: Could not find an instance with the provided Id."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Request failed due to body validation"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          }
+        },
+        "summary": "Update Instance Partially",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "put": {
+        "description": "Updates an available instance of a sqlserver database\n\n**Please note that any changes applied via PUT or PATCH requests will initiate a reboot of the SQL Server Flex Instance.**\n",
+        "operationId": "updateInstanceRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/updateInstanceRequestPayload"
+              }
+            }
+          },
+          "description": "The request body with the parameters for updating the instance",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted: The request was accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: Could not find an instance with the provided Id."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Request failed due to body validation"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          }
+        },
+        "summary": "Update Instance",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}/backups": {
+      "get": {
+        "description": "List all backups which are available for a specific instance.",
+        "operationId": "listBackupsRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/size"
+          },
+          {
+            "$ref": "#/components/parameters/backup.sort"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListBackupResponse"
+                }
+              }
+            },
+            "description": "OK: Contains a list with all backups for a specific instance."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Endpoint not implemented yet"
+          }
+        },
+        "summary": "List backups",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.backup.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}/backups/databases/{databaseName}": {
+      "post": {
+        "description": "Trigger backup for a specific database",
+        "operationId": "triggerBackupRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          },
+          {
+            "$ref": "#/components/parameters/database"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted: The request was accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Request failed due to body validation"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Endpoint not implemented yet"
+          }
+        },
+        "summary": "Trigger backup for a specific Database",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.backup.trigger"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}/backups/databases/{databaseName}/restores": {
+      "post": {
+        "description": "Trigger restore for a specific Database",
+        "operationId": "triggerRestoreRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          },
+          {
+            "$ref": "#/components/parameters/database"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/triggerRestoreRequestPayload"
+              }
+            }
+          },
+          "description": "The request body with the parameters for the database restore."
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted: The request was accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Request failed due to body validation"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Endpoint not implemented yet"
+          }
+        },
+        "summary": "Trigger restore for a specific Database",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.restore.trigger"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}/backups/{backupId}": {
+      "get": {
+        "description": "Get information about a specific backup for an instance.",
+        "operationId": "getBackupRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          },
+          {
+            "$ref": "#/components/parameters/backup"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBackupResponse"
+                }
+              }
+            },
+            "description": "OK: Contains a backup and its parameters with all backups for a specific instance."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Endpoint not implemented yet"
+          }
+        },
+        "summary": "Get specific backup",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.backup.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}/collations": {
+      "get": {
+        "description": "Returns a list of collations for an instance",
+        "operationId": "getCollationsRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCollationsResponse"
+                }
+              }
+            },
+            "description": "A list of available Collations for an instance."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Endpoint not implemented yet"
+          }
+        },
+        "summary": "Get database collation list",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.collation.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}/compatibility": {
+      "get": {
+        "description": "Returns a list of compatibility levels for creating a new database",
+        "operationId": "listCompatibilitiesRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListCompatibilityResponse"
+                }
+              }
+            },
+            "description": "A list of database compatibilities for an instance."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Endpoint not implemented yet"
+          }
+        },
+        "summary": "Get database compatibility list",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.collation.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}/databases": {
+      "get": {
+        "description": "List available databases for an instance.",
+        "operationId": "listDatabasesRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/size"
+          },
+          {
+            "$ref": "#/components/parameters/database.sort"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListDatabasesResponse"
+                }
+              }
+            },
+            "description": "OK: Contains a list of all databases for a specific instance."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          }
+        },
+        "summary": "List Databases",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.database.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create database for a user. Note: The name of a valid user must be provided in the 'options' map field using the key 'owner'",
+        "operationId": "createDatabaseRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createDatabaseRequestPayload"
+              }
+            }
+          },
+          "description": "The request body containing the information for the new database.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateDatabaseResponse"
+                }
+              }
+            },
+            "description": "Accepted: The request was accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Request failed due to body validation"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          }
+        },
+        "summary": "Create Database",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.database.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}/databases/{databaseName}": {
+      "delete": {
+        "description": "Delete database for an instance.",
+        "operationId": "deleteDatabaseRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          },
+          {
+            "$ref": "#/components/parameters/database"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted: The request was accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          }
+        },
+        "summary": "Delete Database",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.database.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get specific available database",
+        "operationId": "getDatabaseRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          },
+          {
+            "$ref": "#/components/parameters/database"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDatabaseResponse"
+                }
+              }
+            },
+            "description": "OK: Contains a database and its parameters for a specific instance."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Endpoint not implemented yet"
+          }
+        },
+        "summary": "Get Database",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.database.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}/protections": {
+      "post": {
+        "description": "Toggle the deletion protection for an instance.",
+        "operationId": "protectInstanceRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/protectInstanceRequestPayload"
+              }
+            }
+          },
+          "description": "The request body with flag isDeletable. Parameter is required.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProtectInstanceResponse"
+                }
+              }
+            },
+            "description": "The instance is now protected / unprotected, depending on field status before the request."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Request failed due to body validation"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Endpoint not implemented yet"
+          }
+        },
+        "summary": "Protect Instance",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.instance.protect"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}/restore-jobs": {
+      "get": {
+        "description": "List all currently running restore jobs which are available for a specific instance",
+        "operationId": "listCurrentRunningRestoreJobs",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListCurrentRunningRestoreJobs"
+                }
+              }
+            },
+            "description": "A list of all running restore jobs for the given instance"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Endpoint not implemented yet"
+          }
+        },
+        "summary": "List current running restore jobs",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.restore.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}/roles": {
+      "get": {
+        "description": "List available roles for an instance that can be assigned to a user",
+        "operationId": "listRolesRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListRolesResponse"
+                }
+              }
+            },
+            "description": "OK: Returns a list of available roles for an instance that can be assigned to a user."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Endpoint not implemented yet"
+          }
+        },
+        "summary": "List Roles",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.role.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}/users": {
+      "get": {
+        "description": "List available users for an instance.",
+        "operationId": "listUsersRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/size"
+          },
+          {
+            "$ref": "#/components/parameters/user.sort"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListUserResponse"
+                }
+              }
+            },
+            "description": "OK: Contains a list of all users for a specific instance."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          }
+        },
+        "summary": "List Users",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.user.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create user for an instance.",
+        "operationId": "createUserRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createUserRequestPayload"
+              }
+            }
+          },
+          "description": "The request body containing the user details.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUserResponse"
+                }
+              }
+            },
+            "description": "Accepted: The request was accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Request failed due to body validation"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          }
+        },
+        "summary": "Create User",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.user.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}/users/{userId}": {
+      "delete": {
+        "description": "Delete an user from a specific instance.",
+        "operationId": "deleteUserRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          },
+          {
+            "$ref": "#/components/parameters/user"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted: The request was accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          }
+        },
+        "summary": "Delete User",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.user.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get a specific available user for an instance.",
+        "operationId": "getUserRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          },
+          {
+            "$ref": "#/components/parameters/user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserResponse"
+                }
+              }
+            },
+            "description": "OK: Contains information of a user for a specific instance."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          }
+        },
+        "summary": "Get User",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.user.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}/users/{userId}/reset": {
+      "post": {
+        "description": "Reset an user from an specific instance.",
+        "operationId": "resetUserRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          },
+          {
+            "$ref": "#/components/parameters/user"
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetUserResponse"
+                }
+              }
+            },
+            "description": "Accepted: The user reset was succesfull"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Request failed due to body validation"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          }
+        },
+        "summary": "Reset User",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.user.reset"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/storages/{flavorId}": {
+      "get": {
+        "description": "Get available storages for a specific flavor",
+        "operationId": "getStoragesRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/flavor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetStoragesResponse"
+                }
+              }
+            },
+            "description": "OK: contains a list of storages available for a flavor."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later"
+          }
+        },
+        "summary": "Get Storages",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.instance.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/versions": {
+      "get": {
+        "description": "Get the sqlserver available versions for the project.",
+        "operationId": "getVersionsRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetVersionsResponse"
+                }
+              }
+            },
+            "description": "OK: Returns a list of available sqlserver versions."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Endpoint not implemented yet"
+          }
+        },
+        "summary": "Get Versions",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.version.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "Authorization": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://mssql-flex-service.api.{region}stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "eu01.",
+          "enum": [
+            "eu01."
+          ]
+        }
+      }
+    }
+  ]
+}

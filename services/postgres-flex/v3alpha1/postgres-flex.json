@@ -447,6 +447,9 @@
           "name": {
             "$ref": "#/components/schemas/instance.name"
           },
+          "network": {
+            "$ref": "#/components/schemas/instance.network"
+          },
           "replicas": {
             "$ref": "#/components/schemas/replicas"
           },
@@ -464,7 +467,6 @@
           }
         },
         "required": [
-          "acl",
           "backupSchedule",
           "flavorId",
           "id",
@@ -474,7 +476,8 @@
           "retentionDays",
           "status",
           "storage",
-          "version"
+          "version",
+          "network"
         ],
         "type": "object"
       },
@@ -1026,9 +1029,6 @@
       },
       "createInstanceRequestPayload": {
         "properties": {
-          "acl": {
-            "$ref": "#/components/schemas/acl"
-          },
           "backupSchedule": {
             "$ref": "#/components/schemas/backup.schedule"
           },
@@ -1058,7 +1058,7 @@
           }
         },
         "required": [
-          "acl",
+          "network",
           "backupSchedule",
           "flavorId",
           "name",
@@ -1331,29 +1331,36 @@
         "type": "string"
       },
       "instance.network": {
-        "description": "The network configuration of the instance.\n\n⚠️ **Note:** This feature is in private preview. Supplying this object is only permitted for enabled accounts. If your account does not have access, the request will be rejected.\n",
+        "description": "The access configuration of the instance",
         "properties": {
           "accessScope": {
-            "default": "PUBLIC",
-            "description": "The access scope of the instance. It defines if the instance is public or airgapped.",
-            "enum": [
-              "PUBLIC",
-              "SNA"
-            ],
-            "type": "string",
-            "x-enum-descriptions": [
-              "defines networking for a public instance",
-              "defines networking for a private instance"
-            ],
-            "x-oapi-codegen-extra-tags": {
-              "validate": "omitempty,oneof=PUBLIC SNA,instance_accessScope"
-            }
+            "$ref": "#/components/schemas/instance.network.accessScope"
+          },
+          "acl": {
+            "$ref": "#/components/schemas/acl"
+          },
+          "instanceAddress": {
+            "example": "10.0.0.2",
+            "type": "string"
+          },
+          "routerAddress": {
+            "example": "10.0.0.1",
+            "type": "string"
           }
         },
         "required": [
-          "accessScope"
+          "acl"
         ],
         "type": "object"
+      },
+      "instance.network.accessScope": {
+        "default": "PUBLIC",
+        "description": "The access scope of the instance. It defines if the instance is public or airgapped.",
+        "enum": [
+          "PUBLIC",
+          "SNA"
+        ],
+        "type": "string"
       },
       "instance.sort": {
         "enum": [
@@ -1579,9 +1586,6 @@
       },
       "updateInstancePartiallyRequestPayload": {
         "properties": {
-          "acl": {
-            "$ref": "#/components/schemas/acl.opt"
-          },
           "backupSchedule": {
             "$ref": "#/components/schemas/backup.schedule.opt"
           },
@@ -1590,6 +1594,9 @@
           },
           "name": {
             "$ref": "#/components/schemas/instance.name.opt"
+          },
+          "network": {
+            "$ref": "#/components/schemas/instance.network"
           },
           "replicas": {
             "$ref": "#/components/schemas/replicas.opt"
@@ -1608,8 +1615,8 @@
       },
       "updateInstanceRequestPayload": {
         "properties": {
-          "acl": {
-            "$ref": "#/components/schemas/acl"
+          "$network": {
+            "$ref": "#/components/schemas/instance.network"
           },
           "backupSchedule": {
             "$ref": "#/components/schemas/backup.schedule"
@@ -1634,14 +1641,14 @@
           }
         },
         "required": [
-          "acl",
           "backupSchedule",
           "flavorId",
           "name",
           "replicas",
           "retentionDays",
           "storage",
-          "version"
+          "version",
+          "network"
         ],
         "type": "object"
       },

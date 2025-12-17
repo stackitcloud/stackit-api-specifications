@@ -1,6 +1,31 @@
 {
   "components": {
     "schemas": {
+      "AddCustomRoleResponse": {
+        "properties": {
+          "resourceId": {
+            "example": "schwarz-it-kg-WJACUK1",
+            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
+            "title": "ID of the resource to which the new role has been added.",
+            "type": "string"
+          },
+          "resourceType": {
+            "example": "organization",
+            "pattern": "^[a-z](?:-?[a-z]){1,63}$",
+            "title": "Resource type of the resource to which the new role has been added.",
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          }
+        },
+        "required": [
+          "resourceId",
+          "resourceType",
+          "role"
+        ],
+        "type": "object"
+      },
       "AddMembersPayload": {
         "properties": {
           "members": {
@@ -23,6 +48,36 @@
         ],
         "type": "object"
       },
+      "AddRolePayload": {
+        "properties": {
+          "description": {
+            "example": "Role for the development team.",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "A human readable description of the role",
+            "type": "string"
+          },
+          "name": {
+            "example": "dev-team",
+            "pattern": "^[a-z](?:[-.]?[a-z]){1,63}$",
+            "title": "Name of the role.",
+            "type": "string"
+          },
+          "permissions": {
+            "items": {
+              "$ref": "#/components/schemas/PermissionRequest"
+            },
+            "title": "Permissions for the role.",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "permissions"
+        ],
+        "type": "object"
+      },
       "AssignableSubject": {
         "properties": {
           "displayName": {
@@ -40,6 +95,17 @@
         },
         "required": [
           "subject"
+        ],
+        "type": "object"
+      },
+      "DeleteRoleResponse": {
+        "properties": {
+          "writtenAt": {
+            "$ref": "#/components/schemas/Zookie"
+          }
+        },
+        "required": [
+          "writtenAt"
         ],
         "type": "object"
       },
@@ -97,6 +163,31 @@
         "required": [
           "name",
           "description"
+        ],
+        "type": "object"
+      },
+      "GetRoleResponse": {
+        "properties": {
+          "resourceId": {
+            "example": "schwarz-it-kg-WJACUK1",
+            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
+            "title": "The ID of the resource from which the role was fetched.",
+            "type": "string"
+          },
+          "resourceType": {
+            "example": "organization",
+            "pattern": "^[a-z](?:-?[a-z]){1,63}$",
+            "title": "Resource type of the resource from which the role was fetched.",
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          }
+        },
+        "required": [
+          "resourceId",
+          "resourceType",
+          "role"
         ],
         "type": "object"
       },
@@ -278,6 +369,21 @@
         ],
         "type": "object"
       },
+      "PermissionRequest": {
+        "properties": {
+          "name": {
+            "example": "iam.member.read",
+            "maxLength": 255,
+            "pattern": "^[a-z](?:[-.]?[a-z]){1,63}$",
+            "title": "Existing permission",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
       "RemoveMembersPayload": {
         "properties": {
           "forceRemove": {
@@ -368,6 +474,64 @@
           "resourceId",
           "resourceType",
           "roles"
+        ],
+        "type": "object"
+      },
+      "UpdateRolePayload": {
+        "properties": {
+          "description": {
+            "example": "Role for the development team.",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "A human readable description of the role",
+            "type": "string"
+          },
+          "etag": {
+            "type": "string"
+          },
+          "name": {
+            "example": "dev-team",
+            "pattern": "^[a-z](?:[-.]?[a-z]){1,63}$",
+            "title": "Name and of the role.",
+            "type": "string"
+          },
+          "permissions": {
+            "items": {
+              "$ref": "#/components/schemas/PermissionRequest"
+            },
+            "title": "Permissions for the role.",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "permissions"
+        ],
+        "type": "object"
+      },
+      "UpdateRoleResponse": {
+        "properties": {
+          "resourceId": {
+            "example": "schwarz-it-kg-WJACUK1",
+            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
+            "title": "The ID of the resource in which the role was updated.",
+            "type": "string"
+          },
+          "resourceType": {
+            "example": "organization",
+            "pattern": "^[a-z](?:-?[a-z]){1,63}$",
+            "title": "Resource type of the resource in which the role was updated.",
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          }
+        },
+        "required": [
+          "resourceId",
+          "resourceType",
+          "role"
         ],
         "type": "object"
       },
@@ -1068,6 +1232,343 @@
           "disabled": true,
           "implicit-actions": [
             "iam.role.get"
+          ]
+        }
+      },
+      "post": {
+        "description": "Add new, user specified roles to a resource, and bind permissions to them. Permissions are predefined.",
+        "operationId": "AddRole",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "resourceType",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "resourceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddRolePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddCustomRoleResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Malformed input"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          }
+        },
+        "summary": "Add a new role",
+        "x-stackit-authorization": {
+          "disabled": true,
+          "implicit-actions": [
+            "iam.role.add"
+          ]
+        }
+      }
+    },
+    "/v2/{resourceType}/{resourceId}/roles/{roleId}": {
+      "delete": {
+        "description": "Delete a custom role by ID.",
+        "operationId": "DeleteRole",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "resourceType",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "resourceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "roleId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "etag",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteRoleResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Malformed input"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          }
+        },
+        "summary": "Delete an existing role",
+        "x-stackit-authorization": {
+          "disabled": true,
+          "implicit-actions": [
+            "iam.role.remove"
+          ]
+        }
+      },
+      "get": {
+        "description": "Get a custom role by ID.",
+        "operationId": "GetRole",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "resourceType",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "resourceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "roleId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetRoleResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Malformed input"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          }
+        },
+        "summary": "Get an existing role",
+        "x-stackit-authorization": {
+          "disabled": true,
+          "implicit-actions": [
+            "iam.role.get"
+          ]
+        }
+      },
+      "put": {
+        "description": "Update a custom role by ID.",
+        "operationId": "UpdateRole",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "resourceType",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "resourceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "roleId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRolePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateRoleResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Malformed input"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          }
+        },
+        "summary": "Update an existing role",
+        "x-stackit-authorization": {
+          "disabled": true,
+          "implicit-actions": [
+            "iam.role.edit"
           ]
         }
       }

@@ -280,8 +280,7 @@
           "type": {
             "description": "Describes in which state the api was when the error happened.",
             "example": "INTERNAL_ERROR",
-            "type": "string",
-            "x-go-custom-tag": "validate:\"required,errorType\""
+            "type": "string"
           }
         },
         "required": [
@@ -428,9 +427,6 @@
       },
       "GetInstanceResponse": {
         "properties": {
-          "acl": {
-            "$ref": "#/components/schemas/acl"
-          },
           "backupSchedule": {
             "$ref": "#/components/schemas/backup.schedule"
           },
@@ -472,7 +468,6 @@
           }
         },
         "required": [
-          "acl",
           "backupSchedule",
           "flavorId",
           "id",
@@ -1001,31 +996,6 @@
         },
         "type": "array"
       },
-      "acl.deprecated": {
-        "deprecated": true,
-        "description": "List of IPV4 cidr.",
-        "example": [
-          "198.51.100.0/24"
-        ],
-        "items": {
-          "description": "A IPV4 cidr.",
-          "example": "198.51.100.0/24",
-          "type": "string"
-        },
-        "type": "array"
-      },
-      "acl.opt": {
-        "description": "List of IPV4 cidr.",
-        "example": [
-          "198.51.100.0/24"
-        ],
-        "items": {
-          "description": "A IPV4 cidr.",
-          "example": "198.51.100.0/24",
-          "type": "string"
-        },
-        "type": "array"
-      },
       "backup.completionTime": {
         "description": "The time when the backup was completed in RFC3339 format.",
         "example": "2023-12-14T23:25:03Z",
@@ -1156,9 +1126,6 @@
       },
       "createInstanceRequestPayload": {
         "properties": {
-          "acl": {
-            "$ref": "#/components/schemas/acl.deprecated"
-          },
           "backupSchedule": {
             "$ref": "#/components/schemas/backup.schedule"
           },
@@ -1176,11 +1143,17 @@
             "properties": {
               "accessScope": {
                 "$ref": "#/components/schemas/instance.network.accessScope"
+              },
+              "acl": {
+                "$ref": "#/components/schemas/acl"
               }
             },
+            "required": [
+              "acl"
+            ],
             "type": "object",
             "x-oapi-codegen-extra-tags": {
-              "validate": "omitempty"
+              "validate": "required"
             }
           },
           "retentionDays": {
@@ -1194,13 +1167,13 @@
           }
         },
         "required": [
-          "acl",
           "backupSchedule",
           "flavorId",
           "name",
           "storage",
           "version",
-          "retentionDays"
+          "retentionDays",
+          "network"
         ],
         "type": "object"
       },
@@ -1721,9 +1694,6 @@
       },
       "updateInstancePartiallyRequestPayload": {
         "properties": {
-          "acl": {
-            "$ref": "#/components/schemas/acl.opt"
-          },
           "backupSchedule": {
             "$ref": "#/components/schemas/backup.schedule.opt"
           },
@@ -1732,6 +1702,21 @@
           },
           "name": {
             "$ref": "#/components/schemas/instance.name.opt"
+          },
+          "network": {
+            "description": "the network configuration of the instance.",
+            "properties": {
+              "accessScope": {
+                "$ref": "#/components/schemas/instance.network.accessScope"
+              },
+              "acl": {
+                "$ref": "#/components/schemas/acl"
+              }
+            },
+            "type": "object",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
           },
           "replicas": {
             "$ref": "#/components/schemas/replicas.opt"
@@ -1750,9 +1735,6 @@
       },
       "updateInstanceRequestPayload": {
         "properties": {
-          "acl": {
-            "$ref": "#/components/schemas/acl"
-          },
           "backupSchedule": {
             "$ref": "#/components/schemas/backup.schedule"
           },
@@ -1761,6 +1743,24 @@
           },
           "name": {
             "$ref": "#/components/schemas/instance.name"
+          },
+          "network": {
+            "description": "the network configuration of the instance.",
+            "properties": {
+              "accessScope": {
+                "$ref": "#/components/schemas/instance.network.accessScope"
+              },
+              "acl": {
+                "$ref": "#/components/schemas/acl"
+              }
+            },
+            "required": [
+              "acl"
+            ],
+            "type": "object",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
           },
           "replicas": {
             "$ref": "#/components/schemas/replicas"
@@ -1776,14 +1776,14 @@
           }
         },
         "required": [
-          "acl",
           "backupSchedule",
           "flavorId",
           "name",
           "replicas",
           "storage",
           "version",
-          "retentionDays"
+          "retentionDays",
+          "network"
         ],
         "type": "object"
       },

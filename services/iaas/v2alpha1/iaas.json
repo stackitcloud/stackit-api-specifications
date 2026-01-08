@@ -275,6 +275,9 @@
           "description": {
             "$ref": "#/components/schemas/Description"
           },
+          "dynamicRoutes": {
+            "$ref": "#/components/schemas/DynamicRoutes"
+          },
           "id": {
             "allOf": [
               {
@@ -290,8 +293,7 @@
             "$ref": "#/components/schemas/GenericName"
           },
           "systemRoutes": {
-            "default": true,
-            "type": "boolean"
+            "$ref": "#/components/schemas/SystemRoutes"
           },
           "updatedAt": {
             "allOf": [
@@ -519,6 +521,11 @@
         ],
         "type": "object"
       },
+      "DynamicRoutes": {
+        "default": true,
+        "description": "A config setting for a routing table which allows propagation of dynamic routes to this routing table.",
+        "type": "boolean"
+      },
       "Error": {
         "description": "Error with HTTP error code and an error message.",
         "properties": {
@@ -557,7 +564,7 @@
         "type": "string"
       },
       "Labels": {
-        "description": "Object that represents the labels of an object. Regex for keys: `^[a-z]((-|_|[a-z0-9])){0,62}$`. Regex for values: `^(-|_|[a-z0-9]){0,63}$`. Providing a `null` value for a key will remove that key.",
+        "description": "Object that represents the labels of an object. Regex for keys: `^(?=.{1,63}$)([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$`. Regex for values: `^(?=.{0,63}$)(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])*$`. Providing a `null` value for a key will remove that key.",
         "example": {
           "key": "value"
         },
@@ -971,6 +978,9 @@
           "description": {
             "$ref": "#/components/schemas/Description"
           },
+          "dynamicRoutes": {
+            "$ref": "#/components/schemas/DynamicRoutes"
+          },
           "id": {
             "allOf": [
               {
@@ -986,8 +996,7 @@
             "$ref": "#/components/schemas/GenericName"
           },
           "systemRoutes": {
-            "default": true,
-            "type": "boolean"
+            "$ref": "#/components/schemas/SystemRoutes"
           },
           "updatedAt": {
             "allOf": [
@@ -1022,6 +1031,11 @@
         },
         "type": "array"
       },
+      "SystemRoutes": {
+        "default": true,
+        "description": "A config setting for a routing table which allows installation of automatic system routes for connectivity between projects in the same SNA.",
+        "type": "boolean"
+      },
       "UUID": {
         "description": "Universally Unique Identifier (UUID).",
         "example": "d61a8564-c8dd-4ffb-bc15-143e7d0c85ed",
@@ -1030,6 +1044,10 @@
         "minLength": 36,
         "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "string"
+      },
+      "UpdateDynamicRoutes": {
+        "description": "The update config setting for a routing table which allows propagation of dynamic routes to this routing table.",
+        "type": "boolean"
       },
       "UpdateNetworkIPv4Body": {
         "description": "The config object for a IPv4 network update.",
@@ -1070,14 +1088,24 @@
           "description": {
             "$ref": "#/components/schemas/Description"
           },
+          "dynamicRoutes": {
+            "$ref": "#/components/schemas/UpdateDynamicRoutes"
+          },
           "labels": {
             "$ref": "#/components/schemas/Labels"
           },
           "name": {
             "$ref": "#/components/schemas/GenericName"
+          },
+          "systemRoutes": {
+            "$ref": "#/components/schemas/UpdateSystemRoutes"
           }
         },
         "type": "object"
+      },
+      "UpdateSystemRoutes": {
+        "description": "The update config setting for a routing table which allows installation of automatic system routes for connectivity between projects in the same SNA.",
+        "type": "boolean"
       },
       "UpdatedAt": {
         "description": "Date-time when resource was last updated.",
@@ -1105,7 +1133,7 @@
     },
     "description": "This API allows you to create and modify IaaS resources.",
     "termsOfService": "https://stackit.de/en/imprint",
-    "title": "IaaS-API",
+    "title": "STACKIT IaaS API",
     "version": "2alpha1"
   },
   "openapi": "3.0.1",
@@ -1361,6 +1389,62 @@
           "resource-type": "organization"
         }
       }
+    },
+    "/v2alpha1/organizations/{organizationId}/network-areas/{areaId}/regions/{region}/routing-tables/{routingTableId}/networks": {
+      "get": {
+        "description": "Get a list of all networks in a routing table.",
+        "operationId": "ListNetworksOfRoutingTable",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkListResponse"
+                }
+              }
+            },
+            "description": "List all routing table networks."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all networks in a routing table.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.network-area.rt.network.list"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1OrganizationID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkAreaID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        },
+        {
+          "$ref": "#/components/parameters/v2RoutingTableID"
+        }
+      ]
     },
     "/v2alpha1/organizations/{organizationId}/network-areas/{areaId}/regions/{region}/routing-tables/{routingTableId}/routes": {
       "get": {

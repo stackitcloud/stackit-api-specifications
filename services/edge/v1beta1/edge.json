@@ -1,0 +1,1324 @@
+{
+  "components": {
+    "schemas": {
+      "badRequest": {
+        "properties": {
+          "code": {
+            "example": "400",
+            "type": "string"
+          },
+          "message": {
+            "example": "Bad request",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "instance": {
+        "properties": {
+          "created": {
+            "description": "The date and time the creation of the instance was triggered.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "description": "A user chosen description to distinguish multiple instances.",
+            "maxLength": 256,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The displayed name of the instance.",
+            "format": "hostname",
+            "maxLength": 8,
+            "type": "string"
+          },
+          "frontendUrl": {
+            "description": "URL to the Management UI of the Instance.",
+            "format": "url",
+            "type": "string"
+          },
+          "id": {
+            "description": "A auto generated unique id which identifies the instance.",
+            "format": "hostname",
+            "maxLength": 16,
+            "type": "string"
+          },
+          "planId": {
+            "description": "Service Plan configures the size of the Instance.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "status": {
+            "description": "The current status of the instance.",
+            "enum": [
+              "error",
+              "reconciling",
+              "active",
+              "deleting"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "planId",
+          "frontendUrl",
+          "status",
+          "created"
+        ]
+      },
+      "instanceList": {
+        "properties": {
+          "instances": {
+            "items": {
+              "$ref": "#/components/schemas/instance"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "instances"
+        ]
+      },
+      "kubeconfig": {
+        "properties": {
+          "kubeconfig": {
+            "$ref": "#/components/schemas/kubeconfigRaw"
+          }
+        },
+        "required": [
+          "kubeconfig"
+        ],
+        "type": "object"
+      },
+      "kubeconfigRaw": {
+        "additionalProperties": true,
+        "description": "The kubeconfig for the instance.",
+        "type": "object"
+      },
+      "plan": {
+        "properties": {
+          "description": {
+            "description": "Description",
+            "example": "Description for Service Plan",
+            "type": "string"
+          },
+          "id": {
+            "description": "Service Plan Identifier",
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxEdgeHosts": {
+            "description": "Maximum number of EdgeHosts",
+            "format": "int32",
+            "title": "Instance max supported EdgeHosts",
+            "type": "integer"
+          },
+          "name": {
+            "description": "Service Plan Name",
+            "example": "S",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "planList": {
+        "properties": {
+          "validPlans": {
+            "items": {
+              "$ref": "#/components/schemas/plan"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "post-instancesPayload": {
+        "properties": {
+          "description": {
+            "description": "A user chosen description to distinguish multiple instances.",
+            "maxLength": 256,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The displayed name to distinguish multiple instances.",
+            "format": "hostname",
+            "maxLength": 8,
+            "minLength": 4,
+            "type": "string"
+          },
+          "planId": {
+            "description": "Service Plan configures the size of the Instance.",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName",
+          "planId"
+        ]
+      },
+      "token": {
+        "properties": {
+          "token": {
+            "$ref": "#/components/schemas/tokenRaw"
+          }
+        },
+        "required": [
+          "token"
+        ],
+        "type": "object"
+      },
+      "tokenRaw": {
+        "description": "The token for the instance.",
+        "type": "string"
+      },
+      "unauthorizedRequest": {
+        "properties": {
+          "code": {
+            "example": "401",
+            "type": "string"
+          },
+          "message": {
+            "example": "Authorization failed",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "update-instance-by-namePayload": {
+        "properties": {
+          "description": {
+            "description": "A user chosen description to distinguish multiple instances.",
+            "maxLength": 256,
+            "type": "string"
+          },
+          "planId": {
+            "description": "Service Plan configures the size of the Instance.",
+            "format": "uuid",
+            "type": "string"
+          }
+        }
+      },
+      "update-instancePayload": {
+        "properties": {
+          "description": {
+            "description": "A user chosen description to distinguish multiple instances.",
+            "maxLength": 256,
+            "type": "string"
+          },
+          "planId": {
+            "description": "Service Plan configures the size of the Instance.",
+            "format": "uuid",
+            "type": "string"
+          }
+        }
+      },
+      "user": {
+        "properties": {
+          "email": {
+            "description": "The email of the user.",
+            "format": "email",
+            "type": "string"
+          },
+          "internalId": {
+            "description": "The UUID of the user.",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "internalId",
+          "email"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "This API provides endpoints for managing STACKIT Edge Cloud instances.",
+    "title": "STACKIT Edge Cloud API",
+    "version": "1beta1"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1beta1/plans": {
+      "get": {
+        "description": "List all global plans.",
+        "operationId": "list-plans-global",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/planList"
+                }
+              }
+            },
+            "description": "Successful response with all defined plans."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequest"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedRequest"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "500": {
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      }
+    },
+    "/v1beta1/projects/{projectId}/plans": {
+      "get": {
+        "description": "List all possible plans for the project.",
+        "operationId": "list-plans-project",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/planList"
+                }
+              }
+            },
+            "description": "Successful response with all defined plans."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequest"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedRequest"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "500": {
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      },
+      "parameters": [
+        {
+          "description": "The STACKIT portal project UUID the plan is part of.",
+          "in": "path",
+          "name": "projectId",
+          "required": true,
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v1beta1/projects/{projectId}/regions/{regionId}/instances": {
+      "get": {
+        "description": "Returns a list of all instances within the project.",
+        "operationId": "get-instances",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/instanceList"
+                }
+              }
+            },
+            "description": "Successful response with all instances."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequest"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedRequest"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "500": {
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "edge.instances.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.edge-cloud"
+            ]
+          }
+        }
+      },
+      "parameters": [
+        {
+          "description": "The STACKIT portal project UUID the instance is part of.",
+          "in": "path",
+          "name": "projectId",
+          "required": true,
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        {
+          "description": "The STACKIT region the instance is part of.",
+          "in": "path",
+          "name": "regionId",
+          "required": true,
+          "schema": {
+            "enum": [
+              "eu01",
+              "eu02"
+            ],
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "description": "Creates a new instance within the project.",
+        "operationId": "post-instances",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/post-instancesPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/instance"
+                }
+              }
+            },
+            "description": "Instance was created successfully"
+          },
+          "400": {
+            "description": "Bad Request. Invalid instance name."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedRequest"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "409": {
+            "description": "If two requests try to update the resource at the same time one will succeeded and the other will fail with a 409 Conflict."
+          },
+          "500": {
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "edge.instances.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.edge-cloud"
+            ]
+          }
+        }
+      }
+    },
+    "/v1beta1/projects/{projectId}/regions/{regionId}/instances/{instanceId}": {
+      "delete": {
+        "description": "Deletes the given instance.",
+        "operationId": "delete-instance",
+        "responses": {
+          "204": {
+            "description": "Instance was deleted successfully."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequest"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedRequest"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "404": {
+            "description": "Not found. Instance not found."
+          },
+          "409": {
+            "description": "If two requests try to update the resource at the same time one will succeeded and the other will fail with a 409 Conflict."
+          },
+          "500": {
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "edge.instances.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.edge-cloud"
+            ]
+          }
+        }
+      },
+      "get": {
+        "description": "Returns the details for the given instance.",
+        "operationId": "get-instance",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/instance"
+                }
+              }
+            },
+            "description": "Instance details successfully retrieved."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequest"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedRequest"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "404": {
+            "description": "Not found. Instance not found."
+          },
+          "500": {
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "edge.instances.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.edge-cloud"
+            ]
+          }
+        }
+      },
+      "parameters": [
+        {
+          "description": "The STACKIT portal project UUID the instance is part of.",
+          "in": "path",
+          "name": "projectId",
+          "required": true,
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        {
+          "description": "The STACKIT region the instance is part of.",
+          "in": "path",
+          "name": "regionId",
+          "required": true,
+          "schema": {
+            "enum": [
+              "eu01",
+              "eu02"
+            ],
+            "type": "string"
+          }
+        },
+        {
+          "description": "The full ID of the instance, \u003cdisplay_name\u003e-\u003cproject_hash\u003e.",
+          "in": "path",
+          "name": "instanceId",
+          "required": true,
+          "schema": {
+            "format": "hostname",
+            "maxLength": 16,
+            "type": "string"
+          }
+        }
+      ],
+      "put": {
+        "description": "Updates the given instance.",
+        "operationId": "update-instance",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/update-instancePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Instance was updated successfully."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequest"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedRequest"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "404": {
+            "description": "Not found. Instance not found."
+          },
+          "409": {
+            "description": "If two requests try to update the resource at the same time one will succeeded and the other will fail with a 409 Conflict."
+          },
+          "500": {
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "edge.instances.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.edge-cloud"
+            ]
+          }
+        }
+      }
+    },
+    "/v1beta1/projects/{projectId}/regions/{regionId}/instances/{instanceId}/kubeconfig": {
+      "get": {
+        "description": "Returns the kubeconfig for the given instance.",
+        "operationId": "get-kubeconfig-by-instance-id",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/kubeconfig"
+                }
+              }
+            },
+            "description": "Kubeconfig for instance successfully retrieved."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequest"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedRequest"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "404": {
+            "description": "Not found. Instance not found or not ready. Check response document for details."
+          },
+          "500": {
+            "description": "Internal server error. Check response document for details."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "edge.instances.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.edge-cloud"
+            ]
+          }
+        }
+      },
+      "parameters": [
+        {
+          "description": "The STACKIT portal project UUID the instance is part of.",
+          "in": "path",
+          "name": "projectId",
+          "required": true,
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        {
+          "description": "The STACKIT region the instance is part of.",
+          "in": "path",
+          "name": "regionId",
+          "required": true,
+          "schema": {
+            "enum": [
+              "eu01",
+              "eu02"
+            ],
+            "type": "string"
+          }
+        },
+        {
+          "description": "The full ID of the instance, \u003cdisplay_name\u003e-\u003cproject_hash\u003e.",
+          "in": "path",
+          "name": "instanceId",
+          "required": true,
+          "schema": {
+            "format": "hostname",
+            "maxLength": 16,
+            "type": "string"
+          }
+        },
+        {
+          "description": "Expiration of the included token in seconds",
+          "in": "query",
+          "name": "expirationSeconds",
+          "schema": {
+            "default": 3600,
+            "format": "int64",
+            "maximum": 15552000,
+            "minimum": 600,
+            "type": "integer"
+          }
+        }
+      ]
+    },
+    "/v1beta1/projects/{projectId}/regions/{regionId}/instances/{instanceId}/token": {
+      "get": {
+        "description": "Returns an ServiceAccount token.",
+        "operationId": "get-token-by-instance-id",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/token"
+                }
+              }
+            },
+            "description": "Token retrieved successfully."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequest"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedRequest"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "404": {
+            "description": "Not found. Instance not found or not ready. Check response document for details."
+          },
+          "500": {
+            "description": "Internal server error. Check response document for details."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "edge.instances.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.edge-cloud"
+            ]
+          }
+        }
+      },
+      "parameters": [
+        {
+          "description": "The STACKIT portal project UUID the instance is part of.",
+          "in": "path",
+          "name": "projectId",
+          "required": true,
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        {
+          "description": "The STACKIT region the instance is part of.",
+          "in": "path",
+          "name": "regionId",
+          "required": true,
+          "schema": {
+            "enum": [
+              "eu01",
+              "eu02"
+            ],
+            "type": "string"
+          }
+        },
+        {
+          "description": "The instance UUID.",
+          "in": "path",
+          "name": "instanceId",
+          "required": true,
+          "schema": {
+            "format": "hostname",
+            "maxLength": 16,
+            "type": "string"
+          }
+        },
+        {
+          "description": "Expiration of the token in seconds",
+          "in": "query",
+          "name": "expirationSeconds",
+          "schema": {
+            "default": 3600,
+            "format": "int64",
+            "maximum": 15552000,
+            "minimum": 600,
+            "type": "integer"
+          }
+        }
+      ]
+    },
+    "/v1beta1/projects/{projectId}/regions/{regionId}/instancesbyname/{displayName}": {
+      "delete": {
+        "description": "Deletes the given instance by name.",
+        "operationId": "delete-instance-by-name",
+        "responses": {
+          "204": {
+            "description": "Instance was deleted successfully."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequest"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedRequest"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "404": {
+            "description": "Not found. Instance not found."
+          },
+          "409": {
+            "description": "If two requests try to update the resource at the same time one will succeeded and the other will fail with a 409 Conflict."
+          },
+          "500": {
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "edge.instances.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.edge-cloud"
+            ]
+          }
+        }
+      },
+      "get": {
+        "description": "Returns the details for the given instance by name.",
+        "operationId": "get-instance-by-name",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/instance"
+                }
+              }
+            },
+            "description": "Instance details successfully retrieved."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequest"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedRequest"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "404": {
+            "description": "Not found. Instance not found."
+          },
+          "500": {
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "edge.instances.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.edge-cloud"
+            ]
+          }
+        }
+      },
+      "parameters": [
+        {
+          "description": "The STACKIT portal project UUID the instance is part of.",
+          "in": "path",
+          "name": "projectId",
+          "required": true,
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        {
+          "description": "The STACKIT region the instance is part of.",
+          "in": "path",
+          "name": "regionId",
+          "required": true,
+          "schema": {
+            "enum": [
+              "eu01",
+              "eu02"
+            ],
+            "type": "string"
+          }
+        },
+        {
+          "description": "The instance display name.",
+          "in": "path",
+          "name": "displayName",
+          "required": true,
+          "schema": {
+            "format": "hostname",
+            "maxLength": 8,
+            "type": "string"
+          }
+        }
+      ],
+      "put": {
+        "description": "Updates the given instance.",
+        "operationId": "update-instance-by-name",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/update-instance-by-namePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Instance was updated successfully."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequest"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedRequest"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "404": {
+            "description": "Not found. Instance not found."
+          },
+          "409": {
+            "description": "If two requests try to update the resource at the same time one will succeeded and the other will fail with a 409 Conflict."
+          },
+          "500": {
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "edge.instances.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.edge-cloud"
+            ]
+          }
+        }
+      }
+    },
+    "/v1beta1/projects/{projectId}/regions/{regionId}/instancesbyname/{displayName}/kubeconfig": {
+      "get": {
+        "description": "Returns the kubeconfig for the given instance.",
+        "operationId": "get-kubeconfig-by-instance-name",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/kubeconfig"
+                }
+              }
+            },
+            "description": "Kubeconfig for instance successfully retrieved."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequest"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedRequest"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "404": {
+            "description": "Not found. Instance not found or not ready. Check response document for details."
+          },
+          "500": {
+            "description": "Internal server error. Check response document for details."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "edge.instances.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.edge-cloud"
+            ]
+          }
+        }
+      },
+      "parameters": [
+        {
+          "description": "The STACKIT portal project UUID the instance is part of.",
+          "in": "path",
+          "name": "projectId",
+          "required": true,
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        {
+          "description": "The STACKIT region the instance is part of.",
+          "in": "path",
+          "name": "regionId",
+          "required": true,
+          "schema": {
+            "enum": [
+              "eu01",
+              "eu02"
+            ],
+            "type": "string"
+          }
+        },
+        {
+          "description": "The instance display name.",
+          "in": "path",
+          "name": "displayName",
+          "required": true,
+          "schema": {
+            "format": "hostname",
+            "maxLength": 8,
+            "type": "string"
+          }
+        },
+        {
+          "description": "Expiration of the included token in seconds",
+          "in": "query",
+          "name": "expirationSeconds",
+          "schema": {
+            "default": 3600,
+            "format": "int64",
+            "maximum": 15552000,
+            "minimum": 600,
+            "type": "integer"
+          }
+        }
+      ]
+    },
+    "/v1beta1/projects/{projectId}/regions/{regionId}/instancesbyname/{displayName}/token": {
+      "get": {
+        "description": "Returns an ServiceAccount token.",
+        "operationId": "get-token-by-instance-name",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/token"
+                }
+              }
+            },
+            "description": "Token for instance successfully retrieved."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequest"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedRequest"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "404": {
+            "description": "Not found. Instance not found or not ready. Check response document for details."
+          },
+          "500": {
+            "description": "Internal server error. Check response document for details."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "edge.instances.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.edge-cloud"
+            ]
+          }
+        }
+      },
+      "parameters": [
+        {
+          "description": "The STACKIT portal project UUID the instance is part of.",
+          "in": "path",
+          "name": "projectId",
+          "required": true,
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        {
+          "description": "The STACKIT region the instance is part of.",
+          "in": "path",
+          "name": "regionId",
+          "required": true,
+          "schema": {
+            "enum": [
+              "eu01",
+              "eu02"
+            ],
+            "type": "string"
+          }
+        },
+        {
+          "description": "The instance display name.",
+          "in": "path",
+          "name": "displayName",
+          "required": true,
+          "schema": {
+            "format": "hostname",
+            "maxLength": 8,
+            "type": "string"
+          }
+        },
+        {
+          "description": "Expiration of the included token in seconds",
+          "in": "query",
+          "name": "expirationSeconds",
+          "schema": {
+            "default": 3600,
+            "format": "int64",
+            "maximum": 15552000,
+            "minimum": 600,
+            "type": "integer"
+          }
+        }
+      ]
+    }
+  },
+  "servers": [
+    {
+      "url": "https://edge.api.stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "global"
+        }
+      }
+    }
+  ]
+}

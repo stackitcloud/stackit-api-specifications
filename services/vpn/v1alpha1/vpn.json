@@ -445,6 +445,9 @@
           "bgpGatewayConfig": {
             "$ref": "#/components/schemas/BGPGatewayConfig"
           },
+          "labels": {
+            "$ref": "#/components/schemas/Label"
+          },
           "name": {
             "description": "The name of the VPN gateway. \nMaximum 20 characters (only alphanumeric and hyphens allowed). Not changeable after creation.\n",
             "example": "my-vpn",
@@ -524,6 +527,9 @@
           },
           "bgpGatewayConfig": {
             "$ref": "#/components/schemas/BGPGatewayConfig"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Label"
           },
           "name": {
             "description": "The name of the VPN gateway. \nMaximum 20 characters (only alphanumeric and hyphens allowed). Not changeable after creation.\n",
@@ -612,6 +618,44 @@
       "IPv4CIDR": {
         "example": "10.10.10.10/32",
         "pattern": "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)\\.?\\b){4}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
+        "type": "string"
+      },
+      "Label": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/LabelValue"
+        },
+        "description": "Map of custom labels. Key and values must be max 63 chars, start/end with alphanumeric.\n",
+        "example": {
+          "cost-center": "123",
+          "is-debug-mode": "",
+          "tier": "backend-service",
+          "version": "v1.0.2"
+        },
+        "maxProperties": 64,
+        "type": "object"
+      },
+      "LabelKey": {
+        "description": "Alphanumeric start/end; may contain the characters \".\", \"-\", \"_\" in between.",
+        "maxLength": 63,
+        "minLength": 1,
+        "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9._-]*[a-zA-Z0-9])?$",
+        "type": "string"
+      },
+      "LabelSelector": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "description": "label selector object with no nested json objects.\n",
+        "example": {
+          "key1": "value1",
+          "key2": "value2"
+        },
+        "type": "object"
+      },
+      "LabelValue": {
+        "description": "Can be empty. If not empty, must start/end alphanumeric; may contain the characters \".\", \"-\", \"_\" in between.",
+        "maxLength": 63,
+        "pattern": "^([a-zA-Z0-9]([a-zA-Z0-9._-]*[a-zA-Z0-9])?)?$",
         "type": "string"
       },
       "Phase": {
@@ -1045,6 +1089,9 @@
           "bgpGatewayConfig": {
             "$ref": "#/components/schemas/BGPGatewayConfig"
           },
+          "labels": {
+            "$ref": "#/components/schemas/Label"
+          },
           "name": {
             "description": "The name of the VPN gateway. \nMaximum 20 characters (only alphanumeric and hyphens allowed). Not changeable after creation.\n",
             "example": "my-vpn",
@@ -1119,7 +1166,7 @@
   "paths": {
     "/v1alpha1/projects/{projectId}/regions/{region}/gateways": {
       "get": {
-        "description": "List VPN gateways in a project.",
+        "description": "Retrieve VPN gateways in a project filtered by a custom label selector format.",
         "operationId": "ListVPNGateways",
         "parameters": [
           {
@@ -1137,6 +1184,14 @@
             "schema": {
               "$ref": "#/components/schemas/Region"
             }
+          },
+          {
+            "in": "query",
+            "name": "label_selector",
+            "schema": {
+              "$ref": "#/components/schemas/LabelSelector"
+            },
+            "style": "deepObject"
           }
         ],
         "responses": {
@@ -1163,7 +1218,7 @@
             "$ref": "#/components/responses/InternalServerError"
           }
         },
-        "summary": "List VPN gateways in a project.",
+        "summary": "List VPN gateways in a project with label filtering",
         "x-stackit-authorization": {
           "actions": [
             "vpn.gateway.list"

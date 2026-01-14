@@ -1228,6 +1228,41 @@
         ],
         "type": "string"
       },
+      "external.s3": {
+        "description": "The external S3 information",
+        "properties": {
+          "s3_access_key": {
+            "description": "The s3 access key id",
+            "example": "AKIAIOSFODNN7EXAMPLE",
+            "type": "string"
+          },
+          "s3_access_secret": {
+            "description": "The s3 access secret",
+            "example": "Aa1Bb~2Cc3.-Dd4Ee5Ff6Gg7Hh8Ii9_Jj0Kk1Ll2",
+            "type": "string"
+          },
+          "s3_bucket": {
+            "description": "The s3 bucket address",
+            "example": "http://mein-beispiel-bucket.s3.eu-central-1.amazonaws.com/",
+            "type": "string"
+          },
+          "s3_files": {
+            "description": "The backup files from which the database should be restored",
+            "items": {
+              "$ref": "#/components/schemas/s3file.info"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "s3_bucket",
+          "s3_access_key",
+          "s3_access_secret",
+          "s3_files"
+        ],
+        "type": "object"
+      },
       "flavor.cpu": {
         "description": "The cpu count of the instance.",
         "example": 4,
@@ -1528,6 +1563,98 @@
         ],
         "format": "int32",
         "type": "integer"
+      },
+      "restoreDatabaseFromBackupPayload": {
+        "description": "Request to restore a database.",
+        "properties": {
+          "database_name": {
+            "description": "The name of the database on the instance to be restore.",
+            "example": "customer_production_db",
+            "type": "string"
+          },
+          "source": {
+            "description": "The source of the restore.",
+            "discriminator": {
+              "mapping": {
+                "BACKUP": "#/components/schemas/source.backup",
+                "EXTERNAL_S3": "#/components/schemas/source.externalS3"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/source.backup"
+              },
+              {
+                "$ref": "#/components/schemas/source.externalS3"
+              }
+            ]
+          }
+        },
+        "required": [
+          "database_name",
+          "source"
+        ],
+        "type": "object"
+      },
+      "s3file.info": {
+        "properties": {
+          "file_number": {
+            "description": "The sequence number of the file",
+            "example": 1,
+            "format": "int32",
+            "type": "integer"
+          },
+          "file_path": {
+            "description": "The path to the file on the S3 bucket",
+            "example": "http://mein-beispiel-bucket.s3.eu-central-1.amazonaws.com/lummerland/peter_pab.bak",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "source.backup": {
+        "description": "Restore from an existing managed backup.",
+        "properties": {
+          "type": {
+            "enum": [
+              "BACKUP"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "source.externalS3": {
+        "description": "Restore from an external S3 backup file.",
+        "properties": {
+          "database_owner": {
+            "$ref": "#/components/schemas/database.owner"
+          },
+          "logging_guid": {
+            "description": "Logging guid to have a complete activity log over all sub stored procedures.",
+            "example": "1",
+            "type": "string"
+          },
+          "s3_details": {
+            "$ref": "#/components/schemas/external.s3"
+          },
+          "type": {
+            "enum": [
+              "EXTERNAL_S3"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "s3_details",
+          "database_owner"
+        ],
+        "type": "object"
       },
       "status": {
         "enum": [
@@ -3702,6 +3829,143 @@
         "x-stackit-authorization": {
           "actions": [
             "sqlserver-flex.restore.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}/restores": {
+      "post": {
+        "description": "Triggers a new restore operation for the specified instance.\nThe request body defines the source \n(e.g., internal backup, external S3) and the target database.\n",
+        "operationId": "restoreDatabaseFromBackup",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "RestoreFromBackup": {
+                  "description": "An example of restoring from an existing managed backup.",
+                  "summary": "Restore from a Managed Backup",
+                  "value": {
+                    "database_name": "customer_production_db",
+                    "source": {
+                      "type": "BACKUP"
+                    }
+                  }
+                },
+                "RestoreFromS3": {
+                  "description": "An example of restoring from an external S3 file.",
+                  "summary": "Restore from an External S3 Bucket",
+                  "value": {
+                    "database_name": "customer_production_db_from_s3",
+                    "source": {
+                      "database_owner": "MyUser",
+                      "logging_guid": "1",
+                      "s3_details": {
+                        "s3_access_key": "AKIAIOSFODNN7EXAMPLE",
+                        "s3_access_secret": "Aa1Bb~2Cc3.-Dd4Ee5Ff6Gg7Hh8Ii9_Jj0Kk1Ll2",
+                        "s3_bucket": "http://mein-beispiel-bucket.s3.eu-central-1.amazonaws.com/",
+                        "s3_files": [
+                          {
+                            "file_number": 1,
+                            "file_path": "http://mein-beispiel-bucket.s3.eu-central-1.amazonaws.com/lummerland/peter_pab.bak"
+                          }
+                        ]
+                      },
+                      "type": "EXTERNAL_S3"
+                    }
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/restoreDatabaseFromBackupPayload"
+              }
+            }
+          },
+          "description": "The restore operation payload.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Import was accepted and is now processed "
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Endpoint not implemented yet"
+          }
+        },
+        "summary": "Create a Restore Operation",
+        "x-stackit-authorization": {
+          "actions": [
+            "sqlserver-flex.restore.trigger"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

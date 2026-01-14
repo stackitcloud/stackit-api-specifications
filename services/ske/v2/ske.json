@@ -61,6 +61,12 @@
       },
       "Cluster": {
         "example": {
+          "access": {
+            "idp": {
+              "enabled": true,
+              "type": "type"
+            }
+          },
           "extensions": {
             "acl": {
               "allowedCidrs": [
@@ -367,6 +373,7 @@
               }
             ],
             "hibernated": true,
+            "identity": "identity",
             "podAddressRanges": [
               "100.64.0.0/14"
             ]
@@ -464,6 +471,7 @@
             }
           ],
           "hibernated": true,
+          "identity": "identity",
           "podAddressRanges": [
             "100.64.0.0/14"
           ]
@@ -503,6 +511,10 @@
           "hibernated": {
             "title": "Indicates whether the cluster is currently hibernated",
             "type": "boolean"
+          },
+          "identity": {
+            "title": "The unique identifier for the cluster",
+            "type": "string"
           },
           "podAddressRanges": {
             "description": "The network ranges (in CIDR notation) used by pods of the cluster.",
@@ -597,7 +609,7 @@
             "type": "string"
           },
           "phase": {
-            "description": "Phase of the credentials rotation. `NEVER` indicates that no credentials rotation has been performed using the new credentials rotation endpoints yet. Using the deprecated [rotate-credentials](#tag/Credentials/operation/SkeService_GetClusterCredentials) endpoint will not update this status field.",
+            "description": "Phase of the credentials rotation. `NEVER` indicates that no credentials rotation has been performed using the new credentials rotation endpoints yet.",
             "enum": [
               "NEVER",
               "PREPARING",
@@ -747,6 +759,41 @@
         ],
         "type": "object"
       },
+      "IDP": {
+        "example": {
+          "enabled": true,
+          "type": "type"
+        },
+        "properties": {
+          "enabled": {
+            "description": "Enable IDP integration for the cluster.",
+            "type": "boolean"
+          },
+          "type": {
+            "description": "Possible values: `\"stackit\"`",
+            "type": "string",
+            "x-extensible-enum": [
+              "stackit"
+            ]
+          }
+        },
+        "required": [
+          "enabled",
+          "type"
+        ],
+        "type": "object"
+      },
+      "IDPKubeconfig": {
+        "example": {
+          "kubeconfig": "kubeconfig"
+        },
+        "properties": {
+          "kubeconfig": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "Image": {
         "description": "For valid names and versions please take a look at [provider-options](#tag/ProviderOptions/operation/SkeService_GetProviderOptions) `machineImages`.",
         "example": {
@@ -840,6 +887,12 @@
         "example": {
           "items": [
             {
+              "access": {
+                "idp": {
+                  "enabled": true,
+                  "type": "type"
+                }
+              },
               "extensions": {
                 "acl": {
                   "allowedCidrs": [
@@ -1146,12 +1199,19 @@
                   }
                 ],
                 "hibernated": true,
+                "identity": "identity",
                 "podAddressRanges": [
                   "100.64.0.0/14"
                 ]
               }
             },
             {
+              "access": {
+                "idp": {
+                  "enabled": true,
+                  "type": "type"
+                }
+              },
               "extensions": {
                 "acl": {
                   "allowedCidrs": [
@@ -1458,6 +1518,7 @@
                   }
                 ],
                 "hibernated": true,
+                "identity": "identity",
                 "podAddressRanges": [
                   "100.64.0.0/14"
                 ]
@@ -1972,7 +2033,7 @@
             "items": {
               "$ref": "#/components/schemas/KubernetesVersion"
             },
-            "title": "List of supported Kubernetes versions",
+            "title": "List of available Kubernetes versions",
             "type": "array"
           },
           "machineImages": {
@@ -1985,7 +2046,7 @@
             "items": {
               "$ref": "#/components/schemas/MachineType"
             },
-            "title": "List of supported machine types",
+            "title": "List of available machine types",
             "type": "array"
           },
           "volumeTypes": {
@@ -2126,7 +2187,7 @@
       "name": "STACKIT Kubernetes Engine (SKE) Team",
       "url": "https://support.stackit.cloud/servicedesk"
     },
-    "description": "The SKE API provides endpoints to create, update, delete clusters within STACKIT portal projects and to trigger further cluster management tasks.",
+    "description": "The SKE API provides endpoints to create, update or delete clusters within STACKIT projects and to trigger further cluster management tasks.",
     "termsOfService": "https://stackit.de/en/imprint",
     "title": "STACKIT Kubernetes Engine API",
     "version": "2.0"
@@ -2174,7 +2235,7 @@
                 }
               }
             },
-            "description": "Invalid request."
+            "description": "Invalid request"
           },
           "401": {
             "content": {
@@ -2194,7 +2255,7 @@
                 }
               }
             },
-            "description": "Project not found."
+            "description": "Project not found"
           },
           "default": {
             "content": {
@@ -2272,7 +2333,7 @@
                 }
               }
             },
-            "description": "Accepted, deletion of cluster happens asynchronously. The deletion is done as soon as GetCluster returns a 404 code. The progress can be observerd in the GetCluster's lastOperation field that contains a progress indicator."
+            "description": "Accepted, deletion of cluster happens asynchronously. The deletion is done as soon as GetCluster returns a 404 code. The progress can be observed in the GetCluster's lastOperation field that contains a progress indicator."
           },
           "400": {
             "content": {
@@ -2282,7 +2343,7 @@
                 }
               }
             },
-            "description": "Invalid request."
+            "description": "Invalid request"
           },
           "401": {
             "content": {
@@ -2293,6 +2354,16 @@
               }
             },
             "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Project or cluster not found"
           },
           "default": {
             "content": {
@@ -2368,7 +2439,7 @@
                 }
               }
             },
-            "description": "Invalid request."
+            "description": "Invalid request"
           },
           "401": {
             "content": {
@@ -2379,6 +2450,16 @@
               }
             },
             "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Project or cluster not found"
           },
           "default": {
             "content": {
@@ -2464,7 +2545,7 @@
                 }
               }
             },
-            "description": "Accepted, creation/update of cluster happens asynchronously. The status of the cluster is specified in the status.conditions array of the response object. An entry in the status.conditions array represents the status of a condition type, whereat following types are supported: APIServerAvailable, ControlPlaneHealthy, EveryNodeReady, SystemComponentsHealthy. After creation of a cluster is triggered, the status of those types is initially `Progressing` and changes to `True` when the related type is successfully created and available."
+            "description": "Accepted, creation/update of cluster happens asynchronously. The status of the cluster is specified in the status.aggregated field of the response object. After creation of a cluster is triggered, the status is initially `STATE_CREATING` and changes to `STATE_HEALTHY` when the cluster was successfully created."
           },
           "400": {
             "content": {
@@ -2474,7 +2555,7 @@
                 }
               }
             },
-            "description": "Invalid request."
+            "description": "Invalid request"
           },
           "401": {
             "content": {
@@ -2494,7 +2575,7 @@
                 }
               }
             },
-            "description": "Project not found."
+            "description": "Project not found"
           },
           "default": {
             "content": {
@@ -2582,7 +2663,7 @@
                 }
               }
             },
-            "description": "Invalid request."
+            "description": "Invalid request"
           },
           "401": {
             "content": {
@@ -2602,7 +2683,7 @@
                 }
               }
             },
-            "description": "Cluster not found."
+            "description": "Project or cluster not found"
           },
           "default": {
             "content": {
@@ -2633,7 +2714,7 @@
     },
     "/v2/projects/{projectId}/regions/{region}/clusters/{clusterName}/hibernate": {
       "post": {
-        "description": "Trigger immediate hibernation of the cluster. If the cluster is already in hibernation state, the method does nothing.",
+        "description": "Trigger immediate hibernation of the cluster. If the cluster is already in hibernation state, this endpoint does nothing.",
         "operationId": "TriggerHibernate",
         "parameters": [
           {
@@ -2680,7 +2761,7 @@
                 }
               }
             },
-            "description": "Accepted, execution happens asynchronously. Use GetCluster endpoint to read the status of the cluster via status.conditions."
+            "description": "Accepted, execution happens asynchronously. Use the [get cluster](#tag/Cluster/operation/SkeService_GetCluster) endpoint to get the status of the cluster via `status.aggregated`."
           },
           "400": {
             "content": {
@@ -2690,7 +2771,7 @@
                 }
               }
             },
-            "description": "Invalid request."
+            "description": "Invalid request"
           },
           "401": {
             "content": {
@@ -2710,7 +2791,7 @@
                 }
               }
             },
-            "description": "Cluster not found."
+            "description": "Project or cluster not found"
           },
           "default": {
             "content": {
@@ -2741,7 +2822,7 @@
     },
     "/v2/projects/{projectId}/regions/{region}/clusters/{clusterName}/kubeconfig": {
       "post": {
-        "description": "Create a new kubeconfig for the cluster. You can specify the expiration (in seconds) in the request body. Its value must be in the range from 600 (10 min) to 15552000 (6 months).",
+        "description": "Create a new admin kubeconfig for the cluster. You can specify the expiration (in seconds) in the request body. Its value must be in the range from 600 (10 min) to 15552000 (6 months). Defaults to 3600.",
         "operationId": "CreateKubeconfig",
         "parameters": [
           {
@@ -2798,7 +2879,7 @@
                 }
               }
             },
-            "description": "Invalid request."
+            "description": "Invalid request"
           },
           "401": {
             "content": {
@@ -2809,6 +2890,16 @@
               }
             },
             "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Project or cluster not found"
           },
           "default": {
             "content": {
@@ -2821,7 +2912,7 @@
             "description": "An unexpected error response."
           }
         },
-        "summary": "Create a kubeconfig",
+        "summary": "Create an admin kubeconfig",
         "x-stackit-authorization": {
           "actions": [
             "ske.cluster.kubeconfig.create"
@@ -2837,9 +2928,107 @@
         }
       }
     },
+    "/v2/projects/{projectId}/regions/{region}/clusters/{clusterName}/kubeconfig/idp": {
+      "get": {
+        "description": "A kubeconfig retrieved using this endpoint does not contain any credentials and instead obtains valid credentials via the STACKIT CLI. Permissions must be granted to the user beforehand using an admin kubeconfig.",
+        "operationId": "GetIDPKubeconfig",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "clusterName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IDPKubeconfig"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Invalid request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Project or cluster not found"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RuntimeError"
+                }
+              }
+            },
+            "description": "An unexpected error response."
+          }
+        },
+        "summary": "Get a kubeconfig to authenticate via IDP for use with the STACKIT CLI",
+        "x-stackit-authorization": {
+          "actions": [
+            "ske.cluster.kubeconfig.idp"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.ske"
+            ]
+          }
+        }
+      }
+    },
     "/v2/projects/{projectId}/regions/{region}/clusters/{clusterName}/kubeconfig/login": {
       "get": {
-        "description": "A kubeconfig retrieved using this endpoint does not contain any credentials and instead obtains valid credentials via the STACKIT CLI.",
+        "description": "A admin kubeconfig retrieved using this endpoint does not contain any credentials and instead obtains valid credentials via the STACKIT CLI.",
         "operationId": "GetLoginKubeconfig",
         "parameters": [
           {
@@ -2886,7 +3075,7 @@
                 }
               }
             },
-            "description": "Invalid request."
+            "description": "Invalid request"
           },
           "401": {
             "content": {
@@ -2897,6 +3086,16 @@
               }
             },
             "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Project or cluster not found"
           },
           "default": {
             "content": {
@@ -2909,7 +3108,7 @@
             "description": "An unexpected error response."
           }
         },
-        "summary": "Get a kubeconfig for use with the STACKIT CLI",
+        "summary": "Get an admin kubeconfig for use with the STACKIT CLI",
         "x-stackit-authorization": {
           "actions": [
             "ske.cluster.kubeconfig.create"
@@ -2974,7 +3173,7 @@
                 }
               }
             },
-            "description": "Accepted, execution happens asynchronously. Use GetCluster endpoint to read the status of the cluster via status.conditions."
+            "description": "Accepted, execution happens asynchronously. Use the [get cluster](#tag/Cluster/operation/SkeService_GetCluster) endpoint to get the status of the cluster via `status.aggregated`."
           },
           "400": {
             "content": {
@@ -2984,7 +3183,7 @@
                 }
               }
             },
-            "description": "Invalid request."
+            "description": "Invalid request"
           },
           "401": {
             "content": {
@@ -3004,7 +3203,7 @@
                 }
               }
             },
-            "description": "Cluster not found."
+            "description": "Project or cluster not found"
           },
           "default": {
             "content": {
@@ -3082,7 +3281,7 @@
                 }
               }
             },
-            "description": "Accepted, execution happens asynchronously. Use GetCluster endpoint to read the status of the cluster via status.conditions."
+            "description": "Accepted, execution happens asynchronously. Use the [get cluster](#tag/Cluster/operation/SkeService_GetCluster) endpoint to get the status of the cluster via `status.aggregated`."
           },
           "400": {
             "content": {
@@ -3092,7 +3291,7 @@
                 }
               }
             },
-            "description": "Invalid request."
+            "description": "Invalid request"
           },
           "401": {
             "content": {
@@ -3112,7 +3311,7 @@
                 }
               }
             },
-            "description": "Cluster not found."
+            "description": "Project or cluster not found"
           },
           "default": {
             "content": {
@@ -3200,7 +3399,7 @@
                 }
               }
             },
-            "description": "Invalid request."
+            "description": "Invalid request"
           },
           "401": {
             "content": {
@@ -3220,7 +3419,7 @@
                 }
               }
             },
-            "description": "Cluster not found."
+            "description": "Project or cluster not found"
           },
           "default": {
             "content": {
@@ -3251,7 +3450,7 @@
     },
     "/v2/projects/{projectId}/regions/{region}/clusters/{clusterName}/wakeup": {
       "post": {
-        "description": "Trigger immediate wake up of the cluster. If the cluster is already in running state, the method does nothing.",
+        "description": "Trigger immediate wake up of the cluster. If the cluster is already in running state, this endpoint does nothing.",
         "operationId": "TriggerWakeup",
         "parameters": [
           {
@@ -3298,7 +3497,7 @@
                 }
               }
             },
-            "description": "Accepted, execution happens asynchronously. Use GetCluster endpoint to read the status of the cluster via status.conditions."
+            "description": "Accepted, execution happens asynchronously. Use the [get cluster](#tag/Cluster/operation/SkeService_GetCluster) endpoint to get the status of the cluster via `status.aggregated`."
           },
           "400": {
             "content": {
@@ -3308,7 +3507,7 @@
                 }
               }
             },
-            "description": "Invalid request."
+            "description": "Invalid request"
           },
           "401": {
             "content": {
@@ -3328,7 +3527,7 @@
                 }
               }
             },
-            "description": "Cluster not found."
+            "description": "Project or cluster not found"
           },
           "default": {
             "content": {
@@ -3359,7 +3558,7 @@
     },
     "/v2/regions/{region}/provider-options": {
       "get": {
-        "description": "Returns a list of supported Kubernetes versions and a list of supported machine types for the cluster nodes.",
+        "description": "Returns available Kubernetes versions, availability zones, machine types, OS versions and volume types for the cluster nodes.",
         "operationId": "ListProviderOptions",
         "parameters": [
           {
@@ -3393,16 +3592,6 @@
               }
             },
             "description": "A successful response."
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Invalid request."
           },
           "401": {
             "content": {

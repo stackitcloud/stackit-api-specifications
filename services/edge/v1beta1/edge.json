@@ -1,6 +1,31 @@
 {
   "components": {
     "schemas": {
+      "CreateInstancePayload": {
+        "properties": {
+          "description": {
+            "description": "A user chosen description to distinguish multiple instances.",
+            "maxLength": 256,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The displayed name to distinguish multiple instances.",
+            "format": "hostname",
+            "maxLength": 8,
+            "minLength": 4,
+            "type": "string"
+          },
+          "planId": {
+            "description": "Service Plan configures the size of the Instance.",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName",
+          "planId"
+        ]
+      },
       "badRequest": {
         "properties": {
           "code": {
@@ -133,31 +158,6 @@
           }
         },
         "type": "object"
-      },
-      "post-instancesPayload": {
-        "properties": {
-          "description": {
-            "description": "A user chosen description to distinguish multiple instances.",
-            "maxLength": 256,
-            "type": "string"
-          },
-          "displayName": {
-            "description": "The displayed name to distinguish multiple instances.",
-            "format": "hostname",
-            "maxLength": 8,
-            "minLength": 4,
-            "type": "string"
-          },
-          "planId": {
-            "description": "Service Plan configures the size of the Instance.",
-            "format": "uuid",
-            "type": "string"
-          }
-        },
-        "required": [
-          "displayName",
-          "planId"
-        ]
       },
       "token": {
         "properties": {
@@ -346,7 +346,7 @@
     "/v1beta1/projects/{projectId}/regions/{regionId}/instances": {
       "get": {
         "description": "Returns a list of all instances within the project.",
-        "operationId": "get-instances",
+        "operationId": "ListInstances",
         "responses": {
           "200": {
             "content": {
@@ -423,12 +423,12 @@
       ],
       "post": {
         "description": "Creates a new instance within the project.",
-        "operationId": "post-instances",
+        "operationId": "CreateInstance",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/post-instancesPayload"
+                "$ref": "#/components/schemas/CreateInstancePayload"
               }
             }
           },

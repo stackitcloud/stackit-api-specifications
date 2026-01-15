@@ -783,17 +783,6 @@
         ],
         "type": "object"
       },
-      "IDPKubeconfig": {
-        "example": {
-          "kubeconfig": "kubeconfig"
-        },
-        "properties": {
-          "kubeconfig": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "Image": {
         "description": "For valid names and versions please take a look at [provider-options](#tag/ProviderOptions/operation/SkeService_GetProviderOptions) `machineImages`.",
         "example": {
@@ -2916,104 +2905,6 @@
         "x-stackit-authorization": {
           "actions": [
             "ske.cluster.kubeconfig.create"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project",
-          "service-enablement": {
-            "services": [
-              "cloud.stackit.ske"
-            ]
-          }
-        }
-      }
-    },
-    "/v2/projects/{projectId}/regions/{region}/clusters/{clusterName}/kubeconfig/idp": {
-      "get": {
-        "description": "A kubeconfig retrieved using this endpoint does not contain any credentials and instead obtains valid credentials via the STACKIT CLI. Permissions must be granted to the user beforehand using an admin kubeconfig.",
-        "operationId": "GetIDPKubeconfig",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "projectId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "region",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "clusterName",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IDPKubeconfig"
-                }
-              }
-            },
-            "description": "A successful response."
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Invalid request"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Project or cluster not found"
-          },
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RuntimeError"
-                }
-              }
-            },
-            "description": "An unexpected error response."
-          }
-        },
-        "summary": "Get a kubeconfig to authenticate via IDP for use with the STACKIT CLI",
-        "x-stackit-authorization": {
-          "actions": [
-            "ske.cluster.kubeconfig.idp"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

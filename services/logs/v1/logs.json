@@ -1,0 +1,942 @@
+{
+  "components": {
+    "parameters": {
+      "accessTokenId": {
+        "description": "The access token UUID.",
+        "in": "path",
+        "name": "tId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "instanceId": {
+        "description": "The Logs Instance UUID.",
+        "in": "path",
+        "name": "instanceId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "projectId": {
+        "description": "The STACKIT portal project UUID the resource is located in.",
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "regionId": {
+        "description": "The STACKIT region name the resource is located in.",
+        "in": "path",
+        "name": "regionId",
+        "required": true,
+        "schema": {
+          "enum": [
+            "eu01",
+            "eu02"
+          ],
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "badRequest": {
+        "description": "Bad Request. The data provided by the client did not match expectations."
+      },
+      "conflict": {
+        "description": "Conflict. The resource has been modified by some other client. Please try again."
+      },
+      "internalServerError": {
+        "description": "Internal server error. The application experienced some unexpected situation."
+      },
+      "notFound": {
+        "description": "Not found. The resource has not been found."
+      },
+      "unauthorized": {
+        "content": {
+          "text/plain": {
+            "schema": {
+              "example": "Jwt is missing",
+              "type": "string"
+            }
+          }
+        },
+        "description": "Unauthorized. You may have provided no or wrong credentials."
+      }
+    },
+    "schemas": {
+      "CreateAccessTokenPayload": {
+        "properties": {
+          "description": {
+            "description": "The description of the access token.",
+            "maxLength": 100,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The displayed name of the access token.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z][\\w -]*$",
+            "type": "string"
+          },
+          "lifetime": {
+            "description": "A lifetime period for an access token in days. If unset the token will not expire.",
+            "format": "int32",
+            "maximum": 180,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "permissions": {
+            "$ref": "#/components/schemas/permissions"
+          }
+        },
+        "required": [
+          "permissions",
+          "displayName"
+        ]
+      },
+      "CreateLogsInstancePayload": {
+        "properties": {
+          "acl": {
+            "description": "The access control list for the Logs instance.",
+            "items": {
+              "example": "192.168.0.1/32",
+              "type": "string"
+            },
+            "maxLength": 30,
+            "type": "array"
+          },
+          "description": {
+            "description": "The description of the access token.",
+            "maxLength": 100,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The displayed name to distinguish multiple Logs instances.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z][\\w -]*$",
+            "type": "string"
+          },
+          "retentionDays": {
+            "description": "The log retention time in days.",
+            "format": "int32",
+            "maximum": 180,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "displayName",
+          "retentionDays"
+        ]
+      },
+      "UpdateAccessTokenPayload": {
+        "properties": {
+          "description": {
+            "description": "The description of the access token.",
+            "maxLength": 100,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The displayed name of the access token.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z][\\w -]*$",
+            "type": "string"
+          }
+        }
+      },
+      "UpdateLogsInstancePayload": {
+        "properties": {
+          "acl": {
+            "description": "The access control list for the Logs instance.",
+            "items": {
+              "example": "192.168.0.1/32",
+              "type": "string"
+            },
+            "maxLength": 30,
+            "type": "array"
+          },
+          "description": {
+            "description": "The description of the Logs instance.",
+            "maxLength": 100,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The displayed name to distinguish multiple Logs instances.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z][\\w -]*$",
+            "type": "string"
+          },
+          "retentionDays": {
+            "description": "The log retention time in days.",
+            "format": "int32",
+            "maximum": 180,
+            "minimum": 1,
+            "type": "integer"
+          }
+        }
+      },
+      "accessToken": {
+        "properties": {
+          "accessToken": {
+            "description": "A generated access token. Only available on creation.",
+            "type": "string"
+          },
+          "creator": {
+            "description": "The user who created the access token.",
+            "type": "string"
+          },
+          "description": {
+            "description": "The description of the access token.",
+            "maxLength": 100,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The displayed name of the access token.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z][\\w -]*$",
+            "type": "string"
+          },
+          "expires": {
+            "description": "Indicates if the access token can expire.",
+            "type": "boolean"
+          },
+          "id": {
+            "description": "An auto generated unique id which identifies the access token.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "permissions": {
+            "$ref": "#/components/schemas/permissions"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "expired"
+            ],
+            "type": "string"
+          },
+          "validUntil": {
+            "description": "The date and time util an access token is valid to (inclusively).",
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "expires",
+          "status",
+          "permissions",
+          "creator",
+          "displayName"
+        ]
+      },
+      "accessTokenList": {
+        "properties": {
+          "tokens": {
+            "items": {
+              "$ref": "#/components/schemas/accessToken"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "tokens"
+        ]
+      },
+      "logsInstance": {
+        "properties": {
+          "acl": {
+            "description": "The access control list for the Logs instance.",
+            "items": {
+              "example": "192.168.0.1/32",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "created": {
+            "description": "The date and time the creation of the Logs instance was triggered.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "datasourceUrl": {
+            "description": "The Logs instance's datasource URL, can be used in Grafana as a datasource URL",
+            "type": "string"
+          },
+          "description": {
+            "description": "The description of the Logs instance.",
+            "maxLength": 100,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The displayed name of the Logs instance.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z][\\w -]*$",
+            "type": "string"
+          },
+          "id": {
+            "description": "A auto generated unique id which identifies the Logs instance.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "ingestOtlpUrl": {
+            "description": "The Logs instance's ingest logs via OTLP URL",
+            "type": "string"
+          },
+          "ingestUrl": {
+            "description": "The Logs instance's ingest logs URL",
+            "type": "string"
+          },
+          "queryRangeUrl": {
+            "description": "The Logs instance's query range URL",
+            "type": "string"
+          },
+          "queryUrl": {
+            "description": "The Logs instance's query  URL",
+            "type": "string"
+          },
+          "retentionDays": {
+            "description": "The log retention time in days.",
+            "format": "int32",
+            "maximum": 180,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "status": {
+            "description": "The current status of the Logs instance.",
+            "enum": [
+              "active",
+              "deleting",
+              "reconciling"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "retentionDays",
+          "status",
+          "created"
+        ]
+      },
+      "logsInstancesList": {
+        "properties": {
+          "instances": {
+            "items": {
+              "$ref": "#/components/schemas/logsInstance"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "instances"
+        ]
+      },
+      "permissions": {
+        "description": "The access permissions granted to the access token.",
+        "example": [
+          "read",
+          "write"
+        ],
+        "items": {
+          "enum": [
+            "read",
+            "write"
+          ],
+          "type": "string"
+        },
+        "type": "array"
+      }
+    }
+  },
+  "info": {
+    "description": "This API provides endpoints for managing STACKIT Logs.\n",
+    "title": "STACKIT Logs API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1/projects/{projectId}/regions/{regionId}/instances": {
+      "get": {
+        "description": "Returns a list of all Logs instances within the project.",
+        "operationId": "ListLogsInstances",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/logsInstancesList"
+                }
+              }
+            },
+            "description": "Successful response with all Logs instances."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "List Logs instances",
+        "x-stackit-authorization": {
+          "actions": [
+            "logs.instance.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        }
+      ],
+      "post": {
+        "description": "Creates a new Logs instance within the project.",
+        "operationId": "CreateLogsInstance",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLogsInstancePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/logsInstance"
+                }
+              }
+            },
+            "description": "Logs instance was created successfully"
+          },
+          "400": {
+            "description": "Bad Request. Invalid display displayName or description field"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Create Logs instance",
+        "x-stackit-authorization": {
+          "actions": [
+            "logs.instance.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{regionId}/instances/{instanceId}": {
+      "delete": {
+        "description": "Deletes the given Logs instance.",
+        "operationId": "DeleteLogsInstance",
+        "responses": {
+          "204": {
+            "description": "Logs instance was deleted successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Delete Logs instance",
+        "x-stackit-authorization": {
+          "actions": [
+            "logs.instance.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns the details for the given Logs instance.",
+        "operationId": "GetLogsInstance",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/logsInstance"
+                }
+              }
+            },
+            "description": "Logs instance details successfully retrieved."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Get Logs Instance",
+        "x-stackit-authorization": {
+          "actions": [
+            "logs.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/instanceId"
+        }
+      ],
+      "put": {
+        "description": "Updates the given Logs instance.",
+        "operationId": "UpdateLogsInstance",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLogsInstancePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/logsInstance"
+                }
+              }
+            },
+            "description": "Logs instance was updated successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Update Logs instance",
+        "x-stackit-authorization": {
+          "actions": [
+            "logs.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{regionId}/instances/{instanceId}/access-tokens": {
+      "delete": {
+        "description": "Deletes all access tokens available for a Logs instance",
+        "operationId": "DeleteAllAccessTokens",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/accessTokenList"
+                }
+              }
+            },
+            "description": "All access tokens were deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Delete All Access Tokens",
+        "x-stackit-authorization": {
+          "actions": [
+            "logs.instance.credentials.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns a list of access tokens created for a Logs instance",
+        "operationId": "ListAccessTokens",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/accessTokenList"
+                }
+              }
+            },
+            "description": "Logs instance access token"
+          },
+          "400": {
+            "description": "Bad Request."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "List Access Tokens",
+        "x-stackit-authorization": {
+          "actions": [
+            "logs.instance.credentials.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/instanceId"
+        }
+      ],
+      "post": {
+        "description": "Create a new Logs instance access token",
+        "operationId": "CreateAccessToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAccessTokenPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/accessToken"
+                }
+              }
+            },
+            "description": "Logs instance access token was created successfully"
+          },
+          "400": {
+            "description": "Bad Request. Invalid lifetime"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Create Access Token",
+        "x-stackit-authorization": {
+          "actions": [
+            "logs.instance.credentials.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{regionId}/instances/{instanceId}/access-tokens/expired": {
+      "delete": {
+        "description": "Deletes all expired access tokens",
+        "operationId": "DeleteAllExpiredAccessTokens",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/accessTokenList"
+                }
+              }
+            },
+            "description": "Expired access tokens were deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Deletes all expired access tokens",
+        "x-stackit-authorization": {
+          "actions": [
+            "logs.instance.credentials.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/instanceId"
+        }
+      ]
+    },
+    "/v1/projects/{projectId}/regions/{regionId}/instances/{instanceId}/access-tokens/{tId}": {
+      "delete": {
+        "description": "Deletes a Logs instance access token",
+        "operationId": "DeleteAccessToken",
+        "responses": {
+          "204": {
+            "description": "Logs instance access token has been deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Delete Access Token",
+        "x-stackit-authorization": {
+          "actions": [
+            "logs.instance.credentials.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get the information of the given access token.",
+        "operationId": "GetAccessToken",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/accessToken"
+                }
+              }
+            },
+            "description": "Returns the information of the access token."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Get Access Token",
+        "x-stackit-authorization": {
+          "actions": [
+            "logs.instance.credentials.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/instanceId"
+        },
+        {
+          "$ref": "#/components/parameters/accessTokenId"
+        }
+      ],
+      "put": {
+        "description": "Updates the given access token.",
+        "operationId": "UpdateAccessToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAccessTokenPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Logs instance access token was updated successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "summary": "Update Access Token",
+        "x-stackit-authorization": {
+          "actions": [
+            "logs.instance.credentials.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://logs.api.stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "global"
+        }
+      }
+    }
+  ]
+}

@@ -1,6 +1,18 @@
 {
   "components": {
     "parameters": {
+      "AuthenticationId": {
+        "description": "Authentication Source identifier.",
+        "example": "83b8e9c4-e3d1-4dc4-bb89-9854c8b5383e",
+        "explode": false,
+        "in": "path",
+        "name": "authenticationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        },
+        "style": "simple"
+      },
       "InstanceId": {
         "description": "Instance identifier.",
         "example": "83b8e9c4-e3d1-4dc4-bb89-9854c8b5383e",
@@ -37,6 +49,120 @@
         "maxItems": 50,
         "type": "array"
       },
+      "Authentication": {
+        "description": "Describes an authentication definition associated to a STACKIT Git instance. The provider type will be an openidConnect type.",
+        "properties": {
+          "auto_discover_url": {
+            "description": "The well-known configuration url to use for this authentication definition.",
+            "type": "string"
+          },
+          "client_id": {
+            "description": "The IDP client id to use.",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "maxLength": 48,
+            "type": "string"
+          },
+          "icon_url": {
+            "description": "The url of the icon to use for this authentication definition.",
+            "type": "string"
+          },
+          "id": {
+            "description": "An auto generated unique uuid which identifies the authentication definition in STACKIT Git instances.",
+            "format": "uuid",
+            "maxLength": 36,
+            "type": "string"
+          },
+          "name": {
+            "description": "The name to identify an authentication definition associated with a STACKIT Git instance.",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "provider": {
+            "description": "The Oauth2 provider to use.",
+            "type": "string"
+          },
+          "scopes": {
+            "description": "Scopes defines the OIDC scopes to request.",
+            "type": "string"
+          },
+          "status": {
+            "description": "The current status of the authentication definition.",
+            "example": "Ready",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "name",
+          "client_id",
+          "icon_url",
+          "auto_discover_url",
+          "provider",
+          "scopes",
+          "status"
+        ]
+      },
+      "AuthenticationList": {
+        "description": "A list of authentications belonging to an Instance.",
+        "properties": {
+          "authentication": {
+            "items": {
+              "$ref": "#/components/schemas/Authentication"
+            },
+            "maxItems": 50,
+            "type": "array"
+          }
+        },
+        "required": [
+          "authentication"
+        ]
+      },
+      "CreateAuthenticationPayload": {
+        "description": "Properties to patch on an authentication. All fields are optional.",
+        "properties": {
+          "auto_discover_url": {
+            "description": "The well-known configuration url to use for this authentication definition.",
+            "type": "string"
+          },
+          "client_id": {
+            "description": "The IDP client id to use.",
+            "type": "string"
+          },
+          "client_secret": {
+            "description": "The IDP client secret to use.",
+            "type": "string"
+          },
+          "icon_url": {
+            "description": "The url of the icon to use for this authentication definition.",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name to identify an authentication definition associated with a STACKIT Git instance.",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "provider": {
+            "default": "openidConnect",
+            "description": "The Oauth2 provider to use.",
+            "type": "string"
+          },
+          "scopes": {
+            "default": "openid profile email",
+            "description": "Scopes defines the OIDC scopes to request.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "client_id",
+          "client_secret",
+          "auto_discover_url"
+        ]
+      },
       "CreateInstancePayload": {
         "description": "Request a STACKIT Git instance to be created with these properties.",
         "properties": {
@@ -44,11 +170,12 @@
             "$ref": "#/components/schemas/Acl"
           },
           "flavor": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/InstanceFlavor"
-              }
-            ]
+            "enum": [
+              "git-10",
+              "git-100"
+            ],
+            "example": "git-100",
+            "type": "string"
           },
           "name": {
             "description": "A user chosen name to distinguish multiple STACKIT Git instances.",
@@ -61,6 +188,48 @@
         "required": [
           "name"
         ]
+      },
+      "CreateRunnerPayload": {
+        "description": "Request a runner to be created supporting the requested list of runtime labels.",
+        "properties": {
+          "labels": {
+            "items": {
+              "example": "stackit-docker",
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "labels"
+        ]
+      },
+      "FeatureToggle": {
+        "description": "Feature toggles for the instance.",
+        "properties": {
+          "default_email_notifications": {
+            "description": "Default email notifications.",
+            "enum": [
+              "enabled",
+              "disabled",
+              "onmention",
+              "andyourown"
+            ],
+            "nullable": true,
+            "type": "string"
+          },
+          "enable_commit_signatures": {
+            "description": "Enable commit signatures.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "enable_local_login": {
+            "description": "Enable local login.",
+            "nullable": true,
+            "type": "boolean"
+          }
+        },
+        "type": "object"
       },
       "Flavor": {
         "description": "Describes a STACKIT Git Flavor.",
@@ -101,6 +270,20 @@
           "sku"
         ]
       },
+      "FlavorsList": {
+        "description": "A list of STACKIT Git Flavors.",
+        "properties": {
+          "flavors": {
+            "items": {
+              "$ref": "#/components/schemas/Flavor"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "flavors"
+        ]
+      },
       "GenericErrorResponse": {
         "description": "Generic Error Response.",
         "properties": {
@@ -138,14 +321,14 @@
             "description": "How many bytes of Object Storage is consumed. Read Only.",
             "type": "string"
           },
-          "created": {
+          "created_at": {
             "description": "The date and time the creation of the STACKIT Git instance was triggered.",
             "format": "date-time",
             "maxLength": 48,
             "type": "string"
           },
           "flavor": {
-            "description": "Desired instance flavor. Must be one of the defined enum values",
+            "description": "Instance flavor.",
             "type": "string"
           },
           "id": {
@@ -187,7 +370,7 @@
           "id",
           "name",
           "url",
-          "created",
+          "created_at",
           "state",
           "version",
           "consumed_disk",
@@ -196,40 +379,7 @@
           "acl"
         ]
       },
-      "InstanceFlavor": {
-        "description": "Desired instance flavor. Must be one of the defined enum values.",
-        "enum": [
-          "git-10",
-          "git-100"
-        ],
-        "maxLength": 255,
-        "type": "string"
-      },
-      "InternalServerErrorResponse": {
-        "description": "Internal server error.",
-        "properties": {
-          "error": {
-            "example": "Internal server error.",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "ListFlavors": {
-        "description": "A list of STACKIT Git Flavors.",
-        "properties": {
-          "flavors": {
-            "items": {
-              "$ref": "#/components/schemas/Flavor"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "flavors"
-        ]
-      },
-      "ListInstances": {
+      "InstanceList": {
         "description": "A list of STACKIT Git instances.",
         "properties": {
           "instances": {
@@ -244,19 +394,44 @@
           "instances"
         ]
       },
-      "ListRunnerLabels": {
-        "description": "A list of STACKIT Git RunnerLabels.",
+      "InternalServerErrorResponse": {
+        "description": "Internal server error.",
         "properties": {
-          "runner-labels": {
-            "items": {
-              "$ref": "#/components/schemas/RunnerLabel"
-            },
-            "type": "array"
+          "error": {
+            "example": "Internal server error.",
+            "type": "string"
           }
         },
-        "required": [
-          "runner-labels"
-        ]
+        "type": "object"
+      },
+      "PatchAuthenticationPayload": {
+        "description": "Properties to patch on an authentication. All fields are optional.",
+        "properties": {
+          "auto_discover_url": {
+            "description": "The well-known configuration url to use for this authentication definition.",
+            "type": "string"
+          },
+          "client_id": {
+            "description": "The IDP client id to use.",
+            "type": "string"
+          },
+          "client_secret": {
+            "description": "The IDP client secret to use.",
+            "type": "string"
+          },
+          "icon_url": {
+            "description": "The url of the icon to use for this authentication definition.",
+            "type": "string"
+          },
+          "provider": {
+            "description": "The Oauth2 provider to use.",
+            "type": "string"
+          },
+          "scopes": {
+            "description": "Scopes defines the OIDC scopes to request.",
+            "type": "string"
+          }
+        }
       },
       "PatchInstancePayload": {
         "description": "Properties to patch on an instance. All fields are optional.",
@@ -268,6 +443,9 @@
               }
             ],
             "nullable": true
+          },
+          "feature_toggle": {
+            "$ref": "#/components/schemas/FeatureToggle"
           }
         },
         "type": "object"
@@ -300,28 +478,88 @@
         ],
         "type": "object"
       },
-      "RunnerLabel": {
-        "description": "Describes a STACKIT Git RunnerLabel.",
+      "Runner": {
+        "description": "Describes a runner associated to a STACKIT Git instance.",
         "properties": {
-          "description": {
-            "description": "RunnerLabel description.",
+          "created_at": {
+            "format": "date-time",
+            "maxLength": 48,
             "type": "string"
           },
           "id": {
-            "description": "RunnerLabel id.",
+            "format": "uuid",
             "maxLength": 36,
             "type": "string"
           },
+          "labels": {
+            "items": {
+              "example": "stackit-docker",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "status": {
+            "description": "The current status of the runner.",
+            "example": "Ready",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "labels",
+          "status"
+        ]
+      },
+      "RunnerRuntime": {
+        "description": "Describes a STACKIT Git Runner runtime.",
+        "properties": {
+          "availability": {
+            "description": "Indicates the availability of the runner label",
+            "example": "available",
+            "type": "string"
+          },
+          "description": {
+            "description": "Human-friendly description of the runtime and it's capabilities.",
+            "example": "A runner capable of building Docker images and runner Docker containers.",
+            "type": "string"
+          },
+          "display_name": {
+            "description": "Human-friendly name of the runtime.",
+            "type": "string"
+          },
+          "id": {
+            "description": "Runtime identifier.",
+            "example": "stackit-docker",
+            "type": "string"
+          },
           "label": {
-            "description": "RunnerLabel label.",
-            "maxLength": 64,
+            "description": "Runtime label.",
+            "example": "stackit-docker",
             "type": "string"
           }
         },
         "required": [
           "id",
           "label",
-          "description"
+          "display_name",
+          "description",
+          "availability",
+          "status"
+        ]
+      },
+      "RunnerRuntimeList": {
+        "description": "A list of STACKIT Git RunnerLabels.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RunnerRuntime"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
         ]
       },
       "UUID": {
@@ -332,16 +570,6 @@
         "minLength": 36,
         "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "string"
-      },
-      "UnauthorizedResponse": {
-        "description": "The request could not be authorized.",
-        "properties": {
-          "error": {
-            "example": "Unauthorized",
-            "type": "string"
-          }
-        },
-        "type": "object"
       }
     }
   },
@@ -366,7 +594,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListFlavors"
+                  "$ref": "#/components/schemas/FlavorsList"
                 }
               }
             },
@@ -383,13 +611,6 @@
             "description": "Bad Request."
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UnauthorizedResponse"
-                }
-              }
-            },
             "description": "Unauthorized."
           },
           "404": {
@@ -409,7 +630,7 @@
         "summary": "Returns the details for the given STACKIT Git flavors.",
         "x-stackit-authorization": {
           "actions": [
-            "git.flavor.list"
+            "git.instance.create"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",
@@ -425,13 +646,13 @@
     "/v1beta/projects/{projectId}/instances": {
       "get": {
         "description": "Lists all STACKIT Git instances within a project.\n",
-        "operationId": "ListInstances",
+        "operationId": "GetInstances",
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListInstances"
+                  "$ref": "#/components/schemas/InstanceList"
                 }
               }
             },
@@ -448,13 +669,6 @@
             "description": "Bad Request."
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UnauthorizedResponse"
-                }
-              }
-            },
             "description": "Unauthorized."
           },
           "500": {
@@ -498,7 +712,7 @@
           "required": true
         },
         "responses": {
-          "201": {
+          "202": {
             "content": {
               "application/json": {
                 "schema": {
@@ -519,13 +733,6 @@
             "description": "Bad Request."
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UnauthorizedResponse"
-                }
-              }
-            },
             "description": "Unauthorized."
           },
           "409": {
@@ -565,8 +772,8 @@
         "description": "Deletes a STACKIT Git instance and destroys all associated data.\n",
         "operationId": "DeleteInstance",
         "responses": {
-          "202": {
-            "description": "Instance was deleted."
+          "204": {
+            "description": "Accepted."
           },
           "400": {
             "content": {
@@ -579,19 +786,26 @@
             "description": "Bad Request."
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UnauthorizedResponse"
-                }
-              }
-            },
             "description": "Unauthorized."
           },
           "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
             "description": "Not found."
           },
           "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
             "description": "Conflict."
           },
           "500": {
@@ -640,16 +854,16 @@
             "description": "Bad Request."
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UnauthorizedResponse"
-                }
-              }
-            },
             "description": "Unauthorized."
           },
           "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
             "description": "Not found."
           },
           "500": {
@@ -691,7 +905,11 @@
                 "acl": [
                   "1.1.1.1/1",
                   "1.2.3.4/5"
-                ]
+                ],
+                "feature_toggle": {
+                  "default_email_notifications": "enabled",
+                  "enable_local_login": true
+                }
               },
               "schema": {
                 "$ref": "#/components/schemas/PatchInstancePayload"
@@ -740,13 +958,6 @@
             "description": "Bad Request."
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UnauthorizedResponse"
-                }
-              }
-            },
             "description": "Unauthorized."
           },
           "404": {
@@ -777,20 +988,20 @@
         }
       }
     },
-    "/v1beta/projects/{projectId}/runner-labels": {
+    "/v1beta/projects/{projectId}/instances/{instanceId}/authentications": {
       "get": {
-        "description": "Type of runners we can use for running jobs.\n",
-        "operationId": "ListRunnerLabels",
+        "description": "Lists all authentication sources belonging to a specific instance\n",
+        "operationId": "ListAuthentication",
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListRunnerLabels"
+                  "$ref": "#/components/schemas/AuthenticationList"
                 }
               }
             },
-            "description": "Git RunnerLabels."
+            "description": "Successful response with all the authentication sources."
           },
           "400": {
             "content": {
@@ -803,13 +1014,327 @@
             "description": "Bad Request."
           },
           "401": {
+            "description": "Unauthorized."
+          },
+          "500": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UnauthorizedResponse"
+                  "$ref": "#/components/schemas/GenericErrorResponse"
                 }
               }
             },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "List authentication sources",
+        "x-stackit-authorization": {
+          "actions": [
+            "git.instance.authentication-source.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ProjectId"
+        },
+        {
+          "$ref": "#/components/parameters/InstanceId"
+        }
+      ],
+      "post": {
+        "description": "Creates an authentication source for the corresponding STACKIT Git instance\n",
+        "operationId": "CreateAuthentication",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAuthenticationPayload"
+              }
+            }
+          },
+          "description": "Authentication Definition configuration data.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Authentication"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Project or Instance not found."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "Creates an authentication source",
+        "x-stackit-authorization": {
+          "actions": [
+            "git.instance.authentication-source.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/instances/{instanceId}/authentications/{authenticationId}": {
+      "delete": {
+        "description": "Deletes the authentication source associated to this STACKIT Git instance.\n",
+        "operationId": "DeleteAuthentication",
+        "responses": {
+          "204": {
+            "description": "Authentication Source was deleted."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Not found."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "Delete Authentication Source",
+        "x-stackit-authorization": {
+          "actions": [
+            "git.instance.authentication-source.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get authentication provider\n",
+        "operationId": "GetAuthentication",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Authentication"
+                }
+              }
+            },
+            "description": "Successful response with all the authentication sources."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "Get authentication provider",
+        "x-stackit-authorization": {
+          "actions": [
+            "git.instance.authentication-source.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ProjectId"
+        },
+        {
+          "$ref": "#/components/parameters/InstanceId"
+        },
+        {
+          "$ref": "#/components/parameters/AuthenticationId"
+        }
+      ],
+      "patch": {
+        "description": "Patches the Authentication Provider.\n",
+        "operationId": "PatchAuthentication",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchAuthenticationPayload"
+              }
+            }
+          },
+          "description": "Authentication Definition configuration data.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Authentication"
+                }
+              }
+            },
+            "description": "Authentication was updated."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "Patch Authentication.",
+        "x-stackit-authorization": {
+          "actions": [
+            "git.instance.authentication-source.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/instances/{instanceId}/runner": {
+      "delete": {
+        "description": "Deletes the runner associated to this STACKIT Git instance and destroys all associated data.\n",
+        "operationId": "DeleteRunner",
+        "responses": {
+          "204": {
+            "description": "Runner was deleted."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
             "description": "Unauthorized."
           },
           "404": {
@@ -826,10 +1351,197 @@
             "description": "Internal server error."
           }
         },
-        "summary": "Returns the details for the given STACKIT Git RunnerLabels.",
+        "summary": "Delete Runner.",
         "x-stackit-authorization": {
           "actions": [
-            "git.flavor.list"
+            "git.runner.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Retrieves information about a runner in a STACKIT Git instance.",
+        "operationId": "GetRunner",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Runner"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "Get Runner information.",
+        "x-stackit-authorization": {
+          "actions": [
+            "git.runner.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ProjectId"
+        },
+        {
+          "$ref": "#/components/parameters/InstanceId"
+        }
+      ],
+      "post": {
+        "description": "Creates the runner associated to this STACKIT Git instance.\n",
+        "operationId": "CreateRunner",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRunnerPayload"
+              }
+            }
+          },
+          "description": "Runner configuration options.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Runner"
+                }
+              }
+            },
+            "description": "Accepted."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "Create the runner associated to this instance.",
+        "x-stackit-authorization": {
+          "actions": [
+            "git.runner.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/runner-runtimes": {
+      "get": {
+        "description": "A list of runner runtimes that are available to be enabled for the project.",
+        "operationId": "ListRunnerRuntimes",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunnerRuntimeList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "git.runner.get"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

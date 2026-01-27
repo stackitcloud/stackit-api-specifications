@@ -432,6 +432,12 @@
           "backupSchedule": {
             "$ref": "#/components/schemas/backup.schedule"
           },
+          "connectionInfo": {
+            "$ref": "#/components/schemas/instance.connectionInfo"
+          },
+          "encryption": {
+            "$ref": "#/components/schemas/instance.encryption"
+          },
           "flavorId": {
             "$ref": "#/components/schemas/flavor.flavorId"
           },
@@ -474,7 +480,8 @@
           "status",
           "storage",
           "version",
-          "network"
+          "network",
+          "connectionInfo"
         ],
         "type": "object"
       },
@@ -1261,6 +1268,27 @@
           "maxIoPerSec",
           "maxThroughInMb",
           "class"
+        ],
+        "type": "object"
+      },
+      "instance.connectionInfo": {
+        "description": "The DNS name and port in the instance overview",
+        "properties": {
+          "host": {
+            "description": "The host of the instance.",
+            "example": "postgresql.eu01.onstackit.cloud",
+            "type": "string"
+          },
+          "port": {
+            "description": "The port of the instance.",
+            "example": 5432,
+            "format": "uint32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "host",
+          "port"
         ],
         "type": "object"
       },

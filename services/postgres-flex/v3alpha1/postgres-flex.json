@@ -284,6 +284,17 @@
       }
     },
     "schemas": {
+      "CloneResponse": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/instance.id"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
       "CreateDatabaseResponse": {
         "properties": {
           "id": {
@@ -432,6 +443,9 @@
       },
       "GetInstanceResponse": {
         "properties": {
+          "acl": {
+            "$ref": "#/components/schemas/acl"
+          },
           "backupSchedule": {
             "$ref": "#/components/schemas/backup.schedule"
           },
@@ -1020,6 +1034,53 @@
         "example": "AUTOMATED",
         "type": "string"
       },
+      "clone.instanceOverrides": {
+        "properties": {
+          "performanceClass": {
+            "$ref": "#/components/schemas/clone.storage.class"
+          },
+          "size": {
+            "$ref": "#/components/schemas/clone.storage.size"
+          }
+        },
+        "required": [
+          "size",
+          "performanceClass"
+        ],
+        "type": "object"
+      },
+      "clone.pointInTime": {
+        "description": "the time for the point in time recovery it will be calculated between first backup and last backup",
+        "example": "2023-12-30T23:25:05Z",
+        "format": "date-time",
+        "type": "string"
+      },
+      "clone.storage.class": {
+        "description": "The storage class for the storage.",
+        "example": "premium-perf12-stackit",
+        "type": "string"
+      },
+      "clone.storage.size": {
+        "description": "The storage size in Gigabytes.",
+        "example": 10,
+        "format": "uint64",
+        "type": "integer"
+      },
+      "cloneRequestPayload": {
+        "properties": {
+          "instanceOverrides": {
+            "$ref": "#/components/schemas/clone.instanceOverrides"
+          },
+          "pointInTime": {
+            "$ref": "#/components/schemas/clone.pointInTime"
+          }
+        },
+        "required": [
+          "pointInTime",
+          "instanceOverrides"
+        ],
+        "type": "object"
+      },
       "createDatabaseRequestPayload": {
         "properties": {
           "name": {
@@ -1049,7 +1110,7 @@
             "$ref": "#/components/schemas/instance.name"
           },
           "network": {
-            "$ref": "#/components/schemas/instance.network"
+            "$ref": "#/components/schemas/instance.network.create"
           },
           "replicas": {
             "$ref": "#/components/schemas/replicas"
@@ -1390,24 +1451,40 @@
         ],
         "type": "string"
       },
-      "instance.network.opt": {
+      "instance.network.create": {
         "description": "The access configuration of the instance",
         "properties": {
           "accessScope": {
             "$ref": "#/components/schemas/instance.network.accessScope"
           },
           "acl": {
-            "$ref": "#/components/schemas/acl.opt"
-          },
-          "instanceAddress": {
-            "example": "10.0.0.2",
-            "type": "string"
-          },
-          "routerAddress": {
-            "example": "10.0.0.1",
-            "type": "string"
+            "$ref": "#/components/schemas/acl"
           }
         },
+        "required": [
+          "acl"
+        ],
+        "type": "object"
+      },
+      "instance.network.opt": {
+        "description": "The access configuration of the instance",
+        "properties": {
+          "acl": {
+            "$ref": "#/components/schemas/acl.opt"
+          }
+        },
+        "type": "object"
+      },
+      "instance.network.update": {
+        "description": "The access configuration of the instance",
+        "properties": {
+          "acl": {
+            "$ref": "#/components/schemas/acl"
+          }
+        },
+        "required": [
+          "acl"
+        ],
         "type": "object"
       },
       "instance.sort": {
@@ -1644,7 +1721,7 @@
             "$ref": "#/components/schemas/instance.name.opt"
           },
           "network": {
-            "$ref": "#/components/schemas/instance.network"
+            "$ref": "#/components/schemas/instance.network.opt"
           },
           "replicas": {
             "$ref": "#/components/schemas/replicas.opt"
@@ -1673,7 +1750,7 @@
             "$ref": "#/components/schemas/instance.name"
           },
           "network": {
-            "$ref": "#/components/schemas/instance.network"
+            "$ref": "#/components/schemas/instance.network.update"
           },
           "replicas": {
             "$ref": "#/components/schemas/replicas"
@@ -3172,6 +3249,154 @@
         "x-stackit-authorization": {
           "actions": [
             "postgres-flex.backup.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}/clone": {
+      "post": {
+        "description": "Clone Instance",
+        "operationId": "cloneRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/project"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/instance"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/cloneRequestPayload"
+              }
+            }
+          },
+          "description": "The request body with the parameters for cloning an instance by a point in time into a new instance."
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloneResponse"
+                }
+              }
+            },
+            "description": "Accepted: The request was accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "badRequestError": {
+                    "$ref": "#/components/examples/badRequestError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "unauthorizedError": {
+                    "$ref": "#/components/examples/unauthorizedError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "User is not allowed to perform this operation or credentials are not correct"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "forbiddenError": {
+                    "$ref": "#/components/examples/forbiddenError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Forbidden: No access for the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "notFoundError": {
+                    "$ref": "#/components/examples/notFoundError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not found: The requested resource was not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Request failed due to body validation"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/internalServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "501": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "notImplementedError": {
+                    "$ref": "#/components/examples/notImplementedError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Endpoint not implemented yet"
+          }
+        },
+        "summary": "Clone Instance",
+        "x-stackit-authorization": {
+          "actions": [
+            "postgres-flex.instance.clone"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

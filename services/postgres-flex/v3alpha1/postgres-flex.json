@@ -14,7 +14,7 @@
         "summary": "Bad Request",
         "value": {
           "code": 400,
-          "message": "invalid backup id",
+          "message": "invalid id",
           "traceId": "885bef8bbc18649c",
           "type": "BAD_REQUEST_ERROR"
         }
@@ -104,7 +104,7 @@
         "name": "backupId",
         "required": true,
         "schema": {
-          "format": "int64",
+          "format": "uint64",
           "type": "integer"
         },
         "style": "simple"
@@ -131,7 +131,7 @@
         "name": "databaseId",
         "required": true,
         "schema": {
-          "format": "int64",
+          "format": "uint64",
           "type": "integer"
         },
         "style": "simple"
@@ -207,10 +207,13 @@
         "name": "page",
         "schema": {
           "default": 1,
-          "format": "int64",
+          "format": "uint64",
           "type": "integer"
         },
-        "style": "form"
+        "style": "form",
+        "x-oapi-codegen-extra-tags": {
+          "validate": "omitempty,page"
+        }
       },
       "project": {
         "description": "The STACKIT project ID.",
@@ -247,7 +250,7 @@
         "name": "size",
         "schema": {
           "default": 10,
-          "format": "int64",
+          "format": "uint64",
           "type": "integer"
         },
         "style": "form"
@@ -260,7 +263,7 @@
         "name": "userId",
         "required": true,
         "schema": {
-          "format": "int64",
+          "format": "uint64",
           "type": "integer"
         },
         "style": "simple"
@@ -784,22 +787,22 @@
       "Pagination": {
         "properties": {
           "page": {
-            "format": "int64",
+            "format": "uint64",
             "type": "integer"
           },
           "size": {
-            "format": "int64",
+            "format": "uint64",
             "type": "integer"
           },
           "sort": {
             "type": "string"
           },
           "totalPages": {
-            "format": "int64",
+            "format": "uint64",
             "type": "integer"
           },
           "totalRows": {
-            "format": "int64",
+            "format": "uint64",
             "type": "integer"
           }
         },
@@ -947,7 +950,7 @@
       "backup.id": {
         "description": "The ID of the backup.",
         "example": 123,
-        "format": "int64",
+        "format": "uint64",
         "type": "integer"
       },
       "backup.name": {
@@ -979,7 +982,7 @@
       "backup.size": {
         "description": "The size of the backup in bytes.",
         "example": 8394655,
-        "format": "int64",
+        "format": "uint64",
         "type": "integer"
       },
       "backup.sort": {
@@ -1009,7 +1012,7 @@
       "backup.storage.size": {
         "description": "The storage size in Gigabytes.",
         "example": 10,
-        "format": "int64",
+        "format": "uint64",
         "type": "integer"
       },
       "backup.type": {
@@ -1112,7 +1115,7 @@
       "database.id": {
         "description": "The id of the database.",
         "example": 1,
-        "format": "int64",
+        "format": "uint64",
         "type": "integer"
       },
       "database.name": {
@@ -1175,7 +1178,7 @@
       "flavor.cpu": {
         "description": "The cpu count of the instance.",
         "example": 1,
-        "format": "int64",
+        "format": "uint64",
         "type": "integer"
       },
       "flavor.description": {
@@ -1196,19 +1199,19 @@
       "flavor.maxGB": {
         "description": "maximum storage which can be ordered for the flavor in Gigabyte.",
         "example": 1,
-        "format": "int32",
+        "format": "uint32",
         "type": "integer"
       },
       "flavor.memory": {
         "description": "The memory of the instance in Gibibyte.",
         "example": 1,
-        "format": "int64",
+        "format": "uint64",
         "type": "integer"
       },
       "flavor.minGB": {
         "description": "minimum storage which is required to order in Gigabyte.",
         "example": 1,
-        "format": "int32",
+        "format": "uint32",
         "type": "integer"
       },
       "flavor.nodeType": {
@@ -1255,12 +1258,12 @@
           },
           "maxIoPerSec": {
             "example": 1000,
-            "format": "int32",
+            "format": "uint32",
             "type": "integer"
           },
           "maxThroughInMb": {
             "example": 100,
-            "format": "int32",
+            "format": "uint32",
             "type": "integer"
           }
         },
@@ -1293,7 +1296,7 @@
         "type": "object"
       },
       "instance.encryption": {
-        "description": "The configuration for instance's volume and backup storage encryption.\n\n⚠️ **Note:** This feature is in private preview. Supplying this object is only permitted for enabled accounts. If your account does not have access, the request will be rejected.\n",
+        "description": "The configuration for instance's volume and backup storage encryption.\n\n⚠︝ **Note:** This feature is in private preview. Supplying this object is only permitted for enabled accounts. If your account does not have access, the request will be rejected.\n",
         "properties": {
           "kekKeyId": {
             "description": "The encryption-key key identifier",
@@ -1387,6 +1390,26 @@
         ],
         "type": "string"
       },
+      "instance.network.opt": {
+        "description": "The access configuration of the instance",
+        "properties": {
+          "accessScope": {
+            "$ref": "#/components/schemas/instance.network.accessScope"
+          },
+          "acl": {
+            "$ref": "#/components/schemas/acl.opt"
+          },
+          "instanceAddress": {
+            "example": "10.0.0.2",
+            "type": "string"
+          },
+          "routerAddress": {
+            "example": "10.0.0.1",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "instance.sort": {
         "enum": [
           "index.desc",
@@ -1471,7 +1494,7 @@
           1,
           3
         ],
-        "format": "int32",
+        "format": "uint32",
         "type": "integer"
       },
       "replicas.opt": {
@@ -1480,19 +1503,19 @@
           1,
           3
         ],
-        "format": "int32",
+        "format": "uint32",
         "type": "integer"
       },
       "retentionDays": {
         "description": "How long backups are retained. The value can only be between 32 and 365 days.",
         "example": 35,
-        "format": "int32",
+        "format": "uint32",
         "type": "integer"
       },
       "retentionDays.opt": {
         "description": "How long backups are retained. The value can only be between 32 and 365 days.",
         "example": 35,
-        "format": "int32",
+        "format": "uint32",
         "type": "integer"
       },
       "status": {
@@ -1548,25 +1571,25 @@
       "storage.max": {
         "description": "The maximum available amount of storage.",
         "example": 1000,
-        "format": "int32",
+        "format": "uint32",
         "type": "integer"
       },
       "storage.min": {
         "description": "The minimum available amount of storage.",
         "example": 10,
-        "format": "int32",
+        "format": "uint32",
         "type": "integer"
       },
       "storage.size": {
         "description": "The storage size in Gigabytes.",
         "example": 10,
-        "format": "int64",
+        "format": "uint64",
         "type": "integer"
       },
       "storage.size.create": {
         "description": "The storage size in Gigabytes.",
         "example": 10,
-        "format": "int64",
+        "format": "uint64",
         "type": "integer"
       },
       "storage.update": {
@@ -1739,7 +1762,7 @@
       "user.id": {
         "description": "The ID of the user.",
         "example": 1,
-        "format": "int64",
+        "format": "uint64",
         "type": "integer"
       },
       "user.name": {
@@ -1760,7 +1783,7 @@
       "user.port": {
         "description": "The port of the instance in which the user belongs to.",
         "example": 5432,
-        "format": "int32",
+        "format": "uint32",
         "type": "integer"
       },
       "user.role": {
@@ -3149,140 +3172,6 @@
         "x-stackit-authorization": {
           "actions": [
             "postgres-flex.backup.get"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project"
-        }
-      }
-    },
-    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}/backups/{backupId}/restores": {
-      "post": {
-        "description": "Restore an Instance from an existing backup. Instance is not reachable during the process of restore",
-        "operationId": "restoreInstanceRequest",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/project"
-          },
-          {
-            "$ref": "#/components/parameters/region"
-          },
-          {
-            "$ref": "#/components/parameters/instance"
-          },
-          {
-            "$ref": "#/components/parameters/backup"
-          }
-        ],
-        "responses": {
-          "202": {
-            "description": "Accepted: The request was accepted"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "badRequestError": {
-                    "$ref": "#/components/examples/badRequestError"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Bad Request"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "unauthorizedError": {
-                    "$ref": "#/components/examples/unauthorizedError"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "User is not allowed to perform this operation or credentials are not correct"
-          },
-          "403": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "forbiddenError": {
-                    "$ref": "#/components/examples/forbiddenError"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Forbidden: No access for the requested resource."
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "notFoundError": {
-                    "$ref": "#/components/examples/notFoundError"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Not found: The requested resource was not found."
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationError"
-                }
-              }
-            },
-            "description": "Request failed due to body validation"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "internalServerError": {
-                    "$ref": "#/components/examples/internalServerError"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
-          },
-          "501": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "notImplementedError": {
-                    "$ref": "#/components/examples/notImplementedError"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Endpoint not implemented yet"
-          }
-        },
-        "summary": "Restore Instance",
-        "x-stackit-authorization": {
-          "actions": [
-            "postgres-flex.backup.restore"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

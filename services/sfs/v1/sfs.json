@@ -1,0 +1,2191 @@
+{
+  "components": {
+    "responses": {
+      "InternalServerError": {
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Please retry again later or contact support if the issue persists"
+      },
+      "UnauthorizedError": {
+        "content": {
+          "text/plain": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "Please make sure the Authorization Header is set and uses correct credentials"
+      },
+      "ValidationError": {
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        },
+        "description": "Some fields of the request have failed the validation procedure."
+      }
+    },
+    "schemas": {
+      "CreateResourcePoolPayload": {
+        "properties": {
+          "availabilityZone": {
+            "description": "Availability zone",
+            "type": "string"
+          },
+          "ipAcl": {
+            "description": "List of IPs that can mount the Resource Pool in read-only; IPs must have a subnet mask (e.g. \"172.16.0.0/24\" for a range of IPs,\n or \"172.16.0.250/32\" for a specific IP)",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "An optional object that represents the labels associated with the resource pool\n keys are validated using the following regex '^[\\\\p{Ll}][\\\\p{Ll}\\\\p{N}_-]*$' and cannot be empty\n values are validated using the following regex '^[\\\\p{Ll}\\\\p{N}_-]*$'",
+            "type": "object"
+          },
+          "name": {
+            "description": "Name of the Resource Pool",
+            "type": "string"
+          },
+          "performanceClass": {
+            "description": "Name of the performance class",
+            "type": "string"
+          },
+          "sizeGigabytes": {
+            "description": "Size of the Resource Pool\n\n (unit: gibibytes)",
+            "format": "int32",
+            "type": "integer"
+          },
+          "snapshotsAreVisible": {
+            "description": "Whether the .snapshot directory is visible when mounting the resource pool.\n Setting this value to false might prevent you from accessing the snapshots (e.g.\n for security reasons). Additionally, the access to the snapshots is always controlled\n by the export policy of the resource pool. That means, if snapshots are visible and\n the export policy allows for reading the resource pool, then it also allows reading\n the snapshot of all shares.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "sizeGigabytes",
+          "name",
+          "availabilityZone",
+          "performanceClass",
+          "ipAcl"
+        ],
+        "type": "object"
+      },
+      "CreateResourcePoolResponse": {
+        "properties": {
+          "resourcePool": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourcePool"
+              }
+            ],
+            "description": "Created Resource Pool"
+          }
+        },
+        "type": "object"
+      },
+      "CreateResourcePoolSnapshotPayload": {
+        "properties": {
+          "comment": {
+            "description": "(optional) A comment to add more information about a snapshot",
+            "nullable": true,
+            "type": "string"
+          },
+          "name": {
+            "description": "Name of the Resource Pool Snapshot",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CreateResourcePoolSnapshotResponse": {
+        "properties": {
+          "resourcePoolSnapshot": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourcePoolSnapshot"
+              }
+            ],
+            "description": "Created Resource Pool Snapshot"
+          }
+        },
+        "type": "object"
+      },
+      "CreateShareExportPolicyPayload": {
+        "properties": {
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "An optional object that represents the labels associated with the share export policy\n keys are validated using the following regex '^[\\\\p{Ll}][\\\\p{Ll}\\\\p{N}_-]*$' and cannot be empty\n values are validated using the following regex '^[\\\\p{Ll}\\\\p{N}_-]*$'",
+            "type": "object"
+          },
+          "name": {
+            "description": "Name of the Share Export Policy",
+            "type": "string"
+          },
+          "rules": {
+            "description": "List of rules of the Share Export Policy. The order of the rules within the array does not matter - what matters\n is the field \"order\" within each rule",
+            "items": {
+              "$ref": "#/components/schemas/CreateShareExportPolicyRequest_Rule"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "CreateShareExportPolicyRequest_Rule": {
+        "properties": {
+          "description": {
+            "description": "Description of the Rule\n\n (optional)",
+            "nullable": true,
+            "type": "string"
+          },
+          "ipAcl": {
+            "description": "IP access control list, where IPs must have a subnet mask (e.g. \"172.16.0.0/24\" for a range of IPs,\n or \"172.16.0.250/32\" for a specific IP)\n\n This array cannot be empty",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "order": {
+            "description": "Order of the rule within a Share Export Policy. The order is used so that when a client IP matches\n multiple rules, the first rule is applied\n\n This field must be set",
+            "format": "int32",
+            "type": "integer"
+          },
+          "readOnly": {
+            "default": false,
+            "description": "Flag to indicate if client IPs matching this rule can only mount the share in read only mode\n\n Default: false",
+            "type": "boolean"
+          },
+          "setUuid": {
+            "default": false,
+            "description": "Flag to honor set UUID\n\n Default: false",
+            "type": "boolean"
+          },
+          "superUser": {
+            "default": true,
+            "description": "Flag to indicate if client IPs matching this rule have root access on the Share\n\n Default: true",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "CreateShareExportPolicyResponse": {
+        "properties": {
+          "shareExportPolicy": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareExportPolicy"
+              }
+            ],
+            "description": "Created Share Export Policy"
+          }
+        },
+        "type": "object"
+      },
+      "CreateSharePayload": {
+        "properties": {
+          "exportPolicyName": {
+            "description": "Name of the Share Export Policy to use in the Share.\n\n Note that if this is not set, the Share can only be mounted in read only by clients with IPs matching the\n IP ACL of the Resource Pool hosting this Share. You can also assign a Share Export Policy after creating\n the Share",
+            "nullable": true,
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "An optional object that represents the labels associated with the share\n keys are validated using the following regex '^[\\\\p{Ll}][\\\\p{Ll}\\\\p{N}_-]*$' and cannot be empty\n values are validated using the following regex '^[\\\\p{Ll}\\\\p{N}_-]*$'",
+            "type": "object"
+          },
+          "name": {
+            "description": "Name of the Share",
+            "type": "string"
+          },
+          "spaceHardLimitGigabytes": {
+            "description": "Space hard limit for the Share. If zero, the Share will have access to the full space of the Resource Pool it lives in.\n\n (unit: gibibytes)",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "CreateShareResponse": {
+        "properties": {
+          "share": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Share"
+              }
+            ],
+            "description": "Created Share"
+          }
+        },
+        "type": "object"
+      },
+      "DeleteResourcePoolResponse": {
+        "type": "object"
+      },
+      "DeleteResourcePoolSnapshotResponse": {
+        "type": "object"
+      },
+      "DeleteShareExportPolicyResponse": {
+        "type": "object"
+      },
+      "DeleteShareResponse": {
+        "type": "object"
+      },
+      "Error": {
+        "properties": {
+          "error_description": {
+            "deprecated": true,
+            "description": "Human-readable string of the error that occured"
+          },
+          "title": {
+            "description": "Human-readable description of the error that occurred.",
+            "type": "string"
+          },
+          "type": {
+            "description": "URI Uniquely identifies the error type. It will be in the format of storage.stackit.cloud/\u003cerror-type\u003e e.g. storage.stackit.cloud/validation-error",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "type"
+        ],
+        "type": "object"
+      },
+      "GetResourcePoolResponse": {
+        "properties": {
+          "resourcePool": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourcePool"
+              }
+            ],
+            "description": "Resource Pool"
+          }
+        },
+        "type": "object"
+      },
+      "GetResourcePoolSnapshotResponse": {
+        "properties": {
+          "resourcePoolSnapshot": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourcePoolSnapshot"
+              }
+            ],
+            "description": "Resource Pool Snapshot"
+          }
+        },
+        "type": "object"
+      },
+      "GetShareExportPolicyResponse": {
+        "properties": {
+          "shareExportPolicy": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareExportPolicy"
+              }
+            ],
+            "description": "Share Export Policies"
+          }
+        },
+        "type": "object"
+      },
+      "GetShareResponse": {
+        "properties": {
+          "share": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Share"
+              }
+            ],
+            "description": "Share"
+          }
+        },
+        "type": "object"
+      },
+      "GoogleProtobufAny": {
+        "additionalProperties": true,
+        "description": "Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.",
+        "properties": {
+          "@type": {
+            "description": "The type of the serialized message.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ListPerformanceClassesResponse": {
+        "properties": {
+          "performanceClasses": {
+            "description": "List of Performance Classes",
+            "items": {
+              "$ref": "#/components/schemas/PerformanceClass"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ListResourcePoolSnapshotsResponse": {
+        "properties": {
+          "resourcePoolSnapshots": {
+            "description": "List of Resource Pool Snapshots",
+            "items": {
+              "$ref": "#/components/schemas/ResourcePoolSnapshot"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ListResourcePoolsResponse": {
+        "properties": {
+          "resourcePools": {
+            "description": "List of Resource Pools",
+            "items": {
+              "$ref": "#/components/schemas/ResourcePool"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ListShareExportPoliciesResponse": {
+        "properties": {
+          "shareExportPolicies": {
+            "description": "List of Share Export Policies",
+            "items": {
+              "$ref": "#/components/schemas/ShareExportPolicy"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ListSharesResponse": {
+        "properties": {
+          "shares": {
+            "description": "List of Shares",
+            "items": {
+              "$ref": "#/components/schemas/Share"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "PerformanceClass": {
+        "properties": {
+          "iops": {
+            "description": "IOPS of the Performance Class",
+            "format": "int32",
+            "type": "integer"
+          },
+          "name": {
+            "description": "Name of the Performance Class",
+            "type": "string"
+          },
+          "throughput": {
+            "description": "Throughput of the Performance Class",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "ResourcePool": {
+        "properties": {
+          "availabilityZone": {
+            "description": "Name of the respective availability zone",
+            "type": "string"
+          },
+          "countShares": {
+            "description": "Number of Shares in the Resource Pool",
+            "format": "int32",
+            "type": "integer"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "description": "ID of the Resource Pool",
+            "type": "string"
+          },
+          "ipAcl": {
+            "description": "List of IPs that can mount the Resource Pool in read-only; IPs must have a subnet mask (e.g. \"172.16.0.0/24\" for a range of IPs,\n or \"172.16.0.250/32\" for a specific IP)",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "mountPath": {
+            "description": "Mount path of the Resource Pool, used to mount the Resource Pool\n\n Note that a Resource Pool can only be mounted in read-only",
+            "type": "string"
+          },
+          "name": {
+            "description": "Name of the Resource Pool",
+            "type": "string"
+          },
+          "performanceClass": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourcePool_PerformanceClass"
+              }
+            ],
+            "description": "Information about the performance class"
+          },
+          "performanceClassDowngradableAt": {
+            "description": "Time when the performance class can be downgraded again.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "sizeReducibleAt": {
+            "description": "Time when the size can be reduced again.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "snapshotsAreVisible": {
+            "description": "Whether the .snapshot directory is visible when mounting the resource pool.\n Setting this value to false might prevent you from accessing the snapshots (e.g.\n for security reasons). Additionally, the access to the snapshots is always controlled\n by the export policy of the resource pool. That means, if snapshots are visible and\n the export policy allows for reading the resource pool, then it also allows reading\n the snapshot of all shares.",
+            "type": "boolean"
+          },
+          "space": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourcePool_Space"
+              }
+            ],
+            "description": "Space information"
+          },
+          "state": {
+            "description": "State of the Resource Pool\n\n (possible values: [\"pending\", \"creating\", \"created\", \"updating\", \"error\", \"deleting\"])",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ResourcePoolSnapshot": {
+        "properties": {
+          "comment": {
+            "description": "(optional) A comment to add more information about a snapshot",
+            "nullable": true,
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "logicalSizeGigabytes": {
+            "description": "Represents the user-visible data size at the time of the snapshot in Gibibytes (e.g. what’s in the snapshot)",
+            "format": "int32",
+            "type": "integer"
+          },
+          "resourcePoolId": {
+            "description": "ID of the Resource Pool of the Snapshot",
+            "type": "string"
+          },
+          "sizeGigabytes": {
+            "description": "Reflects the actual storage footprint in the backend at snapshot time in Gibibytes (e.g. how much storage from the Resource Pool\n does it use).",
+            "format": "int32",
+            "type": "integer"
+          },
+          "snapshotName": {
+            "description": "Name of the Resource Pool Snapshot",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ResourcePool_PerformanceClass": {
+        "properties": {
+          "name": {
+            "description": "Name of the performance class",
+            "type": "string"
+          },
+          "peakIops": {
+            "description": "Max. IOPS of the Resource Pool. This is shared between every Share in the Resource Pool.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "throughput": {
+            "description": "Throughput of the Resource Pool.",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "ResourcePool_Space": {
+        "properties": {
+          "availableGigabytes": {
+            "description": "Available space of the Resource Pool\n\n (only available when retrieving a single Resource Pool by ID)",
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
+          "sizeGigabytes": {
+            "description": "Size of the Resource Pool in Gibibytes.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "usedBySnapshotsGigabytes": {
+            "description": "Used space by snapshots\n\n (only available when retrieving a single Resource Pool by ID)",
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
+          "usedGigabytes": {
+            "description": "Used space of the Resource Pool\n\n (only available when retrieving a single Resource Pool by ID)",
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "Share": {
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "exportPolicy": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareExportPolicy"
+              }
+            ],
+            "description": "Details of the Share Export Policy to use in the Share.\n\n Note that if this is not set, the Share can only be mounted in read only by clients with IPs matching the\n IP ACL of the Resource Pool hosting this Share",
+            "nullable": true
+          },
+          "id": {
+            "description": "ID of the Share",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "An optional object that represents the labels associated with the share\n keys are validated using the following regex '^[\\\\p{Ll}][\\\\p{Ll}\\\\p{N}_-]*$' and cannot be empty\n values are validated using the following regex '^[\\\\p{Ll}\\\\p{N}_-]*$'",
+            "type": "object"
+          },
+          "mountPath": {
+            "description": "Mount path of the Share, used to mount the Share",
+            "type": "string"
+          },
+          "name": {
+            "description": "Name of the Share",
+            "type": "string"
+          },
+          "spaceHardLimitGigabytes": {
+            "description": "Space hard limit for the Share. If zero, the Share will have access to the full space of the Resource Pool it lives in.\n\n (unit: gibibytes)",
+            "format": "int32",
+            "type": "integer"
+          },
+          "state": {
+            "description": "State of the Resource Pool Snapshot\n\n (possible values: [\"pending\", \"creating\", \"created\", \"error\", \"deleting\"])",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ShareExportPolicy": {
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "description": "ID of the Share Export Policy",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "An optional object that represents the labels associated with the share export policy\n keys are validated using the following regex '^[\\\\p{Ll}][\\\\p{Ll}\\\\p{N}_-]*$' and cannot be empty\n values are validated using the following regex '^[\\\\p{Ll}\\\\p{N}_-]*$'",
+            "type": "object"
+          },
+          "name": {
+            "description": "Name of the Share Export Policy",
+            "type": "string"
+          },
+          "rules": {
+            "description": "List of rules of the Share Export Policy. The order of the rules within the array does not matter - what matters\n is the field \"order\" within each rule",
+            "items": {
+              "$ref": "#/components/schemas/ShareExportPolicyRule"
+            },
+            "type": "array"
+          },
+          "sharesUsingExportPolicy": {
+            "description": "Number of Shares using this Share Export Policy",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "ShareExportPolicyRule": {
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "description": "Description of the Rule\n\n (optional)",
+            "nullable": true,
+            "type": "string"
+          },
+          "id": {
+            "description": "ID of the Share Export Policy Rule",
+            "type": "string"
+          },
+          "ipAcl": {
+            "description": "IP access control list, where IPs must have a subnet mask (e.g. \"172.16.0.0/24\" for a range of IPs,\n or \"172.16.0.251/32\" for a specific IP)\n\n This array cannot be empty",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "order": {
+            "description": "Order of the rule within a Share Export Policy. The order is used so that when a client IP matches\n multiple rules, the first rule is applied\n\n This field must be set",
+            "format": "int32",
+            "type": "integer"
+          },
+          "readOnly": {
+            "description": "Flag to indicate if client IPs matching this rule can only mount the share in read only mode\n\n Default: false",
+            "type": "boolean"
+          },
+          "setUuid": {
+            "description": "Flag to honor set UUID\n\n Default: false",
+            "type": "boolean"
+          },
+          "superUser": {
+            "description": "Flag to indicate if client IPs matching this rule have root access on the Share\n\n Default: true",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "Status": {
+        "description": "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
+        "properties": {
+          "code": {
+            "description": "The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].",
+            "format": "int32",
+            "type": "integer"
+          },
+          "details": {
+            "description": "A list of messages that carry the error details.  There is a common set of message types for APIs to use.",
+            "items": {
+              "$ref": "#/components/schemas/GoogleProtobufAny"
+            },
+            "type": "array"
+          },
+          "message": {
+            "description": "A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateResourcePoolPayload": {
+        "properties": {
+          "ipAcl": {
+            "description": "(optional) List of IPs that can mount the Resource Pool in read-only; IPs must have a subnet mask (e.g. \"172.16.0.0/24\" for a range of IPs,\n or \"172.16.0.250/32\" for a specific IP)",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "An optional object that represents the labels associated with the resource pool\n keys are validated using the following regex '^[\\\\p{Ll}][\\\\p{Ll}\\\\p{N}_-]*$' and cannot be empty\n values are validated using the following regex '^[\\\\p{Ll}\\\\p{N}_-]*$'",
+            "type": "object"
+          },
+          "performanceClass": {
+            "description": "(optional) Name of the performance class",
+            "type": "string"
+          },
+          "sizeGigabytes": {
+            "description": "(optional) Size of the Resource Pool\n\n (unit: gigabytes)",
+            "format": "int32",
+            "nullable": true,
+            "type": "integer"
+          },
+          "snapshotPolicyId": {
+            "description": "(optional) ID of the Snapshot Policy to use\n If not set, the Snapshot Policy is not updated\n If set to an empty string, the Snapshot Policy is removed",
+            "type": "string"
+          },
+          "snapshotsAreVisible": {
+            "description": "Whether the .snapshot directory is visible when mounting the resource pool.\n Setting this value to false might prevent you from accessing the snapshots (e.g.\n for security reasons). Additionally, the access to the snapshots is always controlled\n by the export policy of the resource pool. That means, if snapshots are visible and\n the export policy allows for reading the resource pool, then it also allows reading\n the snapshot of all shares.",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateResourcePoolResponse": {
+        "properties": {
+          "resourcePool": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourcePool"
+              }
+            ],
+            "description": "Updated Resource Pool"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateShareExportPolicyBody_Rule": {
+        "properties": {
+          "description": {
+            "description": "Description of the Rule\n\n (optional)",
+            "nullable": true,
+            "type": "string"
+          },
+          "ipAcl": {
+            "description": "IP access control list, where IPs must have a subnet mask (e.g. \"172.16.0.0/24\" for a range of IPs,\n or \"172.16.0.250/32\" for a specific IP)\n\n This array cannot be empty",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "order": {
+            "description": "Order of the rule within a Share Export Policy. The order is used so that when a client IP matches\n multiple rules, the first rule is applied\n\n This field must be set",
+            "format": "int32",
+            "type": "integer"
+          },
+          "readOnly": {
+            "default": false,
+            "description": "Flag to indicate if client IPs matching this rule can only mount the share in read only mode\n\n Default: false",
+            "type": "boolean"
+          },
+          "setUuid": {
+            "default": false,
+            "description": "Flag to honor set UUID\n\n Default: false",
+            "type": "boolean"
+          },
+          "superUser": {
+            "default": true,
+            "description": "Flag to indicate if client IPs matching this rule have root access on the Share\n\n Default: true",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateShareExportPolicyPayload": {
+        "properties": {
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "An optional object that represents the labels associated with the share export policy\n keys are validated using the following regex '^[\\\\p{Ll}][\\\\p{Ll}\\\\p{N}_-]*$' and cannot be empty\n values are validated using the following regex '^[\\\\p{Ll}\\\\p{N}_-]*$'",
+            "type": "object"
+          },
+          "rules": {
+            "description": "List of rules of the Share Export Policy. The order of the rules within the array does not matter - what matters\n is the field \"order\" within each rule. The whole set of rules needs to be sent in the same request, e.g. if 1 rule\n is sent, the share export policy will have just that 1 rule, as opposed to extending the existing set of rules with\n the 1 rule that was sent\n\n Important note: the array of rules passed always overwrites the rule array (i.e. sending an empty array removes all rules)",
+            "items": {
+              "$ref": "#/components/schemas/UpdateShareExportPolicyBody_Rule"
+            },
+            "nullable": true,
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateShareExportPolicyResponse": {
+        "properties": {
+          "shareExportPolicy": {
+            "$ref": "#/components/schemas/ShareExportPolicy"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateSharePayload": {
+        "properties": {
+          "exportPolicyName": {
+            "description": "Name of the Share Export Policy to use in the Share.\n\n The behavior depends on the value:\n - If not set (null): Keep the existing export policy (if any)\n - If set to empty string (\"\"):  Remove the existing export policy\n - If set to a policy name: Update to use the specified policy, creating a new association if none exists",
+            "nullable": true,
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "An optional object that represents the labels associated with the share\n keys are validated using the following regex '^[\\\\p{Ll}][\\\\p{Ll}\\\\p{N}_-]*$' and cannot be empty\n values are validated using the following regex '^[\\\\p{Ll}\\\\p{N}_-]*$'",
+            "type": "object"
+          },
+          "spaceHardLimitGigabytes": {
+            "description": "Space hard limit for the Share. If zero, the Share will have access to the full space of the Resource Pool it lives in.\n\n (unit: gibibytes)",
+            "format": "int32",
+            "nullable": true,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateShareResponse": {
+        "properties": {
+          "share": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Share"
+              }
+            ],
+            "description": "Updated Share"
+          }
+        },
+        "type": "object"
+      },
+      "ValidationError": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Error"
+          },
+          {
+            "properties": {
+              "fields": {
+                "items": {
+                  "$ref": "#/components/schemas/ValidationErrorField"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "fields"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "ValidationErrorField": {
+        "properties": {
+          "field": {
+            "description": "The name of the field in the request that has failed the validation",
+            "type": "string"
+          },
+          "reason": {
+            "description": "The reason why the validation failed",
+            "type": "string"
+          }
+        },
+        "required": [
+          "field",
+          "reason"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "API used to create and manage NFS Shares.",
+    "title": "STACKIT File Storage (SFS)",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1/projects/{projectId}/regions/{region}/resourcePools": {
+      "get": {
+        "description": "Lists Resource Pools in a project.",
+        "operationId": "ListResourcePools",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListResourcePoolsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List Resource Pools",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.resource-pool.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create a Resource Pool in a project.",
+        "operationId": "CreateResourcePool",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateResourcePoolPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateResourcePoolResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create Resource Pool",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.resource-pool.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/resourcePools/{resourcePoolId}": {
+      "delete": {
+        "description": "Deletes a Resource Pool in a project.",
+        "operationId": "DeleteResourcePool",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "resourcePoolId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteResourcePoolResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete Resource Pool",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.resource-pool.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Retrieves a Resource Pool in a project.",
+        "operationId": "GetResourcePool",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "resourcePoolId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetResourcePoolResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get Resource Pool",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.resource-pool.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "patch": {
+        "description": "Updates a Resource Pool in a project.",
+        "operationId": "UpdateResourcePool",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "resourcePoolId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateResourcePoolPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateResourcePoolResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update Resource Pool",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.resource-pool.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/resourcePools/{resourcePoolId}/shares": {
+      "get": {
+        "description": "Lists Shares in a Resource Pool in a project.",
+        "operationId": "ListShares",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "resourcePoolId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListSharesResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List Shares",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.share.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Creates a Share in a Resource Pool in a project.",
+        "operationId": "CreateShare",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "resourcePoolId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSharePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateShareResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create Share",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.share.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/resourcePools/{resourcePoolId}/shares/{shareId}": {
+      "delete": {
+        "description": "Deletes a Shares in a Resource Pool in a project.",
+        "operationId": "DeleteShare",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "resourcePoolId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "shareId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteShareResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete Share",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.share.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Retrieves a Shares in a Resource Pool in a project.",
+        "operationId": "GetShare",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "resourcePoolId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "shareId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShareResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get Share",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.share.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "patch": {
+        "description": "Updates a Shares in a Resource Pool in a project.",
+        "operationId": "UpdateShare",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "resourcePoolId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "shareId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSharePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateShareResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update Share",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.share.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/resourcePools/{resourcePoolId}/snapshots": {
+      "get": {
+        "description": "Lists the Snapshots of a Resource Pool in a project.",
+        "operationId": "ListResourcePoolSnapshots",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "resourcePoolId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListResourcePoolSnapshotsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List Resource Pool Snapshots",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.resource-pool.snapshot.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Creates a Snapshot of a Resource Pool in a project.",
+        "operationId": "CreateResourcePoolSnapshot",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "resourcePoolId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateResourcePoolSnapshotPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateResourcePoolSnapshotResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create Resource Pool Snapshot",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.resource-pool.snapshot.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/resourcePools/{resourcePoolId}/snapshots/{snapshotName}": {
+      "delete": {
+        "description": "Deletes a Snapshot from a Resource Pool in a project.",
+        "operationId": "DeleteResourcePoolSnapshot",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "resourcePoolId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "snapshotName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteResourcePoolSnapshotResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete Resource Pool Snapshot",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.resource-pool.snapshot.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Retrieves a Snapshot from a Resource Pool in a project.",
+        "operationId": "GetResourcePoolSnapshot",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "resourcePoolId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "snapshotName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetResourcePoolSnapshotResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get Resource Pool Snapshot",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.resource-pool.snapshot.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/shareExportPolicies": {
+      "get": {
+        "description": "Lists ShareExportPolicies in a Resource Pool in a project.",
+        "operationId": "ListShareExportPolicies",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListShareExportPoliciesResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List Share Export Policies",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.share-export-policy.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Creates a ShareExportPolicy in a Resource Pool in a project.",
+        "operationId": "CreateShareExportPolicy",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateShareExportPolicyPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateShareExportPolicyResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create Share Export Policy",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.share-export-policy.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/shareExportPolicies/{policyId}": {
+      "delete": {
+        "description": "Deletes a ShareExportPolicies in a Resource Pool in a project.",
+        "operationId": "DeleteShareExportPolicy",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "policyId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteShareExportPolicyResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete Share Export Policy",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.share-export-policy.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Retrieves a ShareExportPolicies in a Resource Pool in a project.",
+        "operationId": "GetShareExportPolicy",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "policyId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetShareExportPolicyResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get Share Export Policy",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.share-export-policy.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "patch": {
+        "description": "Updates a ShareExportPolicies in a Resource Pool in a project.",
+        "operationId": "UpdateShareExportPolicy",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "policyId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateShareExportPolicyPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateShareExportPolicyResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update Share Export Policy",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.share-export-policy.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/resourcePoolPerformanceClasses": {
+      "get": {
+        "description": "Lists all performances classes available",
+        "operationId": "ListPerformanceClasses",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListPerformanceClassesResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List Resource Pool Performance Classes",
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://sfs.api.stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "global"
+        }
+      }
+    }
+  ]
+}

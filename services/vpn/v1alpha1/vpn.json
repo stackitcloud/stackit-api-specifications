@@ -143,15 +143,7 @@
         "description": "BGP configuration effects all connections. (only for routingMode=BGP_ROUTE_BASED)",
         "properties": {
           "localAsn": {
-            "description": "Local ASN for Private Use (reserved by IANA).",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/PrivateASN16Bit"
-              },
-              {
-                "$ref": "#/components/schemas/PrivateASN32Bit"
-              }
-            ]
+            "$ref": "#/components/schemas/PrivateASN"
           },
           "overrideAdvertisedRoutes": {
             "description": "List of routes (IPv4 CIDR).",
@@ -258,15 +250,7 @@
       "BGPTunnelConfig": {
         "properties": {
           "remoteAsn": {
-            "description": "Remote ASN for Private Use (reserved by IANA) (only for routingMode=BGP_ROUTE_BASED)",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/PrivateASN16Bit"
-              },
-              {
-                "$ref": "#/components/schemas/PrivateASN32Bit"
-              }
-            ]
+            "$ref": "#/components/schemas/PrivateASN"
           }
         },
         "required": [
@@ -831,6 +815,17 @@
             "$ref": "#/components/schemas/VPNTunnelPlan"
           }
         }
+      },
+      "PrivateASN": {
+        "description": "ASN for private use (reserved by IANA)",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/PrivateASN16Bit"
+          },
+          {
+            "$ref": "#/components/schemas/PrivateASN32Bit"
+          }
+        ]
       },
       "PrivateASN16Bit": {
         "description": "16-bit Private ASN range.",

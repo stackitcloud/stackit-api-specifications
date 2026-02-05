@@ -511,6 +511,9 @@
           "timestamp": {
             "format": "date-time",
             "type": "string"
+          },
+          "wafViolation": {
+            "$ref": "#/components/schemas/WAFViolation"
           }
         },
         "required": [
@@ -687,7 +690,8 @@
             "enum": [
               "UNKNOWN",
               "CUSTOM_DOMAIN_CNAME_MISSING",
-              "INVALID_ARGUMENT"
+              "INVALID_ARGUMENT",
+              "LOG_SINK_INSTANCE_UNAVAILABLE"
             ],
             "minLength": 1,
             "type": "string"
@@ -875,6 +879,118 @@
         "required": [
           "logs"
         ]
+      },
+      "GetLogsSearchFiltersResponse": {
+        "properties": {
+          "cache": {
+            "items": {
+              "enum": [
+                "HIT",
+                "MISS"
+              ],
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "dataCenter": {
+            "$ref": "#/components/schemas/GetLogsSearchFiltersResponseDatacenterBlock"
+          },
+          "remoteCountry": {
+            "description": "List of ISO-3166 Alpha2 Country Codes matching the input filter. Response is ordered in ascending order. \n\nFor more Info about the country codes, see https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2\n",
+            "items": {
+              "description": "ISO-3166 A2 Country Code",
+              "format": "[A-Z]{2}",
+              "maxLength": 2,
+              "minLength": 2,
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "status": {
+            "description": "List of Status Codes matching the input filter. Response is ordered in ascending order.",
+            "items": {
+              "description": "Non-negative integer representing an HTTP Status Code.",
+              "format": "int32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "status",
+          "remoteCountry",
+          "cache",
+          "dataCenter"
+        ],
+        "type": "object"
+      },
+      "GetLogsSearchFiltersResponseDatacenterBlock": {
+        "description": "Object containing Datacenters to filter for. Each datacenter is grouped to the respective region.",
+        "properties": {
+          "AF": {
+            "items": {
+              "$ref": "#/components/schemas/GetLogsSearchFiltersResponseDatacenterBlockItem"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "ASIA": {
+            "items": {
+              "$ref": "#/components/schemas/GetLogsSearchFiltersResponseDatacenterBlockItem"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "EU": {
+            "items": {
+              "$ref": "#/components/schemas/GetLogsSearchFiltersResponseDatacenterBlockItem"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "NA": {
+            "items": {
+              "$ref": "#/components/schemas/GetLogsSearchFiltersResponseDatacenterBlockItem"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "SA": {
+            "items": {
+              "$ref": "#/components/schemas/GetLogsSearchFiltersResponseDatacenterBlockItem"
+            },
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "EU",
+          "NA",
+          "AF",
+          "SA",
+          "ASIA"
+        ],
+        "type": "object"
+      },
+      "GetLogsSearchFiltersResponseDatacenterBlockItem": {
+        "description": "A datacenter. The `id` defines the key needed to filter against the logs endpoint, while the `displayName` defines a human-readable Name.",
+        "properties": {
+          "displayName": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName"
+        ],
+        "type": "object"
       },
       "GetStatisticsResponse": {
         "properties": {
@@ -1167,11 +1283,13 @@
         "properties": {
           "certificate": {
             "description": "base64-encoded PEM-encoded certificate",
-            "type": "string"
+            "type": "string",
+            "x-go-type": "secret.Secret"
           },
           "key": {
             "description": "base64-encoded PEM encoded key",
-            "type": "string"
+            "type": "string",
+            "x-go-type": "secret.Secret"
           },
           "type": {
             "type": "string"
@@ -1284,7 +1402,9 @@
               "UNKNOWN",
               "CUSTOM_DOMAIN_CNAME_MISSING",
               "CUSTOM_DOMAIN_ALREADY_IN_USE",
-              "PUBLIC_BETA_QUOTA_REACHED"
+              "PUBLIC_BETA_QUOTA_REACHED",
+              "LOG_SINK_INSTANCE_UNAVAILABLE",
+              "EXTERNAL_QUOTA_REACHED"
             ],
             "minLength": 1,
             "type": "string"
@@ -1296,9 +1416,116 @@
         ],
         "type": "object"
       },
-      "WafConfig": {
-        "description": "Configuration of the WAF of a distribution",
+      "WAFRuleAction": {
+        "description": "The action a WAF rule can take based on a request",
+        "enum": [
+          "BLOCKED",
+          "LOGGED",
+          "ALLOWED"
+        ],
+        "type": "string"
+      },
+      "WAFViolation": {
+        "description": "Information about a violated WAF rule in case the WAF is enabled and a rule was triggered (either in BLOCK or LOG_ONLY mode)",
         "properties": {
+          "action": {
+            "$ref": "#/components/schemas/WAFRuleAction"
+          },
+          "asn": {
+            "description": "ASN for the request",
+            "type": "string"
+          },
+          "message": {
+            "description": "Rule specific message explaining the violation",
+            "type": "string"
+          },
+          "method": {
+            "description": "HTTP Method of the request that triggered the violation",
+            "type": "string"
+          },
+          "requestHeaders": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "ruleId": {
+            "description": "ID of the WAF rule that was triggered",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ruleId",
+          "method",
+          "message",
+          "asn",
+          "requestHeaders",
+          "action"
+        ],
+        "type": "object"
+      },
+      "WafConfig": {
+        "description": "Configuration of the WAF of a distribution\n\nA WAF Config always contains a WAF Mode and Type. If a WAF was never enabled, most of the properties are not present.\nTo **enable** the WAF for your Distribution, you must set the `mode` to `ENABLED` or `LOG_ONLY`. \n\nThis causes the other properties to be populated.\n\n## Rules\nThere are 9 properties used to control which Rules are enabled, disabled or set to Log-Only. These properties can be grouped in 3 groups of 3. Each of these groups varies in specificity:\nRules are more specific than Rule Groups, which in turn are more specific than Collections. More specific definitions override more generic definitions.\n\n### Collections\n- `enabledRuleCollectionIds`\n- `disabledRuleCollectionIds`\n- `logOnlyRuleCollectionIds`\nThese are the least specific selectors. As of 2025, only two collections exist:\n  - `@builtin/crs/response`, containing all Rules regarding Responses\n  - `@builtin/crs/request`, containing all Rules regarding Requests  \n  More collections may be added in the future\n### Rule Groups\n- `enabledRuleGroupIds`\n- `disabledRuleGroupIds`\n- `logOnlyRuleGroupIds`  \nThese are more specific than Collections and will override their selector. You can find all available Rule Groups by calling the\n`ListWafCollections` Operation.\n### Rules\n- `enabledRuleIds`\n- `disabledRuleIds`\n- `logOnlyRuleGds`  \nBeing the most specific selectors, these will override both Collection and Rule Group selectors. You can find all available Rule Groups by calling the\n`ListWafCollections` Operation.\n\n### TIP: Review resolved config\nIf you call `GetDistribution` with `?withWafStatus=true`, you get back a resolved WAF Rules Config which contains a `waf` property which you can inspect to see why a Rule is either enabled, disabled or logOnly.\n",
+        "properties": {
+          "allowedHttpMethods": {
+            "description": "This whitelist restricts which HTTP methods the distribution accepts. Requests using\nnon-whitelisted methods are blocked by the WAF before reaching the origin.\n\nCommon methods: `GET`, `POST`, `PUT`, `DELETE`, `PATCH`, `HEAD`, `OPTIONS`, `CONNECT`, `TRACE`\n\nValidation ensures:\n1. At least one method is allowed\n2. No duplicate methods (e.g., `GET` appearing twice)\n3. Each method is valid per HTTP standards\n",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "allowedHttpVersions": {
+            "items": {
+              "description": "This whitelist restricts which HTTP protocol versions are accepted. \n may have security vulnerabilities or lack modern security features.\n\n Supported versions:\n - HTTP/0.9\n - HTTP/1.0\n - HTTP/1.1\n - HTTP/2.0\n - HTTP/3.0\n",
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "allowedRequestContentTypes": {
+            "description": "This allow list restricts which Content-Type headers are accepted in request bodies.\n\nFormat: Must be `type/subtype` with no spaces.\n\nCommon content types:\n- `application/json`\n- `application/x-www-form-urlencoded`\n- `multipart/form-data`\n- `text/html`\n- `text/plain`\n- `application/xml`\n",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "disabledRuleCollectionIds": {
+            "description": "Ids of WAF Collections to mark as disabled\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "disabledRuleGroupIds": {
+            "description": "Ids of WAF Rule Groups to mark as disabled\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "disabledRuleIds": {
+            "description": "Ids of WAF Rules that are **explicitly** disabled for this distribution.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "enabledRuleCollectionIds": {
+            "description": "Ids of WAF Collections to mark as enabled\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "enabledRuleGroupIds": {
+            "description": "Ids of WAF Rule Groups to mark as enabled\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "enabledRuleIds": {
             "description": "Ids of the WAF rules that are **explicitly** enabled for this distribution. \nIf this rule is in a disabled / log Only RuleGroup or Collection,\nit will be enabled regardless as `enabledRuleIds` overrides those in specificity.\n\nDo note that rules can also be enabled because a Rulegroup or Collection is enabled. \n**DO NOT** use this property to find all active rules. Instead, pass `?withWafStatus=true` as a query parameter\nto `GetDistribution` or `ListDistributions`. This will expose the `waf` Property on distribution Level.\n\nFrom there you can `$.waf.enabledRules.map(e =\u003e e.id)` to get a list of all enabled rules.\n",
             "items": {
@@ -1306,8 +1533,32 @@
             },
             "type": "array"
           },
+          "logOnlyRuleCollectionIds": {
+            "description": "Ids of WAF Collections to mark as log Only.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "logOnlyRuleGroupIds": {
+            "description": "Ids of WAF Rule Groups to mark as log Only.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "logOnlyRuleIds": {
+            "description": "Ids of WAF Rules that are **explicitly** marked as Log Only for this distribution.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "mode": {
             "$ref": "#/components/schemas/WafMode"
+          },
+          "paranoiaLevel": {
+            "$ref": "#/components/schemas/WafParanoiaLevel"
           },
           "type": {
             "$ref": "#/components/schemas/WafType"
@@ -1321,9 +1572,97 @@
         "type": "object"
       },
       "WafConfigPatch": {
+        "description": "Modify the WAF Configuration\n\n## WAF Rules\nYou can modify the set of enabled, disabled and log-only Rules by modifying these 9 properties:\n- enabledRuleIds\n- disabledRuleIds\n- logOnlyRuleIds\n- enabledRuleGroupIds\n- disabledRuleGroupIds\n- logOnlyRuleGroupIds\n- enabledRuleCollectionIds\n- disabledRuleCollectionIds\n- logOnlyRuleCollectionIds\n\nPlease inquire the `WafConfig` Description on how the effective configuration is determined.\n\nFor patching, if an ID is already used in one of the properties, it will be removed (and effectively moved) to the new property.\nIf patching multiple properties with the same ID (e.g. writing `@builtin/crs/response` to `logOnlyRuleCollectionIds` and `enabledRuleCollectionIds`), the request will be rejected with a 400.\n",
         "properties": {
+          "allowedHttpMethods": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "allowedHttpVersions": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "allowedRequestContentTypes": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "disabledRuleCollectionIds": {
+            "description": "Ids of WAF Collections to mark as disabled\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "disabledRuleGroupIds": {
+            "description": "Ids of WAF Rule Groups to mark as disabled\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "disabledRuleIds": {
+            "description": "Ids of WAF Rules that are **explicitly** disabled for this distribution.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "enabledRuleCollectionIds": {
+            "description": "Ids of WAF Collections to mark as enabled\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "enabledRuleGroupIds": {
+            "description": "Ids of WAF Rule Groups to mark as enabled\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "enabledRuleIds": {
+            "description": "Ids of WAF Rules that are **explicitly** enabled for this distribution.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "logOnlyRuleCollectionIds": {
+            "description": "Ids of WAF Collections to mark as log Only.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "logOnlyRuleGroupIds": {
+            "description": "Ids of WAF Rule Groups to mark as log Only.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "logOnlyRuleIds": {
+            "description": "Ids of WAF Rules that are **explicitly** marked as Log Only for this distribution.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "mode": {
             "$ref": "#/components/schemas/WafMode"
+          },
+          "paranoiaLevel": {
+            "$ref": "#/components/schemas/WafParanoiaLevel"
           },
           "type": {
             "$ref": "#/components/schemas/WafType"
@@ -1332,10 +1671,22 @@
         "type": "object"
       },
       "WafMode": {
+        "description": "- `ENABLED`: The WAF actively inspects and blocks malicious requests.\n- `DISABLED`: The WAF is completely off. No inspection occurs.\n- `LOG_ONLY`: The WAF inspects requests and logs matches but never blocks.\n",
         "enum": [
           "DISABLED",
           "ENABLED",
           "LOG_ONLY"
+        ],
+        "format": "enum",
+        "type": "string"
+      },
+      "WafParanoiaLevel": {
+        "description": "The paranoia level defines how aggressively the WAF should action on requests.  \nIt ranges from `L1` (least strict, lowest chance of false positives) to `L4` (most strict, highest chance of false positives).\nA higher paranoia level is more effective at catching attacks but can also block legitimate traffic.\n",
+        "enum": [
+          "L1",
+          "L2",
+          "L3",
+          "L4"
         ],
         "format": "enum",
         "type": "string"
@@ -1408,10 +1759,125 @@
           "id": {
             "description": "Specifies the Id of the Rule.",
             "type": "string"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/WafStatusRuleBlockReason"
           }
         },
         "required": [
-          "id"
+          "id",
+          "reason"
+        ],
+        "type": "object"
+      },
+      "WafStatusRuleBlockReason": {
+        "description": "Defines the Reason why a Rule is in the specified state (set to be enabled, disabled or logOnly).",
+        "discriminator": {
+          "mapping": {
+            "directlyDefined": "#/components/schemas/WafStatusRuleBlockReasonDirectlyDefined",
+            "inheritedFromCollection": "#/components/schemas/WafStatusRuleBlockReasonInheritedFromCollection",
+            "inheritedFromGroup": "#/components/schemas/WafStatusRuleBlockReasonInheritedFromGroup",
+            "invalidWafType": "#/components/schemas/WafStatusRuleBlockReasonInvalidWafType",
+            "neverDefined": "#/components/schemas/WafStatusRuleBlockReasonNeverDefined"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/WafStatusRuleBlockReasonNeverDefined"
+          },
+          {
+            "$ref": "#/components/schemas/WafStatusRuleBlockReasonDirectlyDefined"
+          },
+          {
+            "$ref": "#/components/schemas/WafStatusRuleBlockReasonInvalidWafType"
+          },
+          {
+            "$ref": "#/components/schemas/WafStatusRuleBlockReasonInheritedFromCollection"
+          },
+          {
+            "$ref": "#/components/schemas/WafStatusRuleBlockReasonInheritedFromGroup"
+          }
+        ]
+      },
+      "WafStatusRuleBlockReasonDirectlyDefined": {
+        "properties": {
+          "type": {
+            "description": "This is always `directlyDefined`",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "WafStatusRuleBlockReasonInheritedFromCollection": {
+        "properties": {
+          "collectionId": {
+            "description": "The Collection that caused this rule to be in its current state.",
+            "type": "string"
+          },
+          "type": {
+            "description": "This is always `inheritedFromCollection`",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "collectionId"
+        ],
+        "type": "object"
+      },
+      "WafStatusRuleBlockReasonInheritedFromGroup": {
+        "properties": {
+          "groupId": {
+            "description": "The Group that caused this rule to be in its current state.",
+            "type": "string"
+          },
+          "type": {
+            "description": "This is always `inheritedFromGroup`",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "groupId"
+        ],
+        "type": "object"
+      },
+      "WafStatusRuleBlockReasonInvalidWafType": {
+        "properties": {
+          "allowedWafTypes": {
+            "description": "A list containing all WAF Types which can use this Rule. You must patch you WAF to one of these WAF Types to make use of this rule.\nRules show up with this state if they would have been enabled or logOnly otherwise.\n",
+            "items": {
+              "$ref": "#/components/schemas/WafType"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "type": {
+            "description": "This is always `invalidWafType`",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "allowedWafTypes"
+        ],
+        "type": "object"
+      },
+      "WafStatusRuleBlockReasonNeverDefined": {
+        "description": "This object only ever shows up in the disabled rules section. \nIf rules are never defined (e.g. no collection, rule group, or the rule itself is ever mentioned), they are implicitly disabled\n",
+        "properties": {
+          "type": {
+            "description": "This is always `neverDefined`",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
         ],
         "type": "object"
       },
@@ -3268,6 +3734,14 @@
             }
           },
           {
+            "description": "If this is set then only log entries with the chosen WAF rule action/outcome are returned.\nSpecifically, if `ALLOWED` then all requests with no violation are returned. If `BLOCKED` then those where\na WAF rule blocked a request and if `LOGGED` then only those requests where the WAF violation was only logged \nbut the request not blocked\n",
+            "in": "query",
+            "name": "wafAction",
+            "schema": {
+              "$ref": "#/components/schemas/WAFRuleAction"
+            }
+          },
+          {
             "description": "Filters by the CDN data center region that served the request. Can be combined with other filters\n",
             "in": "query",
             "name": "dataCenterRegion",
@@ -3358,6 +3832,111 @@
           }
         },
         "summary": "Retrieve distribution logs",
+        "x-stackit-authorization": {
+          "actions": [
+            "cdn.distribution.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta2/projects/{projectId}/distributions/{distributionId}/logs/searchFilters": {
+      "get": {
+        "operationId": "GetLogsSearchFilters",
+        "parameters": [
+          {
+            "description": "Your STACKIT Project ID.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Your CDN distribution ID.",
+            "in": "path",
+            "name": "distributionId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Optional search string. Will search the **values** for the text input.",
+            "in": "query",
+            "name": "filter",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLogsSearchFiltersResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "Invalid request. Please check your queries or parameters."
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "unauthorized - please make sure the \"Authorization\" header is set and uses correct credentials"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "unprocessable entity - please make sure the body you provided is constructed according to spec"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "internal error - please try again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericJsonResponse"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Get relevant search filters for this distribution based on user input.",
         "x-stackit-authorization": {
           "actions": [
             "cdn.distribution.get"

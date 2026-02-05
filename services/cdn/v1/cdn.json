@@ -145,6 +145,9 @@
           "optimizer": {
             "$ref": "#/components/schemas/Optimizer"
           },
+          "redirects": {
+            "$ref": "#/components/schemas/RedirectConfig"
+          },
           "regions": {
             "items": {
               "$ref": "#/components/schemas/Region"
@@ -232,6 +235,9 @@
           "optimizer": {
             "$ref": "#/components/schemas/OptimizerPatch"
           },
+          "redirects": {
+            "$ref": "#/components/schemas/RedirectConfig"
+          },
           "regions": {
             "items": {
               "$ref": "#/components/schemas/Region"
@@ -313,6 +319,9 @@
           },
           "optimizer": {
             "$ref": "#/components/schemas/Optimizer"
+          },
+          "redirects": {
+            "$ref": "#/components/schemas/RedirectConfig"
           },
           "regions": {
             "description": "Define in which regions you would like your content to be cached.\n",
@@ -1221,6 +1230,36 @@
         ],
         "type": "object"
       },
+      "MatchCondition": {
+        "default": "ANY",
+        "description": "Defines how multiple matchers within this rule are combined (ALL, ANY, NONE). Defaults to ANY.",
+        "enum": [
+          "ANY",
+          "ALL",
+          "NONE"
+        ],
+        "type": "string"
+      },
+      "Matcher": {
+        "description": "A matcher containing a list of string values to compare against the request path.",
+        "properties": {
+          "valueMatchCondition": {
+            "$ref": "#/components/schemas/MatchCondition"
+          },
+          "values": {
+            "description": "A list of glob patterns to match against the request path. At least one value is required. Examples: \"/shop/*\" or \"*/img/*\"",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "values"
+        ],
+        "type": "object"
+      },
       "Optimizer": {
         "description": "Optimizer is paid feature, a real-time on the fly image manipulation and optimization service that automatically optimizes your images for faster image delivery.\n",
         "properties": {
@@ -1372,6 +1411,70 @@
         ],
         "type": "object"
       },
+      "RedirectConfig": {
+        "description": "A wrapper for a list of redirect rules that allows for redirect settings on a distribution.",
+        "properties": {
+          "rules": {
+            "description": "A list of redirect rules. The order of rules matters for evaluation.",
+            "items": {
+              "$ref": "#/components/schemas/RedirectRule"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "RedirectRule": {
+        "description": "A single redirect rule defining a source pattern and a target URL.",
+        "properties": {
+          "description": {
+            "description": "An optional description for the redirect rule.",
+            "type": "string"
+          },
+          "enabled": {
+            "default": true,
+            "description": "A toggle to enable or disable the redirect rule.",
+            "type": "boolean"
+          },
+          "matchers": {
+            "description": "A list of matchers that define when this rule should apply. At least one matcher is required.",
+            "items": {
+              "$ref": "#/components/schemas/Matcher"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "ruleMatchCondition": {
+            "$ref": "#/components/schemas/MatchCondition"
+          },
+          "statusCode": {
+            "description": "The HTTP status code for the redirect. Must be one of 301, 302, 303, 307, or 308.",
+            "enum": [
+              301,
+              302,
+              303,
+              307,
+              308
+            ],
+            "format": "int32",
+            "maximum": 399,
+            "minimum": 300,
+            "type": "integer",
+            "x-go-type": "int32"
+          },
+          "targetUrl": {
+            "description": "The target URL to redirect to. Must be a valid URI.",
+            "format": "uri",
+            "type": "string"
+          }
+        },
+        "required": [
+          "targetUrl",
+          "statusCode",
+          "matchers"
+        ],
+        "type": "object"
+      },
       "Region": {
         "description": "The following regions exist:\n- `EU` - Europe\n- `US` - United States / North America\n- `AF` - Africa\n- `SA` - South America\n- `ASIA` - Asia and Oceania\n",
         "enum": [
@@ -1403,7 +1506,8 @@
               "CUSTOM_DOMAIN_CNAME_MISSING",
               "CUSTOM_DOMAIN_ALREADY_IN_USE",
               "PUBLIC_BETA_QUOTA_REACHED",
-              "LOG_SINK_INSTANCE_UNAVAILABLE"
+              "LOG_SINK_INSTANCE_UNAVAILABLE",
+              "EXTERNAL_QUOTA_REACHED"
             ],
             "minLength": 1,
             "type": "string"

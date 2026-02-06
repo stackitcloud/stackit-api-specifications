@@ -140,10 +140,15 @@
         "type": "string"
       },
       "BGPGatewayConfig": {
-        "description": "BGP configuration effects all connections. (only for routingMode=BGP_ROUTE_BASED)",
+        "description": "BGP configuration effects all connections. (only if bgpEnabled=true)",
         "properties": {
           "localAsn": {
-            "$ref": "#/components/schemas/PrivateASN"
+            "description": "Local ASN for Private Use (reserved by IANA).",
+            "example": 65510,
+            "format": "int32",
+            "maximum": 65534,
+            "minimum": 64512,
+            "type": "integer"
           },
           "overrideAdvertisedRoutes": {
             "description": "List of routes (IPv4 CIDR).",
@@ -249,65 +254,28 @@
       },
       "BGPTunnelConfig": {
         "properties": {
+          "localBgpAddress": {
+            "$ref": "#/components/schemas/IPv4"
+          },
           "remoteAsn": {
-            "$ref": "#/components/schemas/PrivateASN"
+            "description": "Remote ASN for Private Use (reserved by IANA) (required if enableBgp=true)",
+            "example": 65521,
+            "format": "int32",
+            "maximum": 65534,
+            "minimum": 64512,
+            "type": "integer"
+          },
+          "remoteBgpAddress": {
+            "$ref": "#/components/schemas/IPv4"
           }
         },
-        "required": [
-          "remoteAsn"
-        ],
         "type": "object"
       },
       "Connection": {
-        "properties": {
-          "enabled": {
-            "description": "This flag decides whether this connection should be enabled or disabled",
-            "type": "boolean"
-          },
-          "labels": {
-            "$ref": "#/components/schemas/Label"
-          },
-          "localSubnets": {
-            "description": "Optional. Defaults to 0.0.0.0/0 for Route-based VPN configurations. Mandatory for Policy-based.",
-            "items": {
-              "$ref": "#/components/schemas/IPv4CIDR"
-            },
-            "maxItems": 100,
-            "minItems": 1,
-            "type": "array"
-          },
-          "name": {
-            "description": "The name of the connection. \nMaximum 20 characters (only alphanumeric and hyphens allowed). The name bust be unique within the parent Gateway. \nCurrently renaming is not possible therefore deleting and re-creating the connection is necessary.\n",
-            "example": "my-connection",
-            "pattern": "^[a-z0-9]([a-z0-9-]{0,18}[a-z0-9])?$",
-            "type": "string"
-          },
-          "remoteSubnets": {
-            "description": "Optional. Defaults to 0.0.0.0/0 for Route-based VPN configurations. Mandatory for Policy-based.",
-            "items": {
-              "$ref": "#/components/schemas/IPv4CIDR"
-            },
-            "maxItems": 100,
-            "minItems": 1,
-            "type": "array"
-          },
-          "staticRoutes": {
-            "items": {
-              "$ref": "#/components/schemas/IPv4CIDR"
-            },
-            "type": "array"
-          },
-          "tunnel1": {
-            "$ref": "#/components/schemas/TunnelConfiguration"
-          },
-          "tunnel2": {
-            "$ref": "#/components/schemas/TunnelConfiguration"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ConnectionRequest"
           }
-        },
-        "required": [
-          "name",
-          "tunnel1",
-          "tunnel2"
         ],
         "type": "object"
       },
@@ -322,6 +290,63 @@
         },
         "required": [
           "connections"
+        ],
+        "type": "object"
+      },
+      "ConnectionRequest": {
+        "properties": {
+          "enabled": {
+            "description": "This flag decides whether this connection should be enabled or disabled",
+            "type": "boolean"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Label"
+          },
+          "localSubnets": {
+            "description": "List of local subnets (IPv4 CIDR).",
+            "items": {
+              "$ref": "#/components/schemas/IPv4CIDR"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "type": "array"
+          },
+          "name": {
+            "description": "The name of the connection. \nMaximum 20 characters (only alphanumeric and hyphens allowed). The name bust be unique within the parent Gateway. \nCurrently renaming is not possible therefore deleting and re-creating the connection is necessary.\n",
+            "example": "my-connection",
+            "pattern": "^[a-z0-9]([a-z0-9-]{0,18}[a-z0-9])?$",
+            "type": "string"
+          },
+          "remoteSubnets": {
+            "description": "List of remote subnets (IPv4 CIDR).",
+            "items": {
+              "$ref": "#/components/schemas/IPv4CIDR"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "type": "array"
+          },
+          "tunnel1": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TunnelConfiguration"
+              }
+            ]
+          },
+          "tunnel2": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TunnelConfiguration"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "localSubnets",
+          "remoteSubnets",
+          "tunnel1",
+          "tunnel2"
         ],
         "type": "object"
       },
@@ -354,7 +379,7 @@
             "$ref": "#/components/schemas/Label"
           },
           "localSubnets": {
-            "description": "Optional. Defaults to 0.0.0.0/0 for Route-based VPN configurations. Mandatory for Policy-based.",
+            "description": "List of local subnets (IPv4 CIDR).",
             "items": {
               "$ref": "#/components/schemas/IPv4CIDR"
             },
@@ -369,7 +394,7 @@
             "type": "string"
           },
           "remoteSubnets": {
-            "description": "Optional. Defaults to 0.0.0.0/0 for Route-based VPN configurations. Mandatory for Policy-based.",
+            "description": "List of remote subnets (IPv4 CIDR).",
             "items": {
               "$ref": "#/components/schemas/IPv4CIDR"
             },
@@ -377,21 +402,25 @@
             "minItems": 1,
             "type": "array"
           },
-          "staticRoutes": {
-            "items": {
-              "$ref": "#/components/schemas/IPv4CIDR"
-            },
-            "type": "array"
-          },
           "tunnel1": {
-            "$ref": "#/components/schemas/TunnelConfiguration"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TunnelConfiguration"
+              }
+            ]
           },
           "tunnel2": {
-            "$ref": "#/components/schemas/TunnelConfiguration"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TunnelConfiguration"
+              }
+            ]
           }
         },
         "required": [
           "name",
+          "localSubnets",
+          "remoteSubnets",
           "tunnel1",
           "tunnel2"
         ],
@@ -414,7 +443,12 @@
             ],
             "type": "object"
           },
-          "bgp": {
+          "bgpEnabled": {
+            "description": "Enable BGP routing. (This will require a BGPGatewayConfig and also a BGPTunnelConfig for each Tunnel in each Connection)",
+            "example": true,
+            "type": "boolean"
+          },
+          "bgpGatewayConfig": {
             "$ref": "#/components/schemas/BGPGatewayConfig"
           },
           "labels": {
@@ -430,16 +464,12 @@
             "description": "Service Plan to configure the limits of the VPN. Currently supported plans are p50, p100, p200.\nThis list can change in the future where plan ids will be removed and new plans by added. That is the reason this is not an enum.",
             "example": "p50",
             "type": "string"
-          },
-          "routingType": {
-            "$ref": "#/components/schemas/RoutingType"
           }
         },
         "required": [
           "name",
           "planId",
           "availabilityZones",
-          "routingType",
           "connections"
         ],
         "type": "object"
@@ -450,6 +480,36 @@
         "type": "string"
       },
       "Gateway": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GatewayRequest"
+          }
+        ],
+        "properties": {
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          },
+          "state": {
+            "$ref": "#/components/schemas/GatewayStatus"
+          }
+        },
+        "type": "object"
+      },
+      "GatewayList": {
+        "properties": {
+          "gateways": {
+            "items": {
+              "$ref": "#/components/schemas/GatewayWithStatus"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "gateways"
+        ],
+        "type": "object"
+      },
+      "GatewayRequest": {
         "properties": {
           "availabilityZones": {
             "properties": {
@@ -466,7 +526,12 @@
             ],
             "type": "object"
           },
-          "bgp": {
+          "bgpEnabled": {
+            "description": "Enable BGP routing. (This will require a BGPGatewayConfig and also a BGPTunnelConfig for each Tunnel in each Connection)",
+            "example": true,
+            "type": "boolean"
+          },
+          "bgpGatewayConfig": {
             "$ref": "#/components/schemas/BGPGatewayConfig"
           },
           "labels": {
@@ -482,51 +547,15 @@
             "description": "Service Plan to configure the limits of the VPN. Currently supported plans are p50, p100, p200.\nThis list can change in the future where plan ids will be removed and new plans by added. That is the reason this is not an enum.",
             "example": "p50",
             "type": "string"
-          },
-          "routingType": {
-            "$ref": "#/components/schemas/RoutingType"
           }
         },
         "required": [
           "name",
           "planId",
           "availabilityZones",
-          "routingType",
           "connections"
         ],
         "type": "object"
-      },
-      "GatewayList": {
-        "properties": {
-          "gateways": {
-            "items": {
-              "$ref": "#/components/schemas/GatewayResponse"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "gateways"
-        ],
-        "type": "object"
-      },
-      "GatewayResponse": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Gateway"
-          },
-          {
-            "properties": {
-              "region": {
-                "$ref": "#/components/schemas/Region"
-              },
-              "state": {
-                "$ref": "#/components/schemas/GatewayStatus"
-              }
-            },
-            "type": "object"
-          }
-        ]
       },
       "GatewayStatus": {
         "description": "Describes the status of the surrounding infrastructure.",
@@ -542,7 +571,7 @@
       "GatewayStatusResponse": {
         "properties": {
           "gatewayName": {
-            "description": "Name of the Gateway instance.",
+            "description": "VPN name",
             "example": "coffee",
             "type": "string"
           },
@@ -556,6 +585,35 @@
             "type": "array"
           }
         },
+        "type": "object"
+      },
+      "GatewayWithStatus": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GatewaysResponse"
+          }
+        ],
+        "properties": {
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          }
+        },
+        "type": "object"
+      },
+      "GatewaysResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GatewayRequest"
+          }
+        ],
+        "properties": {
+          "state": {
+            "$ref": "#/components/schemas/GatewayStatus"
+          }
+        },
+        "required": [
+          "state"
+        ],
         "type": "object"
       },
       "IPv4": {
@@ -572,7 +630,7 @@
         "additionalProperties": {
           "$ref": "#/components/schemas/LabelValue"
         },
-        "description": "Map of custom labels. Key and values must be a string with max 63 chars, start/end with alphanumeric.\nThe key of a label follows the same rules as the LabelValue except that it cannot be empty.\n",
+        "description": "Map of custom labels. Key and values must be max 63 chars, start/end with alphanumeric.\n",
         "example": {
           "cost-center": "123",
           "is-debug-mode": "",
@@ -581,6 +639,13 @@
         },
         "maxProperties": 64,
         "type": "object"
+      },
+      "LabelKey": {
+        "description": "Alphanumeric start/end; may contain the characters \".\", \"-\", \"_\" in between.",
+        "maxLength": 63,
+        "minLength": 1,
+        "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9._-]*[a-zA-Z0-9])?$",
+        "type": "string"
       },
       "LabelSelector": {
         "additionalProperties": {
@@ -598,18 +663,6 @@
         "maxLength": 63,
         "pattern": "^([a-zA-Z0-9]([a-zA-Z0-9._-]*[a-zA-Z0-9])?)?$",
         "type": "string"
-      },
-      "PeeringConfig": {
-        "description": "The peering object defines the point-to-point IP configuration for the Tunnel Interface. \nThese addresses serve as next-hop identifiers and are used for BGP peering sessions and can be used in Static Route-Based connectivity.\n",
-        "properties": {
-          "localAddress": {
-            "$ref": "#/components/schemas/IPv4"
-          },
-          "remoteAddress": {
-            "$ref": "#/components/schemas/IPv4"
-          }
-        },
-        "type": "object"
       },
       "Phase": {
         "properties": {
@@ -805,13 +858,6 @@
           }
         }
       },
-      "PrivateASN": {
-        "description": "ASN for private use (reserved by IANA).\nAllowed values are 64512-65534 (16-bit range) and 4200000000-4294967294 (32-bit range).\n",
-        "format": "int32",
-        "maximum": 4294967294,
-        "minimum": 64512,
-        "type": "integer"
-      },
       "Quota": {
         "properties": {
           "limit": {
@@ -863,21 +909,10 @@
         "example": "eu01",
         "type": "string"
       },
-      "RoutingType": {
-        "enum": [
-          "POLICY_BASED",
-          "ROUTE_BASED",
-          "BGP_ROUTE_BASED"
-        ],
-        "type": "string"
-      },
       "TunnelConfiguration": {
         "properties": {
-          "bgp": {
+          "bgpTunnelConfig": {
             "$ref": "#/components/schemas/BGPTunnelConfig"
-          },
-          "peering": {
-            "$ref": "#/components/schemas/PeeringConfig"
           },
           "phase1": {
             "allOf": [
@@ -946,8 +981,7 @@
             "description": "A Pre-Shared Key for authentication. \nRequired in create-requests, optional in update-requests and omitted in every response.",
             "example": "Super1Secret2Shared3Key4",
             "minLength": 20,
-            "type": "string",
-            "writeOnly": true
+            "type": "string"
           },
           "remoteAddress": {
             "$ref": "#/components/schemas/IPv4"
@@ -992,7 +1026,7 @@
             "$ref": "#/components/schemas/Label"
           },
           "localSubnets": {
-            "description": "Optional. Defaults to 0.0.0.0/0 for Route-based VPN configurations. Mandatory for Policy-based.",
+            "description": "List of local subnets (IPv4 CIDR).",
             "items": {
               "$ref": "#/components/schemas/IPv4CIDR"
             },
@@ -1007,7 +1041,7 @@
             "type": "string"
           },
           "remoteSubnets": {
-            "description": "Optional. Defaults to 0.0.0.0/0 for Route-based VPN configurations. Mandatory for Policy-based.",
+            "description": "List of remote subnets (IPv4 CIDR).",
             "items": {
               "$ref": "#/components/schemas/IPv4CIDR"
             },
@@ -1015,21 +1049,25 @@
             "minItems": 1,
             "type": "array"
           },
-          "staticRoutes": {
-            "items": {
-              "$ref": "#/components/schemas/IPv4CIDR"
-            },
-            "type": "array"
-          },
           "tunnel1": {
-            "$ref": "#/components/schemas/TunnelConfiguration"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TunnelConfiguration"
+              }
+            ]
           },
           "tunnel2": {
-            "$ref": "#/components/schemas/TunnelConfiguration"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TunnelConfiguration"
+              }
+            ]
           }
         },
         "required": [
           "name",
+          "localSubnets",
+          "remoteSubnets",
           "tunnel1",
           "tunnel2"
         ],
@@ -1052,7 +1090,12 @@
             ],
             "type": "object"
           },
-          "bgp": {
+          "bgpEnabled": {
+            "description": "Enable BGP routing. (This will require a BGPGatewayConfig and also a BGPTunnelConfig for each Tunnel in each Connection)",
+            "example": true,
+            "type": "boolean"
+          },
+          "bgpGatewayConfig": {
             "$ref": "#/components/schemas/BGPGatewayConfig"
           },
           "labels": {
@@ -1068,16 +1111,12 @@
             "description": "Service Plan to configure the limits of the VPN. Currently supported plans are p50, p100, p200.\nThis list can change in the future where plan ids will be removed and new plans by added. That is the reason this is not an enum.",
             "example": "p50",
             "type": "string"
-          },
-          "routingType": {
-            "$ref": "#/components/schemas/RoutingType"
           }
         },
         "required": [
           "name",
           "planId",
           "availabilityZones",
-          "routingType",
           "connections"
         ],
         "type": "object"
@@ -1234,7 +1273,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GatewayResponse"
+                  "$ref": "#/components/schemas/Gateway"
                 }
               }
             },
@@ -1358,7 +1397,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GatewayResponse"
+                  "$ref": "#/components/schemas/Gateway"
                 }
               }
             },
@@ -1434,7 +1473,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GatewayResponse"
+                  "$ref": "#/components/schemas/Gateway"
                 }
               }
             },

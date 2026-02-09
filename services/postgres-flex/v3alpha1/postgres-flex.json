@@ -855,17 +855,6 @@
         ],
         "type": "object"
       },
-      "RecoveryResponse": {
-        "properties": {
-          "id": {
-            "$ref": "#/components/schemas/instance.id"
-          }
-        },
-        "required": [
-          "id"
-        ],
-        "type": "object"
-      },
       "ResetUserResponse": {
         "properties": {
           "connectionString": {
@@ -1544,25 +1533,6 @@
       "instance.version.update.opt": {
         "description": "The Postgres version used for the instance. See [Versions Endpoint](/documentation/postgres-flex-service/version/v3alpha1#tag/Version) for supported version parameters.",
         "type": "string"
-      },
-      "pointInTimeRecoveryRequestPayload": {
-        "properties": {
-          "performanceClass": {
-            "$ref": "#/components/schemas/backup.storage.class"
-          },
-          "recoveryTime": {
-            "$ref": "#/components/schemas/backup.recoveryTime"
-          },
-          "size": {
-            "$ref": "#/components/schemas/backup.storage.size"
-          }
-        },
-        "required": [
-          "recoveryTime",
-          "size",
-          "performanceClass"
-        ],
-        "type": "object"
       },
       "protect.isDeletable": {
         "description": "Protect instance from deletion.",
@@ -2985,154 +2955,6 @@
         "x-stackit-authorization": {
           "actions": [
             "postgres-flex.backup.list"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project"
-        }
-      }
-    },
-    "/v3alpha1/projects/{projectId}/regions/{region}/instances/{instanceId}/backups/recoveries": {
-      "post": {
-        "description": "Point in Time Recovery",
-        "operationId": "pointInTimeRecoveryRequest",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/project"
-          },
-          {
-            "$ref": "#/components/parameters/region"
-          },
-          {
-            "$ref": "#/components/parameters/instance"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/pointInTimeRecoveryRequestPayload"
-              }
-            }
-          },
-          "description": "The request body with the parameters for recover an instance by a point in time into a new instance."
-        },
-        "responses": {
-          "202": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RecoveryResponse"
-                }
-              }
-            },
-            "description": "Accepted: The request was accepted"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "badRequestError": {
-                    "$ref": "#/components/examples/badRequestError"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Bad Request"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "unauthorizedError": {
-                    "$ref": "#/components/examples/unauthorizedError"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Unauthorized: user is not allowed to perform this operation or credentials are not correct"
-          },
-          "403": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "forbiddenError": {
-                    "$ref": "#/components/examples/forbiddenError"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Forbidden: No access for the requested resource."
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "notFoundError": {
-                    "$ref": "#/components/examples/notFoundError"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Not found: The requested resource was not found."
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationError"
-                }
-              }
-            },
-            "description": "Request failed due to body validation"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "internalServerError": {
-                    "$ref": "#/components/examples/internalServerError"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
-          },
-          "501": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "notImplementedError": {
-                    "$ref": "#/components/examples/notImplementedError"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Endpoint not implemented yet"
-          }
-        },
-        "summary": "Point in Time Recovery",
-        "x-stackit-authorization": {
-          "actions": [
-            "postgres-flex.backup.restore"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

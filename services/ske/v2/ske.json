@@ -32,6 +32,14 @@
         ],
         "type": "object"
       },
+      "AccessScope": {
+        "description": "The access scope of the Control Plane. It defines if the Kubernetes control plane is public or only available inside a STACKIT Network Area.\n⚠️ Note: This feature is in private preview. Supplying this object is only permitted for enabled accounts. If your account does not have access, the request will be rejected.",
+        "enum": [
+          "PUBLIC",
+          "SNA"
+        ],
+        "type": "string"
+      },
       "AvailabilityZone": {
         "example": {
           "name": "name"
@@ -122,6 +130,9 @@
           },
           "name": "name",
           "network": {
+            "controlPlane": {
+              "accessScope": "PUBLIC"
+            },
             "id": "id"
           },
           "nodepools": [
@@ -347,7 +358,7 @@
             }
           ],
           "status": {
-            "aggregated": "STATE_UNSPECIFIED",
+            "aggregated": "STATE_HEALTHY",
             "creationTime": "2000-01-23T04:56:07Z",
             "credentialsRotation": {
               "lastCompletionTime": "2000-01-23T04:56:07Z",
@@ -445,7 +456,7 @@
       },
       "ClusterStatus": {
         "example": {
-          "aggregated": "STATE_UNSPECIFIED",
+          "aggregated": "STATE_HEALTHY",
           "creationTime": "2000-01-23T04:56:07Z",
           "credentialsRotation": {
             "lastCompletionTime": "2000-01-23T04:56:07Z",
@@ -530,9 +541,7 @@
         "type": "object"
       },
       "ClusterStatusState": {
-        "default": "STATE_UNSPECIFIED",
         "enum": [
-          "STATE_UNSPECIFIED",
           "STATE_HEALTHY",
           "STATE_CREATING",
           "STATE_DELETING",
@@ -694,9 +703,7 @@
         "type": "object"
       },
       "GetProviderOptionsRequestVersionState": {
-        "default": "UNSPECIFIED",
         "enum": [
-          "UNSPECIFIED",
           "SUPPORTED"
         ],
         "type": "string"
@@ -937,6 +944,9 @@
               },
               "name": "name",
               "network": {
+                "controlPlane": {
+                  "accessScope": "PUBLIC"
+                },
                 "id": "id"
               },
               "nodepools": [
@@ -1162,7 +1172,7 @@
                 }
               ],
               "status": {
-                "aggregated": "STATE_UNSPECIFIED",
+                "aggregated": "STATE_HEALTHY",
                 "creationTime": "2000-01-23T04:56:07Z",
                 "credentialsRotation": {
                   "lastCompletionTime": "2000-01-23T04:56:07Z",
@@ -1256,6 +1266,9 @@
               },
               "name": "name",
               "network": {
+                "controlPlane": {
+                  "accessScope": "PUBLIC"
+                },
                 "id": "id"
               },
               "nodepools": [
@@ -1481,7 +1494,7 @@
                 }
               ],
               "status": {
-                "aggregated": "STATE_UNSPECIFIED",
+                "aggregated": "STATE_HEALTHY",
                 "creationTime": "2000-01-23T04:56:07Z",
                 "credentialsRotation": {
                   "lastCompletionTime": "2000-01-23T04:56:07Z",
@@ -1720,9 +1733,15 @@
       },
       "Network": {
         "example": {
+          "controlPlane": {
+            "accessScope": "PUBLIC"
+          },
           "id": "id"
         },
         "properties": {
+          "controlPlane": {
+            "$ref": "#/components/schemas/v2ControlPlaneNetwork"
+          },
           "id": {
             "title": "ID of the SNA network into which the cluster will be deployed",
             "type": "string"
@@ -2165,6 +2184,17 @@
         "properties": {
           "name": {
             "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "v2ControlPlaneNetwork": {
+        "example": {
+          "accessScope": "PUBLIC"
+        },
+        "properties": {
+          "accessScope": {
+            "$ref": "#/components/schemas/AccessScope"
           }
         },
         "type": "object"
@@ -3464,9 +3494,7 @@
             "in": "query",
             "name": "versionState",
             "schema": {
-              "default": "UNSPECIFIED",
               "enum": [
-                "UNSPECIFIED",
                 "SUPPORTED"
               ],
               "type": "string"

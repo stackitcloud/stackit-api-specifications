@@ -130,47 +130,40 @@
         ],
         "type": "object"
       },
-      "AlertRule": {
+      "AlertRecordResponse": {
         "properties": {
-          "alert": {
-            "maxLength": 200,
+          "data": {
+            "$ref": "#/components/schemas/AlertrecordResponse"
+          },
+          "message": {
             "minLength": 1,
-            "title": "Alert",
+            "title": "Message",
             "type": "string"
-          },
-          "annotations": {
-            "additionalProperties": {
-              "minLength": 1,
-              "type": "string"
-            },
-            "title": "Annotations",
-            "type": "object"
-          },
-          "expr": {
-            "maxLength": 2000,
-            "minLength": 1,
-            "title": "Expr",
-            "type": "string"
-          },
-          "for": {
-            "default": "0s",
-            "maxLength": 8,
-            "minLength": 2,
-            "title": "For",
-            "type": "string"
-          },
-          "labels": {
-            "additionalProperties": {
-              "minLength": 1,
-              "type": "string"
-            },
-            "title": "Labels",
-            "type": "object"
           }
         },
         "required": [
-          "alert",
-          "expr"
+          "data",
+          "message"
+        ],
+        "type": "object"
+      },
+      "AlertRecordsResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/AlertrecordResponse"
+            },
+            "type": "array"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "message"
         ],
         "type": "object"
       },
@@ -222,11 +215,28 @@
         ],
         "type": "object"
       },
+      "AlertRuleResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/AlertruleResponse"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "message"
+        ],
+        "type": "object"
+      },
       "AlertRulesResponse": {
         "properties": {
           "data": {
             "items": {
-              "$ref": "#/components/schemas/AlertRule"
+              "$ref": "#/components/schemas/AlertruleResponse"
             },
             "type": "array"
           },
@@ -238,6 +248,238 @@
         },
         "required": [
           "data",
+          "message"
+        ],
+        "type": "object"
+      },
+      "AlertrecordResponse": {
+        "properties": {
+          "expr": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Expr",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Labels",
+            "type": "object"
+          },
+          "record": {
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Record",
+            "type": "string"
+          }
+        },
+        "required": [
+          "expr",
+          "record"
+        ],
+        "type": "object"
+      },
+      "AlertruleResponse": {
+        "properties": {
+          "alert": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Alert",
+            "type": "string"
+          },
+          "annotations": {
+            "additionalProperties": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Annotations",
+            "type": "object"
+          },
+          "expr": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Expr",
+            "type": "string"
+          },
+          "for": {
+            "default": "0s",
+            "maxLength": 8,
+            "minLength": 2,
+            "title": "For",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Labels",
+            "type": "object"
+          }
+        },
+        "required": [
+          "alert",
+          "expr"
+        ],
+        "type": "object"
+      },
+      "BackupResponse": {
+        "properties": {
+          "alertConfigBackups": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "alertRulesBackups": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "grafanaBackups": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "scrapeConfigBackups": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "alertConfigBackups",
+          "alertRulesBackups",
+          "grafanaBackups",
+          "message",
+          "scrapeConfigBackups"
+        ],
+        "type": "object"
+      },
+      "BackupRetentionResponse": {
+        "properties": {
+          "alertConfigBackupRetention": {
+            "maxLength": 8,
+            "minLength": 2,
+            "title": "Alertconfigbackupretention",
+            "type": "string"
+          },
+          "alertRulesBackupRetention": {
+            "maxLength": 8,
+            "minLength": 2,
+            "title": "Alertrulesbackupretention",
+            "type": "string"
+          },
+          "grafanaBackupRetention": {
+            "maxLength": 8,
+            "minLength": 2,
+            "title": "Grafanabackupretention",
+            "type": "string"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "scrapeConfigBackupRetention": {
+            "maxLength": 8,
+            "minLength": 2,
+            "title": "Scrapeconfigbackupretention",
+            "type": "string"
+          }
+        },
+        "required": [
+          "alertConfigBackupRetention",
+          "alertRulesBackupRetention",
+          "grafanaBackupRetention",
+          "message",
+          "scrapeConfigBackupRetention"
+        ],
+        "type": "object"
+      },
+      "BackupSchedule": {
+        "properties": {
+          "schedule": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Schedule",
+            "type": "string"
+          },
+          "scheduleId": {
+            "format": "uuid",
+            "title": "Scheduleid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "schedule",
+          "scheduleId"
+        ],
+        "type": "object"
+      },
+      "BackupSchedulePostResponse": {
+        "properties": {
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "schedule": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Schedule",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message",
+          "schedule"
+        ],
+        "type": "object"
+      },
+      "BackupScheduleResponse": {
+        "properties": {
+          "alertConfigBackupSchedules": {
+            "items": {
+              "$ref": "#/components/schemas/BackupSchedule"
+            },
+            "type": "array"
+          },
+          "alertRulesBackupSchedules": {
+            "items": {
+              "$ref": "#/components/schemas/BackupSchedule"
+            },
+            "type": "array"
+          },
+          "grafanaBackupSchedules": {
+            "items": {
+              "$ref": "#/components/schemas/BackupSchedule"
+            },
+            "type": "array"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "scrapeConfigBackupSchedules": {
+            "items": {
+              "$ref": "#/components/schemas/BackupSchedule"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
           "message"
         ],
         "type": "object"
@@ -668,6 +910,32 @@
         ],
         "type": "object"
       },
+      "CreateAlertrecordPayload": {
+        "description": "Record.\n`Additional Validators:`\n* total config (all alert groups/rules/records) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
+        "properties": {
+          "expr": {
+            "description": "The PromQL expression to evaluate. Every evaluation\ncycle this is evaluated at the current time, and all resultant\ntime series become pending/firing alerts.",
+            "maxLength": 2000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "labels": {
+            "description": "map of key:value. Labels to add or overwrite for each alert.\n`Additional Validators:`\n* should not contain more than 10 keys\n* each key and value should not be longer than 200 characters\n",
+            "type": "object"
+          },
+          "record": {
+            "description": "The name of the record.\n`Additional Validators:`\n* is the identifier and so unique in the group\n",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "expr",
+          "record"
+        ],
+        "type": "object"
+      },
       "CreateAlertrulesPayload": {
         "description": "Alert rule.\n`Additional Validators:`\n* total config (all alert groups/rules) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
         "properties": {
@@ -702,6 +970,19 @@
         "required": [
           "alert",
           "expr"
+        ],
+        "type": "object"
+      },
+      "CreateBackupSchedulePayload": {
+        "properties": {
+          "schedule": {
+            "description": "The schedule for how often to create a backup.\n`Additional Validators:`\n* must be a valid cronjob format\n* must run less than hourly",
+            "maxLength": 100,
+            "type": "string"
+          }
+        },
+        "required": [
+          "schedule"
         ],
         "type": "object"
       },
@@ -745,6 +1026,30 @@
         "required": [
           "credentials",
           "message"
+        ],
+        "type": "object"
+      },
+      "CreateElasticsearchCheckPayload": {
+        "description": "Elasticsearch check body.",
+        "properties": {
+          "password": {
+            "description": "password",
+            "maxLength": 200,
+            "type": "string"
+          },
+          "server": {
+            "description": "url to check",
+            "maxLength": 200,
+            "type": "string"
+          },
+          "username": {
+            "description": "username",
+            "maxLength": 200,
+            "type": "string"
+          }
+        },
+        "required": [
+          "server"
         ],
         "type": "object"
       },
@@ -881,6 +1186,124 @@
         "required": [
           "name",
           "rules"
+        ],
+        "type": "object"
+      },
+      "CreateMongodbCheckPayload": {
+        "description": "Mongodb check body.",
+        "properties": {
+          "server": {
+            "description": "url to check",
+            "maxLength": 200,
+            "type": "string"
+          }
+        },
+        "required": [
+          "server"
+        ],
+        "type": "object"
+      },
+      "CreateMysqlCheckPayload": {
+        "description": "MySQL check body.",
+        "properties": {
+          "server": {
+            "description": "url to check",
+            "maxLength": 200,
+            "type": "string"
+          }
+        },
+        "required": [
+          "server"
+        ],
+        "type": "object"
+      },
+      "CreateNetworkCheckPayload": {
+        "description": "Network check body.",
+        "properties": {
+          "address": {
+            "description": "network to check",
+            "maxLength": 400,
+            "type": "string"
+          }
+        },
+        "required": [
+          "address"
+        ],
+        "type": "object"
+      },
+      "CreatePingCheckPayload": {
+        "description": "Ping check body.",
+        "properties": {
+          "url": {
+            "description": "domain to check",
+            "maxLength": 400,
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "type": "object"
+      },
+      "CreatePostgresqlCheckPayload": {
+        "description": "Postgresql check body.",
+        "properties": {
+          "address": {
+            "description": "url to check",
+            "maxLength": 200,
+            "type": "string"
+          }
+        },
+        "required": [
+          "address"
+        ],
+        "type": "object"
+      },
+      "CreateRabbitmqCheckPayload": {
+        "description": "RabbitMQ check body.",
+        "properties": {
+          "password": {
+            "description": "password",
+            "maxLength": 200,
+            "type": "string"
+          },
+          "url": {
+            "description": "url to check",
+            "maxLength": 200,
+            "type": "string"
+          },
+          "username": {
+            "description": "username",
+            "maxLength": 200,
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "type": "object"
+      },
+      "CreateRedisCheckPayload": {
+        "description": "Redis check body.",
+        "properties": {
+          "password": {
+            "description": "password",
+            "maxLength": 200,
+            "type": "string"
+          },
+          "server": {
+            "description": "url to check",
+            "maxLength": 200,
+            "type": "string"
+          },
+          "username": {
+            "description": "username",
+            "maxLength": 200,
+            "type": "string"
+          }
+        },
+        "required": [
+          "server"
         ],
         "type": "object"
       },
@@ -1307,6 +1730,59 @@
         },
         "required": [
           "data",
+          "message"
+        ],
+        "type": "object"
+      },
+      "ElasticsearchCheckChildResponse": {
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "password": {
+            "minLength": 1,
+            "title": "Password",
+            "type": "string"
+          },
+          "server": {
+            "minLength": 1,
+            "title": "Server",
+            "type": "string"
+          },
+          "username": {
+            "minLength": 1,
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "server"
+        ],
+        "type": "object"
+      },
+      "ElasticsearchCheckResponse": {
+        "properties": {
+          "elasticsearchCheck": {
+            "$ref": "#/components/schemas/ElasticsearchCheckChildResponse"
+          },
+          "elasticsearchChecks": {
+            "items": {
+              "$ref": "#/components/schemas/ElasticsearchCheckChildResponse"
+            },
+            "maxItems": 100,
+            "type": "array"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "elasticsearchChecks",
           "message"
         ],
         "type": "object"
@@ -2461,6 +2937,135 @@
         ],
         "type": "object"
       },
+      "MongodbCheckChildResponse": {
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "server": {
+            "minLength": 1,
+            "title": "Server",
+            "type": "string"
+          }
+        },
+        "required": [
+          "server",
+          "id"
+        ],
+        "type": "object"
+      },
+      "MongodbCheckResponse": {
+        "properties": {
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "mongodbCheck": {
+            "$ref": "#/components/schemas/MongodbCheckChildResponse"
+          },
+          "mongodbChecks": {
+            "items": {
+              "$ref": "#/components/schemas/MongodbCheckChildResponse"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "message",
+          "mongodbChecks"
+        ],
+        "type": "object"
+      },
+      "MysqlCheckChildResponse": {
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "server": {
+            "minLength": 1,
+            "title": "Server",
+            "type": "string"
+          }
+        },
+        "required": [
+          "server",
+          "id"
+        ],
+        "type": "object"
+      },
+      "MysqlCheckResponse": {
+        "properties": {
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "mysqlCheck": {
+            "$ref": "#/components/schemas/MysqlCheckChildResponse"
+          },
+          "mysqlChecks": {
+            "items": {
+              "$ref": "#/components/schemas/MysqlCheckChildResponse"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "message",
+          "mysqlChecks"
+        ],
+        "type": "object"
+      },
+      "NetworkCheckChildResponse": {
+        "properties": {
+          "address": {
+            "minLength": 1,
+            "title": "Address",
+            "type": "string"
+          },
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "address",
+          "id"
+        ],
+        "type": "object"
+      },
+      "NetworkCheckResponse": {
+        "properties": {
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "networkCheck": {
+            "$ref": "#/components/schemas/NetworkCheckChildResponse"
+          },
+          "networkChecks": {
+            "items": {
+              "$ref": "#/components/schemas/NetworkCheckChildResponse"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "message",
+          "networkChecks"
+        ],
+        "type": "object"
+      },
       "OAuth2": {
         "properties": {
           "clientId": {
@@ -2498,6 +3103,58 @@
           "clientId",
           "clientSecret",
           "tokenUrl"
+        ],
+        "type": "object"
+      },
+      "Offerings": {
+        "properties": {
+          "description": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "documentationUrl": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Documentationurl",
+            "type": "string"
+          },
+          "imageUrl": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Imageurl",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "plans": {
+            "items": {
+              "$ref": "#/components/schemas/Plan"
+            },
+            "type": "array"
+          },
+          "tags": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 10,
+            "type": "array"
+          }
+        },
+        "required": [
+          "description",
+          "documentationUrl",
+          "imageUrl",
+          "name",
+          "plans",
+          "tags"
         ],
         "type": "object"
       },
@@ -2546,6 +3203,49 @@
         },
         "required": [
           "detail"
+        ],
+        "type": "object"
+      },
+      "PingCheckChildResponse": {
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "url": {
+            "minLength": 1,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "id"
+        ],
+        "type": "object"
+      },
+      "PingCheckResponse": {
+        "properties": {
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "pingCheck": {
+            "$ref": "#/components/schemas/PingCheckChildResponse"
+          },
+          "pingChecks": {
+            "items": {
+              "$ref": "#/components/schemas/PingCheckChildResponse"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "message",
+          "pingChecks"
         ],
         "type": "object"
       },
@@ -2801,6 +3501,49 @@
         ],
         "type": "object"
       },
+      "PostgresqlCheckChildResponse": {
+        "properties": {
+          "address": {
+            "minLength": 1,
+            "title": "Address",
+            "type": "string"
+          },
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "address",
+          "id"
+        ],
+        "type": "object"
+      },
+      "PostgresqlCheckResponse": {
+        "properties": {
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "postgresqlCheck": {
+            "$ref": "#/components/schemas/PostgresqlCheckChildResponse"
+          },
+          "postgresqlChecks": {
+            "items": {
+              "$ref": "#/components/schemas/PostgresqlCheckChildResponse"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "message",
+          "postgresqlChecks"
+        ],
+        "type": "object"
+      },
       "ProjectInstanceFull": {
         "properties": {
           "error": {
@@ -2864,6 +3607,59 @@
         ],
         "type": "object"
       },
+      "RabbitMQCheckChildResponse": {
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "password": {
+            "minLength": 1,
+            "title": "Password",
+            "type": "string"
+          },
+          "url": {
+            "minLength": 1,
+            "title": "Url",
+            "type": "string"
+          },
+          "username": {
+            "minLength": 1,
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "url"
+        ],
+        "type": "object"
+      },
+      "RabbitmqCheckResponse": {
+        "properties": {
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "rabbitmqCheck": {
+            "$ref": "#/components/schemas/RabbitMQCheckChildResponse"
+          },
+          "rabbitmqChecks": {
+            "items": {
+              "$ref": "#/components/schemas/RabbitMQCheckChildResponse"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "message",
+          "rabbitmqChecks"
+        ],
+        "type": "object"
+      },
       "Receiver": {
         "properties": {
           "data": {
@@ -2910,6 +3706,59 @@
         },
         "required": [
           "name"
+        ],
+        "type": "object"
+      },
+      "RedisCheckChildResponse": {
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "password": {
+            "minLength": 1,
+            "title": "Password",
+            "type": "string"
+          },
+          "server": {
+            "minLength": 1,
+            "title": "Server",
+            "type": "string"
+          },
+          "username": {
+            "minLength": 1,
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "server",
+          "id"
+        ],
+        "type": "object"
+      },
+      "RedisCheckResponse": {
+        "properties": {
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "redisCheck": {
+            "$ref": "#/components/schemas/RedisCheckChildResponse"
+          },
+          "redisChecks": {
+            "items": {
+              "$ref": "#/components/schemas/RedisCheckChildResponse"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "message",
+          "redisChecks"
         ],
         "type": "object"
       },
@@ -3942,6 +4791,55 @@
         },
         "required": [
           "rules"
+        ],
+        "type": "object"
+      },
+      "UpdateAlertrecordPayload": {
+        "description": "Record.\n`Additional Validators:`\n* total config (all alert groups/rules/records) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
+        "properties": {
+          "expr": {
+            "description": "The PromQL expression to evaluate. Every evaluation\ncycle this is evaluated at the current time, and all resultant\ntime series become pending/firing alerts.",
+            "maxLength": 2000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "labels": {
+            "description": "map of key:value. Labels to add or overwrite for each alert.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters\n",
+            "type": "object"
+          }
+        },
+        "required": [
+          "expr"
+        ],
+        "type": "object"
+      },
+      "UpdateAlertrulePayload": {
+        "description": "Alert rule.\n`Additional Validators:`\n* total config (all alert groups/rules) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
+        "properties": {
+          "annotations": {
+            "description": "map of key:value. Annotations to add to each alert.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+            "type": "object"
+          },
+          "expr": {
+            "description": "The PromQL expression to evaluate. Every evaluation\ncycle this is evaluated at the current time, and all resultant\ntime series become pending/firing alerts.",
+            "maxLength": 2000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "for": {
+            "default": "0s",
+            "description": "Alerts are considered firing once they have been returned for this long. Alerts which have not yet fired for long enough are considered pending.\n`Additional Validators:`\n* must be a valid time string",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "labels": {
+            "description": "map of key:value. Labels to add or overwrite for each alert.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters",
+            "type": "object"
+          }
+        },
+        "required": [
+          "expr"
         ],
         "type": "object"
       },
@@ -7812,6 +8710,1633 @@
         }
       }
     },
+    "/v1/projects/{projectId}/instances/{instanceId}/alertgroups/{groupName}/alertrules/{alertName}": {
+      "delete": {
+        "description": "Delete alert rule.",
+        "operationId": "DeleteAlertrule",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alertName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "groupName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "alert": "up test",
+                      "annotations": {
+                        "test": "test"
+                      },
+                      "expr": "up == 1",
+                      "for": "30s",
+                      "labels": {
+                        "test": "test"
+                      }
+                    }
+                  ],
+                  "message": "Alert rules successfully deleted"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/AlertRulesResponse"
+                }
+              }
+            },
+            "description": "Delete alert rule."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Something went wrong"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong deleting the alert rule."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Alert rule not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Alert rule not found."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get alert rule.",
+        "operationId": "GetAlertrule",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alertName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "groupName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "alert": "up test",
+                    "annotations": {
+                      "test": "test"
+                    },
+                    "expr": "up == 1",
+                    "for": "30s",
+                    "labels": {
+                      "test": "test"
+                    }
+                  },
+                  "message": "Successfully got alert rules"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/AlertRuleResponse"
+                }
+              }
+            },
+            "description": "Get alert rules"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Alert rule not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Alert rule not found."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "put": {
+        "description": "Update alert rule.",
+        "operationId": "UpdateAlertrule",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alertName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "groupName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAlertrulePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "alert": "up test",
+                      "annotations": {
+                        "test": "test"
+                      },
+                      "expr": "up == 1",
+                      "for": "30s",
+                      "labels": {
+                        "test": "test"
+                      }
+                    }
+                  ],
+                  "message": "Alert rule updated successfully"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/AlertRulesResponse"
+                }
+              }
+            },
+            "description": "Update alert rules."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Something went wrong"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong updating the alert rule."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Alert rule not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Alert rule not found."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/alertgroups/{groupName}/records": {
+      "delete": {
+        "description": "Delete alert records.",
+        "operationId": "DeleteAlertrecords",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "groupName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Name of the records that should be deleted",
+            "explode": false,
+            "in": "query",
+            "name": "alertRecord",
+            "required": true,
+            "schema": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "style": "form"
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "expr": "sum without(instance, method, controller, status_code)(rate(prometheus_http_requests_total[5m]))",
+                      "labels": {
+                        "test": "test"
+                      },
+                      "record": "job:prometheus_http_requests_total:rate5m"
+                    }
+                  ],
+                  "message": "Alert records successfully deleted"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/AlertRecordsResponse"
+                }
+              }
+            },
+            "description": "Delete alert records."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get alert records.",
+        "operationId": "ListAlertrecords",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "groupName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "expr": "sum without(instance, method, controller, status_code)(rate(prometheus_http_requests_total[5m]))",
+                      "labels": {
+                        "test": "test"
+                      },
+                      "record": "job:prometheus_http_requests_total:rate5m"
+                    }
+                  ],
+                  "message": "Successfully got alert records"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/AlertRecordsResponse"
+                }
+              }
+            },
+            "description": "Get all alert records."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "patch": {
+        "description": "Patch alert records.",
+        "operationId": "PartialUpdateAlertrecords",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "groupName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "Array of records that should be created or updated",
+                "items": {
+                  "description": "Record.\n`Additional Validators:`\n* total config (all alert groups/rules/records) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
+                  "properties": {
+                    "expr": {
+                      "description": "The PromQL expression to evaluate. Every evaluation\ncycle this is evaluated at the current time, and all resultant\ntime series become pending/firing alerts.",
+                      "maxLength": 2000,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "labels": {
+                      "description": "map of key:value. Labels to add or overwrite for each alert.\n`Additional Validators:`\n* should not contain more than 10 keys\n* each key and value should not be longer than 200 characters\n",
+                      "type": "object"
+                    },
+                    "record": {
+                      "description": "The name of the record.\n`Additional Validators:`\n* is the identifier and so unique in the group\n",
+                      "maxLength": 200,
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "expr",
+                    "record"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "expr": "sum without(instance, method, controller, status_code)(rate(prometheus_http_requests_total[5m]))",
+                      "labels": {
+                        "test": "test"
+                      },
+                      "record": "job:prometheus_http_requests_total:rate5m"
+                    }
+                  ],
+                  "message": "Alert records successfully created"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/AlertRecordsResponse"
+                }
+              }
+            },
+            "description": "Create alert records."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Something went wrong"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create alert record.",
+        "operationId": "CreateAlertrecord",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "groupName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAlertrecordPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "expr": "sum without(instance, method, controller, status_code)(rate(prometheus_http_requests_total[5m]))",
+                      "labels": {
+                        "test": "test"
+                      },
+                      "record": "job:prometheus_http_requests_total:rate5m"
+                    }
+                  ],
+                  "message": "Alert record successfully created"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/AlertRecordsResponse"
+                }
+              }
+            },
+            "description": "Create alert record."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Something wrong"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/alertgroups/{groupName}/records/{alertRecord}": {
+      "delete": {
+        "description": "Delete alert record.",
+        "operationId": "DeleteAlertrecord",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alertRecord",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "groupName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "expr": "sum without(instance, method, controller, status_code)(rate(prometheus_http_requests_total[5m]))",
+                      "labels": {
+                        "test": "test"
+                      },
+                      "record": "job:prometheus_http_requests_total:rate5m"
+                    }
+                  ],
+                  "message": "Alert record successfully deleted"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/AlertRecordsResponse"
+                }
+              }
+            },
+            "description": "Delete alert record."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Could not delete record"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Alert record not found."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get alert record.",
+        "operationId": "GetAlertrecord",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alertRecord",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "groupName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "expr": "sum without(instance, method, controller, status_code)(rate(prometheus_http_requests_total[5m]))",
+                    "labels": {
+                      "test": "test"
+                    },
+                    "record": "job:prometheus_http_requests_total:rate5m"
+                  },
+                  "message": "Successfully got alert record"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/AlertRecordResponse"
+                }
+              }
+            },
+            "description": "Get alert record."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Something went wrong"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Alert record not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Alert record not found."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "put": {
+        "description": "Update alert record.",
+        "operationId": "UpdateAlertrecord",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alertRecord",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "groupName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAlertrecordPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "expr": "sum without(instance, method, controller, status_code)(rate(prometheus_http_requests_total[5m]))",
+                      "labels": {
+                        "test": "test"
+                      },
+                      "record": "job:prometheus_http_requests_total:rate5m"
+                    }
+                  ],
+                  "message": "Alert record updated successfully"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/AlertRecordsResponse"
+                }
+              }
+            },
+            "description": "Update alert record."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Something went wrong"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong updating the record."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Alert record not found."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Alert record not found."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/backup-restores/{backupDate}": {
+      "post": {
+        "description": "Restore backup.",
+        "operationId": "RestoreBackup",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "backupDate",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "List of restore targets",
+            "in": "query",
+            "name": "restoreTarget",
+            "required": true,
+            "schema": {
+              "enum": [
+                "alertConfig",
+                "alertRules",
+                "scrapeConfig",
+                "grafana"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Restore will be proceeded"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Restore backup"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You do not have permission to perform this action."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Backup not found"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Backup not found"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/backup-retentions": {
+      "get": {
+        "description": "Get backup retention.",
+        "operationId": "ListBackupRetentions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "alertConfigBackupRetention": "14d",
+                  "alertRulesBackupRetention": "14d",
+                  "grafanaBackupRetention": "14d",
+                  "message": "Successfully got backup retention",
+                  "scrapeConfigBackupRetention": "14d"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/BackupRetentionResponse"
+                }
+              }
+            },
+            "description": "Get backup retention"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You do not have permission to perform this action."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/backup-schedules": {
+      "get": {
+        "description": "Get backup schedules.",
+        "operationId": "ListBackupSchedules",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "List of backup targets",
+            "explode": false,
+            "in": "query",
+            "name": "backupTarget",
+            "schema": {
+              "items": {
+                "enum": [
+                  "alertConfig",
+                  "alertRules",
+                  "scrapeConfig",
+                  "grafana"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "style": "form"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "alertConfigBackupSchedules": [
+                    {
+                      "schedule": "*/5 * * * *",
+                      "scheduleId": "f546eff4-3c8d-4664-9657-a6ad46edffe5"
+                    },
+                    {
+                      "schedule": "0 0 * * MON",
+                      "scheduleId": "a3cddd87-a967-42ef-9413-041c731ac81a"
+                    }
+                  ],
+                  "alertRulesBackupSchedules": [
+                    {
+                      "schedule": "*/5 * * * *",
+                      "scheduleId": "f546eff4-3c8d-4664-9657-a6ad46edffe6"
+                    },
+                    {
+                      "schedule": "0 0 * * MON",
+                      "scheduleId": "a3cddd87-a967-42ef-9413-041c731ac81b"
+                    }
+                  ],
+                  "grafanaBackupSchedules": [
+                    {
+                      "schedule": "*/5 * * * *",
+                      "scheduleId": "f546eff4-3c8d-4664-9657-a6ad46edffe8"
+                    },
+                    {
+                      "schedule": "0 0 * * MON",
+                      "scheduleId": "a3cddd87-a967-42ef-9413-041c731ac81d"
+                    }
+                  ],
+                  "message": "Successfully got backup schedules",
+                  "scrapeConfigBackupSchedules": [
+                    {
+                      "schedule": "*/5 * * * *",
+                      "scheduleId": "f546eff4-3c8d-4664-9657-a6ad46edffe7"
+                    },
+                    {
+                      "schedule": "0 0 * * MON",
+                      "scheduleId": "a3cddd87-a967-42ef-9413-041c731ac81c"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/BackupScheduleResponse"
+                }
+              }
+            },
+            "description": "Get backup schedules."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You do not have permission to perform this action."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create backup schedule.",
+        "operationId": "CreateBackupSchedule",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "List of backup targets",
+            "explode": false,
+            "in": "query",
+            "name": "backupTarget",
+            "schema": {
+              "items": {
+                "enum": [
+                  "alertConfig",
+                  "alertRules",
+                  "scrapeConfig",
+                  "grafana"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "style": "form"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBackupSchedulePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Backup schedule will be created",
+                  "schedule": "*/5 * * * *"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/BackupSchedulePostResponse"
+                }
+              }
+            },
+            "description": "Create backup schedule"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Something went wrong"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You do not have permission to perform this action."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/backups": {
+      "get": {
+        "description": "Get backups.",
+        "operationId": "ListBackups",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "List of backup targets",
+            "explode": false,
+            "in": "query",
+            "name": "backupTarget",
+            "schema": {
+              "items": {
+                "enum": [
+                  "alertConfig",
+                  "alertRules",
+                  "scrapeConfig",
+                  "grafana"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "style": "form"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "alertConfigBackups": [
+                    "11-08-2021T14:08:21",
+                    "14-08-2021T06:35:40"
+                  ],
+                  "alertRulesBackups": [
+                    "11-08-2021T14:08:22",
+                    "14-08-2021T06:35:41"
+                  ],
+                  "grafanaBackups": [
+                    "11-08-2021T14:08:31",
+                    "14-08-2021T06:35:43"
+                  ],
+                  "message": "Successfully got backups",
+                  "scrapeConfigBackups": [
+                    "11-08-2021T14:08:23",
+                    "14-08-2021T06:35:42"
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/BackupResponse"
+                }
+              }
+            },
+            "description": "Get all backups"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You do not have permission to perform this action."
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Could not get backups from storage"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Connection to object storage could not be established."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create a backup.",
+        "operationId": "CreateBackup",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "List of backup targets",
+            "explode": false,
+            "in": "query",
+            "name": "backupTarget",
+            "schema": {
+              "items": {
+                "enum": [
+                  "alertConfig",
+                  "alertRules",
+                  "scrapeConfig",
+                  "grafana"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "style": "form"
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Backup will be created"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Create backup"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Something went wrong"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You do not have permission to perform this action."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
     "/v1/projects/{projectId}/instances/{instanceId}/cert-checks": {
       "get": {
         "description": "Get all cert checks configured.",
@@ -8734,6 +11259,293 @@
               }
             },
             "description": "failed to read kubernetes configmap"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/elasticsearch-checks": {
+      "get": {
+        "description": "Get all elasticsearch checks configured.",
+        "operationId": "ListElasticsearchChecks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "elasticsearchChecks": [
+                    {
+                      "id": "c5a0ab6ad3af3e3bb44a4d369c5aa36d",
+                      "server": "http://localhost:9200"
+                    }
+                  ],
+                  "message": "Successfully got all elasticsearch checks"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ElasticsearchCheckResponse"
+                }
+              }
+            },
+            "description": "Get all elasticsearch checks."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create elasticsearch check.",
+        "operationId": "CreateElasticsearchCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateElasticsearchCheckPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "elasticsearchCheck": {
+                    "id": "06db0f4180251258cbecf430a95cefaf",
+                    "server": "http://localhost:9300"
+                  },
+                  "elasticsearchChecks": [
+                    {
+                      "id": "c5a0ab6ad3af3e3bb44a4d369c5aa36d",
+                      "server": "http://localhost:9200"
+                    },
+                    {
+                      "id": "06db0f4180251258cbecf430a95cefaf",
+                      "server": "http://localhost:9300"
+                    }
+                  ],
+                  "message": "Successfully created elasticsearch check"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ElasticsearchCheckResponse"
+                }
+              }
+            },
+            "description": "Get added check (elasticsearchCheck) and all configured checks (elasticsearchChecks)."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "CheckArrayError": {
+                    "summary": "Global error",
+                    "value": [
+                      "instance is not ready"
+                    ]
+                  },
+                  "CheckObjectError": {
+                    "summary": "Field specific error",
+                    "value": {
+                      "password": [
+                        "This field may not be blank."
+                      ],
+                      "server": [
+                        "This field may not be blank."
+                      ],
+                      "username": [
+                        "This field may not be blank."
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/CheckObjectError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CheckArrayError"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/elasticsearch-checks/{id}": {
+      "delete": {
+        "description": "Delete elasticsearch check.",
+        "operationId": "DeleteElasticsearchCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "elasticsearchChecks": [
+                    {
+                      "id": "c5a0ab6ad3af3e3bb44a4d369c5aa36d",
+                      "server": "http://localhost:9200"
+                    }
+                  ],
+                  "message": "Successfully deleted elasticsearch check"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ElasticsearchCheckResponse"
+                }
+              }
+            },
+            "description": "Delete elasticsearch check."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
           }
         },
         "x-stackit-authorization": {
@@ -10034,7 +12846,2074 @@
         }
       }
     },
+    "/v1/projects/{projectId}/instances/{instanceId}/mongodb-checks": {
+      "get": {
+        "description": "Get all mongodb checks configured.",
+        "operationId": "ListMongodbChecks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully got all mongodb checks",
+                  "mongodbChecks": [
+                    {
+                      "id": "058e329ae4975a91f0a55b5f643932fc",
+                      "server": "mongodb://127.0.0.1:27017/?connect=direct"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/MongodbCheckResponse"
+                }
+              }
+            },
+            "description": "Get all mongodb checks."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create mongodb check.",
+        "operationId": "CreateMongodbCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMongodbCheckPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully created mongodb check",
+                  "mongodbCheck": {
+                    "id": "74ebf3218591a92cc7a7845f0e249b24",
+                    "server": "mongodb://127.0.0.2:27017/?connect=direct"
+                  },
+                  "mongodbChecks": [
+                    {
+                      "id": "058e329ae4975a91f0a55b5f643932fc",
+                      "server": "mongodb://127.0.0.1:27017/?connect=direct"
+                    },
+                    {
+                      "id": "74ebf3218591a92cc7a7845f0e249b24",
+                      "server": "mongodb://127.0.0.2:27017/?connect=direct"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/MongodbCheckResponse"
+                }
+              }
+            },
+            "description": "Get added check (mongodbCheck) and all configured checks (mongodbChecks)."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "CheckArrayError": {
+                    "summary": "Global error",
+                    "value": [
+                      "instance is not ready"
+                    ]
+                  },
+                  "CheckObjectError": {
+                    "summary": "Field specific error",
+                    "value": {
+                      "server": [
+                        "This field may not be blank."
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/CheckObjectError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CheckArrayError"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/mongodb-checks/{id}": {
+      "delete": {
+        "description": "Delete mongodb check.",
+        "operationId": "DeleteMongodbCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully deleted mongodb check",
+                  "mongodbChecks": [
+                    {
+                      "id": "058e329ae4975a91f0a55b5f643932fc",
+                      "server": "mongodb://127.0.0.1:27017/?connect=direct"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/MongodbCheckResponse"
+                }
+              }
+            },
+            "description": "Delete mongodb check."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/mysql-checks": {
+      "get": {
+        "description": "Get all mysql checks configured.",
+        "operationId": "ListMysqlChecks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully got all mysql checks",
+                  "mysqlChecks": [
+                    {
+                      "id": "7738ea6fb9a9f48c1056df12fae7e83f",
+                      "server": "tcp(127.0.0.1:3306)/"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/MysqlCheckResponse"
+                }
+              }
+            },
+            "description": "Get all mysql checks."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create mysql check.",
+        "operationId": "CreateMysqlCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMysqlCheckPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully created mysql check",
+                  "mysqlCheck": {
+                    "id": "82e2ddebbb2fbbaade959921880dcd8d",
+                    "server": "tcp(127.0.0.2:3306)/"
+                  },
+                  "mysqlChecks": [
+                    {
+                      "id": "7738ea6fb9a9f48c1056df12fae7e83f",
+                      "server": "tcp(127.0.0.1:3306)/"
+                    },
+                    {
+                      "id": "82e2ddebbb2fbbaade959921880dcd8d",
+                      "server": "tcp(127.0.0.2:3306)/"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/MysqlCheckResponse"
+                }
+              }
+            },
+            "description": "Get added check (mysqlCheck) and all configured checks (mysqlChecks)."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "CheckArrayError": {
+                    "summary": "Global error",
+                    "value": [
+                      "instance is not ready"
+                    ]
+                  },
+                  "CheckObjectError": {
+                    "summary": "Field specific error",
+                    "value": {
+                      "server": [
+                        "This field may not be blank."
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/CheckObjectError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CheckArrayError"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/mysql-checks/{id}": {
+      "delete": {
+        "description": "Delete mysql check.",
+        "operationId": "DeleteMysqlCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully deleted mysql check",
+                  "mysqlChecks": [
+                    {
+                      "id": "7738ea6fb9a9f48c1056df12fae7e83f",
+                      "server": "tcp(127.0.0.1:3306)/"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/MysqlCheckResponse"
+                }
+              }
+            },
+            "description": "Delete mysql check."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/network-checks": {
+      "get": {
+        "description": "Get all network checks configured.",
+        "operationId": "ListNetworkChecks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully got all network checks",
+                  "networkChecks": [
+                    {
+                      "address": "example.org:80",
+                      "id": "ae90dd04b106ec9960651f20a1fe5130"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkCheckResponse"
+                }
+              }
+            },
+            "description": "Get all network checks."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create network check.",
+        "operationId": "CreateNetworkCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateNetworkCheckPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully created network check",
+                  "networkCheck": {
+                    "address": "example.org:90",
+                    "id": "6d77519d9ed31b405f6c32010bb9b1f4"
+                  },
+                  "networkChecks": [
+                    {
+                      "address": "example.org:80",
+                      "id": "ae90dd04b106ec9960651f20a1fe5130"
+                    },
+                    {
+                      "address": "example.org:90",
+                      "id": "6d77519d9ed31b405f6c32010bb9b1f4"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkCheckResponse"
+                }
+              }
+            },
+            "description": "Get added check (networkCheck) and all configured checks (networkChecks)."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "CheckArrayError": {
+                    "summary": "Global error",
+                    "value": [
+                      "instance is not ready"
+                    ]
+                  },
+                  "CheckObjectError": {
+                    "summary": "Field specific error",
+                    "value": {
+                      "address": [
+                        "This field may not be blank."
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/CheckObjectError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CheckArrayError"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/network-checks/{id}": {
+      "delete": {
+        "description": "Delete network check.",
+        "operationId": "DeleteNetworkCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully deleted network check",
+                  "networkChecks": [
+                    {
+                      "address": "example.org:80",
+                      "id": "ae90dd04b106ec9960651f20a1fe5130"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkCheckResponse"
+                }
+              }
+            },
+            "description": "Delete network check."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/ping-checks": {
+      "get": {
+        "description": "Get all ping checks configured.",
+        "operationId": "ListPingChecks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully got all ping checks",
+                  "pingChecks": [
+                    {
+                      "id": "1bdf72e04d6b50c82a48c7e4dd38cc69",
+                      "url": "example.org"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PingCheckResponse"
+                }
+              }
+            },
+            "description": "Ping check response."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create ping check.",
+        "operationId": "CreatePingCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePingCheckPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully created ping check",
+                  "pingCheck": {
+                    "id": "9fce74d47c54c182ad73cadc1b4fbfe8",
+                    "url": "example-2.org"
+                  },
+                  "pingChecks": [
+                    {
+                      "id": "1bdf72e04d6b50c82a48c7e4dd38cc69",
+                      "url": "example.org"
+                    },
+                    {
+                      "id": "9fce74d47c54c182ad73cadc1b4fbfe8",
+                      "url": "example-2.org"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PingCheckResponse"
+                }
+              }
+            },
+            "description": "Get added check (pingCheck) and all configured checks (pingChecks)."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "CheckArrayError": {
+                    "summary": "Global error",
+                    "value": [
+                      "instance is not ready"
+                    ]
+                  },
+                  "CheckObjectError": {
+                    "summary": "Field specific error",
+                    "value": {
+                      "url": [
+                        "This field may not be blank."
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/CheckObjectError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CheckArrayError"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/ping-checks/{id}": {
+      "delete": {
+        "description": "Delete ping check.",
+        "operationId": "DeletePingCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully deleted ping check",
+                  "pingChecks": [
+                    {
+                      "id": "1bdf72e04d6b50c82a48c7e4dd38cc69",
+                      "url": "example.org"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PingCheckResponse"
+                }
+              }
+            },
+            "description": "Ping check response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/postgresql-checks": {
+      "get": {
+        "description": "Get all postgresql checks configured.",
+        "operationId": "ListPostgresqlChecks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully got all postgresql checks",
+                  "postgresqlChecks": [
+                    {
+                      "address": "postgres://user:pass@hostname:5432/db?sslmode=false",
+                      "id": "aef366e3d571a20c71cea76df15c1ae7"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PostgresqlCheckResponse"
+                }
+              }
+            },
+            "description": "Get all postgresql checks."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create postgresql check.",
+        "operationId": "CreatePostgresqlCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePostgresqlCheckPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully created postgresql check",
+                  "postgresqlCheck": {
+                    "address": "postgres://user:pass@hostname:5442/db?sslmode=false",
+                    "id": "8c89ab9a335119a1ba3a4f263482ccef"
+                  },
+                  "postgresqlChecks": [
+                    {
+                      "address": "postgres://user:pass@hostname:5432/db?sslmode=false",
+                      "id": "aef366e3d571a20c71cea76df15c1ae7"
+                    },
+                    {
+                      "address": "postgres://user:pass@hostname:5442/db?sslmode=false",
+                      "id": "8c89ab9a335119a1ba3a4f263482ccef"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PostgresqlCheckResponse"
+                }
+              }
+            },
+            "description": "Get added check (postgresqlCheck) and all configured checks (postgresqlChecks)."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "CheckArrayError": {
+                    "summary": "Global error",
+                    "value": [
+                      "instance is not ready"
+                    ]
+                  },
+                  "CheckObjectError": {
+                    "summary": "Field specific error",
+                    "value": {
+                      "address": [
+                        "This field may not be blank."
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/CheckObjectError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CheckArrayError"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/postgresql-checks/{id}": {
+      "delete": {
+        "description": "Delete postgresql check.",
+        "operationId": "DeletePostgresqlCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully deleted postgresql check",
+                  "postgresqlChecks": [
+                    {
+                      "address": "postgres://user:pass@hostname:5432/db?sslmode=false",
+                      "id": "aef366e3d571a20c71cea76df15c1ae7"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PostgresqlCheckResponse"
+                }
+              }
+            },
+            "description": "Delete postgresql check."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/rabbitmq-checks": {
+      "get": {
+        "description": "Get all rabbitmq checks configured.",
+        "operationId": "ListRabbitmqChecks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully got all rabbitmq checks",
+                  "rabbitmqChecks": [
+                    {
+                      "id": "489c740bf617ba3254d96d6cf0c9e6a5",
+                      "url": "http://localhost:15672"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/RabbitmqCheckResponse"
+                }
+              }
+            },
+            "description": "Get all rabbitmq checks."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create rabbitmq check.",
+        "operationId": "CreateRabbitmqCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRabbitmqCheckPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully created rabbitmq check",
+                  "rabbitmqCheck": {
+                    "id": "d2916e599013fec71f6456b2dffc86bf",
+                    "url": "http://localhost-2:15672"
+                  },
+                  "rabbitmqChecks": [
+                    {
+                      "id": "489c740bf617ba3254d96d6cf0c9e6a5",
+                      "url": "http://localhost:15672"
+                    },
+                    {
+                      "id": "d2916e599013fec71f6456b2dffc86bf",
+                      "url": "http://localhost-2:15672"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/RabbitmqCheckResponse"
+                }
+              }
+            },
+            "description": "Get added check (rabbitmqCheck) and all configured checks (rabbitmqChecks)."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "CheckArrayError": {
+                    "summary": "Global error",
+                    "value": [
+                      "instance is not ready"
+                    ]
+                  },
+                  "CheckObjectError": {
+                    "summary": "Field specific error",
+                    "value": {
+                      "password": [
+                        "This field may not be blank."
+                      ],
+                      "url": [
+                        "This field may not be blank."
+                      ],
+                      "username": [
+                        "This field may not be blank."
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/CheckObjectError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CheckArrayError"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/rabbitmq-checks/{id}": {
+      "delete": {
+        "description": "Delete rabbitmq check.",
+        "operationId": "DeleteRabbitmqCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully deleted rabbitmq check",
+                  "rabbitmqChecks": [
+                    {
+                      "id": "489c740bf617ba3254d96d6cf0c9e6a5",
+                      "url": "http://localhost:15672"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/RabbitmqCheckResponse"
+                }
+              }
+            },
+            "description": "Delete rabbitmq check."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/redis-checks": {
+      "get": {
+        "description": "Get all redis checks configured.",
+        "operationId": "ListRedisChecks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully got all redis checks",
+                  "redisChecks": [
+                    {
+                      "id": "79a38c85cede269b64c8ed3ae45a5557",
+                      "server": "tcp://localhost:6379"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/RedisCheckResponse"
+                }
+              }
+            },
+            "description": "Get all redis checks."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create redis check.",
+        "operationId": "CreateRedisCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRedisCheckPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully created redis check",
+                  "redisCheck": {
+                    "id": "07d55c523ea3dee6ff0dd33ffdae6765",
+                    "server": "tcp://localhost-2:6379"
+                  },
+                  "redisChecks": [
+                    {
+                      "id": "79a38c85cede269b64c8ed3ae45a5557",
+                      "server": "tcp://localhost:6379"
+                    },
+                    {
+                      "id": "07d55c523ea3dee6ff0dd33ffdae6765",
+                      "server": "tcp://localhost-2:6379"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/RedisCheckResponse"
+                }
+              }
+            },
+            "description": "Get added check (redisCheck) and all configured checks (redisChecks)."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "CheckArrayError": {
+                    "summary": "Global error",
+                    "value": [
+                      "instance is not ready"
+                    ]
+                  },
+                  "CheckObjectError": {
+                    "summary": "Field specific error",
+                    "value": {
+                      "password": [
+                        "This field may not be blank."
+                      ],
+                      "server": [
+                        "This field may not be blank."
+                      ],
+                      "username": [
+                        "This field may not be blank."
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/CheckObjectError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CheckArrayError"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/redis-checks/{id}": {
+      "delete": {
+        "description": "Delete redis check.",
+        "operationId": "DeleteRedisCheck",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Successfully deleted redis check",
+                  "redisChecks": [
+                    {
+                      "id": "79a38c85cede269b64c8ed3ae45a5557",
+                      "server": "tcp://localhost:6379"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/RedisCheckResponse"
+                }
+              }
+            },
+            "description": "Delete redis check."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": [
+                  "instance is not ready"
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CheckArrayError"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
     "/v1/projects/{projectId}/instances/{instanceId}/scrapeconfigs": {
+      "delete": {
+        "description": "Delete scrape configs.",
+        "operationId": "DeleteScrapeConfigs",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Name of the jobs that should be deleted",
+            "explode": false,
+            "in": "query",
+            "name": "jobName",
+            "required": true,
+            "schema": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "style": "form"
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "jobName": "test",
+                      "metricsPath": "/metrics",
+                      "scheme": "https",
+                      "scrapeInterval": "5m",
+                      "scrapeTimeout": "1m",
+                      "staticConfigs": [
+                        {
+                          "targets": [
+                            "example.com"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "message": "Scrape configs successfully deleted"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ScrapeConfigsResponse"
+                }
+              }
+            },
+            "description": "Deleted scrape configs."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
       "get": {
         "description": "Get scrape configs.",
         "operationId": "ListScrapeConfigs",
@@ -10103,6 +14982,439 @@
         "x-stackit-authorization": {
           "actions": [
             "argus.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "patch": {
+        "description": "Update scrape configs.",
+        "operationId": "PartialUpdateScrapeConfigs",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "Array of jobs that should be created or updated",
+                "items": {
+                  "properties": {
+                    "basicAuth": {
+                      "description": "Sets the 'Authorization' header on every scrape request with the configured username and password.\n`Additional Validators:`\n* if basicAuth is in the body no other authentication method should be in the body",
+                      "properties": {
+                        "password": {
+                          "description": "password",
+                          "maxLength": 200,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "username": {
+                          "description": "username",
+                          "maxLength": 200,
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "bearerToken": {
+                      "description": "Sets the 'Authorization' header on every scrape request with the configured bearer token. It is mutually exclusive with 'bearer_token_file'.\n`Additional Validators:`\n* needs to be a valid bearer token\n* if bearerToken is in the body no other authentication method should be in the body",
+                      "type": "string"
+                    },
+                    "honorLabels": {
+                      "default": false,
+                      "description": "Note that any globally configured 'external_labels' are unaffected by this setting. In communication with external systems, they are always applied only when a time series does not have a given label yet and are ignored otherwise.",
+                      "type": "boolean"
+                    },
+                    "honorTimeStamps": {
+                      "default": false,
+                      "description": "honor_timestamps controls whether Prometheus respects the timestamps present in scraped data. If honor_timestamps is set to 'true', the timestamps of the metrics exposed by the target will be used.",
+                      "type": "boolean"
+                    },
+                    "httpSdConfigs": {
+                      "description": "HTTP-based service discovery provides a more generic way to configure static targets and serves as an interface to plug in custom service discovery mechanisms.",
+                      "items": {
+                        "properties": {
+                          "basicAuth": {
+                            "description": "Sets the 'Authorization' header on every scrape request with the configured username and password.\n`Additional Validators:`\n* if basicAuth is in the body no other authentication method should be in the body",
+                            "properties": {
+                              "password": {
+                                "description": "password",
+                                "maxLength": 200,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "username": {
+                                "description": "username",
+                                "maxLength": 200,
+                                "minLength": 1,
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "oauth2": {
+                            "description": "OAuth 2.0 authentication using the client credentials grant type. Prometheus fetches an access token from the specified endpoint with the given client access and secret keys.\n`Additional Validators:`\n* if oauth2 is in the body no other authentication method should be in the body",
+                            "properties": {
+                              "clientId": {
+                                "description": "clientId",
+                                "maxLength": 200,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "clientSecret": {
+                                "description": "clientSecret",
+                                "maxLength": 200,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "scopes": {
+                                "description": "The URL to fetch the token from.",
+                                "items": {
+                                  "maxLength": 200,
+                                  "minLength": 1,
+                                  "type": "string"
+                                },
+                                "type": "array"
+                              },
+                              "tlsConfig": {
+                                "description": "Configures the scrape request's TLS settings.",
+                                "properties": {
+                                  "insecureSkipVerify": {
+                                    "default": false,
+                                    "description": "Disable validation of the server certificate.",
+                                    "type": "boolean"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "tokenUrl": {
+                                "description": "The URL to fetch the token from.",
+                                "maxLength": 200,
+                                "minLength": 1,
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "clientId",
+                              "clientSecret",
+                              "tokenUrl"
+                            ],
+                            "type": "object"
+                          },
+                          "refreshInterval": {
+                            "default": "60s",
+                            "description": "Refresh interval to re-query the endpoint. E.g. 60s\n`Additional Validators:`\n* must be a valid time format* must be \u003e= 60s",
+                            "maxLength": 8,
+                            "minLength": 2,
+                            "type": "string"
+                          },
+                          "tlsConfig": {
+                            "description": "Configures the scrape request's TLS settings.",
+                            "properties": {
+                              "insecureSkipVerify": {
+                                "default": false,
+                                "description": "Disable validation of the server certificate.",
+                                "type": "boolean"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "url": {
+                            "description": "URL from which the targets are fetched.",
+                            "maxLength": 400,
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "url"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "jobName": {
+                      "description": "The job name assigned to scraped metrics by default.\n`Additional Validators:`\n* must be unique\n* key and values should only include the characters: a-zA-Z0-9-",
+                      "maxLength": 200,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "metricsPath": {
+                      "default": "/metrics",
+                      "description": "The HTTP resource path on which to fetch metrics from targets. E.g. /metrics",
+                      "maxLength": 200,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "metricsRelabelConfigs": {
+                      "description": "List of metric relabel configurations",
+                      "items": {
+                        "properties": {
+                          "action": {
+                            "default": "replace",
+                            "description": "Action to perform based on regex matching.\n`Additional Validators:`\n* if action is replace, targetLabel needs to be in body",
+                            "enum": [
+                              "replace",
+                              "keep",
+                              "drop",
+                              "hashmod",
+                              "labelmap",
+                              "labeldrop",
+                              "labelkeep"
+                            ],
+                            "type": "string"
+                          },
+                          "modulus": {
+                            "description": "Modulus to take of the hash of the source label values.",
+                            "type": "number"
+                          },
+                          "regex": {
+                            "default": ".*",
+                            "description": "Regular expression against which the extracted value is matched.",
+                            "maxLength": 400,
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "replacement": {
+                            "default": "$1",
+                            "description": "Replacement value against which a regex replace is performed if the regular expression matches. Regex capture groups are available.",
+                            "maxLength": 200,
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "separator": {
+                            "default": ";",
+                            "description": "Separator placed between concatenated source label values.",
+                            "maxLength": 20,
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "sourceLabels": {
+                            "description": "The source labels select values from existing labels. Their content is concatenated using the configured separator and matched against the configured regular expression for the replace, keep, and drop actions.",
+                            "items": {
+                              "maxLength": 200,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "targetLabel": {
+                            "description": "Label to which the resulting value is written in a replace action. It is mandatory for replace actions. Regex capture groups are available.",
+                            "maxLength": 200,
+                            "minLength": 1,
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "oauth2": {
+                      "description": "OAuth 2.0 authentication using the client credentials grant type. Prometheus fetches an access token from the specified endpoint with the given client access and secret keys.\n`Additional Validators:`\n* if oauth2 is in the body no other authentication method should be in the body",
+                      "properties": {
+                        "clientId": {
+                          "description": "clientId",
+                          "maxLength": 200,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "clientSecret": {
+                          "description": "clientSecret",
+                          "maxLength": 200,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "scopes": {
+                          "description": "The URL to fetch the token from.",
+                          "items": {
+                            "maxLength": 200,
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "tlsConfig": {
+                          "description": "Configures the scrape request's TLS settings.",
+                          "properties": {
+                            "insecureSkipVerify": {
+                              "default": false,
+                              "description": "Disable validation of the server certificate.",
+                              "type": "boolean"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "tokenUrl": {
+                          "description": "The URL to fetch the token from.",
+                          "maxLength": 200,
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "clientId",
+                        "clientSecret",
+                        "tokenUrl"
+                      ],
+                      "type": "object"
+                    },
+                    "params": {
+                      "description": "Optional http params\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not have more than 200 characters",
+                      "type": "object"
+                    },
+                    "sampleLimit": {
+                      "description": "Per-scrape limit on number of scraped samples that will be accepted. If more than this number of samples are present after metric relabeling the entire scrape will be treated as failed. The total limit depends on the service plan target limits * samples",
+                      "type": "number"
+                    },
+                    "scheme": {
+                      "description": "Configures the protocol scheme used for requests. https or http",
+                      "enum": [
+                        "http",
+                        "https"
+                      ],
+                      "type": "string"
+                    },
+                    "scrapeInterval": {
+                      "description": "How frequently to scrape targets from this job. E.g. 5m\n`Additional Validators:`\n* must be a valid time format* must be \u003e= 60s",
+                      "maxLength": 8,
+                      "minLength": 2,
+                      "type": "string"
+                    },
+                    "scrapeTimeout": {
+                      "description": "Per-scrape timeout when scraping this job.\n`Additional Validators:`\n* must be a valid time format* must be smaller than scrapeInterval",
+                      "maxLength": 8,
+                      "minLength": 2,
+                      "type": "string"
+                    },
+                    "staticConfigs": {
+                      "description": "A list of scrape configurations.",
+                      "items": {
+                        "properties": {
+                          "labels": {
+                            "description": "Labels assigned to all metrics scraped from the targets.\n`Additional Validators:`\n* should not contain more than 10 keys\n* each key and value should not be longer than 200 characters",
+                            "type": "object"
+                          },
+                          "targets": {
+                            "description": "The targets specified by the static config.",
+                            "items": {
+                              "maxLength": 500,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "targets"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "tlsConfig": {
+                      "description": "Configures the scrape request's TLS settings.",
+                      "properties": {
+                        "insecureSkipVerify": {
+                          "default": false,
+                          "description": "Disable validation of the server certificate.",
+                          "type": "boolean"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "jobName",
+                    "scheme",
+                    "scrapeInterval",
+                    "scrapeTimeout",
+                    "staticConfigs"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "jobName": "test",
+                      "metricsPath": "/metrics",
+                      "scheme": "https",
+                      "scrapeInterval": "5m",
+                      "scrapeTimeout": "1m",
+                      "staticConfigs": [
+                        {
+                          "targets": [
+                            "example.com"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "message": "Scrape targets successfully created"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ScrapeConfigsResponse"
+                }
+              }
+            },
+            "description": "Create scrape targets."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Something went wrong"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Something went wrong."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.instance.update"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",
@@ -10639,6 +15951,89 @@
         "x-stackit-authorization": {
           "actions": [
             "argus.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/offerings": {
+      "get": {
+        "description": "Get all plans.",
+        "operationId": "ListOfferings",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "description": "awesome service",
+                  "documentationUrl": "awesome docs",
+                  "imageUrl": "image",
+                  "message": "Successfully got offering",
+                  "name": "STACKIT Observability",
+                  "plans": [
+                    {
+                      "alertMatchers": 10,
+                      "alertReceivers": 10,
+                      "alertRules": 1000,
+                      "amount": 49,
+                      "bucketSize": 20,
+                      "description": "Small Plan",
+                      "grafanaGlobalDashboards": 20,
+                      "grafanaGlobalOrgs": 2,
+                      "grafanaGlobalSessions": 10,
+                      "grafanaGlobalUsers": 10,
+                      "id": "7b1fbd9c-9acd-42ce-95d3-0f6822d6cabe",
+                      "isFree": false,
+                      "isPublic": true,
+                      "logsAlert": 20,
+                      "logsStorage": 20,
+                      "name": "SmallPlan",
+                      "planId": "7b1fbd9c-9acd-42ce-95d3-0f6822d6cabe",
+                      "samplesPerScrape": 0,
+                      "schema": "{}",
+                      "targetNumber": 2,
+                      "totalMetricSamples": 5000,
+                      "tracesStorage": 20
+                    }
+                  ],
+                  "tags": []
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Offerings"
+                }
+              }
+            },
+            "description": "Get service offering"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have permission to perform this action."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDenied"
+                }
+              }
+            },
+            "description": "You are not authorized"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "argus.plan.list"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

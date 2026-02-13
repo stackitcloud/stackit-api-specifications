@@ -78,26 +78,6 @@
         ],
         "type": "object"
       },
-      "AssignableSubject": {
-        "properties": {
-          "displayName": {
-            "example": "Test Group",
-            "title": "Human readable display name. Used for user groups",
-            "type": "string"
-          },
-          "subject": {
-            "example": "user@mail.schwarz",
-            "maxLength": 255,
-            "minLength": 1,
-            "title": "Identifier of user, service account, client or user group. Usually email address or name in case of clients.",
-            "type": "string"
-          }
-        },
-        "required": [
-          "subject"
-        ],
-        "type": "object"
-      },
       "DeleteRoleResponse": {
         "properties": {
           "writtenAt": {
@@ -188,35 +168,6 @@
           "resourceId",
           "resourceType",
           "role"
-        ],
-        "type": "object"
-      },
-      "ListAssignableSubjectsResponse": {
-        "properties": {
-          "resourceId": {
-            "example": "schwarz-it-kg-WJACUK1",
-            "pattern": "^([a-zA-Z0-9/_|\\-=+@.]{1,})$",
-            "title": "The ID of the resource, where the members should be updated",
-            "type": "string"
-          },
-          "resourceType": {
-            "example": "organization",
-            "pattern": "^[a-z](?:-?[a-z]){1,63}$",
-            "title": "Resource type",
-            "type": "string"
-          },
-          "subjects": {
-            "items": {
-              "$ref": "#/components/schemas/AssignableSubject"
-            },
-            "title": "The list of members who can be added to this resource",
-            "type": "array"
-          }
-        },
-        "required": [
-          "resourceId",
-          "resourceType",
-          "subjects"
         ],
         "type": "object"
       },
@@ -614,86 +565,6 @@
   },
   "openapi": "3.0.3",
   "paths": {
-    "/v2/bff/{resourceType}/{resourceId}/assignableSubjects": {
-      "get": {
-        "description": "BFF endpoint for portal. List subjects assignable to a given resource.",
-        "operationId": "GetAssignableSubjects",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "resourceType",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "resourceId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "subject",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListAssignableSubjectsResponse"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Malformed input"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Forbidden"
-          }
-        },
-        "summary": "Get subjects assignable to a resource",
-        "x-stackit-authorization": {
-          "disabled": true,
-          "implicit-actions": [
-            "iam.member.get"
-          ]
-        }
-      }
-    },
     "/v2/permissions": {
       "get": {
         "description": "Get available permissions",

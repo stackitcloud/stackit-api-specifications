@@ -130,10 +130,39 @@
         ],
         "type": "object"
       },
+      "AlertRecord": {
+        "properties": {
+          "expr": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Expr",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Labels",
+            "type": "object"
+          },
+          "record": {
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Record",
+            "type": "string"
+          }
+        },
+        "required": [
+          "expr",
+          "record"
+        ],
+        "type": "object"
+      },
       "AlertRecordResponse": {
         "properties": {
           "data": {
-            "$ref": "#/components/schemas/AlertrecordResponse"
+            "$ref": "#/components/schemas/AlertRecord"
           },
           "message": {
             "minLength": 1,
@@ -151,7 +180,7 @@
         "properties": {
           "data": {
             "items": {
-              "$ref": "#/components/schemas/AlertrecordResponse"
+              "$ref": "#/components/schemas/AlertRecord"
             },
             "type": "array"
           },
@@ -164,6 +193,50 @@
         "required": [
           "data",
           "message"
+        ],
+        "type": "object"
+      },
+      "AlertRule": {
+        "properties": {
+          "alert": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Alert",
+            "type": "string"
+          },
+          "annotations": {
+            "additionalProperties": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Annotations",
+            "type": "object"
+          },
+          "expr": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Expr",
+            "type": "string"
+          },
+          "for": {
+            "default": "0s",
+            "maxLength": 8,
+            "minLength": 2,
+            "title": "For",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Labels",
+            "type": "object"
+          }
+        },
+        "required": [
+          "alert",
+          "expr"
         ],
         "type": "object"
       },
@@ -218,7 +291,7 @@
       "AlertRuleResponse": {
         "properties": {
           "data": {
-            "$ref": "#/components/schemas/AlertruleResponse"
+            "$ref": "#/components/schemas/AlertRule"
           },
           "message": {
             "minLength": 1,
@@ -236,7 +309,7 @@
         "properties": {
           "data": {
             "items": {
-              "$ref": "#/components/schemas/AlertruleResponse"
+              "$ref": "#/components/schemas/AlertRule"
             },
             "type": "array"
           },
@@ -249,79 +322,6 @@
         "required": [
           "data",
           "message"
-        ],
-        "type": "object"
-      },
-      "AlertrecordResponse": {
-        "properties": {
-          "expr": {
-            "maxLength": 2000,
-            "minLength": 1,
-            "title": "Expr",
-            "type": "string"
-          },
-          "labels": {
-            "additionalProperties": {
-              "minLength": 1,
-              "type": "string"
-            },
-            "title": "Labels",
-            "type": "object"
-          },
-          "record": {
-            "maxLength": 300,
-            "minLength": 1,
-            "title": "Record",
-            "type": "string"
-          }
-        },
-        "required": [
-          "expr",
-          "record"
-        ],
-        "type": "object"
-      },
-      "AlertruleResponse": {
-        "properties": {
-          "alert": {
-            "maxLength": 200,
-            "minLength": 1,
-            "title": "Alert",
-            "type": "string"
-          },
-          "annotations": {
-            "additionalProperties": {
-              "minLength": 1,
-              "type": "string"
-            },
-            "title": "Annotations",
-            "type": "object"
-          },
-          "expr": {
-            "maxLength": 2000,
-            "minLength": 1,
-            "title": "Expr",
-            "type": "string"
-          },
-          "for": {
-            "default": "0s",
-            "maxLength": 8,
-            "minLength": 2,
-            "title": "For",
-            "type": "string"
-          },
-          "labels": {
-            "additionalProperties": {
-              "minLength": 1,
-              "type": "string"
-            },
-            "title": "Labels",
-            "type": "object"
-          }
-        },
-        "required": [
-          "alert",
-          "expr"
         ],
         "type": "object"
       },

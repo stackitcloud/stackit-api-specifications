@@ -49,43 +49,67 @@
         "maxItems": 50,
         "type": "array"
       },
+      "AlreadyExistsError": {
+        "description": "Error response when a resource already exists.",
+        "properties": {
+          "message": {
+            "example": "Resource already exists.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
       "Authentication": {
         "description": "Describes an authentication definition associated to a STACKIT Git instance. The provider type will be an openidConnect type.",
         "properties": {
           "auto_discover_url": {
             "description": "The well-known configuration url to use for this authentication definition.",
+            "example": "https://auth.example.com/.well-known/openid-configuration",
+            "pattern": "^https://[a-zA-Z0-9\\-\\.]+(\\.[a-zA-Z]{2,})+(/.*)?$",
             "type": "string"
           },
           "client_id": {
             "description": "The IDP client id to use.",
+            "example": "stackit-client",
             "type": "string"
           },
           "created_at": {
+            "description": "The date and time the creation of the authentication definition was triggered.",
+            "example": "2022-01-01T00:00:00Z",
             "format": "date-time",
             "maxLength": 48,
             "type": "string"
           },
           "icon_url": {
             "description": "The url of the icon to use for this authentication definition.",
+            "example": "https://stackit.example.com/icon.png",
+            "pattern": "^https://[a-zA-Z0-9\\-\\.]+(\\.[a-zA-Z]{2,})+(/.*)?$",
             "type": "string"
           },
           "id": {
             "description": "An auto generated unique uuid which identifies the authentication definition in STACKIT Git instances.",
+            "example": "7e69076b-d104-4544-b428-a9329f63d239",
             "format": "uuid",
             "maxLength": 36,
             "type": "string"
           },
           "name": {
             "description": "The name to identify an authentication definition associated with a STACKIT Git instance.",
+            "example": "stackit",
             "maxLength": 32,
             "type": "string"
           },
           "provider": {
             "description": "The Oauth2 provider to use.",
+            "example": "openidConnect",
             "type": "string"
           },
           "scopes": {
             "description": "Scopes defines the OIDC scopes to request.",
+            "example": "openid profile email",
             "type": "string"
           },
           "status": {
@@ -121,38 +145,82 @@
           "authentication"
         ]
       },
+      "BadErrorResponse": {
+        "description": "400 Error Response.",
+        "properties": {
+          "details": {
+            "example": "An error occurred.",
+            "type": "string"
+          },
+          "error": {
+            "example": "An error occurred.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
+      "ConflictErrorResponse": {
+        "description": "409 Error Response.",
+        "properties": {
+          "details": {
+            "example": "conflict: ....",
+            "type": "string"
+          },
+          "error": {
+            "example": "conflict",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
       "CreateAuthenticationPayload": {
         "description": "Properties to patch on an authentication. All fields are optional.",
         "properties": {
           "auto_discover_url": {
             "description": "The well-known configuration url to use for this authentication definition.",
+            "example": "https://auth.example.com/.well-known/openid-configuration",
+            "pattern": "^https://[a-zA-Z0-9\\-\\.]+(\\.[a-zA-Z]{2,})+(/.*)?$",
             "type": "string"
           },
           "client_id": {
             "description": "The IDP client id to use.",
+            "example": "stackit-client",
+            "maxLength": 256,
             "type": "string"
           },
           "client_secret": {
             "description": "The IDP client secret to use.",
+            "example": "new-client-secret",
             "type": "string"
           },
           "icon_url": {
             "description": "The url of the icon to use for this authentication definition.",
+            "example": "https://stackit.example.com/icon.png",
+            "pattern": "^https://[a-zA-Z0-9\\-\\.]+(\\.[a-zA-Z]{2,})+(/.*)?$",
             "type": "string"
           },
           "name": {
             "description": "The name to identify an authentication definition associated with a STACKIT Git instance.",
+            "example": "stackit",
             "maxLength": 32,
             "type": "string"
           },
           "provider": {
             "default": "openidConnect",
             "description": "The Oauth2 provider to use.",
+            "example": "openidConnect",
             "type": "string"
           },
           "scopes": {
             "default": "openid profile email",
             "description": "Scopes defines the OIDC scopes to request.",
+            "example": "openid profile email",
             "type": "string"
           }
         },
@@ -270,20 +338,6 @@
           "sku"
         ]
       },
-      "FlavorsList": {
-        "description": "A list of STACKIT Git Flavors.",
-        "properties": {
-          "flavors": {
-            "items": {
-              "$ref": "#/components/schemas/Flavor"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "flavors"
-        ]
-      },
       "GenericErrorResponse": {
         "description": "Generic Error Response.",
         "properties": {
@@ -383,7 +437,35 @@
           "feature_toggle"
         ]
       },
-      "InstanceList": {
+      "InternalServerErrorResponse": {
+        "description": "Internal server error.",
+        "properties": {
+          "details": {
+            "example": "Internal server error.",
+            "type": "string"
+          },
+          "error": {
+            "example": "Internal server error.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ListFlavors": {
+        "description": "A list of STACKIT Git Flavors.",
+        "properties": {
+          "flavors": {
+            "items": {
+              "$ref": "#/components/schemas/Flavor"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "flavors"
+        ]
+      },
+      "ListInstances": {
         "description": "A list of STACKIT Git instances.",
         "properties": {
           "instances": {
@@ -398,14 +480,21 @@
           "instances"
         ]
       },
-      "InternalServerErrorResponse": {
-        "description": "Internal server error.",
+      "NotFoundErrorResponse": {
+        "description": "404 Error Response.",
         "properties": {
+          "details": {
+            "example": "Not Found.",
+            "type": "string"
+          },
           "error": {
-            "example": "Internal server error.",
+            "example": "Not Found.",
             "type": "string"
           }
         },
+        "required": [
+          "message"
+        ],
         "type": "object"
       },
       "PatchAuthenticationPayload": {
@@ -413,26 +502,35 @@
         "properties": {
           "auto_discover_url": {
             "description": "The well-known configuration url to use for this authentication definition.",
+            "example": "https://auth.example.com/.well-known/openid-configuration",
+            "pattern": "^https://[a-zA-Z0-9\\-\\.]+(\\.[a-zA-Z]{2,})+(/.*)?$",
             "type": "string"
           },
           "client_id": {
             "description": "The IDP client id to use.",
+            "example": "stackit-client",
+            "maxLength": 256,
             "type": "string"
           },
           "client_secret": {
             "description": "The IDP client secret to use.",
+            "example": "new-client-secret",
             "type": "string"
           },
           "icon_url": {
             "description": "The url of the icon to use for this authentication definition.",
+            "example": "https://stackit.example.com/icon.png",
+            "pattern": "^https://[a-zA-Z0-9\\-\\.]+(\\.[a-zA-Z]{2,})+(/.*)?$",
             "type": "string"
           },
           "provider": {
             "description": "The Oauth2 provider to use.",
+            "example": "openidConnect",
             "type": "string"
           },
           "scopes": {
             "description": "Scopes defines the OIDC scopes to request.",
+            "example": "openid profile email",
             "type": "string"
           }
         }
@@ -574,6 +672,36 @@
         "minLength": 36,
         "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "string"
+      },
+      "UnauthorizedErrorResponse": {
+        "description": "Unauthorized Error Response.",
+        "properties": {
+          "error": {
+            "example": "Unauthorized",
+            "type": "string"
+          },
+          "message": {
+            "example": "invalid token",
+            "type": "string"
+          },
+          "path": {
+            "example": "/api.....",
+            "type": "string"
+          },
+          "status": {
+            "example": 401,
+            "type": "integer"
+          },
+          "timestamp": {
+            "example": "2022-05-25T14:55:36.789Z",
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
       }
     }
   },
@@ -598,7 +726,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FlavorsList"
+                  "$ref": "#/components/schemas/ListFlavors"
                 }
               }
             },
@@ -650,13 +778,13 @@
     "/v1beta/projects/{projectId}/instances": {
       "get": {
         "description": "Lists all STACKIT Git instances within a project.\n",
-        "operationId": "GetInstances",
+        "operationId": "ListInstances",
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InstanceList"
+                  "$ref": "#/components/schemas/ListInstances"
                 }
               }
             },
@@ -1011,20 +1139,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorResponse"
+                  "$ref": "#/components/schemas/BadErrorResponse"
                 }
               }
             },
             "description": "Bad Request."
           },
           "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            },
             "description": "Unauthorized."
           },
           "500": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorResponse"
+                  "$ref": "#/components/schemas/InternalServerErrorResponse"
                 }
               }
             },
@@ -1078,20 +1213,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorResponse"
+                  "$ref": "#/components/schemas/BadErrorResponse"
                 }
               }
             },
             "description": "Bad Request."
           },
           "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            },
             "description": "Unauthorized."
           },
           "404": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorResponse"
+                  "$ref": "#/components/schemas/NotFoundErrorResponse"
                 }
               }
             },
@@ -1101,7 +1243,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorResponse"
+                  "$ref": "#/components/schemas/ConflictErrorResponse"
                 }
               }
             },
@@ -1111,7 +1253,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorResponse"
+                  "$ref": "#/components/schemas/InternalServerErrorResponse"
                 }
               }
             },
@@ -1148,6 +1290,13 @@
             "description": "Bad Request."
           },
           "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            },
             "description": "Unauthorized."
           },
           "404": {
@@ -1209,20 +1358,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorResponse"
+                  "$ref": "#/components/schemas/BadErrorResponse"
                 }
               }
             },
             "description": "Bad Request."
           },
           "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            },
             "description": "Unauthorized."
           },
           "500": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorResponse"
+                  "$ref": "#/components/schemas/InternalServerErrorResponse"
                 }
               }
             },
@@ -1279,30 +1435,37 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorResponse"
+                  "$ref": "#/components/schemas/BadErrorResponse"
                 }
               }
             },
             "description": "Bad Request."
           },
           "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            },
             "description": "Unauthorized."
           },
           "404": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorResponse"
+                  "$ref": "#/components/schemas/NotFoundErrorResponse"
                 }
               }
             },
-            "description": "Not found."
+            "description": "Project or Instance not found."
           },
           "500": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorResponse"
+                  "$ref": "#/components/schemas/InternalServerErrorResponse"
                 }
               }
             },
@@ -1466,7 +1629,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorResponse"
+                  "$ref": "#/components/schemas/AlreadyExistsError"
                 }
               }
             },

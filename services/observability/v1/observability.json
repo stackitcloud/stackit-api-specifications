@@ -841,6 +841,32 @@
         ],
         "type": "object"
       },
+      "CreateAlertRecordPayload": {
+        "description": "Record.\n`Additional Validators:`\n* total config (all alert groups/rules/records) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
+        "properties": {
+          "expr": {
+            "description": "The PromQL expression to evaluate. Every evaluation\ncycle this is evaluated at the current time, and all resultant\ntime series become pending/firing alerts.",
+            "maxLength": 2000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "labels": {
+            "description": "map of key:value. Labels to add or overwrite for each alert.\n`Additional Validators:`\n* should not contain more than 10 keys\n* each key and value should not be longer than 200 characters\n",
+            "type": "object"
+          },
+          "record": {
+            "description": "The name of the record.\n`Additional Validators:`\n* is the identifier and so unique in the group\n",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "expr",
+          "record"
+        ],
+        "type": "object"
+      },
       "CreateAlertgroupsPayload": {
         "description": "Alert group that should be created or updated.\n`Additional Validators:`\n* total config should not be bigger than 500000 characters as string since this the limitation of prometheus.",
         "properties": {
@@ -907,32 +933,6 @@
         "required": [
           "name",
           "rules"
-        ],
-        "type": "object"
-      },
-      "CreateAlertrecordPayload": {
-        "description": "Record.\n`Additional Validators:`\n* total config (all alert groups/rules/records) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
-        "properties": {
-          "expr": {
-            "description": "The PromQL expression to evaluate. Every evaluation\ncycle this is evaluated at the current time, and all resultant\ntime series become pending/firing alerts.",
-            "maxLength": 2000,
-            "minLength": 1,
-            "type": "string"
-          },
-          "labels": {
-            "description": "map of key:value. Labels to add or overwrite for each alert.\n`Additional Validators:`\n* should not contain more than 10 keys\n* each key and value should not be longer than 200 characters\n",
-            "type": "object"
-          },
-          "record": {
-            "description": "The name of the record.\n`Additional Validators:`\n* is the identifier and so unique in the group\n",
-            "maxLength": 200,
-            "minLength": 1,
-            "type": "string"
-          }
-        },
-        "required": [
-          "expr",
-          "record"
         ],
         "type": "object"
       },
@@ -4732,6 +4732,25 @@
         ],
         "type": "object"
       },
+      "UpdateAlertRecordPayload": {
+        "description": "Record.\n`Additional Validators:`\n* total config (all alert groups/rules/records) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
+        "properties": {
+          "expr": {
+            "description": "The PromQL expression to evaluate. Every evaluation\ncycle this is evaluated at the current time, and all resultant\ntime series become pending/firing alerts.",
+            "maxLength": 2000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "labels": {
+            "description": "map of key:value. Labels to add or overwrite for each alert.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters\n",
+            "type": "object"
+          }
+        },
+        "required": [
+          "expr"
+        ],
+        "type": "object"
+      },
       "UpdateAlertgroupPayload": {
         "description": "Alert group that should be created or updated.\n`Additional Validators:`\n* total config should not be bigger than 500000 characters as string since this the limitation of prometheus.",
         "properties": {
@@ -4791,25 +4810,6 @@
         },
         "required": [
           "rules"
-        ],
-        "type": "object"
-      },
-      "UpdateAlertrecordPayload": {
-        "description": "Record.\n`Additional Validators:`\n* total config (all alert groups/rules/records) should not be bigger than 500000 characters as string since this the limitation of prometheus.",
-        "properties": {
-          "expr": {
-            "description": "The PromQL expression to evaluate. Every evaluation\ncycle this is evaluated at the current time, and all resultant\ntime series become pending/firing alerts.",
-            "maxLength": 2000,
-            "minLength": 1,
-            "type": "string"
-          },
-          "labels": {
-            "description": "map of key:value. Labels to add or overwrite for each alert.\n`Additional Validators:`\n* should not contain more than 5 keys\n* each key and value should not be longer than 200 characters\n",
-            "type": "object"
-          }
-        },
-        "required": [
-          "expr"
         ],
         "type": "object"
       },
@@ -9049,7 +9049,7 @@
     "/v1/projects/{projectId}/instances/{instanceId}/alertgroups/{groupName}/records": {
       "delete": {
         "description": "Delete alert records.",
-        "operationId": "DeleteAlertrecords",
+        "operationId": "DeleteAlertRecords",
         "parameters": [
           {
             "in": "path",
@@ -9138,7 +9138,7 @@
       },
       "get": {
         "description": "Get alert records.",
-        "operationId": "ListAlertrecords",
+        "operationId": "ListAlertRecords",
         "parameters": [
           {
             "in": "path",
@@ -9213,7 +9213,7 @@
       },
       "patch": {
         "description": "Patch alert records.",
-        "operationId": "PartialUpdateAlertrecords",
+        "operationId": "PartialUpdateAlertRecords",
         "parameters": [
           {
             "in": "path",
@@ -9338,7 +9338,7 @@
       },
       "post": {
         "description": "Create alert record.",
-        "operationId": "CreateAlertrecord",
+        "operationId": "CreateAlertRecord",
         "parameters": [
           {
             "in": "path",
@@ -9369,7 +9369,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateAlertrecordPayload"
+                "$ref": "#/components/schemas/CreateAlertRecordPayload"
               }
             }
           },
@@ -9438,7 +9438,7 @@
     "/v1/projects/{projectId}/instances/{instanceId}/alertgroups/{groupName}/records/{alertRecord}": {
       "delete": {
         "description": "Delete alert record.",
-        "operationId": "DeleteAlertrecord",
+        "operationId": "DeleteAlertRecord",
         "parameters": [
           {
             "in": "path",
@@ -9534,7 +9534,7 @@
       },
       "get": {
         "description": "Get alert record.",
-        "operationId": "GetAlertrecord",
+        "operationId": "GetAlertRecord",
         "parameters": [
           {
             "in": "path",
@@ -9641,7 +9641,7 @@
       },
       "put": {
         "description": "Update alert record.",
-        "operationId": "UpdateAlertrecord",
+        "operationId": "UpdateAlertRecord",
         "parameters": [
           {
             "in": "path",
@@ -9680,7 +9680,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateAlertrecordPayload"
+                "$ref": "#/components/schemas/UpdateAlertRecordPayload"
               }
             }
           },

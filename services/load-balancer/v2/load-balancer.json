@@ -3,6 +3,13 @@
     "schemas": {
       "ActiveHealthCheck": {
         "properties": {
+          "altPort": {
+            "description": "Overrides the default port used for health check probes.",
+            "example": 8090,
+            "format": "int32",
+            "title": "Health Check Port",
+            "type": "integer"
+          },
           "healthyThreshold": {
             "description": "Healthy threshold of the health checking",
             "format": "int32",
@@ -10,6 +17,9 @@
             "minimum": 1,
             "title": "Healthy threshold",
             "type": "integer"
+          },
+          "httpHealthChecks": {
+            "$ref": "#/components/schemas/HttpHealthChecks"
           },
           "interval": {
             "description": "Interval duration of health checking in seconds",
@@ -289,6 +299,29 @@
           "@type": {
             "description": "The type of the serialized message.",
             "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "HttpHealthChecks": {
+        "description": "Options for the HTTP health checking.",
+        "properties": {
+          "okStatuses": {
+            "description": "List of HTTP status codes that indicate a healthy response",
+            "items": {
+              "type": "string"
+            },
+            "maximum": 299,
+            "minimum": 200,
+            "title": "HTTP Health Checks' status code",
+            "type": "array"
+          },
+          "path": {
+            "description": "Path to send the health check request to",
+            "type": "string"
+          },
+          "tls": {
+            "$ref": "#/components/schemas/TlsConfig"
           }
         },
         "type": "object"
@@ -785,6 +818,28 @@
               "$ref": "#/components/schemas/Target"
             },
             "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "TlsConfig": {
+        "description": "Set this to configure TLS settings.",
+        "properties": {
+          "customCa": {
+            "description": "Specifies a custom Certificate Authority (CA). When provided, the target pool will trust certificates signed by this CA, in addition to any system-trusted CAs. This is useful for scenarios where the target pool needs to communicate with servers using self-signed or internally-issued certificates. Enabled needs to be set to true and skip validation to false for this option.",
+            "format": "bytes",
+            "title": "Custom Certificate Authority",
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Enable TLS (Transport Layer Security) bridging for the connection between Application Load Balancer and targets in this pool. When enabled, public CAs are trusted. Can be used in tandem with the options either custom CA or skip validation or alone.",
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "skipCertificateValidation": {
+            "description": "Bypass certificate validation for TLS bridging in this target pool. This option is insecure and can only be used with public CAs by setting enabled true. Meant to be used for testing purposes only!",
+            "title": "Skip Certificate Validation",
+            "type": "boolean"
           }
         },
         "type": "object"

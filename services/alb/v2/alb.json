@@ -4,6 +4,13 @@
       "ActiveHealthCheck": {
         "description": "Set this to customize active health checks for targets in this pool.",
         "properties": {
+          "altPort": {
+            "description": "Overrides the default port used for health check probes.",
+            "example": 8090,
+            "format": "int32",
+            "title": "Health Check Port",
+            "type": "integer"
+          },
           "healthyThreshold": {
             "description": "Healthy threshold of the health checking",
             "format": "int32",
@@ -371,6 +378,9 @@
           "path": {
             "description": "Path to send the health check request to",
             "type": "string"
+          },
+          "tls": {
+            "$ref": "#/components/schemas/TlsConfig"
           }
         },
         "type": "object"
@@ -899,13 +909,13 @@
             "type": "array"
           },
           "tlsConfig": {
-            "$ref": "#/components/schemas/TargetPoolTlsConfig"
+            "$ref": "#/components/schemas/TlsConfig"
           }
         },
         "type": "object"
       },
-      "TargetPoolTlsConfig": {
-        "description": "TLSConfig used for the target pool.",
+      "TlsConfig": {
+        "description": "Set this to configure TLS settings.",
         "properties": {
           "customCa": {
             "description": "Specifies a custom Certificate Authority (CA). When provided, the target pool will trust certificates signed by this CA, in addition to any system-trusted CAs. This is useful for scenarios where the target pool needs to communicate with servers using self-signed or internally-issued certificates. Enabled needs to be set to true and skip validation to false for this option.",
@@ -1098,7 +1108,7 @@
             "type": "array"
           },
           "tlsConfig": {
-            "$ref": "#/components/schemas/TargetPoolTlsConfig"
+            "$ref": "#/components/schemas/TlsConfig"
           }
         },
         "type": "object"

@@ -430,6 +430,9 @@
           "timestamp": {
             "format": "date-time",
             "type": "string"
+          },
+          "wafViolation": {
+            "$ref": "#/components/schemas/WAFViolation"
           }
         },
         "required": [
@@ -611,7 +614,8 @@
             "enum": [
               "UNKNOWN",
               "CUSTOM_DOMAIN_CNAME_MISSING",
-              "INVALID_ARGUMENT"
+              "INVALID_ARGUMENT",
+              "LOG_SINK_INSTANCE_UNAVAILABLE"
             ],
             "minLength": 1,
             "type": "string"
@@ -1052,11 +1056,13 @@
         "properties": {
           "certificate": {
             "description": "base64-encoded PEM-encoded certificate",
-            "type": "string"
+            "type": "string",
+            "x-go-type": "secret.Secret"
           },
           "key": {
             "description": "base64-encoded PEM encoded key",
-            "type": "string"
+            "type": "string",
+            "x-go-type": "secret.Secret"
           },
           "type": {
             "type": "string"
@@ -1155,7 +1161,6 @@
           "SA",
           "ASIA"
         ],
-        "format": "enum",
         "type": "string"
       },
       "StatusError": {
@@ -1176,7 +1181,9 @@
               "UNKNOWN",
               "CUSTOM_DOMAIN_CNAME_MISSING",
               "CUSTOM_DOMAIN_ALREADY_IN_USE",
-              "PUBLIC_BETA_QUOTA_REACHED"
+              "PUBLIC_BETA_QUOTA_REACHED",
+              "LOG_SINK_INSTANCE_UNAVAILABLE",
+              "EXTERNAL_QUOTA_REACHED"
             ],
             "minLength": 1,
             "type": "string"
@@ -1206,6 +1213,15 @@
           "description"
         ],
         "type": "object"
+      },
+      "WAFRuleAction": {
+        "description": "The action a WAF rule can take based on a request",
+        "enum": [
+          "BLOCKED",
+          "LOGGED",
+          "ALLOWED"
+        ],
+        "type": "string"
       },
       "WAFRuleCollection": {
         "properties": {
@@ -1263,9 +1279,66 @@
         ],
         "type": "object"
       },
+      "WAFViolation": {
+        "description": "Information about a violated WAF rule in case the WAF is enabled and a rule was triggered (either in BLOCK or LOG_ONLY mode)",
+        "properties": {
+          "action": {
+            "$ref": "#/components/schemas/WAFRuleAction"
+          },
+          "asn": {
+            "description": "ASN for the request",
+            "type": "string"
+          },
+          "message": {
+            "description": "Rule specific message explaining the violation",
+            "type": "string"
+          },
+          "method": {
+            "description": "HTTP Method of the request that triggered the violation",
+            "type": "string"
+          },
+          "requestHeaders": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "ruleId": {
+            "description": "ID of the WAF rule that was triggered",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ruleId",
+          "method",
+          "message",
+          "asn",
+          "requestHeaders",
+          "action"
+        ],
+        "type": "object"
+      },
       "WafConfig": {
         "description": "Configuration of the WAF of a distribution",
         "properties": {
+          "allowedHttpMethods": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "allowedHttpVersions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "allowedRequestContentTypes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "enabledRuleIds": {
             "description": "IDs of the WAF rules that are **explicitly** enabled for this distribution. \nIf this rule is in a disabled / log Only RuleGroup or Collection,\nit will be enabled regardless as `enabledRuleIds` overrides those in specificity.\n\nDo note that rules can also be enabled because a Rulegroup or Collection is enabled. \n**DO NOT** use this property to find all active rules. Instead, pass `?withWafStatus=true` as a query parameter\nto `GetDistribution` or `ListDistributions`. This will expose the `waf` Property on distribution Level.\n\nFrom there you can `$.waf.enabledRules.map(e =\u003e e.id)` to get a list of all enabled rules.\n",
             "items": {
@@ -1275,6 +1348,9 @@
           },
           "mode": {
             "$ref": "#/components/schemas/WafMode"
+          },
+          "paranoiaLevel": {
+            "$ref": "#/components/schemas/WafParanoiaLevel"
           },
           "type": {
             "$ref": "#/components/schemas/WafType"
@@ -1289,8 +1365,29 @@
       },
       "WafConfigPatch": {
         "properties": {
+          "allowedHttpMethods": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "allowedHttpVersions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "allowedRequestContentTypes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "mode": {
             "$ref": "#/components/schemas/WafMode"
+          },
+          "paranoiaLevel": {
+            "$ref": "#/components/schemas/WafParanoiaLevel"
           },
           "type": {
             "$ref": "#/components/schemas/WafType"
@@ -1304,7 +1401,16 @@
           "ENABLED",
           "LOG_ONLY"
         ],
-        "format": "enum",
+        "type": "string"
+      },
+      "WafParanoiaLevel": {
+        "description": "The paranoia level defines how aggressively the WAF should action on requests.  \nIt ranges from `L1` (least strict, lowest chance of false positives) to `L4` (most strict, highest chance of false positives).\nA higher paranoia level is more effective at catching attacks but can also block legitimate traffic.\n",
+        "enum": [
+          "L1",
+          "L2",
+          "L3",
+          "L4"
+        ],
         "type": "string"
       },
       "WafType": {
@@ -1313,7 +1419,6 @@
           "FREE",
           "PREMIUM"
         ],
-        "format": "enum",
         "type": "string"
       }
     }
@@ -1383,7 +1488,6 @@
                 "status",
                 "originUrlRelated"
               ],
-              "format": "enum",
               "type": "string"
             }
           },
@@ -1395,7 +1499,6 @@
                 "ascending",
                 "descending"
               ],
-              "format": "enum",
               "type": "string"
             }
           }
@@ -2938,6 +3041,14 @@
             }
           },
           {
+            "description": "If this is set then only log entries with the chosen WAF rule action/outcome are returned.\nSpecifically, if `ALLOWED` then all requests with no violation are returned. If `BLOCKED` then those where\na WAF rule blocked a request and if `LOGGED` then only those requests where the WAF violation was only logged \nbut the request not blocked\n",
+            "in": "query",
+            "name": "wafAction",
+            "schema": {
+              "$ref": "#/components/schemas/WAFRuleAction"
+            }
+          },
+          {
             "description": "Quantifies how many log entries should be returned on this \npage. Must be a natural number between 1 and 1000 (inclusive)\n",
             "in": "query",
             "name": "pageSize",
@@ -2974,7 +3085,6 @@
                 "path",
                 "host"
               ],
-              "format": "enum",
               "type": "string"
             }
           },
@@ -2986,7 +3096,6 @@
                 "ascending",
                 "descending"
               ],
-              "format": "enum",
               "type": "string"
             }
           },

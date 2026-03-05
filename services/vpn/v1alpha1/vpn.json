@@ -177,7 +177,7 @@
         "properties": {
           "localAs": {
             "example": 65521,
-            "type": "number"
+            "type": "integer"
           },
           "peerUptime": {
             "example": "00:36:41",
@@ -185,15 +185,15 @@
           },
           "pfxRcd": {
             "example": 1,
-            "type": "number"
+            "type": "integer"
           },
           "pfxSnt": {
             "example": 2,
-            "type": "number"
+            "type": "integer"
           },
           "remoteAs": {
             "example": 65510,
-            "type": "number"
+            "type": "integer"
           },
           "remoteIP": {
             "example": "169.254.179.245",
@@ -235,7 +235,7 @@
           },
           "weight": {
             "example": 0,
-            "type": "number"
+            "type": "integer"
           }
         },
         "required": [
@@ -258,11 +258,36 @@
         ],
         "type": "object"
       },
-      "Connection": {
+      "ConnectionList": {
         "properties": {
+          "connections": {
+            "items": {
+              "$ref": "#/components/schemas/ConnectionResponse"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "connections"
+        ],
+        "type": "object"
+      },
+      "ConnectionResponse": {
+        "properties": {
+          "displayName": {
+            "description": "The name of the connection. \nMaximum 20 characters (only alphanumeric and hyphens allowed). The name bust be unique within the parent Gateway. \nCurrently renaming is not possible therefore deleting and re-creating the connection is necessary.\n",
+            "example": "my-connection",
+            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$",
+            "type": "string"
+          },
           "enabled": {
             "description": "This flag decides whether this connection should be enabled or disabled",
             "type": "boolean"
+          },
+          "id": {
+            "description": "UUID of the Gateway instance.",
+            "format": "uuid",
+            "type": "string"
           },
           "labels": {
             "$ref": "#/components/schemas/Label"
@@ -275,12 +300,6 @@
             "maxItems": 100,
             "minItems": 1,
             "type": "array"
-          },
-          "name": {
-            "description": "The name of the connection. \nMaximum 20 characters (only alphanumeric and hyphens allowed). The name bust be unique within the parent Gateway. \nCurrently renaming is not possible therefore deleting and re-creating the connection is necessary.\n",
-            "example": "my-connection",
-            "pattern": "^[a-z0-9]([a-z0-9-]{0,18}[a-z0-9])?$",
-            "type": "string"
           },
           "remoteSubnets": {
             "description": "Optional. Defaults to 0.0.0.0/0 for Route-based VPN configurations. Mandatory for Policy-based.",
@@ -311,29 +330,15 @@
         ],
         "type": "object"
       },
-      "ConnectionList": {
-        "properties": {
-          "connections": {
-            "items": {
-              "$ref": "#/components/schemas/Connection"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "connections"
-        ],
-        "type": "object"
-      },
       "ConnectionStatusResponse": {
         "properties": {
-          "enabled": {
-            "type": "boolean"
-          },
-          "name": {
+          "displayName": {
             "description": "The name of the connection.",
             "example": "avocado-coffee",
             "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
           },
           "tunnels": {
             "items": {
@@ -346,6 +351,12 @@
       },
       "CreateGatewayConnectionPayload": {
         "properties": {
+          "displayName": {
+            "description": "The name of the connection. \nMaximum 20 characters (only alphanumeric and hyphens allowed). The name bust be unique within the parent Gateway. \nCurrently renaming is not possible therefore deleting and re-creating the connection is necessary.\n",
+            "example": "my-connection",
+            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$",
+            "type": "string"
+          },
           "enabled": {
             "description": "This flag decides whether this connection should be enabled or disabled",
             "type": "boolean"
@@ -361,12 +372,6 @@
             "maxItems": 100,
             "minItems": 1,
             "type": "array"
-          },
-          "name": {
-            "description": "The name of the connection. \nMaximum 20 characters (only alphanumeric and hyphens allowed). The name bust be unique within the parent Gateway. \nCurrently renaming is not possible therefore deleting and re-creating the connection is necessary.\n",
-            "example": "my-connection",
-            "pattern": "^[a-z0-9]([a-z0-9-]{0,18}[a-z0-9])?$",
-            "type": "string"
           },
           "remoteSubnets": {
             "description": "Optional. Defaults to 0.0.0.0/0 for Route-based VPN configurations. Mandatory for Policy-based.",
@@ -417,14 +422,14 @@
           "bgp": {
             "$ref": "#/components/schemas/BGPGatewayConfig"
           },
+          "displayName": {
+            "description": "The name of the VPN gateway. \n",
+            "example": "my-vpn",
+            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$",
+            "type": "string"
+          },
           "labels": {
             "$ref": "#/components/schemas/Label"
-          },
-          "name": {
-            "description": "The name of the VPN gateway. \nMaximum 20 characters (only alphanumeric and hyphens allowed). Not changeable after creation.\n",
-            "example": "my-vpn",
-            "pattern": "^[a-z0-9]([a-z0-9-]{0,18}[a-z0-9])?$",
-            "type": "string"
           },
           "planId": {
             "description": "Service Plan to configure the limits of the VPN. Currently supported plans are p50, p100, p200.\nThis list can change in the future where plan ids will be removed and new plans by added. That is the reason this is not an enum.",
@@ -436,7 +441,6 @@
           }
         },
         "required": [
-          "name",
           "planId",
           "availabilityZones",
           "routingType",
@@ -469,14 +473,14 @@
           "bgp": {
             "$ref": "#/components/schemas/BGPGatewayConfig"
           },
+          "displayName": {
+            "description": "The name of the VPN gateway. \n",
+            "example": "my-vpn",
+            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$",
+            "type": "string"
+          },
           "labels": {
             "$ref": "#/components/schemas/Label"
-          },
-          "name": {
-            "description": "The name of the VPN gateway. \nMaximum 20 characters (only alphanumeric and hyphens allowed). Not changeable after creation.\n",
-            "example": "my-vpn",
-            "pattern": "^[a-z0-9]([a-z0-9-]{0,18}[a-z0-9])?$",
-            "type": "string"
           },
           "planId": {
             "description": "Service Plan to configure the limits of the VPN. Currently supported plans are p50, p100, p200.\nThis list can change in the future where plan ids will be removed and new plans by added. That is the reason this is not an enum.",
@@ -488,7 +492,6 @@
           }
         },
         "required": [
-          "name",
           "planId",
           "availabilityZones",
           "routingType",
@@ -517,6 +520,12 @@
           },
           {
             "properties": {
+              "id": {
+                "description": "The server-generated UUID of the VPN gateway.",
+                "format": "uuid",
+                "readOnly": true,
+                "type": "string"
+              },
               "region": {
                 "$ref": "#/components/schemas/Region"
               },
@@ -541,13 +550,18 @@
       },
       "GatewayStatusResponse": {
         "properties": {
-          "gatewayName": {
+          "displayName": {
             "description": "Name of the Gateway instance.",
             "example": "coffee",
             "type": "string"
           },
           "gatewayStatus": {
             "$ref": "#/components/schemas/GatewayStatus"
+          },
+          "id": {
+            "description": "UUID of the Gateway instance.",
+            "format": "uuid",
+            "type": "string"
           },
           "tunnels": {
             "items": {
@@ -984,6 +998,12 @@
       },
       "UpdateGatewayConnectionPayload": {
         "properties": {
+          "displayName": {
+            "description": "The name of the connection. \nMaximum 20 characters (only alphanumeric and hyphens allowed). The name bust be unique within the parent Gateway. \nCurrently renaming is not possible therefore deleting and re-creating the connection is necessary.\n",
+            "example": "my-connection",
+            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$",
+            "type": "string"
+          },
           "enabled": {
             "description": "This flag decides whether this connection should be enabled or disabled",
             "type": "boolean"
@@ -999,12 +1019,6 @@
             "maxItems": 100,
             "minItems": 1,
             "type": "array"
-          },
-          "name": {
-            "description": "The name of the connection. \nMaximum 20 characters (only alphanumeric and hyphens allowed). The name bust be unique within the parent Gateway. \nCurrently renaming is not possible therefore deleting and re-creating the connection is necessary.\n",
-            "example": "my-connection",
-            "pattern": "^[a-z0-9]([a-z0-9-]{0,18}[a-z0-9])?$",
-            "type": "string"
           },
           "remoteSubnets": {
             "description": "Optional. Defaults to 0.0.0.0/0 for Route-based VPN configurations. Mandatory for Policy-based.",
@@ -1055,14 +1069,14 @@
           "bgp": {
             "$ref": "#/components/schemas/BGPGatewayConfig"
           },
+          "displayName": {
+            "description": "The name of the VPN gateway. \n",
+            "example": "my-vpn",
+            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$",
+            "type": "string"
+          },
           "labels": {
             "$ref": "#/components/schemas/Label"
-          },
-          "name": {
-            "description": "The name of the VPN gateway. \nMaximum 20 characters (only alphanumeric and hyphens allowed). Not changeable after creation.\n",
-            "example": "my-vpn",
-            "pattern": "^[a-z0-9]([a-z0-9-]{0,18}[a-z0-9])?$",
-            "type": "string"
           },
           "planId": {
             "description": "Service Plan to configure the limits of the VPN. Currently supported plans are p50, p100, p200.\nThis list can change in the future where plan ids will be removed and new plans by added. That is the reason this is not an enum.",
@@ -1074,7 +1088,6 @@
           }
         },
         "required": [
-          "name",
           "planId",
           "availabilityZones",
           "routingType",
@@ -1267,7 +1280,7 @@
         }
       }
     },
-    "/v1alpha1/projects/{projectId}/regions/{region}/gateways/{gatewayName}": {
+    "/v1alpha1/projects/{projectId}/regions/{region}/gateways/{gatewayId}": {
       "delete": {
         "description": "Delete a existing VPN gateway and all it's connections in a project.",
         "operationId": "DeleteVPNGateway",
@@ -1290,9 +1303,10 @@
           },
           {
             "in": "path",
-            "name": "gatewayName",
+            "name": "gatewayId",
             "required": true,
             "schema": {
+              "format": "uuid",
               "type": "string"
             }
           }
@@ -1346,9 +1360,10 @@
           },
           {
             "in": "path",
-            "name": "gatewayName",
+            "name": "gatewayId",
             "required": true,
             "schema": {
+              "format": "uuid",
               "type": "string"
             }
           }
@@ -1412,9 +1427,10 @@
           },
           {
             "in": "path",
-            "name": "gatewayName",
+            "name": "gatewayId",
             "required": true,
             "schema": {
+              "format": "uuid",
               "type": "string"
             }
           }
@@ -1467,7 +1483,7 @@
         }
       }
     },
-    "/v1alpha1/projects/{projectId}/regions/{region}/gateways/{gatewayName}/connections": {
+    "/v1alpha1/projects/{projectId}/regions/{region}/gateways/{gatewayId}/connections": {
       "get": {
         "description": "List connections for an existing VPN gateway.",
         "operationId": "ListGatewayConnections",
@@ -1490,9 +1506,10 @@
           },
           {
             "in": "path",
-            "name": "gatewayName",
+            "name": "gatewayId",
             "required": true,
             "schema": {
+              "format": "uuid",
               "type": "string"
             }
           },
@@ -1564,9 +1581,10 @@
           },
           {
             "in": "path",
-            "name": "gatewayName",
+            "name": "gatewayId",
             "required": true,
             "schema": {
+              "format": "uuid",
               "type": "string"
             }
           }
@@ -1585,7 +1603,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Connection"
+                  "$ref": "#/components/schemas/ConnectionResponse"
                 }
               }
             },
@@ -1618,7 +1636,7 @@
         }
       }
     },
-    "/v1alpha1/projects/{projectId}/regions/{region}/gateways/{gatewayName}/connections/{connectionName}": {
+    "/v1alpha1/projects/{projectId}/regions/{region}/gateways/{gatewayId}/connections/{connectionId}": {
       "delete": {
         "description": "Delete a certain connection from an existing VPN gateway.",
         "operationId": "DeleteGatewayConnection",
@@ -1641,15 +1659,16 @@
           },
           {
             "in": "path",
-            "name": "gatewayName",
+            "name": "gatewayId",
             "required": true,
             "schema": {
+              "format": "uuid",
               "type": "string"
             }
           },
           {
             "in": "path",
-            "name": "connectionName",
+            "name": "connectionId",
             "required": true,
             "schema": {
               "type": "string"
@@ -1708,15 +1727,16 @@
           },
           {
             "in": "path",
-            "name": "gatewayName",
+            "name": "gatewayId",
             "required": true,
             "schema": {
+              "format": "uuid",
               "type": "string"
             }
           },
           {
             "in": "path",
-            "name": "connectionName",
+            "name": "connectionId",
             "required": true,
             "schema": {
               "type": "string"
@@ -1728,7 +1748,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Connection"
+                  "$ref": "#/components/schemas/ConnectionResponse"
                 }
               }
             },
@@ -1782,15 +1802,16 @@
           },
           {
             "in": "path",
-            "name": "gatewayName",
+            "name": "gatewayId",
             "required": true,
             "schema": {
+              "format": "uuid",
               "type": "string"
             }
           },
           {
             "in": "path",
-            "name": "connectionName",
+            "name": "connectionId",
             "required": true,
             "schema": {
               "type": "string"
@@ -1811,7 +1832,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Connection"
+                  "$ref": "#/components/schemas/ConnectionResponse"
                 }
               }
             },
@@ -1844,7 +1865,7 @@
         }
       }
     },
-    "/v1alpha1/projects/{projectId}/regions/{region}/gateways/{gatewayName}/connections/{connectionName}/status": {
+    "/v1alpha1/projects/{projectId}/regions/{region}/gateways/{gatewayId}/connections/{connectionId}/status": {
       "get": {
         "description": "Gets the status for a specific connection in an existing VPN gateway.",
         "operationId": "GetGatewayConnectionStatus",
@@ -1867,15 +1888,16 @@
           },
           {
             "in": "path",
-            "name": "gatewayName",
+            "name": "gatewayId",
             "required": true,
             "schema": {
+              "format": "uuid",
               "type": "string"
             }
           },
           {
             "in": "path",
-            "name": "connectionName",
+            "name": "connectionId",
             "required": true,
             "schema": {
               "type": "string"
@@ -1920,7 +1942,7 @@
         }
       }
     },
-    "/v1alpha1/projects/{projectId}/regions/{region}/gateways/{gatewayName}/status": {
+    "/v1alpha1/projects/{projectId}/regions/{region}/gateways/{gatewayId}/status": {
       "get": {
         "description": "Get the status of a VPN gateway in a project.",
         "operationId": "GetVPNGatewayStatus",
@@ -1943,9 +1965,10 @@
           },
           {
             "in": "path",
-            "name": "gatewayName",
+            "name": "gatewayId",
             "required": true,
             "schema": {
+              "format": "uuid",
               "type": "string"
             }
           }

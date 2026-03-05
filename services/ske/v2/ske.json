@@ -32,6 +32,20 @@
         ],
         "type": "object"
       },
+      "Access": {
+        "example": {
+          "idp": {
+            "enabled": true,
+            "type": "type"
+          }
+        },
+        "properties": {
+          "idp": {
+            "$ref": "#/components/schemas/IDP"
+          }
+        },
+        "type": "object"
+      },
       "AccessScope": {
         "description": "The access scope of the Control Plane. It defines if the Kubernetes control plane is public or only available inside a STACKIT Network Area.\n⚠️ Note: This feature is in private preview. Supplying this object is only permitted for enabled accounts. If your account does not have access, the request will be rejected.",
         "enum": [
@@ -391,6 +405,9 @@
           }
         },
         "properties": {
+          "access": {
+            "$ref": "#/components/schemas/Access"
+          },
           "extensions": {
             "$ref": "#/components/schemas/Extension"
           },
@@ -435,16 +452,23 @@
         },
         "properties": {
           "code": {
-            "description": "Possible values: `\"SKE_OBSERVABILITY_INSTANCE_NOT_FOUND\"`, `\"SKE_DNS_ZONE_NOT_FOUND\"`, `\"SKE_NODE_NO_VALID_HOST_FOUND\"`, `\"SKE_NODE_MISCONFIGURED_PDB\"`, `\"SKE_NODE_MACHINE_TYPE_NOT_FOUND\"`, `\"SKE_INFRA_SNA_NETWORK_NOT_FOUND\"`, `\"SKE_FETCHING_ERRORS_NOT_POSSIBLE\"`",
+            "description": "Possible values: `\"SKE_INFRA_SNA_NETWORK_NOT_FOUND\"`, `\"SKE_INFRA_SNA_NETWORK_NO_ROUTER\"`, `\"SKE_NODE_NO_VALID_HOST_FOUND\"`, `\"SKE_NODE_MISCONFIGURED_PDB\"`, `\"SKE_NODE_MACHINE_TYPE_NOT_FOUND\"`, `\"SKE_NETWORK_NO_DNS_CONFIGURED\"`, `\"SKE_NETWORK_NO_AVAILABLE_IPS\"`, `\"SKE_NODE_MEMORY_PRESSURE\"`, `\"SKE_NODE_DISK_PRESSURE\"`, `\"SKE_NODE_PID_PRESSURE\"`, `\"SKE_OBSERVABILITY_INSTANCE_NOT_FOUND\"`, `\"SKE_OBSERVABILITY_INSTANCE_NOT_READY\"`, `\"SKE_DNS_ZONE_NOT_FOUND\"`, `\"SKE_FETCHING_ERRORS_NOT_POSSIBLE\"`",
             "title": "Error code",
             "type": "string",
             "x-extensible-enum": [
-              "SKE_OBSERVABILITY_INSTANCE_NOT_FOUND",
-              "SKE_DNS_ZONE_NOT_FOUND",
+              "SKE_INFRA_SNA_NETWORK_NOT_FOUND",
+              "SKE_INFRA_SNA_NETWORK_NO_ROUTER",
               "SKE_NODE_NO_VALID_HOST_FOUND",
               "SKE_NODE_MISCONFIGURED_PDB",
               "SKE_NODE_MACHINE_TYPE_NOT_FOUND",
-              "SKE_INFRA_SNA_NETWORK_NOT_FOUND",
+              "SKE_NETWORK_NO_DNS_CONFIGURED",
+              "SKE_NETWORK_NO_AVAILABLE_IPS",
+              "SKE_NODE_MEMORY_PRESSURE",
+              "SKE_NODE_DISK_PRESSURE",
+              "SKE_NODE_PID_PRESSURE",
+              "SKE_OBSERVABILITY_INSTANCE_NOT_FOUND",
+              "SKE_OBSERVABILITY_INSTANCE_NOT_READY",
+              "SKE_DNS_ZONE_NOT_FOUND",
               "SKE_FETCHING_ERRORS_NOT_POSSIBLE"
             ]
           },
@@ -565,6 +589,9 @@
       },
       "CreateOrUpdateClusterPayload": {
         "properties": {
+          "access": {
+            "$ref": "#/components/schemas/Access"
+          },
           "extensions": {
             "$ref": "#/components/schemas/Extension"
           },
@@ -788,6 +815,17 @@
           "enabled",
           "type"
         ],
+        "type": "object"
+      },
+      "IDPKubeconfig": {
+        "example": {
+          "kubeconfig": "kubeconfig"
+        },
+        "properties": {
+          "kubeconfig": {
+            "type": "string"
+          }
+        },
         "type": "object"
       },
       "Image": {
@@ -2935,6 +2973,104 @@
         "x-stackit-authorization": {
           "actions": [
             "ske.cluster.kubeconfig.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.ske"
+            ]
+          }
+        }
+      }
+    },
+    "/v2/projects/{projectId}/regions/{region}/clusters/{clusterName}/kubeconfig/idp": {
+      "get": {
+        "description": "A kubeconfig retrieved using this endpoint does not contain any credentials and instead obtains valid credentials via the STACKIT CLI. Permissions must be granted to the user beforehand using an admin kubeconfig.",
+        "operationId": "GetIDPKubeconfig",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "clusterName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IDPKubeconfig"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Invalid request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Project or cluster not found"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RuntimeError"
+                }
+              }
+            },
+            "description": "An unexpected error response."
+          }
+        },
+        "summary": "Get a kubeconfig to authenticate via IDP for use with the STACKIT CLI",
+        "x-stackit-authorization": {
+          "actions": [
+            "ske.cluster.kubeconfig.idp.create"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

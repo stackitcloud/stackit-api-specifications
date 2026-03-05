@@ -72,14 +72,13 @@ jobs:
         run: make download-oas
       - name: Generate SDK
         run: make generate-sdk LANGUAGE=python
+      - name: install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.10.4"
       - name: Install Python SDK
         working-directory: ./sdk-repo-updated
-        run: |
-          pip install poetry
-          poetry config virtualenvs.create false
-          python -m venv ${{ runner.temp }}/.venv
-          source ${{ runner.temp }}/.venv/bin/activate
-          make install-dev
+        run: make install-dev
       - name: Push Python SDK
         env:
           GH_REPO: "stackitcloud/stackit-sdk-python"

@@ -428,7 +428,7 @@
             "$ref": "#/components/schemas/BGPGatewayConfig"
           },
           "displayName": {
-            "description": "The name of the VPN gateway. \n",
+            "description": "The name of the VPN gateway.\n",
             "example": "my-vpn",
             "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$",
             "type": "string"
@@ -453,11 +453,6 @@
         ],
         "type": "object"
       },
-      "DefaultPlanId": {
-        "description": "Default Plan ID for the current region",
-        "example": "p50",
-        "type": "string"
-      },
       "Gateway": {
         "properties": {
           "availabilityZones": {
@@ -479,7 +474,7 @@
             "$ref": "#/components/schemas/BGPGatewayConfig"
           },
           "displayName": {
-            "description": "The name of the VPN gateway. \n",
+            "description": "The name of the VPN gateway.\n",
             "example": "my-vpn",
             "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$",
             "type": "string"
@@ -788,14 +783,7 @@
             "type": "string"
           },
           "planId": {
-            "description": "Service plan identifier",
-            "example": "p50",
-            "type": "string"
-          },
-          "region": {
-            "description": "Region (read-only)",
-            "example": "eu01",
-            "type": "string"
+            "$ref": "#/components/schemas/PlanID"
           },
           "sku": {
             "description": "Plan SKU",
@@ -805,8 +793,7 @@
           "type": {
             "description": "Service plan type",
             "enum": [
-              "high-availability",
-              "single"
+              "high-availability"
             ],
             "example": "high-availability",
             "type": "string"
@@ -814,19 +801,21 @@
         },
         "type": "object"
       },
+      "PlanID": {
+        "description": "The service plan identifier.",
+        "example": "p50",
+        "type": "string"
+      },
       "PlanList": {
         "properties": {
           "defaultPlanId": {
-            "$ref": "#/components/schemas/DefaultPlanId"
+            "$ref": "#/components/schemas/PlanID"
           },
           "plans": {
             "items": {
               "$ref": "#/components/schemas/Plan"
             },
             "type": "array"
-          },
-          "tunnel": {
-            "$ref": "#/components/schemas/VPNTunnelPlan"
           }
         }
       },
@@ -1081,7 +1070,7 @@
             "$ref": "#/components/schemas/BGPGatewayConfig"
           },
           "displayName": {
-            "description": "The name of the VPN gateway. \n",
+            "description": "The name of the VPN gateway.\n",
             "example": "my-vpn",
             "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$",
             "type": "string"
@@ -1104,26 +1093,6 @@
           "routingType",
           "connections"
         ],
-        "type": "object"
-      },
-      "VPNTunnelPlan": {
-        "properties": {
-          "name": {
-            "description": "Tunnel model name",
-            "example": "VPN-IPSec-Tunnel-EU01",
-            "type": "string"
-          },
-          "region": {
-            "description": "Tunnel model region",
-            "example": "eu01",
-            "type": "string"
-          },
-          "sku": {
-            "description": "Tunnel model SKU",
-            "example": "ST-0175001",
-            "type": "string"
-          }
-        },
         "type": "object"
       },
       "VPNTunnels": {

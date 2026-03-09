@@ -92,7 +92,7 @@
         "required": [
           "code",
           "message",
-          "string"
+          "status"
         ],
         "type": "object"
       },
@@ -146,7 +146,7 @@
             "$ref": "#/components/schemas/PrivateASN"
           },
           "overrideAdvertisedRoutes": {
-            "description": "List of routes (IPv4 CIDR).",
+            "description": "A list of IPv4 Prefixes to advertise via BGP. \nIf omitted, the SNA network ranges will be advertised.\n",
             "items": {
               "$ref": "#/components/schemas/IPv4CIDR"
             },
@@ -176,30 +176,41 @@
       "BGPStatusPeers": {
         "properties": {
           "localAs": {
+            "description": "The ASN of the local STACKIT gateway.",
             "example": 65521,
+            "format": "int32",
             "type": "integer"
           },
           "peerUptime": {
+            "description": "Duration the session has been established",
             "example": "00:36:41",
             "type": "string"
           },
           "pfxRcd": {
+            "description": "Count of prefixes received from the neighbor.",
             "example": 1,
+            "format": "int32",
             "type": "integer"
           },
           "pfxSnt": {
+            "description": "Count of prefixes advertised to the neighbor.",
             "example": 2,
+            "format": "int32",
             "type": "integer"
           },
           "remoteAs": {
+            "description": "The ASN of the remote neighbor.",
             "example": 65510,
+            "format": "int32",
             "type": "integer"
           },
           "remoteIP": {
+            "description": "The IP address of the remote BGP neighbor.",
             "example": "169.254.179.245",
             "type": "string"
           },
           "state": {
+            "description": "The current BGP session state.",
             "example": "Established",
             "type": "string"
           }
@@ -218,23 +229,27 @@
       "BGPStatusRoutes": {
         "properties": {
           "network": {
+            "description": "The destination network",
             "example": "192.168.32.0/20",
             "type": "string"
           },
           "origin": {
-            "example": "incomplete",
+            "example": "IGP",
             "type": "string"
           },
           "path": {
-            "example": "65510",
+            "description": "The AS-PATH",
+            "example": 65510,
             "type": "string"
           },
           "peerId": {
+            "description": "BGP Router ID of the neighbor that advertised this route",
             "example": "169.254.179.245",
             "type": "string"
           },
           "weight": {
             "example": 0,
+            "format": "int32",
             "type": "integer"
           }
         },
@@ -275,7 +290,7 @@
       "ConnectionResponse": {
         "properties": {
           "displayName": {
-            "description": "The name of the connection. \nMaximum 20 characters (only alphanumeric and hyphens allowed). The name bust be unique within the parent Gateway. \nCurrently renaming is not possible therefore deleting and re-creating the connection is necessary.\n",
+            "description": "A user-friendly name for the connection.",
             "example": "my-connection",
             "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$",
             "type": "string"
@@ -324,7 +339,7 @@
           }
         },
         "required": [
-          "name",
+          "displayName",
           "tunnel1",
           "tunnel2"
         ],
@@ -334,7 +349,7 @@
         "properties": {
           "displayName": {
             "description": "The name of the connection.",
-            "example": "avocado-coffee",
+            "example": "my-ipsec-tunnel",
             "type": "string"
           },
           "enabled": {
@@ -357,7 +372,7 @@
       "CreateGatewayConnectionPayload": {
         "properties": {
           "displayName": {
-            "description": "The name of the connection. \nMaximum 20 characters (only alphanumeric and hyphens allowed). The name bust be unique within the parent Gateway. \nCurrently renaming is not possible therefore deleting and re-creating the connection is necessary.\n",
+            "description": "A user-friendly name for the connection.",
             "example": "my-connection",
             "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$",
             "type": "string"
@@ -365,9 +380,6 @@
           "enabled": {
             "description": "This flag decides whether this connection should be enabled or disabled",
             "type": "boolean"
-          },
-          "labels": {
-            "$ref": "#/components/schemas/Label"
           },
           "localSubnets": {
             "description": "Optional. Defaults to 0.0.0.0/0 for Route-based VPN configurations. Mandatory for Policy-based.",
@@ -428,7 +440,7 @@
             "$ref": "#/components/schemas/BGPGatewayConfig"
           },
           "displayName": {
-            "description": "The name of the VPN gateway.\n",
+            "description": "A user-friendly name for the VPN gateway.",
             "example": "my-vpn",
             "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$",
             "type": "string"
@@ -437,7 +449,7 @@
             "$ref": "#/components/schemas/Label"
           },
           "planId": {
-            "description": "Service Plan to configure the limits of the VPN. Currently supported plans are p50, p100, p200.\nThis list can change in the future where plan ids will be removed and new plans by added. That is the reason this is not an enum.",
+            "description": "The service plan identifier.",
             "example": "p50",
             "type": "string"
           },
@@ -446,10 +458,10 @@
           }
         },
         "required": [
+          "displayName",
           "planId",
           "availabilityZones",
-          "routingType",
-          "connections"
+          "routingType"
         ],
         "type": "object"
       },
@@ -474,7 +486,7 @@
             "$ref": "#/components/schemas/BGPGatewayConfig"
           },
           "displayName": {
-            "description": "The name of the VPN gateway.\n",
+            "description": "A user-friendly name for the VPN gateway.",
             "example": "my-vpn",
             "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$",
             "type": "string"
@@ -483,7 +495,7 @@
             "$ref": "#/components/schemas/Label"
           },
           "planId": {
-            "description": "Service Plan to configure the limits of the VPN. Currently supported plans are p50, p100, p200.\nThis list can change in the future where plan ids will be removed and new plans by added. That is the reason this is not an enum.",
+            "description": "The service plan identifier.",
             "example": "p50",
             "type": "string"
           },
@@ -492,10 +504,10 @@
           }
         },
         "required": [
+          "displayName",
           "planId",
           "availabilityZones",
-          "routingType",
-          "connections"
+          "routingType"
         ],
         "type": "object"
       },
@@ -526,9 +538,6 @@
                 "readOnly": true,
                 "type": "string"
               },
-              "region": {
-                "$ref": "#/components/schemas/Region"
-              },
               "state": {
                 "$ref": "#/components/schemas/GatewayStatus"
               }
@@ -538,7 +547,7 @@
         ]
       },
       "GatewayStatus": {
-        "description": "Describes the status of the surrounding infrastructure.",
+        "description": "The current lifecycle state of the gateway infrastructure.\n- `PENDING`: Provisioning or update is in progress.\n- `READY`: The gateway is fully operational.\n- `ERROR`: A failure occurred.\n- `DELETING`: The resource is being removed.\n",
         "enum": [
           "PENDING",
           "READY",
@@ -592,12 +601,13 @@
         "additionalProperties": {
           "$ref": "#/components/schemas/LabelValue"
         },
-        "description": "Map of custom labels. Key and values must be a string with max 63 chars, start/end with alphanumeric.\nThe key of a label follows the same rules as the LabelValue except that it cannot be empty.\n",
+        "description": "Map of custom labels. Key and values must be a string with max 63 chars, start/end with alphanumeric.\nThe key of a label follows the same rules as the `LabelValue` except that it cannot be empty.\n",
         "example": {
-          "cost-center": "123",
-          "is-debug-mode": "",
-          "tier": "backend-service",
-          "version": "v1.0.2"
+          "contact": "max.mustermann@example.org",
+          "environment": "production",
+          "foo": "bar",
+          "onsite-target": "branch-office-berlin",
+          "team": "netops"
         },
         "maxProperties": 64,
         "type": "object"
@@ -606,7 +616,7 @@
         "additionalProperties": {
           "type": "string"
         },
-        "description": "label selector object with no nested json objects.\n",
+        "description": "Filter resources by labels.",
         "example": {
           "key1": "value1",
           "key2": "value2"
@@ -688,17 +698,17 @@
       "Phase1Status": {
         "properties": {
           "dhGroup": {
-            "description": "Negotiated Diffie-Hellman Group",
+            "description": "The negotiated Diffie-Hellman Group",
             "example": "MODP2048",
             "type": "string"
           },
           "encryptionAlgorithm": {
-            "description": "Negotiated encryption algorithm.",
+            "description": "The negotiated encryption algorithm.",
             "example": "AES_GCM_16",
             "type": "string"
           },
           "integrityAlgorithm": {
-            "description": "Negotiated integrity algorithm or pseudo-random-function.",
+            "description": "The negotiated integrity algorithm or pseudo-random-function.",
             "example": "SHA_256",
             "type": "string"
           },
@@ -712,45 +722,47 @@
       "Phase2Status": {
         "properties": {
           "bytesIn": {
-            "description": "Bytes received.",
+            "description": "The total data volume received through this Security Association, measured in bytes.",
             "example": "453533",
             "type": "string"
           },
           "bytesOut": {
-            "description": "Bytes sent.",
+            "description": "The total data volume sent through this Security Association, measured in bytes.",
             "example": "46459064",
             "type": "string"
           },
           "dhGroup": {
-            "description": "Negotiated Diffie-Hellman Group",
+            "description": "The negotiated Diffie-Hellman Group",
             "example": "MODP2048",
             "type": "string"
           },
           "encap": {
+            "description": "Indicates whether NAT traversal encapsulation is active for the connection.",
             "example": "yes",
             "type": "string"
           },
           "encryptionAlgorithm": {
-            "description": "Negotiated encryption algorithm.",
+            "description": "The negotiated encryption algorithm.",
             "example": "AES_GCM_16",
             "type": "string"
           },
           "integrityAlgorithm": {
-            "description": "Negotiated integrity algorithm or pseudo-random-function.",
+            "description": "The negotiated integrity algorithm or pseudo-random-function.",
             "example": "SHA_256",
             "type": "string"
           },
           "packetsIn": {
-            "description": "Packets received.",
+            "description": "The total number of packets received through this IPsec Security Association.",
             "example": "1534134",
             "type": "string"
           },
           "packetsOut": {
-            "description": "Packets sent.",
+            "description": "The total number of packets sent through this IPsec Security Association",
             "example": "65847343",
             "type": "string"
           },
           "protocol": {
+            "description": "The security protocol used for the tunnel, typically `ESP` (Encapsulating Security Payload).",
             "example": "ESP",
             "type": "string"
           },
@@ -764,21 +776,19 @@
       "Plan": {
         "properties": {
           "maxBandwidth": {
-            "description": "Maximum bandwidth of a VPN instance.",
-            "example": 50,
+            "description": "The maximum throughput supported by the gateway in each direction, measured in MBit/s",
+            "example": 500,
             "format": "int32",
-            "title": "VPN max supported throughput in Mbits.",
             "type": "integer"
           },
           "maxConnections": {
-            "description": "Maximum concurrent connections of a VPN Gateway.",
+            "description": "The maximum number of connections supported by the VPN Gateway.",
             "example": 2,
             "format": "int32",
-            "title": "VPN max supported concurrent connections.",
             "type": "integer"
           },
           "name": {
-            "description": "Service plan name",
+            "description": "The name of the service plan.",
             "example": "VPN-IPSec-50-HA-EU01",
             "type": "string"
           },
@@ -786,16 +796,8 @@
             "$ref": "#/components/schemas/PlanID"
           },
           "sku": {
-            "description": "Plan SKU",
+            "description": "The SKU identifier used for billing.",
             "example": "ST-0174501",
-            "type": "string"
-          },
-          "type": {
-            "description": "Service plan type",
-            "enum": [
-              "high-availability"
-            ],
-            "example": "high-availability",
             "type": "string"
           }
         },
@@ -803,7 +805,7 @@
       },
       "PlanID": {
         "description": "The service plan identifier.",
-        "example": "p50",
+        "example": "p500",
         "type": "string"
       },
       "PlanList": {
@@ -820,7 +822,7 @@
         }
       },
       "PrivateASN": {
-        "description": "ASN for private use (reserved by IANA).\nAllowed values are 64512-65534 (16-bit range) and 4200000000-4294967294 (32-bit range).\n",
+        "description": "ASN for private use (reserved by IANA), both 16Bit and 32Bit ranges are valid (RFC 6996).\n",
         "format": "int32",
         "maximum": 4294967294,
         "minimum": 64512,
@@ -829,9 +831,11 @@
       "Quota": {
         "properties": {
           "limit": {
+            "format": "int32",
             "type": "integer"
           },
           "usage": {
+            "format": "int32",
             "type": "integer"
           }
         },
@@ -849,7 +853,7 @@
                 "$ref": "#/components/schemas/Quota"
               }
             ],
-            "description": "The number of gateways."
+            "description": "Current limit and usage for VPN gateways."
           }
         },
         "required": [
@@ -922,10 +926,9 @@
                 "properties": {
                   "dpdAction": {
                     "default": "restart",
-                    "description": "Action to perform for this CHILD_SA on DPD timeout.\n\"clear\": Closes the CHILD_SA and does not take further action.\n\"trap\": installs a trap policy which will catch matching traffic and tries to re-negotiate the tunnel on-demand).\n\"restart\": immediately tries to re-negotiate the CILD_SA under a fresh IKE_SA.\n",
+                    "description": "Action to perform for this CHILD_SA on DPD timeout.\n\"clear\": Closes the CHILD_SA and does not take further action.\n\"restart\": immediately tries to re-negotiate the CILD_SA under a fresh IKE_SA.\n",
                     "enum": [
                       "clear",
-                      "trap",
                       "restart"
                     ],
                     "example": "restart",
@@ -941,12 +944,10 @@
                   },
                   "startAction": {
                     "default": "start",
-                    "description": "Action to perform after loading the connection configuration.\n\"none\": The connection will be loaded but needs to be manually initiated.\n\"trap\": installs a trap policy which triggers the tunnel as soon as matching traffic has been detected.\n\"start\": initiates the connection actively.\n\"start|stop\": Immediately initiate a connection for which trap policies have been installed.\n",
+                    "description": "Action to perform after loading the connection configuration.\n\"none\": The connection will be loaded but needs to be manually initiated.\n\"start\": initiates the connection actively.\n",
                     "enum": [
                       "none",
-                      "trap",
-                      "start",
-                      "trap|start"
+                      "start"
                     ],
                     "example": "start",
                     "type": "string"
@@ -999,7 +1000,7 @@
       "UpdateGatewayConnectionPayload": {
         "properties": {
           "displayName": {
-            "description": "The name of the connection. \nMaximum 20 characters (only alphanumeric and hyphens allowed). The name bust be unique within the parent Gateway. \nCurrently renaming is not possible therefore deleting and re-creating the connection is necessary.\n",
+            "description": "A user-friendly name for the connection.",
             "example": "my-connection",
             "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$",
             "type": "string"
@@ -1007,9 +1008,6 @@
           "enabled": {
             "description": "This flag decides whether this connection should be enabled or disabled",
             "type": "boolean"
-          },
-          "labels": {
-            "$ref": "#/components/schemas/Label"
           },
           "localSubnets": {
             "description": "Optional. Defaults to 0.0.0.0/0 for Route-based VPN configurations. Mandatory for Policy-based.",
@@ -1070,7 +1068,7 @@
             "$ref": "#/components/schemas/BGPGatewayConfig"
           },
           "displayName": {
-            "description": "The name of the VPN gateway.\n",
+            "description": "A user-friendly name for the VPN gateway.",
             "example": "my-vpn",
             "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$",
             "type": "string"
@@ -1079,7 +1077,7 @@
             "$ref": "#/components/schemas/Label"
           },
           "planId": {
-            "description": "Service Plan to configure the limits of the VPN. Currently supported plans are p50, p100, p200.\nThis list can change in the future where plan ids will be removed and new plans by added. That is the reason this is not an enum.",
+            "description": "The service plan identifier.",
             "example": "p50",
             "type": "string"
           },
@@ -1088,15 +1086,15 @@
           }
         },
         "required": [
+          "displayName",
           "planId",
           "availabilityZones",
-          "routingType",
-          "connections"
+          "routingType"
         ],
         "type": "object"
       },
       "VPNTunnels": {
-        "description": "List all available tunnels with public IP and status",
+        "description": "Status of the underlying tunnel instances.",
         "properties": {
           "bgpStatus": {
             "$ref": "#/components/schemas/BGPStatus"
@@ -1112,6 +1110,7 @@
             "type": "string"
           },
           "publicIP": {
+            "description": "The public IPv4 address of this endpoint.",
             "example": "192.214.168.197",
             "type": "string"
           }
@@ -1121,7 +1120,7 @@
     }
   },
   "info": {
-    "description": "The STACKIT VPN API provides endpoints to provision and manage VPN instances in your STACKIT project.",
+    "description": "Provision and manage **STACKIT VPN** gateways.\n\nUse this API to establish secure, encrypted IPsec tunnels between your STACKIT Network Area (SNA) and external networks.\nThe service supports the following routing architectures:\n- Policy-based IPsec\n- Static route-based IPsec\n- Dynamic BGP IPsec",
     "title": "STACKIT VPN API",
     "version": "1alpha1"
   },
@@ -1129,7 +1128,7 @@
   "paths": {
     "/v1alpha1/projects/{projectId}/regions/{region}/gateways": {
       "get": {
-        "description": "Retrieve VPN gateways in a project filtered by a custom label selector format.",
+        "description": "Retrieve a list of all VPN gateways in a project. \nFilter the results using the `label_selector` query parameter.\n",
         "operationId": "ListVPNGateways",
         "parameters": [
           {
@@ -1149,6 +1148,8 @@
             }
           },
           {
+            "description": "Filter resources by labels.",
+            "example": "?label_selector[environment]=production\u0026label_selector[foo]=bar",
             "in": "query",
             "name": "label_selector",
             "schema": {
@@ -1192,7 +1193,7 @@
         }
       },
       "post": {
-        "description": "Create a VPN gateway in a project.",
+        "description": "Provision a new VPN gateway.",
         "operationId": "CreateVPNGateway",
         "parameters": [
           {
@@ -1262,7 +1263,7 @@
     },
     "/v1alpha1/projects/{projectId}/regions/{region}/gateways/{gatewayId}": {
       "delete": {
-        "description": "Delete a existing VPN gateway and all it's connections in a project.",
+        "description": "Permanently remove a VPN gateway and all its associated connections.    \nThis operation is irreversible.\n",
         "operationId": "DeleteVPNGateway",
         "parameters": [
           {
@@ -1293,7 +1294,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Deleted"
+            "description": "Request has been accepted. The task of deletion was initiated."
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -1386,7 +1387,7 @@
         }
       },
       "put": {
-        "description": "Update a VPN gateway in a project.",
+        "description": "Modify the configuration of an existing VPN gateway.    \nCertain changes may trigger infrastructure updates or temporary connection re-negotiations.\n",
         "operationId": "UpdateVPNGateway",
         "parameters": [
           {
@@ -1494,6 +1495,8 @@
             }
           },
           {
+            "description": "Filter resources by labels.",
+            "example": "?label_selector[environment]=production\u0026label_selector[foo]=bar",
             "in": "query",
             "name": "label_selector",
             "schema": {
@@ -1540,7 +1543,7 @@
         }
       },
       "post": {
-        "description": "Create a connection for an existing VPN gateway.",
+        "description": "Create a new connection on an existing VPN gateway.",
         "operationId": "CreateGatewayConnection",
         "parameters": [
           {
@@ -1605,7 +1608,7 @@
             "$ref": "#/components/responses/InternalServerError"
           }
         },
-        "summary": "Create a connection for an existing VPN gateway.",
+        "summary": "Create a new connection on an existing VPN gateway.",
         "x-stackit-authorization": {
           "actions": [
             "vpn.connection.add"
@@ -1761,7 +1764,7 @@
         }
       },
       "put": {
-        "description": "Update a connection for an existing VPN gateway.",
+        "description": "Updating the configuration of an existing connection.",
         "operationId": "UpdateGatewayConnection",
         "parameters": [
           {
@@ -1834,7 +1837,7 @@
             "$ref": "#/components/responses/InternalServerError"
           }
         },
-        "summary": "Update a connection for an existing VPN gateway.",
+        "summary": "Update a connection on an existing VPN gateway.",
         "x-stackit-authorization": {
           "actions": [
             "vpn.connection.update"
@@ -1847,7 +1850,7 @@
     },
     "/v1alpha1/projects/{projectId}/regions/{region}/gateways/{gatewayId}/connections/{connectionId}/status": {
       "get": {
-        "description": "Gets the status for a specific connection in an existing VPN gateway.",
+        "description": "Get the status for a specific connection.",
         "operationId": "GetGatewayConnectionStatus",
         "parameters": [
           {
@@ -1911,7 +1914,7 @@
             "$ref": "#/components/responses/InternalServerError"
           }
         },
-        "summary": "Gets the status for a specific connection in an existing VPN gateway.",
+        "summary": "Gets the status for a specific connection.",
         "x-stackit-authorization": {
           "actions": [
             "vpn.connection.status.get"
@@ -1993,7 +1996,7 @@
     },
     "/v1alpha1/projects/{projectId}/regions/{region}/quotas": {
       "get": {
-        "description": "List project quotas.",
+        "description": "Retrieve the resource quotas and current usage for STACKIT VPN within a specific project and region.\n",
         "operationId": "ListQuotas",
         "parameters": [
           {
@@ -2022,7 +2025,7 @@
                 }
               }
             },
-            "description": "List quotas."
+            "description": "OK"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -2044,7 +2047,7 @@
     },
     "/v1alpha1/regions/{region}/plans": {
       "get": {
-        "description": "List available service plans for a project.",
+        "description": "Retrieve a list of available service plans available for provisioning a VPN in a specific `region`.    \nUse this to identify the `planId` required for gateway creation.\n",
         "operationId": "ListPlans",
         "parameters": [
           {
@@ -2065,7 +2068,7 @@
                 }
               }
             },
-            "description": "Service plans response"
+            "description": "OK"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"

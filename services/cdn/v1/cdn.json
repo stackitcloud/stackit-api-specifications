@@ -635,6 +635,13 @@
       "Domain": {
         "description": "Definition of a custom or managed domain without any certificates or keys",
         "properties": {
+          "certificateType": {
+            "enum": [
+              "managed",
+              "custom"
+            ],
+            "type": "string"
+          },
           "errors": {
             "description": "This object is present if the custom domain has errors.",
             "items": {
@@ -663,7 +670,8 @@
         "required": [
           "name",
           "type",
-          "status"
+          "status",
+          "certificateType"
         ],
         "type": "object"
       },
@@ -805,6 +813,11 @@
       "GetCustomDomainCustomCertificate": {
         "description": "Returned if a custom certificate is used. Response does not contain the certificate or key.",
         "properties": {
+          "skipDnsCheck": {
+            "default": false,
+            "description": "Returns if the CNAME Check has been disabled for this Custom Domain. This is usually set for migrations to allow for no downtime.",
+            "type": "boolean"
+          },
           "type": {
             "type": "string"
           },
@@ -817,7 +830,8 @@
         },
         "required": [
           "type",
-          "version"
+          "version",
+          "skipDnsCheck"
         ],
         "type": "object"
       },
@@ -1329,6 +1343,10 @@
             "description": "base64-encoded PEM encoded key",
             "type": "string",
             "x-go-type": "secret.Secret"
+          },
+          "skipDnsCheck": {
+            "description": "When adding a new custom domain, we do a check to verify that your Domain\npoints to the managed domain via a CNAME or ALIAS.\nIf this is not the case, the call would usually reject. \n\nThis additional property is an escape hatch to this functionality. It's useful\nfor when you are migrating onto STACKIT CDN. It allows you to migrate without \ndowntime.\n\nBy providing a custom certificate with `skipDnsCheck` set to `true`, we will \nnot check the Record for correctness. Then, once the CDN is set up, you can\nchange the CNAME Record on your DNS and update the Custom Domain entry to \ndisable this check, or switch to a managed certificate.\n\nThis field is optional. If not set, the check is **not** skipped.\n",
+            "type": "boolean"
           },
           "type": {
             "type": "string"
@@ -1993,7 +2011,7 @@
   },
   "info": {
     "description": "API used to create and manage your CDN distributions.",
-    "title": "CDN API",
+    "title": "STACKIT CDN API",
     "version": "1.0.0"
   },
   "openapi": "3.0.3",

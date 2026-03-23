@@ -64,6 +64,10 @@ jobs:
         with:
           repository: "stackitcloud/stackit-sdk-generator"
           ref: "main"
+      - name: install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.10.4"
       - name: Build
         uses: ./.github/actions/build/python
         with:
@@ -72,10 +76,6 @@ jobs:
         run: make download-oas
       - name: Generate SDK
         run: make generate-sdk LANGUAGE=python
-      - name: install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          version: "0.10.4"
       - name: Install Python SDK
         working-directory: ./sdk-repo-updated
         run: make install-dev

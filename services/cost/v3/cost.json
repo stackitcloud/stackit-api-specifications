@@ -422,18 +422,43 @@
         "title": "V3 Summarized Service Costs",
         "type": "object"
       },
-      "defaultError": {
-        "description": "A standard error object.",
+      "authErrorResponse": {
         "properties": {
-          "code": {
+          "error": {
             "type": "string"
           },
           "message": {
             "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "status": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "timeStamp": {
+            "format": "date-time",
+            "type": "string"
           }
         },
         "required": [
-          "code"
+          "timeStamp",
+          "path",
+          "status",
+          "error",
+          "message"
+        ],
+        "type": "object"
+      },
+      "errorResponse": {
+        "properties": {
+          "msg": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "msg"
         ],
         "title": "Error",
         "type": "object"
@@ -515,26 +540,10 @@
             "description": "OK"
           },
           "400": {
-            "description": "Bad request"
-          },
-          "401": {
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Customer account not found"
-          },
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/defaultError"
+                  "$ref": "#/components/schemas/errorResponse"
                 }
               },
               "text/csv": {
@@ -543,7 +552,42 @@
                 }
               }
             },
-            "description": "Not Implemented"
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Not found"
           }
         },
         "summary": "V3 Costs for all projects",
@@ -636,26 +680,10 @@
             "description": "OK"
           },
           "400": {
-            "description": "Bad request"
-          },
-          "401": {
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Customer account not found"
-          },
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/defaultError"
+                  "$ref": "#/components/schemas/errorResponse"
                 }
               },
               "text/csv": {
@@ -664,7 +692,42 @@
                 }
               }
             },
-            "description": "Not Implemented"
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Not found"
           }
         },
         "summary": "V3 Costs for all projects of all related sub-customers",
@@ -754,26 +817,10 @@
             "description": "OK"
           },
           "400": {
-            "description": "Bad request"
-          },
-          "401": {
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Customer account or project not found"
-          },
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/defaultError"
+                  "$ref": "#/components/schemas/errorResponse"
                 }
               },
               "text/csv": {
@@ -782,7 +829,42 @@
                 }
               }
             },
-            "description": "Not Implemented"
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Not found"
           }
         },
         "summary": "V3 Costs for a certain project",

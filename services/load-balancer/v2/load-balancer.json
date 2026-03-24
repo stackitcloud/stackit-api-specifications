@@ -244,13 +244,13 @@
           "maxCredentials": {
             "description": "The maximum number of observability credentials that can be stored in this project.",
             "format": "int32",
-            "maximum": 999,
+            "maximum": 1000000,
             "minimum": -1,
             "title": "Observability credentials max quota",
             "type": "integer"
           },
           "maxLoadBalancers": {
-            "description": "The maximum number of load balancing servers in this project. Unlimited if set to -1.",
+            "description": "The maximum number of load balancing servers in this project.",
             "format": "int32",
             "maximum": 1000000,
             "minimum": -1,
@@ -396,6 +396,7 @@
             "type": "string"
           },
           "serverNameIndicators": {
+            "deprecated": true,
             "description": "Server Name Indicators config for domains to be routed to the desired target pool for this listener.",
             "items": {
               "$ref": "#/components/schemas/ServerNameIndicator"
@@ -2055,7 +2056,7 @@
     },
     "/v2/projects/{projectId}/regions/{region}/quota": {
       "get": {
-        "description": "Retrieves the configured Load Balancer quota for the project. Limit can be changed via service request.\n There can be 3 times as many observability credentials as Load Balancers.",
+        "description": "Retrieves the configured Network Load Balancer quota for the project. Limit can be changed via service request.",
         "operationId": "GetQuota",
         "parameters": [
           {
@@ -2116,7 +2117,7 @@
             "description": "Default error response"
           }
         },
-        "summary": "Get the quota of Load Balancers in a project.",
+        "summary": "Get the quota of Network Load Balancers in a project.",
         "x-stackit-authorization": {
           "actions": [
             "nlb.quota.get"

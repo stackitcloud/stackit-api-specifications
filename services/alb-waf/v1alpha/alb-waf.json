@@ -1,6 +1,28 @@
 {
   "components": {
     "schemas": {
+      "CRSConfigQuota": {
+        "description": "CRS Config quota holds the limit and usage for Core Rule Set configuration resources",
+        "properties": {
+          "limit": {
+            "description": "The maximum number of Core Rule Set configurations in this project.",
+            "format": "int32",
+            "maximum": 1000000,
+            "minimum": -1,
+            "title": "Max CRS configurations",
+            "type": "integer"
+          },
+          "usage": {
+            "description": "The number of Core Rule Set configurations that are currently existing in this project.",
+            "format": "int32",
+            "maximum": 1000000,
+            "minimum": -1,
+            "title": "Used CRS configurations",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
       "CreateCoreRuleSetPayload": {
         "description": "CreateCoreRuleSetRequest creates a rule configuration.",
         "properties": {
@@ -191,6 +213,28 @@
         },
         "type": "object"
       },
+      "CustomRulesQuota": {
+        "description": "Custom rules quotas holds the limit and usage for custom rules resources",
+        "properties": {
+          "limit": {
+            "description": "The maximum number of custom rules in this project.",
+            "format": "int32",
+            "maximum": 1000000,
+            "minimum": -1,
+            "title": "Max custom rules",
+            "type": "integer"
+          },
+          "usage": {
+            "description": "The number of custom rules that currently existing in this project.",
+            "format": "int32",
+            "maximum": 1000000,
+            "minimum": -1,
+            "title": "Used custom rules",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
       "DeleteCoreRuleSetResponse": {
         "description": "DeleteCoreRuleSetResponse returns has empty body if successful.",
         "type": "object"
@@ -217,6 +261,30 @@
             "example": "my-core-rule-set-config",
             "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
             "type": "string"
+          },
+          "region": {
+            "description": "Region",
+            "example": "eu01",
+            "format": "string",
+            "pattern": "^[a-z]{2,4}[0-9]{2}$",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GetQuotaResponse": {
+        "properties": {
+          "projectId": {
+            "description": "Project identifier",
+            "example": "2438ac3c-37eb-4902-adef-ed16b4431030",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "readOnly": true,
+            "type": "string"
+          },
+          "quotas": {
+            "$ref": "#/components/schemas/Quotas"
           },
           "region": {
             "description": "Region",
@@ -350,6 +418,21 @@
             "format": "string",
             "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
             "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Quotas": {
+        "description": "Quotas holds the specific quota elements for different resources",
+        "properties": {
+          "coreRuleSet": {
+            "$ref": "#/components/schemas/CRSConfigQuota"
+          },
+          "customRules": {
+            "$ref": "#/components/schemas/CustomRulesQuota"
+          },
+          "webApplicationFirewall": {
+            "$ref": "#/components/schemas/WAFConfigQuota"
           }
         },
         "type": "object"
@@ -562,6 +645,28 @@
             "example": "my-rules-config",
             "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
             "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "WAFConfigQuota": {
+        "description": "WAF Config quota holds the limit and usage for Web Application Firewall configuration resources",
+        "properties": {
+          "limit": {
+            "description": "The maximum number of Web Application Firewall configurations in this project.",
+            "format": "int32",
+            "maximum": 1000000,
+            "minimum": -1,
+            "title": "Max WAF configurations",
+            "type": "integer"
+          },
+          "usage": {
+            "description": "The number of Web Application Firewall configurations that are currently existing in this project.",
+            "format": "int32",
+            "maximum": 1000000,
+            "minimum": -1,
+            "title": "Used WAF configurations",
+            "type": "integer"
           }
         },
         "type": "object"
@@ -1021,6 +1126,85 @@
         "x-stackit-authorization": {
           "actions": [
             "alb.waf.crs.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/regions/{region}/quotas": {
+      "get": {
+        "description": "Retrieves the configured WAF resource quotas for the project. Limit can be changed via service request.",
+        "operationId": "GetQuota",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetQuotaResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "description": "One or more fields are invalid."
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "this projectId is not allowed to try this API"
+          },
+          "500": {
+            "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Get the quota for WAF resources in a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.waf.quota.get"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

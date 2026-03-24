@@ -188,7 +188,7 @@
       "GetQuotaResponse": {
         "properties": {
           "maxLoadBalancers": {
-            "description": "The maximum number of load balancing servers in this project. Unlimited if set to -1.",
+            "description": "The maximum number of load balancing servers in this project.",
             "format": "int32",
             "maximum": 1000000,
             "minimum": -1,
@@ -306,6 +306,7 @@
             "type": "string"
           },
           "serverNameIndicators": {
+            "deprecated": true,
             "description": "Server Name Idicators config for domains to be routed to the desired target pool for this listener.",
             "items": {
               "$ref": "#/components/schemas/ServerNameIndicator"
@@ -820,6 +821,7 @@
   "paths": {
     "/v1/plans": {
       "get": {
+        "deprecated": true,
         "description": "ListPlans returns for the configured service plans for a project.",
         "operationId": "ListPlans",
         "responses": {
@@ -1077,6 +1079,7 @@
     },
     "/v1/projects/{projectId}/credentials": {
       "get": {
+        "deprecated": true,
         "description": "List Credentials",
         "operationId": "ListCredentials",
         "parameters": [
@@ -1143,6 +1146,7 @@
         }
       },
       "post": {
+        "deprecated": true,
         "description": "Create credentials can be used to store existing credentials, which are valid to be used for Load Balancer Observability.\n This means, e.g. when using ARGUS, that credentials first must be created for that ARGUS instance (by using their API) and\n then can be provided to the Load Balancer by storing them with this endpoint.",
         "operationId": "CreateCredentials",
         "parameters": [
@@ -1233,6 +1237,7 @@
     },
     "/v1/projects/{projectId}/credentials/{credentialsRef}": {
       "delete": {
+        "deprecated": true,
         "description": "Delete Credential",
         "operationId": "DeleteCredentials",
         "parameters": [
@@ -1310,6 +1315,7 @@
         }
       },
       "get": {
+        "deprecated": true,
         "description": "Get Credentials",
         "operationId": "GetCredentials",
         "parameters": [
@@ -1390,6 +1396,7 @@
         }
       },
       "put": {
+        "deprecated": true,
         "description": "Update Credentials",
         "operationId": "UpdateCredentials",
         "parameters": [
@@ -1482,6 +1489,7 @@
     },
     "/v1/projects/{projectId}/load-balancers": {
       "get": {
+        "deprecated": true,
         "description": "ListLoadBalancer will list load balancers of a project. This contains information set during\n creation or updates for every load balancer in the project. Additionally, it will have information about\n the state of the load balancer in the form of a status field and error description feedback.",
         "operationId": "ListLoadBalancers",
         "parameters": [
@@ -1570,6 +1578,7 @@
         }
       },
       "post": {
+        "deprecated": true,
         "description": "Create Load Balancer will create a load balancer.\n The default load balancing algorithm is round robin unless useSourceIpAddress in session persistence is enabled for a target pool then it is Maglev.",
         "operationId": "CreateLoadBalancer",
         "parameters": [
@@ -1663,6 +1672,7 @@
     },
     "/v1/projects/{projectId}/load-balancers/{name}": {
       "delete": {
+        "deprecated": true,
         "description": "DeleteLoadBalancer will delete a given load balancer.",
         "operationId": "DeleteLoadBalancer",
         "parameters": [
@@ -1740,6 +1750,7 @@
         }
       },
       "get": {
+        "deprecated": true,
         "description": "Get Load Balancer will get a single load balancer of a project. This contains all the information set during\n creation or updates. Additionally, it will have information about the state of the load balancer in the form\n of a status field and error description feedback.",
         "operationId": "GetLoadBalancer",
         "parameters": [
@@ -1820,6 +1831,7 @@
         }
       },
       "put": {
+        "deprecated": true,
         "description": "Update Load Balancer allows the change of listeners and target pools of an existing Load Balancer.\n The Load balancer resource version needs to be the current version to ensure concurrency safe updates.\n The default load balancing algorithm is round robin unless useSourceIpAddress in session persistence is enabled for a target pool then it is Maglev.",
         "operationId": "UpdateLoadBalancer",
         "parameters": [
@@ -1912,6 +1924,7 @@
     },
     "/v1/projects/{projectId}/load-balancers/{name}/target-pools/{targetPoolName}": {
       "put": {
+        "deprecated": true,
         "description": "ReplaceTargetPool will replace a specific target pool of a load balancer with new content.\n Useful to  add/remove target servers. will update a load balancer.\n Only replaces the mentioned target pools and leaves others unchanged.\n Cannot be used to create or rename a target pool.",
         "operationId": "UpdateTargetPool",
         "parameters": [
@@ -2009,7 +2022,8 @@
     },
     "/v1/projects/{projectId}/quota": {
       "get": {
-        "description": "Retrieves the configured Load Balancer quota for the project. Limit can be changed via service request.\n There can be 3 times as many observability credentials as Load Balancers.",
+        "deprecated": true,
+        "description": "Retrieves the configured Network Load Balancer quota for the project. Limit can be changed via service request.",
         "operationId": "GetQuota",
         "parameters": [
           {
@@ -2062,7 +2076,7 @@
             "description": "Default error response"
           }
         },
-        "summary": "Get the quota for Load Balancers in a project.",
+        "summary": "Get the quota of Network Load Balancers in a project.",
         "x-stackit-authorization": {
           "actions": [
             "nlb.quota.get"

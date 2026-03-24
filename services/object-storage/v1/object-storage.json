@@ -35,6 +35,12 @@
             "title": "Name",
             "type": "string"
           },
+          "objectLockEnabled": {
+            "description": "Whether S3 Object Lock is enabled for this bucket",
+            "example": false,
+            "title": "Objectlockenabled",
+            "type": "boolean"
+          },
           "region": {
             "example": "eu01",
             "title": "Region",
@@ -57,9 +63,32 @@
           "name",
           "region",
           "urlPathStyle",
-          "urlVirtualHostedStyle"
+          "urlVirtualHostedStyle",
+          "objectLockEnabled"
         ],
         "title": "Bucket",
+        "type": "object"
+      },
+      "ComplianceLockResponse": {
+        "properties": {
+          "maxRetentionDays": {
+            "description": "Maximum retention period in days",
+            "example": 365,
+            "title": "Maxretentiondays",
+            "type": "integer"
+          },
+          "project": {
+            "description": "Project ID",
+            "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
+            "title": "Project",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project",
+          "maxRetentionDays"
+        ],
+        "title": "ComplianceLockResponse",
         "type": "object"
       },
       "CreateAccessKeyPayload": {
@@ -199,7 +228,7 @@
           },
           "urn": {
             "description": "Credentials group URN",
-            "example": "urn:sgws:identity::12345678901234567890:user/credentials-group-123456",
+            "example": "urn:sgws:identity::12345678901234567890:group/credentials-group-123456",
             "title": "Urn",
             "type": "string"
           }
@@ -210,6 +239,75 @@
           "displayName"
         ],
         "title": "CredentialsGroup",
+        "type": "object"
+      },
+      "CredentialsGroupExtended": {
+        "properties": {
+          "credentialsGroupId": {
+            "description": "The ID of the credentials group",
+            "example": "3969597f-d2f3-4c07-8533-1a4bf8159c0e",
+            "title": "Credentials group ID",
+            "type": "string"
+          },
+          "displayName": {
+            "description": "Name of the group holding credentials",
+            "example": "group-name-1",
+            "title": "Credentials group name",
+            "type": "string"
+          },
+          "urn": {
+            "description": "StorageGRID group URN",
+            "example": "urn:sgws:identity::12345678901234567890:group/credentials-group-123456",
+            "title": "Urn",
+            "type": "string"
+          },
+          "userUrn": {
+            "description": "StorageGRID user URN",
+            "example": "urn:sgws:identity::12345678901234567890:user/credentials-group-123456",
+            "title": "User URN",
+            "type": "string"
+          }
+        },
+        "required": [
+          "credentialsGroupId",
+          "urn",
+          "userUrn",
+          "displayName"
+        ],
+        "title": "CredentialsGroupExtended",
+        "type": "object"
+      },
+      "DefaultRetentionResponse": {
+        "properties": {
+          "bucket": {
+            "description": "Name of the bucket",
+            "example": "bucket-1",
+            "title": "Bucket",
+            "type": "string"
+          },
+          "days": {
+            "description": "Retention period in days",
+            "example": 90,
+            "title": "Days",
+            "type": "integer"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/RetentionMode"
+          },
+          "project": {
+            "description": "Project ID",
+            "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
+            "title": "Project",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project",
+          "bucket",
+          "mode",
+          "days"
+        ],
+        "title": "DefaultRetentionResponse",
         "type": "object"
       },
       "DeleteAccessKeyResponse": {
@@ -278,6 +376,28 @@
         "title": "DeleteCredentialsGroupResponse",
         "type": "object"
       },
+      "DeleteDefaultRetentionResponse": {
+        "properties": {
+          "bucket": {
+            "description": "Name of the bucket",
+            "example": "bucket-1",
+            "title": "Bucket",
+            "type": "string"
+          },
+          "project": {
+            "description": "Project ID",
+            "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
+            "title": "Project",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project",
+          "bucket"
+        ],
+        "title": "DeleteDefaultRetentionResponse",
+        "type": "object"
+      },
       "DetailedError": {
         "properties": {
           "key": {
@@ -331,6 +451,25 @@
           "bucket"
         ],
         "title": "GetBucketResponse",
+        "type": "object"
+      },
+      "GetCredentialsGroupResponse": {
+        "properties": {
+          "credentialsGroup": {
+            "$ref": "#/components/schemas/CredentialsGroupExtended"
+          },
+          "project": {
+            "description": "Project ID",
+            "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
+            "title": "Project",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project",
+          "credentialsGroup"
+        ],
+        "title": "GetCredentialsGroupResponse",
         "type": "object"
       },
       "HTTPValidationError": {
@@ -448,6 +587,35 @@
         "title": "ProjectResponse",
         "type": "object"
       },
+      "RetentionMode": {
+        "description": "The retention mode for default retention on a bucket.",
+        "enum": [
+          "COMPLIANCE",
+          "GOVERNANCE"
+        ],
+        "title": "RetentionMode"
+      },
+      "SetDefaultRetentionPayload": {
+        "properties": {
+          "days": {
+            "description": "Retention period in days",
+            "example": 90,
+            "exclusiveMinimum": true,
+            "minimum": 0,
+            "title": "Days",
+            "type": "integer"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/RetentionMode"
+          }
+        },
+        "required": [
+          "mode",
+          "days"
+        ],
+        "title": "DefaultRetentionRequest",
+        "type": "object"
+      },
       "ValidationError": {
         "properties": {
           "loc": {
@@ -457,6 +625,7 @@
                   "type": "string"
                 },
                 {
+                  "format": "int32",
                   "type": "integer"
                 }
               ]
@@ -530,6 +699,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "403": {
             "content": {
               "application/json": {
@@ -549,6 +728,16 @@
               }
             },
             "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Conflict"
           },
           "422": {
             "content": {
@@ -608,6 +797,16 @@
               }
             },
             "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Unauthorized"
           },
           "403": {
             "content": {
@@ -697,6 +896,16 @@
               }
             },
             "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Unauthorized"
           },
           "403": {
             "content": {
@@ -798,6 +1007,16 @@
               }
             },
             "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Unauthorized"
           },
           "403": {
             "content": {
@@ -912,6 +1131,16 @@
             },
             "description": "Temporary Redirect"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "403": {
             "content": {
               "application/json": {
@@ -1002,6 +1231,16 @@
               }
             },
             "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Unauthorized"
           },
           "403": {
             "content": {
@@ -1098,6 +1337,16 @@
             },
             "description": "Successful Response"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "404": {
             "content": {
               "application/json": {
@@ -1181,6 +1430,16 @@
             },
             "description": "Successful Response"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "403": {
             "content": {
               "application/json": {
@@ -1233,7 +1492,7 @@
         }
       },
       "post": {
-        "description": "Create a bucket for the given project. Bucket with the same name\ncannot already exists in the object storage",
+        "description": "Create a bucket for the given project. Bucket with the same name cannot already exists in the object storage",
         "operationId": "CreateBucket",
         "parameters": [
           {
@@ -1261,6 +1520,16 @@
               "title": "Bucket Name",
               "type": "string"
             }
+          },
+          {
+            "description": "Enable S3 Object Lock on this bucket. Can only be set at creation time. Requires an active project-level compliance lock.",
+            "in": "query",
+            "name": "objectLockEnabled",
+            "schema": {
+              "default": false,
+              "title": "Object Lock Enabled",
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -1273,6 +1542,16 @@
               }
             },
             "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Unauthorized"
           },
           "404": {
             "content": {
@@ -1326,6 +1605,277 @@
         }
       }
     },
+    "/v1/project/{projectId}/bucket/{bucketName}/default-retention": {
+      "delete": {
+        "description": "Remove the default retention from a bucket. Object Lock itself remains enabled.",
+        "operationId": "DeleteDefaultRetention",
+        "parameters": [
+          {
+            "description": "STACKIT project ID",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "description": "STACKIT project ID",
+              "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
+              "title": "Project ID",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The name has to be dns-conform.",
+            "in": "path",
+            "name": "bucketName",
+            "required": true,
+            "schema": {
+              "description": "The name has to be dns-conform.",
+              "example": "bucket-1",
+              "maxLength": 63,
+              "minLength": 3,
+              "title": "Bucket Name",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteDefaultRetentionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Delete Default Retention",
+        "x-stackit-authorization": {
+          "actions": [
+            "object-storage.bucket.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get the default retention configuration for a bucket.",
+        "operationId": "GetDefaultRetention",
+        "parameters": [
+          {
+            "description": "STACKIT project ID",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "description": "STACKIT project ID",
+              "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
+              "title": "Project ID",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The name has to be dns-conform.",
+            "in": "path",
+            "name": "bucketName",
+            "required": true,
+            "schema": {
+              "description": "The name has to be dns-conform.",
+              "example": "bucket-1",
+              "maxLength": 63,
+              "minLength": 3,
+              "title": "Bucket Name",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefaultRetentionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get Default Retention",
+        "x-stackit-authorization": {
+          "actions": [
+            "object-storage.bucket.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "put": {
+        "description": "Set or update the default retention for a bucket.",
+        "operationId": "SetDefaultRetention",
+        "parameters": [
+          {
+            "description": "STACKIT project ID",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "description": "STACKIT project ID",
+              "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
+              "title": "Project ID",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The name has to be dns-conform.",
+            "in": "path",
+            "name": "bucketName",
+            "required": true,
+            "schema": {
+              "description": "The name has to be dns-conform.",
+              "example": "bucket-1",
+              "maxLength": 63,
+              "minLength": 3,
+              "title": "Bucket Name",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetDefaultRetentionPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefaultRetentionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Update Default Retention",
+        "x-stackit-authorization": {
+          "actions": [
+            "object-storage.bucket.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
     "/v1/project/{projectId}/buckets": {
       "get": {
         "description": "Get the list of all buckets in the given project",
@@ -1354,6 +1904,16 @@
               }
             },
             "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Unauthorized"
           },
           "403": {
             "content": {
@@ -1407,6 +1967,205 @@
         }
       }
     },
+    "/v1/project/{projectId}/compliance-lock": {
+      "delete": {
+        "description": "Remove compliance lock from a project.",
+        "operationId": "DeleteComplianceLock",
+        "parameters": [
+          {
+            "description": "STACKIT project ID",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "description": "STACKIT project ID",
+              "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
+              "title": "Project ID",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComplianceLockResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Delete Compliance Lock",
+        "x-stackit-authorization": {
+          "actions": [
+            "object-storage.compliance-lock.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get the project-level compliance lock.",
+        "operationId": "GetComplianceLock",
+        "parameters": [
+          {
+            "description": "STACKIT project ID",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "description": "STACKIT project ID",
+              "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
+              "title": "Project ID",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComplianceLockResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get Compliance Lock",
+        "x-stackit-authorization": {
+          "actions": [
+            "object-storage.compliance-lock.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Enable compliance lock for a project.",
+        "operationId": "CreateComplianceLock",
+        "parameters": [
+          {
+            "description": "STACKIT project ID",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "description": "STACKIT project ID",
+              "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
+              "title": "Project ID",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComplianceLockResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Create Compliance Lock",
+        "x-stackit-authorization": {
+          "actions": [
+            "object-storage.compliance-lock.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
     "/v1/project/{projectId}/credentials-group": {
       "post": {
         "operationId": "CreateCredentialsGroup",
@@ -1444,6 +2203,16 @@
               }
             },
             "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Unauthorized"
           },
           "403": {
             "content": {
@@ -1548,6 +2317,16 @@
             },
             "description": "Successful Response"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "404": {
             "content": {
               "application/json": {
@@ -1588,6 +2367,87 @@
           "resource-id-type": "dynamic",
           "resource-type": "project"
         }
+      },
+      "get": {
+        "description": "Get the details of a single credentials group",
+        "operationId": "GetCredentialsGroup",
+        "parameters": [
+          {
+            "description": "STACKIT project ID",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "description": "STACKIT project ID",
+              "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
+              "title": "Project ID",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Id of the credentials group",
+            "in": "path",
+            "name": "groupId",
+            "required": true,
+            "schema": {
+              "description": "Id of the credentials group",
+              "example": "3969597f-d2f3-4c07-8533-1a4bf8159c0e",
+              "title": "Credentials Group Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCredentialsGroupResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get Credentials Group",
+        "x-stackit-authorization": {
+          "actions": [
+            "object-storage.credentials-group.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
       }
     },
     "/v1/project/{projectId}/credentials-groups": {
@@ -1618,6 +2478,16 @@
               }
             },
             "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Unauthorized"
           },
           "404": {
             "content": {

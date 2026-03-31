@@ -33,6 +33,14 @@
       }
     },
     "schemas": {
+      "CreateLockResponse": {
+        "properties": {
+          "lockId": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "CreateResourcePoolPayload": {
         "properties": {
           "availabilityZone": {
@@ -65,6 +73,10 @@
             "description": "Size of the Resource Pool\n\n (unit: gibibytes)",
             "format": "int32",
             "type": "integer"
+          },
+          "snapshotPolicyId": {
+            "description": "(optional) Id of the Snapshot Policy to use",
+            "type": "string"
           },
           "snapshotsAreVisible": {
             "description": "Whether the .snapshot directory is visible when mounting the resource pool.\n Setting this value to false might prevent you from accessing the snapshots (e.g.\n for security reasons). Additionally, the access to the snapshots is always controlled\n by the export policy of the resource pool. That means, if snapshots are visible and\n the export policy allows for reading the resource pool, then it also allows reading\n the snapshot of all shares.",
@@ -103,6 +115,12 @@
           "name": {
             "description": "Name of the Resource Pool Snapshot",
             "type": "string"
+          },
+          "snaplockRetentionHours": {
+            "description": "(optional) Time in hours after which snaplock on the snapshot expires",
+            "format": "uint32",
+            "nullable": true,
+            "type": "integer"
           }
         },
         "type": "object"
@@ -239,6 +257,9 @@
         },
         "type": "object"
       },
+      "DeleteLockResponse": {
+        "type": "object"
+      },
       "DeleteResourcePoolResponse": {
         "type": "object"
       },
@@ -298,6 +319,19 @@
         },
         "type": "object"
       },
+      "GetScheduleResponse": {
+        "properties": {
+          "schedule": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Schedule"
+              }
+            ],
+            "description": "Schedule"
+          }
+        },
+        "type": "object"
+      },
       "GetShareExportPolicyResponse": {
         "properties": {
           "shareExportPolicy": {
@@ -320,6 +354,19 @@
               }
             ],
             "description": "Share"
+          }
+        },
+        "type": "object"
+      },
+      "GetSnapshotPolicyResponse": {
+        "properties": {
+          "snapshotPolicy": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SnapshotPolicy"
+              }
+            ],
+            "description": "Snapshot Policy"
           }
         },
         "type": "object"
@@ -371,6 +418,18 @@
         },
         "type": "object"
       },
+      "ListSchedulesResponse": {
+        "properties": {
+          "schedules": {
+            "description": "List of Schedules",
+            "items": {
+              "$ref": "#/components/schemas/Schedule"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "ListShareExportPoliciesResponse": {
         "properties": {
           "shareExportPolicies": {
@@ -389,6 +448,18 @@
             "description": "List of Shares",
             "items": {
               "$ref": "#/components/schemas/Share"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ListSnapshotPoliciesResponse": {
+        "properties": {
+          "snapshotPolicies": {
+            "description": "List of Snapshot Policies",
+            "items": {
+              "$ref": "#/components/schemas/SnapshotPolicy"
             },
             "type": "array"
           }
@@ -472,6 +543,15 @@
             "format": "date-time",
             "type": "string"
           },
+          "snapshotPolicy": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourcePool_SnapshotPolicy"
+              }
+            ],
+            "description": "(optional) Snapshot Policy",
+            "nullable": true
+          },
           "snapshotsAreVisible": {
             "default": false,
             "description": "Whether the .snapshot directory is visible when mounting the resource pool.\n Setting this value to false might prevent you from accessing the snapshots (e.g.\n for security reasons). Additionally, the access to the snapshots is always controlled\n by the export policy of the resource pool. That means, if snapshots are visible and\n the export policy allows for reading the resource pool, then it also allows reading\n the snapshot of all shares.",
@@ -517,6 +597,12 @@
             "format": "int32",
             "type": "integer"
           },
+          "snaplockExpiryTime": {
+            "description": "Represents the snaplock expiry time if snaplock is enabled for the resource pool",
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
           "snapshotName": {
             "description": "Name of the Resource Pool Snapshot",
             "type": "string"
@@ -543,6 +629,19 @@
         },
         "type": "object"
       },
+      "ResourcePool_SnapshotPolicy": {
+        "properties": {
+          "id": {
+            "description": "ID of the Snapshot Policy",
+            "type": "string"
+          },
+          "name": {
+            "description": "Name of the Snapshot Policy",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "ResourcePool_Space": {
         "properties": {
           "availableGigabytes": {
@@ -556,11 +655,39 @@
             "format": "int32",
             "type": "integer"
           },
+          "usedBySnapshotsGigabytes": {
+            "description": "Used space by snapshots\n\n (only available when retrieving a single Resource Pool by ID)",
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
           "usedGigabytes": {
             "description": "Used space of the Resource Pool\n\n (only available when retrieving a single Resource Pool by ID)",
             "format": "double",
             "nullable": true,
             "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "Schedule": {
+        "properties": {
+          "createdAt": {
+            "description": "created at timestamp",
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "description": "ID of the Schedule",
+            "type": "string"
+          },
+          "interval": {
+            "description": "Interval of the Schedule (follows the cron schedule expression in Unix-like systems)",
+            "type": "string"
+          },
+          "name": {
+            "description": "Name of the Schedule",
+            "type": "string"
           }
         },
         "type": "object"
@@ -689,6 +816,57 @@
         },
         "type": "object"
       },
+      "SnapshotPolicy": {
+        "properties": {
+          "comment": {
+            "description": "Comment of the Snapshot Policy",
+            "type": "string"
+          },
+          "createdAt": {
+            "description": "created at timestamp",
+            "format": "date-time",
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Wether the Snapshot Policy is enabled",
+            "type": "boolean"
+          },
+          "id": {
+            "description": "ID of the Snapshot Policy",
+            "type": "string"
+          },
+          "name": {
+            "description": "Name of the Snapshot Policy",
+            "type": "string"
+          },
+          "schedules": {
+            "description": "associated schedules",
+            "items": {
+              "$ref": "#/components/schemas/SnapshotPolicy_Schedule"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "SnapshotPolicy_Schedule": {
+        "properties": {
+          "count": {
+            "format": "uint32",
+            "type": "integer"
+          },
+          "prefix": {
+            "type": "string"
+          },
+          "retentionPeriod": {
+            "type": "string"
+          },
+          "scheduleId": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "Status": {
         "description": "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
         "properties": {
@@ -736,6 +914,10 @@
             "format": "int32",
             "nullable": true,
             "type": "integer"
+          },
+          "snapshotPolicyId": {
+            "description": "(optional) Id of the Snapshot Policy to use\n If not set, the Snapshot Policy is not updated\n If set to an empty string, the Snapshot Policy is removed",
+            "type": "string"
           },
           "snapshotsAreVisible": {
             "description": "Whether the .snapshot directory is visible when mounting the resource pool.\n Setting this value to false might prevent you from accessing the snapshots (e.g.\n for security reasons). Additionally, the access to the snapshots is always controlled\n by the export policy of the resource pool. That means, if snapshots are visible and\n the export policy allows for reading the resource pool, then it also allows reading\n the snapshot of all shares.",
@@ -2139,6 +2321,319 @@
         }
       }
     },
+    "/v1/projects/{projectId}/schedules": {
+      "get": {
+        "description": "List Schedules",
+        "operationId": "ListSchedules",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListSchedulesResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.resource-pool.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/schedules/{id}": {
+      "get": {
+        "description": "Get Schedule",
+        "operationId": "GetSchedule",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetScheduleResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.resource-pool.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/snapshotPolicies": {
+      "get": {
+        "description": "List Snapshot Policies",
+        "operationId": "ListSnapshotPolicies",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "immutable",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListSnapshotPoliciesResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.resource-pool.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/snapshotPolicies/{id}": {
+      "get": {
+        "description": "Get Snapshot Policy",
+        "operationId": "GetSnapshotPolicy",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetSnapshotPolicyResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.resource-pool.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/regions/{region}/project/{projectId}/locks": {
+      "delete": {
+        "description": "Delete Lock",
+        "operationId": "DeleteLock",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteLockResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.resource-pool.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create Lock",
+        "operationId": "CreateLock",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateLockResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.resource-pool.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
     "/v1/resourcePoolPerformanceClasses": {
       "get": {
         "description": "Lists all performances classes available",
@@ -2164,7 +2659,7 @@
             "$ref": "#/components/responses/InternalServerError"
           }
         },
-        "summary": "List Resource Pool Performance Classes",
+        "summary": "List Resource Performance Classes",
         "x-stackit-authorization": {
           "disabled": true
         }

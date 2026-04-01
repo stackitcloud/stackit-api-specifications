@@ -19,6 +19,16 @@
           "$ref": "#/components/schemas/UUID"
         }
       },
+      "v1Cascade": {
+        "description": "Cascade action.",
+        "in": "query",
+        "name": "cascade",
+        "schema": {
+          "default": false,
+          "example": true,
+          "type": "boolean"
+        }
+      },
       "v1ConsumerProjectID": {
         "description": "The identifier (ID) of a STACKIT Project that consumes an image share.",
         "in": "path",
@@ -1569,6 +1579,9 @@
                 "$ref": "#/components/schemas/BootVolume"
               }
             ]
+          },
+          "configDrive": {
+            "$ref": "#/components/schemas/ServerConfigDrive"
           },
           "createdAt": {
             "allOf": [
@@ -3729,6 +3742,9 @@
               }
             ]
           },
+          "configDrive": {
+            "$ref": "#/components/schemas/ServerConfigDrive"
+          },
           "createdAt": {
             "allOf": [
               {
@@ -3895,6 +3911,12 @@
           }
         },
         "type": "object"
+      },
+      "ServerConfigDrive": {
+        "default": false,
+        "description": "When true the server is created with a config drive.",
+        "example": true,
+        "type": "boolean"
       },
       "ServerConsoleUrl": {
         "description": "Object that represents a server console URL.",
@@ -11044,6 +11066,11 @@
         "deprecated": true,
         "description": "Delete a volume inside a project. The deletion will fail if the volume is still in use.",
         "operationId": "DeleteVolume",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1Cascade"
+          }
+        ],
         "responses": {
           "204": {
             "description": "Volume delete request has been accepted."

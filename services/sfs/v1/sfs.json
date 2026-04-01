@@ -33,14 +33,6 @@
       }
     },
     "schemas": {
-      "CreateLockResponse": {
-        "properties": {
-          "lockId": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "CreateResourcePoolPayload": {
         "properties": {
           "availabilityZone": {
@@ -257,9 +249,6 @@
         },
         "type": "object"
       },
-      "DeleteLockResponse": {
-        "type": "object"
-      },
       "DeleteResourcePoolResponse": {
         "type": "object"
       },
@@ -270,6 +259,12 @@
         "type": "object"
       },
       "DeleteShareResponse": {
+        "type": "object"
+      },
+      "DisableLockResponse": {
+        "type": "object"
+      },
+      "EnableLockResponse": {
         "type": "object"
       },
       "Error": {
@@ -291,6 +286,15 @@
           "title",
           "type"
         ],
+        "type": "object"
+      },
+      "GetLockResponse": {
+        "properties": {
+          "lockId": {
+            "description": "Whether the lock is enabled for the project",
+            "type": "string"
+          }
+        },
         "type": "object"
       },
       "GetResourcePoolResponse": {
@@ -935,6 +939,34 @@
               }
             ],
             "description": "Updated Resource Pool"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateResourcePoolSnapshotPayload": {
+        "properties": {
+          "comment": {
+            "description": "(optional) A comment to add more information about a snapshot",
+            "nullable": true,
+            "type": "string"
+          },
+          "name": {
+            "description": "(optional) name of the Resource Pool Snapshot",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateResourcePoolSnapshotResponse": {
+        "properties": {
+          "resourcePoolSnapshot": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourcePoolSnapshot"
+              }
+            ],
+            "description": "Updated Resource Pool Snapshot"
           }
         },
         "type": "object"
@@ -2011,6 +2043,84 @@
           "resource-id-type": "dynamic",
           "resource-type": "project"
         }
+      },
+      "patch": {
+        "description": "Updates a Snapshot from a Resource Pool in a project.",
+        "operationId": "UpdateResourcePoolSnapshot",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "resourcePoolId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "snapshotName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateResourcePoolSnapshotPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateResourcePoolSnapshotResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update Resource Pool Snapshot",
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.resource-pool.snapshot.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
       }
     },
     "/v1/projects/{projectId}/regions/{region}/shareExportPolicies": {
@@ -2530,8 +2640,8 @@
     },
     "/v1/regions/{region}/project/{projectId}/locks": {
       "delete": {
-        "description": "Delete Lock",
-        "operationId": "DeleteLock",
+        "description": "Clean up locks for a project so that it can be deleted successfully.",
+        "operationId": "DisableLock",
         "parameters": [
           {
             "in": "path",
@@ -2555,7 +2665,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DeleteLockResponse"
+                  "$ref": "#/components/schemas/DisableLockResponse"
                 }
               }
             },
@@ -2581,9 +2691,9 @@
           "resource-type": "project"
         }
       },
-      "post": {
-        "description": "Create Lock",
-        "operationId": "CreateLock",
+      "get": {
+        "description": "Get lock status for a project.",
+        "operationId": "GetLock",
         "parameters": [
           {
             "in": "path",
@@ -2607,7 +2717,49 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateLockResponse"
+                  "$ref": "#/components/schemas/GetLockResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "file-storage.resource-pool.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Enable Lock for a project. Necessary for immutable snapshots and to prevent accidental deletion of resources.",
+        "operationId": "EnableLock",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnableLockResponse"
                 }
               }
             },

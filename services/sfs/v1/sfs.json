@@ -327,19 +327,6 @@
         },
         "type": "object"
       },
-      "GetScheduleResponse": {
-        "properties": {
-          "schedule": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Schedule"
-              }
-            ],
-            "description": "Schedule"
-          }
-        },
-        "type": "object"
-      },
       "GetShareExportPolicyResponse": {
         "properties": {
           "shareExportPolicy": {
@@ -420,18 +407,6 @@
             "description": "List of Resource Pools",
             "items": {
               "$ref": "#/components/schemas/ResourcePool"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "ListSchedulesResponse": {
-        "properties": {
-          "schedules": {
-            "description": "List of Schedules",
-            "items": {
-              "$ref": "#/components/schemas/Schedule"
             },
             "type": "array"
           }
@@ -674,28 +649,6 @@
             "format": "double",
             "nullable": true,
             "type": "number"
-          }
-        },
-        "type": "object"
-      },
-      "Schedule": {
-        "properties": {
-          "createdAt": {
-            "description": "created at timestamp",
-            "format": "date-time",
-            "type": "string"
-          },
-          "id": {
-            "description": "ID of the Schedule",
-            "type": "string"
-          },
-          "interval": {
-            "description": "Interval of the Schedule (follows the cron schedule expression in Unix-like systems)",
-            "type": "string"
-          },
-          "name": {
-            "description": "Name of the Schedule",
-            "type": "string"
           }
         },
         "type": "object"
@@ -2428,106 +2381,6 @@
         "x-stackit-authorization": {
           "actions": [
             "file-storage.share-export-policy.update"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project"
-        }
-      }
-    },
-    "/v1/projects/{projectId}/schedules": {
-      "get": {
-        "description": "List Schedules",
-        "operationId": "ListSchedules",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "projectId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListSchedulesResponse"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            },
-            "description": "Default error response"
-          }
-        },
-        "x-stackit-authorization": {
-          "actions": [
-            "file-storage.resource-pool.create"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project"
-        }
-      }
-    },
-    "/v1/projects/{projectId}/schedules/{id}": {
-      "get": {
-        "description": "Get Schedule",
-        "operationId": "GetSchedule",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "projectId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetScheduleResponse"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            },
-            "description": "Default error response"
-          }
-        },
-        "x-stackit-authorization": {
-          "actions": [
-            "file-storage.resource-pool.create"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

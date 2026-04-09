@@ -1212,8 +1212,24 @@
       },
       "VendorSubscription": {
         "properties": {
+          "autoRenewal": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/bool"
+              }
+            ],
+            "description": "If true, the the subscription will extend its validity automatically at the end of the current period."
+          },
           "lifecycleState": {
             "$ref": "#/components/schemas/subscriptionLifecycleState"
+          },
+          "orderedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/date-time"
+              }
+            ],
+            "description": "When the subscription was ordered."
           },
           "organizationId": {
             "$ref": "#/components/schemas/UUID"
@@ -1226,6 +1242,33 @@
           },
           "subscriptionId": {
             "$ref": "#/components/schemas/UUID"
+          },
+          "terminatesAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/date-time"
+              }
+            ],
+            "description": "Timestamp when the subscription will finally terminate.",
+            "example": "2022-06-11T23:59:59Z"
+          },
+          "validFrom": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/date-time"
+              }
+            ],
+            "description": "Timestamp when the subscription validity has started.",
+            "example": "2022-05-12T00:00:00Z"
+          },
+          "validUntil": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/date-time"
+              }
+            ],
+            "description": "Timestamp of when the subscription will end.",
+            "example": "2022-06-11T23:59:59Z"
           }
         },
         "required": [
@@ -1233,6 +1276,7 @@
           "organizationId",
           "projectId",
           "lifecycleState",
+          "orderedAt",
           "product"
         ],
         "type": "object"
@@ -1296,6 +1340,11 @@
         "title": "serviceLevelAgreement",
         "type": "object"
       },
+      "bool": {
+        "description": "Boolean data type.",
+        "example": true,
+        "type": "boolean"
+      },
       "contactPersonName": {
         "description": "The full name of the contact person.",
         "example": "Max Mustermann",
@@ -1311,6 +1360,12 @@
       "customerToken": {
         "description": "Opaque token exchangeable for subscription details.",
         "example": "VGhpcyBpcyBhIHRva2VuIGJ5IGRvbW15IHRva2VuIGFuZCBiYXNlNjQgZW5jb2RlZA==",
+        "type": "string"
+      },
+      "date-time": {
+        "description": "Date and Timestamp RFC 3339",
+        "example": "1940-03-10T03:00:00Z",
+        "format": "date-time",
         "type": "string"
       },
       "deliveryMethod": {

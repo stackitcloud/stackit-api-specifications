@@ -591,7 +591,7 @@
             "type": "array"
           },
           "expiration": {
-            "$ref": "#/components/schemas/ExpiratoaionStatus"
+            "$ref": "#/components/schemas/ExpirationStatus"
           },
           "hibernated": {
             "title": "Indicates whether the cluster is currently hibernated",
@@ -739,6 +739,44 @@
         ],
         "type": "object"
       },
+      "ExpirationStatus": {
+        "example": {
+          "kubernetes": {
+            "expirationDate": "2000-01-23T04:56:07Z",
+            "version": "version"
+          },
+          "nodepools": [
+            {
+              "kubernetesExpirationDate": "2000-01-23T04:56:07Z",
+              "kubernetesVersion": "kubernetesVersion",
+              "name": "name",
+              "osExpirationDate": "2000-01-23T04:56:07Z",
+              "osName": "osName",
+              "osVersion": "osVersion"
+            },
+            {
+              "kubernetesExpirationDate": "2000-01-23T04:56:07Z",
+              "kubernetesVersion": "kubernetesVersion",
+              "name": "name",
+              "osExpirationDate": "2000-01-23T04:56:07Z",
+              "osName": "osName",
+              "osVersion": "osVersion"
+            }
+          ]
+        },
+        "properties": {
+          "kubernetes": {
+            "$ref": "#/components/schemas/ExpirationStatusKubernetes"
+          },
+          "nodepools": {
+            "items": {
+              "$ref": "#/components/schemas/ExpirationStatusNodepool"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "ExpirationStatusKubernetes": {
         "example": {
           "expirationDate": "2000-01-23T04:56:07Z",
@@ -784,44 +822,6 @@
           },
           "osVersion": {
             "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "ExpiratoaionStatus": {
-        "example": {
-          "kubernetes": {
-            "expirationDate": "2000-01-23T04:56:07Z",
-            "version": "version"
-          },
-          "nodepools": [
-            {
-              "kubernetesExpirationDate": "2000-01-23T04:56:07Z",
-              "kubernetesVersion": "kubernetesVersion",
-              "name": "name",
-              "osExpirationDate": "2000-01-23T04:56:07Z",
-              "osName": "osName",
-              "osVersion": "osVersion"
-            },
-            {
-              "kubernetesExpirationDate": "2000-01-23T04:56:07Z",
-              "kubernetesVersion": "kubernetesVersion",
-              "name": "name",
-              "osExpirationDate": "2000-01-23T04:56:07Z",
-              "osName": "osName",
-              "osVersion": "osVersion"
-            }
-          ]
-        },
-        "properties": {
-          "kubernetes": {
-            "$ref": "#/components/schemas/ExpirationStatusKubernetes"
-          },
-          "nodepools": {
-            "items": {
-              "$ref": "#/components/schemas/ExpirationStatusNodepool"
-            },
-            "type": "array"
           }
         },
         "type": "object"

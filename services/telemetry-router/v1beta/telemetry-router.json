@@ -1,0 +1,1422 @@
+{
+  "components": {
+    "parameters": {
+      "accessTokenId": {
+        "description": "The Access Token UUID.",
+        "in": "path",
+        "name": "accessTokenId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "destinationId": {
+        "description": "The Destination UUID.",
+        "in": "path",
+        "name": "destinationId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "force": {
+        "description": "If true, deletes all child resources. If false, the resource remains in a 'deletion state' while child resources exist.",
+        "in": "query",
+        "name": "force",
+        "schema": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "pageSize": {
+        "description": "Maximum number of items to return",
+        "in": "query",
+        "name": "pageSize",
+        "schema": {
+          "default": 10,
+          "format": "int32",
+          "maximum": 100,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "pageToken": {
+        "description": "A token to retrieve the next page of results.",
+        "in": "query",
+        "name": "pageToken",
+        "schema": {
+          "maxLength": 1024,
+          "type": "string"
+        }
+      },
+      "projectId": {
+        "description": "The STACKIT portal project UUID the resource is located in.",
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "regionId": {
+        "description": "The STACKIT region name the resource is located in.",
+        "in": "path",
+        "name": "regionId",
+        "required": true,
+        "schema": {
+          "enum": [
+            "eu01",
+            "eu02"
+          ],
+          "type": "string"
+        }
+      },
+      "telemetryRouterId": {
+        "description": "The Telemetry Router UUID.",
+        "in": "path",
+        "name": "telemetryRouterId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "badRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/response4xx"
+            }
+          }
+        },
+        "description": "Bad Request. The data provided by the client did not match expectations."
+      },
+      "conflict": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/response4xx"
+            }
+          }
+        },
+        "description": "Conflict. The resource has been modified by some other client. Please try again."
+      },
+      "internalServerError": {
+        "description": "Internal server error. The application experienced some unexpected situation."
+      },
+      "notFound": {
+        "description": "Not found. The resource has not been found."
+      },
+      "unauthorized": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/response4xx"
+            }
+          }
+        },
+        "description": "Unauthorized. You may have provided no or wrong credentials."
+      }
+    },
+    "schemas": {
+      "accessTokenBaseRequest": {
+        "properties": {
+          "description": {
+            "description": "The description of the access token.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The selected display name of the access token.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9 \\-]*$",
+            "type": "string"
+          },
+          "ttl": {
+            "description": "The time-to-live (TTL) in days for the access token. If not set, token will not expire.",
+            "format": "int32",
+            "minimum": 1,
+            "nullable": true,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "displayName"
+        ],
+        "type": "object"
+      },
+      "accessTokenBaseResponse": {
+        "properties": {
+          "creatorId": {
+            "description": "The user ID of the creator of the access token.",
+            "type": "string"
+          },
+          "description": {
+            "description": "The description of the access token.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The selected display name of the access token.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9 ]*$",
+            "type": "string"
+          },
+          "expirationTime": {
+            "description": "The date and time until the access token is valid to (inclusively).",
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "id": {
+            "description": "An auto generated unique id which identifies the access token.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "expired",
+              "deleting"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "status",
+          "creatorId"
+        ],
+        "type": "object"
+      },
+      "configFilter": {
+        "properties": {
+          "attributes": {
+            "items": {
+              "$ref": "#/components/schemas/configFilterAttributes"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "attributes"
+        ],
+        "type": "object"
+      },
+      "configFilterAttributes": {
+        "properties": {
+          "key": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "type": "string"
+          },
+          "level": {
+            "$ref": "#/components/schemas/configFilterLevel"
+          },
+          "matcher": {
+            "$ref": "#/components/schemas/configFilterMatcher"
+          },
+          "values": {
+            "items": {
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "key",
+          "values",
+          "matcher",
+          "level"
+        ],
+        "type": "object"
+      },
+      "configFilterLevel": {
+        "enum": [
+          "resource",
+          "scope",
+          "logRecord"
+        ],
+        "type": "string"
+      },
+      "configFilterMatcher": {
+        "enum": [
+          "=",
+          "!="
+        ],
+        "type": "string"
+      },
+      "create-access-tokenPayload": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/accessTokenBaseRequest"
+          }
+        ]
+      },
+      "create-destinationPayload": {
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/destinationConfig"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9 \\-]*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName",
+          "config"
+        ],
+        "type": "object"
+      },
+      "create-telemetry-routerPayload": {
+        "properties": {
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9 \\-]*$",
+            "type": "string"
+          },
+          "filter": {
+            "$ref": "#/components/schemas/configFilter"
+          }
+        },
+        "required": [
+          "displayName"
+        ],
+        "type": "object"
+      },
+      "createAccessTokenResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/accessTokenBaseResponse"
+          },
+          {
+            "properties": {
+              "accessToken": {
+                "description": "The generated access token.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "accessToken"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "destinationConfig": {
+        "properties": {
+          "configType": {
+            "$ref": "#/components/schemas/destinationConfigType"
+          },
+          "filter": {
+            "$ref": "#/components/schemas/configFilter"
+          },
+          "openTelemetry": {
+            "$ref": "#/components/schemas/destinationConfigOpenTelemetry"
+          },
+          "s3": {
+            "$ref": "#/components/schemas/destinationConfigS3"
+          }
+        },
+        "required": [
+          "configType"
+        ],
+        "type": "object"
+      },
+      "destinationConfigOpenTelemetry": {
+        "properties": {
+          "basicAuth": {
+            "$ref": "#/components/schemas/destinationConfigOpenTelemetryBasicAuth"
+          },
+          "bearerToken": {
+            "description": "A bearer token to authenticate at the OpenTelemetry URI.",
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "uri": {
+            "description": "The URI for reaching the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          }
+        },
+        "required": [
+          "uri"
+        ],
+        "type": "object"
+      },
+      "destinationConfigOpenTelemetryBasicAuth": {
+        "description": "Basic auth to authenticate at the OpenTelemetry URI",
+        "properties": {
+          "password": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "type": "string"
+          },
+          "username": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ],
+        "type": "object"
+      },
+      "destinationConfigS3": {
+        "properties": {
+          "accessKey": {
+            "$ref": "#/components/schemas/destinationConfigS3AccessKey"
+          },
+          "bucket": {
+            "maxLength": 63,
+            "minLength": 3,
+            "type": "string"
+          },
+          "endpoint": {
+            "description": "The URI for reaching the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          }
+        },
+        "required": [
+          "endpoint",
+          "bucket"
+        ],
+        "type": "object"
+      },
+      "destinationConfigS3AccessKey": {
+        "description": "The S3 access key",
+        "properties": {
+          "id": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "type": "string"
+          },
+          "secret": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "secret"
+        ],
+        "type": "object"
+      },
+      "destinationConfigType": {
+        "description": "Type of the destination.",
+        "enum": [
+          "OpenTelemetry",
+          "S3"
+        ],
+        "type": "string"
+      },
+      "destinationResponse": {
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/destinationConfig"
+          },
+          "creationTime": {
+            "description": "The point in time the resource was created.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "credentialType": {
+            "description": "The credential type for the resource.",
+            "enum": [
+              "bearerToken",
+              "basicAuth",
+              "accessKey"
+            ],
+            "type": "string"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9 \\-]*$",
+            "type": "string"
+          },
+          "id": {
+            "description": "A auto generated unique id which identifies the resource.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "status": {
+            "description": "The current status of the resource.",
+            "enum": [
+              "reconciling",
+              "active",
+              "deleting"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "status",
+          "creationTime",
+          "config",
+          "credentialType"
+        ],
+        "type": "object"
+      },
+      "getAccessTokenResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/accessTokenBaseResponse"
+          }
+        ]
+      },
+      "listAccessTokensResponse": {
+        "properties": {
+          "accessTokens": {
+            "items": {
+              "$ref": "#/components/schemas/getAccessTokenResponse"
+            },
+            "type": "array"
+          },
+          "nextPageToken": {
+            "description": "A token to retrieve the next page of results.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "accessTokens"
+        ],
+        "type": "object"
+      },
+      "listDestinationsResponse": {
+        "properties": {
+          "destinations": {
+            "items": {
+              "$ref": "#/components/schemas/destinationResponse"
+            },
+            "type": "array"
+          },
+          "nextPageToken": {
+            "description": "A token to retrieve the next page of results.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "destinations"
+        ],
+        "type": "object"
+      },
+      "listTelemetryRoutersResponse": {
+        "properties": {
+          "nextPageToken": {
+            "description": "A token to retrieve the next page of results.",
+            "type": "string"
+          },
+          "telemetryRouters": {
+            "items": {
+              "$ref": "#/components/schemas/telemetryRouterResponse"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "telemetryRouters"
+        ],
+        "type": "object"
+      },
+      "response4xx": {
+        "properties": {
+          "message": {
+            "description": "A message containing the reason for failure",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
+      "telemetryRouterResponse": {
+        "properties": {
+          "creationTime": {
+            "description": "The point in time the resource was created.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9 \\-]*$",
+            "type": "string"
+          },
+          "filter": {
+            "$ref": "#/components/schemas/configFilter"
+          },
+          "id": {
+            "description": "A auto generated unique id which identifies the resource.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "status": {
+            "description": "The current status of the resource.",
+            "enum": [
+              "reconciling",
+              "active",
+              "deleting"
+            ],
+            "type": "string"
+          },
+          "uri": {
+            "description": "The URI for reaching the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "status",
+          "creationTime",
+          "uri"
+        ],
+        "type": "object"
+      },
+      "update-access-tokenPayload": {
+        "properties": {
+          "description": {
+            "maxLength": 1024,
+            "nullable": true,
+            "type": "string"
+          },
+          "displayName": {
+            "maxLength": 32,
+            "minLength": 1,
+            "nullable": true,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9 \\-]*$",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "update-destinationPayload": {
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/destinationConfig"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9 \\-]*$",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "update-telemetry-routerPayload": {
+        "properties": {
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9 \\-]*$",
+            "type": "string"
+          },
+          "filter": {
+            "$ref": "#/components/schemas/configFilter"
+          }
+        },
+        "type": "object"
+      },
+      "updateAccessTokenResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/accessTokenBaseResponse"
+          }
+        ]
+      }
+    }
+  },
+  "info": {
+    "description": "This API provides endpoints for managing Telemetry Routers.\n",
+    "title": "STACKIT Telemetry Router API",
+    "version": "1beta.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1beta/projects/{projectId}/regions/{regionId}/telemetry-routers": {
+      "get": {
+        "description": "Returns a list of all Telemetry Routers within the project.",
+        "operationId": "list-telemetry-routers",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pageToken"
+          },
+          {
+            "$ref": "#/components/parameters/pageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/listTelemetryRoutersResponse"
+                }
+              }
+            },
+            "description": "Successful response with all Telemetry Routers."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-router.instance.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        }
+      ],
+      "post": {
+        "description": "Creates the new Telemetry Router within the project.",
+        "operationId": "create-telemetry-router",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/create-telemetry-routerPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/telemetryRouterResponse"
+                }
+              }
+            },
+            "description": "Telemetry Router was created successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-router.instance.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/telemetry-routers/{telemetryRouterId}": {
+      "delete": {
+        "description": "Deletes the given Telemetry Router.",
+        "operationId": "delete-telemetry-router",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/force"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Telemetry Router was deleted successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-router.instance.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns the details for the given Telemetry Router.",
+        "operationId": "get-telemetry-router",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/telemetryRouterResponse"
+                }
+              }
+            },
+            "description": "Telemetry Router returned successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-router.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/telemetryRouterId"
+        }
+      ],
+      "put": {
+        "description": "Updates the given Telemetry Router.",
+        "operationId": "update-telemetry-router",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/update-telemetry-routerPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/telemetryRouterResponse"
+                }
+              }
+            },
+            "description": "Telemetry Router was updated successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-router.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/telemetry-routers/{telemetryRouterId}/access-tokens": {
+      "get": {
+        "description": "Get all access tokens for a telemetry router.",
+        "operationId": "list-access-tokens",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pageToken"
+          },
+          {
+            "$ref": "#/components/parameters/pageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/listAccessTokensResponse"
+                }
+              }
+            },
+            "description": "Access Tokens returned successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-router.access-token.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/telemetryRouterId"
+        }
+      ],
+      "post": {
+        "description": "Create a new access token for the given Telemetry Router.",
+        "operationId": "create-access-token",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/create-access-tokenPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createAccessTokenResponse"
+                }
+              }
+            },
+            "description": "Access Token created successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-router.access-token.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/telemetry-routers/{telemetryRouterId}/access-tokens/{accessTokenId}": {
+      "delete": {
+        "description": "Delete an access token for the given Telemetry Router by its ID.",
+        "operationId": "delete-access-token",
+        "responses": {
+          "204": {
+            "description": "Access Token deleted successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-router.access-token.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get an access token for the given Telemetry Router by its ID.",
+        "operationId": "get-access-token",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getAccessTokenResponse"
+                }
+              }
+            },
+            "description": "Access Token returned successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-router.access-token.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/telemetryRouterId"
+        },
+        {
+          "$ref": "#/components/parameters/accessTokenId"
+        }
+      ],
+      "put": {
+        "description": "Update an existing access token for the given Telemetry Router by its ID.",
+        "operationId": "update-access-token",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/update-access-tokenPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/updateAccessTokenResponse"
+                }
+              }
+            },
+            "description": "Access Token updated successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-router.access-token.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/telemetry-routers/{telemetryRouterId}/destinations": {
+      "get": {
+        "description": "Returns a list of all destinations of a specific Telemetry Router within a project.",
+        "operationId": "list-destinations",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pageToken"
+          },
+          {
+            "$ref": "#/components/parameters/pageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/listDestinationsResponse"
+                }
+              }
+            },
+            "description": "Successful response with all destinations."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-router.destination.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/telemetryRouterId"
+        }
+      ],
+      "post": {
+        "description": "Creates a new Destination within the project.",
+        "operationId": "create-destination",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/create-destinationPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/destinationResponse"
+                }
+              }
+            },
+            "description": "Destination was created successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-router.destination.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/telemetry-routers/{telemetryRouterId}/destinations/{destinationId}": {
+      "delete": {
+        "description": "Deletes the given Destination.",
+        "operationId": "delete-destination",
+        "responses": {
+          "204": {
+            "description": "Destination was deleted successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-router.destination.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns the details for the given destination.",
+        "operationId": "get-destination",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/destinationResponse"
+                }
+              }
+            },
+            "description": "Destination details successfully retrieved."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-router.destination.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/telemetryRouterId"
+        },
+        {
+          "$ref": "#/components/parameters/destinationId"
+        }
+      ],
+      "put": {
+        "description": "Updates the given destination.",
+        "operationId": "update-destination",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/update-destinationPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/destinationResponse"
+                }
+              }
+            },
+            "description": "Destination was updated successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-router.destination.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://telemetry-router.api.stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "global"
+        }
+      }
+    }
+  ]
+}

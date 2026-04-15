@@ -1,0 +1,842 @@
+{
+  "components": {
+    "parameters": {
+      "folderId": {
+        "description": "The STACKIT portal folder UUID the resource is located in.",
+        "in": "path",
+        "name": "folderId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "organizationId": {
+        "description": "The STACKIT portal organization UUID the resource is located in.",
+        "in": "path",
+        "name": "organizationId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "projectId": {
+        "description": "The STACKIT portal project UUID the resource is located in.",
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "regionId": {
+        "description": "The STACKIT region name the resource is located in.",
+        "in": "path",
+        "name": "regionId",
+        "required": true,
+        "schema": {
+          "enum": [
+            "eu01",
+            "eu02"
+          ],
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "badRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/response4xx"
+            }
+          }
+        },
+        "description": "Bad Request. The data provided by the client did not match expectations."
+      },
+      "conflict": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/response4xx"
+            }
+          }
+        },
+        "description": "Conflict. The resource has been modified by some other client. Please try again."
+      },
+      "internalServerError": {
+        "description": "Internal server error. The application experienced some unexpected situation."
+      },
+      "notFound": {
+        "description": "Not found. The resource has not been found."
+      },
+      "unauthorized": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/response4xx"
+            }
+          }
+        },
+        "description": "Unauthorized. You may have provided no or wrong credentials."
+      }
+    },
+    "schemas": {
+      "patch-folder-telemetry-linkPayload": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/telemetryLinkRequest"
+          }
+        ]
+      },
+      "patch-organization-telemetry-linkPayload": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/telemetryLinkRequest"
+          }
+        ]
+      },
+      "patch-project-telemetry-linkPayload": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/telemetryLinkRequest"
+          }
+        ]
+      },
+      "put-folder-telemetry-linkPayload": {
+        "allOf": [
+          {
+            "required": [
+              "displayName",
+              "telemetryRouterId",
+              "enabled",
+              "accessToken"
+            ],
+            "type": "object"
+          },
+          {
+            "$ref": "#/components/schemas/telemetryLinkRequest"
+          }
+        ]
+      },
+      "put-organization-telemetry-linkPayload": {
+        "allOf": [
+          {
+            "required": [
+              "displayName",
+              "telemetryRouterId",
+              "enabled",
+              "accessToken"
+            ],
+            "type": "object"
+          },
+          {
+            "$ref": "#/components/schemas/telemetryLinkRequest"
+          }
+        ]
+      },
+      "put-project-telemetry-linkPayload": {
+        "allOf": [
+          {
+            "required": [
+              "displayName",
+              "telemetryRouterId",
+              "enabled",
+              "accessToken"
+            ],
+            "type": "object"
+          },
+          {
+            "$ref": "#/components/schemas/telemetryLinkRequest"
+          }
+        ]
+      },
+      "response4xx": {
+        "properties": {
+          "message": {
+            "description": "A message containing the reason for failure",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
+      "telemetryLinkRequest": {
+        "properties": {
+          "accessToken": {
+            "description": "The access token.",
+            "pattern": "^[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.?[A-Za-z0-9-_.+/=]*$",
+            "type": "string"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9 \\-]*$",
+            "type": "string"
+          },
+          "enabled": {
+            "default": true,
+            "description": "Indicates whether routing through the link to a telemetry-router is active.",
+            "type": "boolean"
+          },
+          "telemetryRouterId": {
+            "description": "The ID of the telemetry-router to route the telemetry data.",
+            "maxLength": 1024,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "telemetryLinkResponse": {
+        "properties": {
+          "accessToken": {
+            "description": "The access token.",
+            "type": "string"
+          },
+          "createTime": {
+            "description": "The point in time the resource was created.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Indicates whether routing through the link to a telemetry-router is active.",
+            "type": "boolean"
+          },
+          "id": {
+            "description": "A auto generated unique id which identifies the resource.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "regionId": {
+            "description": "The STACKIT region name the resource is located in.",
+            "enum": [
+              "eu01",
+              "eu02"
+            ],
+            "type": "string"
+          },
+          "status": {
+            "description": "The current state of the link.",
+            "enum": [
+              "active",
+              "inactive",
+              "failed"
+            ],
+            "type": "string"
+          },
+          "telemetryRouterId": {
+            "description": "The ID of the telemetry-router to route the telemetry data.",
+            "maxLength": 1024,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "regionId",
+          "telemetryRouterId",
+          "enabled",
+          "status",
+          "createTime"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "This API provides endpoints for managing Telemetry Links. The Telemetry Link enables Log Routing towards a defined Telemetry Router.\n",
+    "title": "STACKIT Telemetry Link API",
+    "version": "1beta.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1beta/folders/{folderId}/regions/{regionId}/telemetry-link": {
+      "delete": {
+        "description": "Deletes the given Telemetry Link within the folder.",
+        "operationId": "delete-folder-telemetry-link",
+        "responses": {
+          "204": {
+            "description": "Telemetry Link was deleted successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.delete"
+          ],
+          "resource-id": "folderId",
+          "resource-id-type": "dynamic",
+          "resource-type": "folder"
+        }
+      },
+      "get": {
+        "description": "Returns the details for the given Telemetry Link within the folder.",
+        "operationId": "get-folder-telemetry-link",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/telemetryLinkResponse"
+                }
+              }
+            },
+            "description": "Telemetry Link details successfully retrieved."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.get"
+          ],
+          "resource-id": "folderId",
+          "resource-id-type": "dynamic",
+          "resource-type": "folder"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/folderId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        }
+      ],
+      "patch": {
+        "description": "Patches the given Telemetry Link within the folder.",
+        "operationId": "patch-folder-telemetry-link",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/patch-folder-telemetry-linkPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/telemetryLinkResponse"
+                }
+              }
+            },
+            "description": "Telemetry Link was patched successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.update"
+          ],
+          "resource-id": "folderId",
+          "resource-id-type": "dynamic",
+          "resource-type": "folder"
+        }
+      },
+      "put": {
+        "description": "Creates or updates the given Telemetry Link within the folder.",
+        "operationId": "put-folder-telemetry-link",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/put-folder-telemetry-linkPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/telemetryLinkResponse"
+                }
+              }
+            },
+            "description": "Telemetry Link was updated successfully."
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/telemetryLinkResponse"
+                }
+              }
+            },
+            "description": "Telemetry Link was created successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.update"
+          ],
+          "resource-id": "folderId",
+          "resource-id-type": "dynamic",
+          "resource-type": "folder"
+        }
+      }
+    },
+    "/v1beta/organizations/{organizationId}/regions/{regionId}/telemetry-link": {
+      "delete": {
+        "description": "Deletes the given Telemetry Link within the organization.",
+        "operationId": "delete-organization-telemetry-link",
+        "responses": {
+          "204": {
+            "description": "Telemetry Link was deleted successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.delete"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      },
+      "get": {
+        "description": "Returns the details for the given Telemetry Link within the organization.",
+        "operationId": "get-organization-telemetry-link",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/telemetryLinkResponse"
+                }
+              }
+            },
+            "description": "Telemetry Link details successfully retrieved."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.get"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/organizationId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        }
+      ],
+      "patch": {
+        "description": "Patches the given Telemetry Link within the organization.",
+        "operationId": "patch-organization-telemetry-link",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/patch-organization-telemetry-linkPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/telemetryLinkResponse"
+                }
+              }
+            },
+            "description": "Telemetry Link was patched successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.update"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      },
+      "put": {
+        "description": "Creates or updates the given Telemetry Link within the organization.",
+        "operationId": "put-organization-telemetry-link",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/put-organization-telemetry-linkPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/telemetryLinkResponse"
+                }
+              }
+            },
+            "description": "Telemetry Link was updated successfully."
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/telemetryLinkResponse"
+                }
+              }
+            },
+            "description": "Telemetry Link was created successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.update"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/telemetry-link": {
+      "delete": {
+        "description": "Deletes the given Telemetry Link within the project.",
+        "operationId": "delete-project-telemetry-link",
+        "responses": {
+          "204": {
+            "description": "Telemetry Link was deleted successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns the details for the given Telemetry Link within the project.",
+        "operationId": "get-project-telemetry-link",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/telemetryLinkResponse"
+                }
+              }
+            },
+            "description": "Telemetry Link details successfully retrieved."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        }
+      ],
+      "patch": {
+        "description": "Patches the given Telemetry Link within the project.",
+        "operationId": "patch-project-telemetry-link",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/patch-project-telemetry-linkPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/telemetryLinkResponse"
+                }
+              }
+            },
+            "description": "Telemetry Link was patched successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "put": {
+        "description": "Creates or updates the given Telemetry Link within the project.",
+        "operationId": "put-project-telemetry-link",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/put-project-telemetry-linkPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/telemetryLinkResponse"
+                }
+              }
+            },
+            "description": "Telemetry Link was updated successfully."
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/telemetryLinkResponse"
+                }
+              }
+            },
+            "description": "Telemetry Link was created successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://telemetry-link.api.stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "global"
+        }
+      }
+    }
+  ]
+}

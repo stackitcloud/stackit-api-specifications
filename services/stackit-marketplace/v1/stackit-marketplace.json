@@ -457,6 +457,15 @@
             "pattern": "^[a-z0-9-]{1,20}-[0-9a-f]{8}$",
             "type": "string"
           },
+          "planType": {
+            "description": "The type of the plan.",
+            "enum": [
+              "PUBLIC",
+              "PRIVATE",
+              "INDIVIDUAL"
+            ],
+            "type": "string"
+          },
           "priceType": {
             "description": "The product's price type.",
             "enum": [
@@ -520,7 +529,8 @@
           "skuInfo",
           "skuInfoDetails",
           "highlights",
-          "scope"
+          "scope",
+          "planType"
         ],
         "type": "object"
       },
@@ -791,6 +801,13 @@
           },
           "industries": {
             "description": "A collection of industries with counts.",
+            "items": {
+              "$ref": "#/components/schemas/Facets_Facet"
+            },
+            "type": "array"
+          },
+          "planType": {
+            "description": "A collection of plan types with counts.",
             "items": {
               "$ref": "#/components/schemas/Facets_Facet"
             },

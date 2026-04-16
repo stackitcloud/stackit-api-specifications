@@ -1,0 +1,892 @@
+{
+  "components": {
+    "parameters": {
+      "dremioId": {
+        "description": "The Dremio UUID.",
+        "in": "path",
+        "name": "dremioId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "dremioUserId": {
+        "description": "The dremio user UUID.",
+        "in": "path",
+        "name": "dremioUserId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "pageSize": {
+        "description": "Maximum number of items to return",
+        "in": "query",
+        "name": "pageSize",
+        "schema": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "pageToken": {
+        "description": "A token to retrieve the next page of results.",
+        "in": "query",
+        "name": "pageToken",
+        "schema": {
+          "maxLength": 1024,
+          "type": "string"
+        }
+      },
+      "projectId": {
+        "description": "The STACKIT portal project UUID the resource is located in.",
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "regionId": {
+        "description": "The STACKIT region name the resource is located in.",
+        "in": "path",
+        "name": "regionId",
+        "required": true,
+        "schema": {
+          "enum": [
+            "eu01",
+            "eu02"
+          ],
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "badRequest": {
+        "description": "Bad Request. The data provided by the client did not match expectations."
+      },
+      "conflict": {
+        "description": "Conflict. The resource has been modified by some other client. Please try again."
+      },
+      "internalServerError": {
+        "description": "Internal server error. The application experienced some unexpected situation."
+      },
+      "notFound": {
+        "description": "Not found. The resource has not been found."
+      },
+      "unauthorized": {
+        "description": "Unauthorized. You may have provided no or wrong credentials."
+      }
+    },
+    "schemas": {
+      "authParameters": {
+        "description": "An additional parameter the Identity Provider requires.",
+        "example": {
+          "name": "access_type",
+          "value": "offline"
+        },
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "value"
+        ],
+        "type": "object"
+      },
+      "authentication": {
+        "description": "Dremio authentication settings. A change here triggers a Dremio restart and will incur downtime.",
+        "properties": {
+          "azuread": {
+            "$ref": "#/components/schemas/azuread"
+          },
+          "oauth": {
+            "$ref": "#/components/schemas/oauth"
+          },
+          "type": {
+            "enum": [
+              "local-only",
+              "azuread",
+              "oauth"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "azuread": {
+        "description": "Azure Active Directory authentication configuration.",
+        "properties": {
+          "authorityUrl": {
+            "description": "The Azure AD authority URL.",
+            "type": "string"
+          },
+          "clientId": {
+            "description": "The Azure AD client ID.",
+            "type": "string"
+          },
+          "clientSecret": {
+            "description": "The Azure AD client secret.",
+            "type": "string"
+          },
+          "redirectUrl": {
+            "description": "The Azure AD redirect URL.",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "authorityUrl",
+          "clientId",
+          "clientSecret"
+        ],
+        "type": "object"
+      },
+      "create-dremio-userPayload": {
+        "properties": {
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "email": {
+            "description": "This is the admin user's email address.",
+            "format": "email",
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "firstName": {
+            "description": "This is the admin user's first name.",
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "lastName": {
+            "description": "This is the  admin user's last name.",
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "name": {
+            "description": "This is the username used to login the admin user.",
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "password": {
+            "description": "A password chosen by the user.",
+            "format": "password",
+            "maxLength": 128,
+            "minLength": 15,
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "name",
+          "firstName",
+          "lastName",
+          "email",
+          "password"
+        ]
+      },
+      "create-dremioPayload": {
+        "properties": {
+          "authentication": {
+            "$ref": "#/components/schemas/authentication"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9 ]*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName"
+        ]
+      },
+      "dremioResponse": {
+        "properties": {
+          "authentication": {
+            "$ref": "#/components/schemas/authentication"
+          },
+          "create_time": {
+            "description": "The point in time the resource was created.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9 ]*$",
+            "type": "string"
+          },
+          "endpoints": {
+            "$ref": "#/components/schemas/endpoints"
+          },
+          "errorMessage": {
+            "description": "A message describing an actionable error the user can resolve. This field is empty if no such error exists.",
+            "readOnly": true,
+            "type": "string"
+          },
+          "id": {
+            "description": "A auto generated unique id which identifies the resource.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "state": {
+            "description": "The current state of the resource.",
+            "enum": [
+              "reconciling",
+              "active",
+              "deleting"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "state",
+          "create_time",
+          "endpoints",
+          "authentication"
+        ]
+      },
+      "dremioUserResponse": {
+        "properties": {
+          "create_time": {
+            "description": "The point in time the resource was created.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "email": {
+            "description": "This is the admin user's email address.",
+            "format": "email",
+            "maxLength": 256,
+            "minLength": 5,
+            "type": "string"
+          },
+          "errorMessage": {
+            "description": "A message describing an actionable error the user can resolve. This field is empty if no such error exists.",
+            "readOnly": true,
+            "type": "string"
+          },
+          "firstName": {
+            "description": "This is the admin user's first name.",
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "id": {
+            "description": "A auto generated unique id which identifies the resource.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "lastName": {
+            "description": "This is the  admin user's last name.",
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "name": {
+            "description": "This is the username used to login the admin user.",
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "state": {
+            "description": "The current state of the resource.",
+            "enum": [
+              "reconciling",
+              "active",
+              "deleting"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "firstName",
+          "lastName",
+          "email",
+          "createTime",
+          "state"
+        ]
+      },
+      "endpoints": {
+        "description": "A collection of endpoints offered by the Dremio instance.",
+        "properties": {
+          "arrowFlight": {
+            "description": "The URL for the Arrow Flight endpoint of the Dremio instance.",
+            "type": "string"
+          },
+          "catalog": {
+            "description": "The URL for the Catalog endpoint of the Dremio instance.",
+            "type": "string"
+          },
+          "ui": {
+            "description": "The URL for the UI of the Dremio instance.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ui",
+          "arrowFlight",
+          "catalog"
+        ]
+      },
+      "listDremioUsersResponse": {
+        "properties": {
+          "dremioUsers": {
+            "items": {
+              "$ref": "#/components/schemas/dremioUserResponse"
+            },
+            "type": "array"
+          },
+          "nextPageToken": {
+            "description": "A token to retrieve the next page of results.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dremioUsers"
+        ]
+      },
+      "listDremiosResponse": {
+        "properties": {
+          "dremios": {
+            "items": {
+              "$ref": "#/components/schemas/dremioResponse"
+            },
+            "type": "array"
+          },
+          "nextPageToken": {
+            "description": "A token to retrieve the next page of results.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dremios"
+        ]
+      },
+      "oauth": {
+        "description": "OIDC authentication configuration.",
+        "properties": {
+          "authorityUrl": {
+            "description": "The Issuer location URI, where the OIDC provider configuration can be found.",
+            "type": "string"
+          },
+          "clientId": {
+            "description": "The client ID assigned by the Identity Provider.",
+            "type": "string"
+          },
+          "clientSecret": {
+            "description": "The client secret generated by the Identity Provider.",
+            "type": "string"
+          },
+          "jwtClaims": {
+            "description": "Maps fields from the JWT token to fields Dremio requires.",
+            "properties": {
+              "userName": {
+                "example": "email",
+                "type": "string"
+              }
+            },
+            "required": [
+              "userName"
+            ],
+            "type": "object"
+          },
+          "parameters": {
+            "description": "Any additional parameters the Identity Provider requires.",
+            "items": {
+              "$ref": "#/components/schemas/authParameters"
+            },
+            "type": "array",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "redirectUrl": {
+            "description": "The URL where Dremio is hosted. The URL must match the redirect URL set in the Identity Provider.",
+            "readOnly": true,
+            "type": "string"
+          },
+          "scope": {
+            "default": "openid profile",
+            "description": "A list of space-separated scopes. The `openid` scope is always required; other scopes can vary by provider.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "authorityUrl",
+          "clientId",
+          "clientSecret",
+          "jwtClaims"
+        ],
+        "type": "object"
+      },
+      "update-dremioPayload": {
+        "properties": {
+          "authentication": {
+            "$ref": "#/components/schemas/authentication"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9 ]*$",
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "info": {
+    "description": "This API provides endpoints for managing Dremios.\n",
+    "title": "STACKIT Dremio API",
+    "version": "1alpha.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1alpha/projects/{projectId}/regions/{regionId}/dremios": {
+      "get": {
+        "description": "Returns a list of all dremio instances within the project.",
+        "operationId": "list-dremios",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pageToken"
+          },
+          {
+            "$ref": "#/components/parameters/pageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/listDremiosResponse"
+                }
+              }
+            },
+            "description": "Successful response with all dremio instances."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "dremio.instance.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        }
+      ],
+      "post": {
+        "description": "Creates a new Dremio within the project.",
+        "operationId": "create-dremio",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/create-dremioPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dremioResponse"
+                }
+              }
+            },
+            "description": "Dremio has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "dremio.instance.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/regions/{regionId}/dremios/{dremioId}": {
+      "delete": {
+        "description": "Deletes the given Dremio.",
+        "operationId": "delete-dremio",
+        "responses": {
+          "202": {
+            "description": "Dremio deletion has been accepted."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "dremio.instance.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns the details for the given Dremio.",
+        "operationId": "get-dremio",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dremioResponse"
+                }
+              }
+            },
+            "description": "Dremio details successfully retrieved."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "dremio.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/dremioId"
+        }
+      ],
+      "put": {
+        "description": "Updates the given Dremio. Please note that changing certain fields will trigger a Dremio restart and will incur downtime. See the request body information for more details.",
+        "operationId": "update-dremio",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/update-dremioPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dremioResponse"
+                }
+              }
+            },
+            "description": "Dremio update has been accepted."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "dremio.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/regions/{regionId}/dremios/{dremioId}/users": {
+      "get": {
+        "description": "Returns a list of all dremio admin users for the given dremio instance.",
+        "operationId": "list-dremio-users",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pageToken"
+          },
+          {
+            "$ref": "#/components/parameters/pageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/listDremioUsersResponse"
+                }
+              }
+            },
+            "description": "Successful response with all dremio admin users"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "dremio.user.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/dremioId"
+        }
+      ],
+      "post": {
+        "description": "Creates a new dremio admin user for the given dremio instance",
+        "operationId": "create-dremio-user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/create-dremio-userPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dremioUserResponse"
+                }
+              }
+            },
+            "description": "Dremio user has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "dremio.user.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/regions/{regionId}/dremios/{dremioId}/users/{dremioUserId}": {
+      "delete": {
+        "description": "Deletes the given dremio admin user.",
+        "operationId": "delete-dremio-user",
+        "responses": {
+          "202": {
+            "description": "Dremio user deletion has been accepted."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "dremio.user.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns the details for the given dremio admin user",
+        "operationId": "get-dremio-user",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dremioUserResponse"
+                }
+              }
+            },
+            "description": "Dremio admin user details successfully retrieved."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "dremio.user.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/dremioId"
+        },
+        {
+          "$ref": "#/components/parameters/dremioUserId"
+        }
+      ]
+    }
+  },
+  "servers": [
+    {
+      "url": "https://dremio.api.{region}stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "eu01.",
+          "enum": [
+            "eu01."
+          ]
+        }
+      }
+    }
+  ]
+}

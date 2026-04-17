@@ -156,7 +156,7 @@
           },
           "assets": {
             "additionalProperties": {
-              "$ref": "#/components/schemas/GetProductResponse_Asset"
+              "$ref": "#/components/schemas/catalog.v1.GetProductResponse_Asset"
             },
             "description": "The assets associated with the product.",
             "type": "object"
@@ -225,7 +225,7 @@
           "highlights": {
             "description": "The list of highlights.",
             "items": {
-              "$ref": "#/components/schemas/GetProductResponse_ProductHighlight"
+              "$ref": "#/components/schemas/catalog.v1.GetProductResponse_ProductHighlight"
             },
             "type": "array"
           },
@@ -270,7 +270,7 @@
           "pricingOptions": {
             "description": "The list of pricing options.",
             "items": {
-              "$ref": "#/components/schemas/GetProductResponse_PricingOption"
+              "$ref": "#/components/schemas/catalog.v1.GetProductResponse_PricingOption"
             },
             "type": "array"
           },
@@ -283,7 +283,7 @@
             "type": "string"
           },
           "sovereignty": {
-            "$ref": "#/components/schemas/Sovereignty"
+            "$ref": "#/components/schemas/catalog.v1.Sovereignty"
           },
           "summary": {
             "description": "The short summary of the product.",
@@ -311,17 +311,17 @@
           "supportResources": {
             "description": "The list of support resources.",
             "items": {
-              "$ref": "#/components/schemas/GetProductResponse_SupportResource"
+              "$ref": "#/components/schemas/catalog.v1.GetProductResponse_SupportResource"
             },
             "type": "array"
           },
           "vendor": {
-            "$ref": "#/components/schemas/Vendor"
+            "$ref": "#/components/schemas/catalog.v1.Vendor"
           },
           "vendorTerms": {
             "description": "The list of terms of use.",
             "items": {
-              "$ref": "#/components/schemas/GetProductResponse_VendorTerm"
+              "$ref": "#/components/schemas/catalog.v1.GetProductResponse_VendorTerm"
             },
             "type": "array"
           },
@@ -387,214 +387,6 @@
           "path",
           "status",
           "timeStamp"
-        ],
-        "type": "object"
-      },
-      "Facets_Facet": {
-        "properties": {
-          "count": {
-            "description": "The number of items associated with this facet value.",
-            "example": 15,
-            "format": "uint32",
-            "type": "integer"
-          },
-          "value": {
-            "description": "The value of the facet.",
-            "example": "eGovernment",
-            "type": "string"
-          }
-        },
-        "required": [
-          "value",
-          "count"
-        ],
-        "type": "object"
-      },
-      "GetProductResponse_Asset": {
-        "properties": {
-          "version": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "description": "Localized asset file name indexed by locale (en or de).",
-            "example": {
-              "en": "2025-06-02_001_file-name_EN.pdf"
-            },
-            "maxLength": 64,
-            "pattern": "^\\d{4}-\\d{2}-\\d{2}_\\d{3}_[a-zA-Z0-9_-]+_(DE|EN)(\\.[a-zA-Z0-9]+)?$",
-            "type": "object"
-          }
-        },
-        "type": "object"
-      },
-      "GetProductResponse_PricingOption": {
-        "properties": {
-          "description": {
-            "description": "The pricing option description.",
-            "example": "Product Premium Plan.",
-            "type": "string"
-          },
-          "highlights": {
-            "description": "The list of highlights.",
-            "items": {
-              "$ref": "#/components/schemas/PricingOption_PricingHighlight"
-            },
-            "type": "array"
-          },
-          "name": {
-            "description": "The pricing option name.",
-            "example": "Premium Plan",
-            "type": "string"
-          },
-          "noticePeriod": {
-            "$ref": "#/components/schemas/PricingOption_NoticePeriod"
-          },
-          "planId": {
-            "description": "The user-readable plan ID of a pricing option.",
-            "example": "marketplace-plan-c4f9d2fc",
-            "maxLength": 29,
-            "minLength": 10,
-            "pattern": "^[a-z0-9-]{1,20}-[0-9a-f]{8}$",
-            "type": "string"
-          },
-          "planType": {
-            "description": "The type of the plan.",
-            "enum": [
-              "PUBLIC",
-              "PRIVATE",
-              "INDIVIDUAL"
-            ],
-            "type": "string"
-          },
-          "priceType": {
-            "description": "The product's price type.",
-            "enum": [
-              "CONTRACT",
-              "FREE",
-              "FREE_TRIAL",
-              "BYOL",
-              "PAYG"
-            ],
-            "example": "CONTRACT",
-            "type": "string"
-          },
-          "pricingPlan": {
-            "description": "Additional price type information.",
-            "example": "Monthly subscription",
-            "type": "string"
-          },
-          "rate": {
-            "description": "The price of the product (per unit).",
-            "example": "9,90€",
-            "type": "string"
-          },
-          "scope": {
-            "description": "The scope of the plan.",
-            "enum": [
-              "PUBLIC",
-              "AUTHENTICATED",
-              "PRIVATE_PROJECT"
-            ],
-            "type": "string"
-          },
-          "sku": {
-            "description": "The concrete variant of the product.",
-            "example": "MP-1234",
-            "type": "string"
-          },
-          "skuInfo": {
-            "description": "Short description of this offering.",
-            "example": "Flexible and scalable",
-            "type": "string"
-          },
-          "skuInfoDetails": {
-            "description": "More details about what this offering entails.",
-            "example": "Access the full suite of the Product features with this plan.",
-            "type": "string"
-          },
-          "unit": {
-            "description": "The interval to which the rate applies.",
-            "enum": [
-              "month"
-            ],
-            "example": "month",
-            "type": "string"
-          }
-        },
-        "required": [
-          "name",
-          "description",
-          "planId",
-          "sku",
-          "skuInfo",
-          "skuInfoDetails",
-          "highlights",
-          "scope",
-          "planType"
-        ],
-        "type": "object"
-      },
-      "GetProductResponse_ProductHighlight": {
-        "properties": {
-          "highlightContent": {
-            "description": "The highlight content.",
-            "example": "This is the content of the best highlight ever,",
-            "type": "string"
-          },
-          "highlightIcon": {
-            "description": "The highlight icon.",
-            "example": "rocket",
-            "type": "string"
-          },
-          "highlightTitle": {
-            "description": "The highlight title.",
-            "example": "Best highlight ever.",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "GetProductResponse_SupportResource": {
-        "properties": {
-          "supportLink": {
-            "description": "The support resource link.",
-            "example": "https://example.com",
-            "format": "uri",
-            "maxLength": 512,
-            "type": "string"
-          },
-          "supportLinkTitle": {
-            "description": "The support resource link title.",
-            "example": "Contact our support.",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "GetProductResponse_VendorTerm": {
-        "properties": {
-          "description": {
-            "description": "The terms of service description.",
-            "example": "See the terms and conditions of this product.",
-            "type": "string"
-          },
-          "title": {
-            "description": "The terms of service title.",
-            "example": "Vendor Terms of Service",
-            "type": "string"
-          },
-          "url": {
-            "description": "The terms of use url.",
-            "example": "https://example.com",
-            "format": "uri",
-            "maxLength": 512,
-            "type": "string"
-          }
-        },
-        "required": [
-          "url",
-          "title",
-          "description"
         ],
         "type": "object"
       },
@@ -751,12 +543,12 @@
             "type": "string"
           },
           "facets": {
-            "$ref": "#/components/schemas/ListProductsResponse_Facets"
+            "$ref": "#/components/schemas/catalog.v1.ListProductsResponse_Facets"
           },
           "items": {
             "description": "Contains all available products.",
             "items": {
-              "$ref": "#/components/schemas/ListProductsResponse_Product"
+              "$ref": "#/components/schemas/catalog.v1.ListProductsResponse_Product"
             },
             "type": "array"
           },
@@ -779,151 +571,6 @@
           "limit",
           "items",
           "totalCount"
-        ],
-        "type": "object"
-      },
-      "ListProductsResponse_Facets": {
-        "description": "A collection of facets.",
-        "properties": {
-          "categories": {
-            "description": "A collection of categories with counts.",
-            "items": {
-              "$ref": "#/components/schemas/Facets_Facet"
-            },
-            "type": "array"
-          },
-          "deliveryMethod": {
-            "description": "A collection of delivery methods with counts.",
-            "items": {
-              "$ref": "#/components/schemas/Facets_Facet"
-            },
-            "type": "array"
-          },
-          "industries": {
-            "description": "A collection of industries with counts.",
-            "items": {
-              "$ref": "#/components/schemas/Facets_Facet"
-            },
-            "type": "array"
-          },
-          "planType": {
-            "description": "A collection of plan types with counts.",
-            "items": {
-              "$ref": "#/components/schemas/Facets_Facet"
-            },
-            "type": "array"
-          },
-          "priceType": {
-            "description": "A collection of price types with counts.",
-            "items": {
-              "$ref": "#/components/schemas/Facets_Facet"
-            },
-            "type": "array"
-          },
-          "pricingPlans": {
-            "description": "A collection of pricing plans with counts.",
-            "items": {
-              "$ref": "#/components/schemas/Facets_Facet"
-            },
-            "type": "array"
-          },
-          "sovereignty": {
-            "description": "A collection of sovereignty levels with counts.",
-            "items": {
-              "$ref": "#/components/schemas/Facets_Facet"
-            },
-            "type": "array"
-          },
-          "vendor": {
-            "description": "A collection of vendors with counts.",
-            "items": {
-              "$ref": "#/components/schemas/Facets_Facet"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "ListProductsResponse_Product": {
-        "properties": {
-          "deliveryMethod": {
-            "description": "The product delivery method/type. For reference: SAAS - Software as a Service, SAI - STACKIT Application Image",
-            "enum": [
-              "SAAS",
-              "KUBERNETES",
-              "SAI",
-              "PROFESSIONAL_SERVICE",
-              "MANAGED_SERVICE"
-            ],
-            "example": "SAAS",
-            "type": "string"
-          },
-          "freeTrial": {
-            "$ref": "#/components/schemas/Product_FreeTrial"
-          },
-          "hasAuthenticatedPlanOption": {
-            "description": "If the product has an authenticated plan option.",
-            "example": true,
-            "type": "boolean"
-          },
-          "hasFreeTrial": {
-            "description": "If the product has a free trial option.",
-            "example": true,
-            "type": "boolean"
-          },
-          "hasPrivatePlanOption": {
-            "description": "If the product has a private plan option.",
-            "example": true,
-            "type": "boolean"
-          },
-          "lifecycleState": {
-            "default": "PRODUCT_LIVE",
-            "description": "The lifecycle state of the product.",
-            "enum": [
-              "PRODUCT_LIVE",
-              "PRODUCT_PREVIEW"
-            ],
-            "example": "SAAS",
-            "type": "string"
-          },
-          "logo": {
-            "description": "The logo information.",
-            "type": "string"
-          },
-          "name": {
-            "description": "The name of the product.",
-            "example": "Cool Product Name",
-            "maxLength": 512,
-            "type": "string"
-          },
-          "productId": {
-            "description": "Unique ID of the product.",
-            "example": "marketplace-product-4c531ae5",
-            "maxLength": 29,
-            "minLength": 10,
-            "pattern": "^[a-z0-9-]{1,20}-[0-9a-f]{8}$",
-            "type": "string"
-          },
-          "sovereignty": {
-            "$ref": "#/components/schemas/Sovereignty"
-          },
-          "summary": {
-            "description": "The short summary of the product.",
-            "example": "A very custom summary.",
-            "maxLength": 1024,
-            "type": "string"
-          },
-          "vendor": {
-            "$ref": "#/components/schemas/Product_PartialVendor"
-          }
-        },
-        "required": [
-          "productId",
-          "name",
-          "deliveryMethod",
-          "summary",
-          "vendor",
-          "lifecycleState"
         ],
         "type": "object"
       },
@@ -955,81 +602,6 @@
         ],
         "type": "object"
       },
-      "PricingOption_NoticePeriod": {
-        "properties": {
-          "type": {
-            "description": "The notice period type.",
-            "enum": [
-              "SAME_DAY",
-              "DAYS",
-              "MONTHS"
-            ],
-            "example": "DAYS",
-            "type": "string"
-          },
-          "value": {
-            "description": "The value of the corresponding type. Omitted for SAME_DAY.",
-            "example": 14,
-            "format": "uint32",
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "PricingOption_PricingHighlight": {
-        "properties": {
-          "highlightContent": {
-            "description": "The highlight content.",
-            "example": "This is the content of the best highlight ever.",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "Product_FreeTrial": {
-        "description": "Information about free trial period.",
-        "properties": {
-          "value": {
-            "description": "The amount of days of free trial highlighted in the product card.",
-            "example": 7,
-            "format": "uint32",
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "Product_PartialVendor": {
-        "properties": {
-          "name": {
-            "description": "The product's vendor name.",
-            "example": "STACKIT",
-            "maxLength": 512,
-            "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:= -]+$",
-            "type": "string"
-          },
-          "vendorId": {
-            "description": "Unique ID of the vendor.",
-            "example": "14fef715-4ef3-4b10-8789-cd7f9bd09421",
-            "format": "uuid",
-            "maxLength": 36,
-            "minLength": 36,
-            "type": "string"
-          },
-          "websiteUrl": {
-            "description": "The vendor's website.",
-            "example": "https://example.com",
-            "format": "uri",
-            "maxLength": 512,
-            "type": "string"
-          }
-        },
-        "required": [
-          "vendorId",
-          "name",
-          "websiteUrl"
-        ],
-        "type": "object"
-      },
       "ResolveCustomerPayload": {
         "properties": {
           "token": {
@@ -1039,59 +611,6 @@
         "required": [
           "token"
         ],
-        "type": "object"
-      },
-      "Sovereignty": {
-        "properties": {
-          "dataAccess": {
-            "description": "The data access.",
-            "enum": [
-              "WITHIN_EU",
-              "WITHIN_EUROPE"
-            ],
-            "example": "WITHIN_EU",
-            "type": "string"
-          },
-          "dataLocation": {
-            "description": "The data location.",
-            "enum": [
-              "ON_STACKIT"
-            ],
-            "example": "ON_STACKIT",
-            "type": "string"
-          },
-          "maturityLevel": {
-            "description": "The sovereignty level.",
-            "enum": [
-              "ACKNOWLEDGED",
-              "INTERMEDIATE",
-              "ADVANCED",
-              "SOVEREIGN"
-            ],
-            "example": "ADVANCED",
-            "type": "string"
-          },
-          "securityStandard": {
-            "description": "The security certification.",
-            "enum": [
-              "ISO_27001",
-              "CONFIRMED_MEASURES",
-              "SELF_DECLARATION"
-            ],
-            "example": "ISO_27001",
-            "type": "string"
-          },
-          "serviceLocation": {
-            "description": "The service location.",
-            "enum": [
-              "ON_STACKIT",
-              "GERMANY",
-              "EU"
-            ],
-            "example": "ON_STACKIT",
-            "type": "string"
-          }
-        },
         "type": "object"
       },
       "SubscriptionProduct": {
@@ -1160,72 +679,6 @@
         "minLength": 36,
         "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "string"
-      },
-      "Vendor": {
-        "properties": {
-          "description": {
-            "description": "The vendor description.",
-            "example": "This is the example vendor.",
-            "type": "string"
-          },
-          "id": {
-            "type": "string"
-          },
-          "logo": {
-            "description": "The logo information.",
-            "type": "string"
-          },
-          "name": {
-            "description": "The product's vendor name.",
-            "example": "STACKIT",
-            "maxLength": 512,
-            "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:= -]+$",
-            "type": "string"
-          },
-          "organizationId": {
-            "type": "string"
-          },
-          "projectId": {
-            "type": "string"
-          },
-          "translations": {
-            "additionalProperties": {
-              "$ref": "#/components/schemas/VendorTranslations"
-            },
-            "type": "object"
-          },
-          "vendorId": {
-            "description": "The user-readable vendor ID.",
-            "example": "super-vendor-cd7f9bd0",
-            "maxLength": 29,
-            "minLength": 10,
-            "pattern": "^[a-z0-9-]{1,20}-[0-9a-f]{8}$",
-            "type": "string"
-          },
-          "videoUrl": {
-            "description": "The vendor video URL.",
-            "example": "https://example.com",
-            "format": "uri",
-            "maxLength": 512,
-            "type": "string"
-          },
-          "websiteUrl": {
-            "description": "The vendor's website.",
-            "example": "https://example.com",
-            "format": "uri",
-            "maxLength": 512,
-            "type": "string"
-          }
-        },
-        "required": [
-          "vendorId",
-          "name",
-          "description",
-          "logo",
-          "websiteUrl",
-          "videoUrl"
-        ],
-        "type": "object"
       },
       "VendorSubscription": {
         "properties": {
@@ -1298,17 +751,6 @@
         ],
         "type": "object"
       },
-      "VendorTranslations": {
-        "properties": {
-          "description": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "description"
-        ],
-        "type": "object"
-      },
       "assets": {
         "description": "The assets associated with the product.",
         "properties": {
@@ -1361,6 +803,538 @@
         "description": "Boolean data type.",
         "example": true,
         "type": "boolean"
+      },
+      "catalog.v1.Facets_Facet": {
+        "properties": {
+          "count": {
+            "description": "The number of items associated with this facet value.",
+            "example": 15,
+            "format": "uint32",
+            "type": "integer"
+          },
+          "value": {
+            "description": "The value of the facet.",
+            "example": "eGovernment",
+            "type": "string"
+          }
+        },
+        "required": [
+          "value",
+          "count"
+        ],
+        "type": "object"
+      },
+      "catalog.v1.GetProductResponse_Asset": {
+        "properties": {
+          "version": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Localized asset file name indexed by locale (en or de).",
+            "example": {
+              "en": "2025-06-02_001_file-name_EN.pdf"
+            },
+            "maxLength": 64,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}_\\d{3}_[a-zA-Z0-9_-]+_(DE|EN)(\\.[a-zA-Z0-9]+)?$",
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "catalog.v1.GetProductResponse_PricingOption": {
+        "properties": {
+          "description": {
+            "description": "The pricing option description.",
+            "example": "Product Premium Plan.",
+            "type": "string"
+          },
+          "highlights": {
+            "description": "The list of highlights.",
+            "items": {
+              "$ref": "#/components/schemas/catalog.v1.PricingOption_PricingHighlight"
+            },
+            "type": "array"
+          },
+          "name": {
+            "description": "The pricing option name.",
+            "example": "Premium Plan",
+            "type": "string"
+          },
+          "noticePeriod": {
+            "$ref": "#/components/schemas/catalog.v1.PricingOption_NoticePeriod"
+          },
+          "planId": {
+            "description": "The user-readable plan ID of a pricing option.",
+            "example": "marketplace-plan-c4f9d2fc",
+            "maxLength": 29,
+            "minLength": 10,
+            "pattern": "^[a-z0-9-]{1,20}-[0-9a-f]{8}$",
+            "type": "string"
+          },
+          "planType": {
+            "description": "The type of the plan.",
+            "enum": [
+              "PUBLIC",
+              "PRIVATE",
+              "INDIVIDUAL"
+            ],
+            "type": "string"
+          },
+          "priceType": {
+            "description": "The product's price type.",
+            "enum": [
+              "CONTRACT",
+              "FREE",
+              "FREE_TRIAL",
+              "BYOL",
+              "PAYG"
+            ],
+            "example": "CONTRACT",
+            "type": "string"
+          },
+          "pricingPlan": {
+            "description": "Additional price type information.",
+            "example": "Monthly subscription",
+            "type": "string"
+          },
+          "rate": {
+            "description": "The price of the product (per unit).",
+            "example": "9,90€",
+            "type": "string"
+          },
+          "scope": {
+            "description": "The scope of the plan.",
+            "enum": [
+              "PUBLIC",
+              "AUTHENTICATED",
+              "PRIVATE_PROJECT"
+            ],
+            "type": "string"
+          },
+          "sku": {
+            "description": "The concrete variant of the product.",
+            "example": "MP-1234",
+            "type": "string"
+          },
+          "skuInfo": {
+            "description": "Short description of this offering.",
+            "example": "Flexible and scalable",
+            "type": "string"
+          },
+          "skuInfoDetails": {
+            "description": "More details about what this offering entails.",
+            "example": "Access the full suite of the Product features with this plan.",
+            "type": "string"
+          },
+          "unit": {
+            "description": "The interval to which the rate applies.",
+            "enum": [
+              "month"
+            ],
+            "example": "month",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "planId",
+          "sku",
+          "skuInfo",
+          "skuInfoDetails",
+          "highlights",
+          "scope",
+          "planType"
+        ],
+        "type": "object"
+      },
+      "catalog.v1.GetProductResponse_ProductHighlight": {
+        "properties": {
+          "highlightContent": {
+            "description": "The highlight content.",
+            "example": "This is the content of the best highlight ever,",
+            "type": "string"
+          },
+          "highlightIcon": {
+            "description": "The highlight icon.",
+            "example": "rocket",
+            "type": "string"
+          },
+          "highlightTitle": {
+            "description": "The highlight title.",
+            "example": "Best highlight ever.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "catalog.v1.GetProductResponse_SupportResource": {
+        "properties": {
+          "supportLink": {
+            "description": "The support resource link.",
+            "example": "https://example.com",
+            "format": "uri",
+            "maxLength": 512,
+            "type": "string"
+          },
+          "supportLinkTitle": {
+            "description": "The support resource link title.",
+            "example": "Contact our support.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "catalog.v1.GetProductResponse_VendorTerm": {
+        "properties": {
+          "description": {
+            "description": "The terms of service description.",
+            "example": "See the terms and conditions of this product.",
+            "type": "string"
+          },
+          "title": {
+            "description": "The terms of service title.",
+            "example": "Vendor Terms of Service",
+            "type": "string"
+          },
+          "url": {
+            "description": "The terms of use url.",
+            "example": "https://example.com",
+            "format": "uri",
+            "maxLength": 512,
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "title",
+          "description"
+        ],
+        "type": "object"
+      },
+      "catalog.v1.ListProductsResponse_Facets": {
+        "description": "A collection of facets.",
+        "properties": {
+          "categories": {
+            "description": "A collection of categories with counts.",
+            "items": {
+              "$ref": "#/components/schemas/catalog.v1.Facets_Facet"
+            },
+            "type": "array"
+          },
+          "deliveryMethod": {
+            "description": "A collection of delivery methods with counts.",
+            "items": {
+              "$ref": "#/components/schemas/catalog.v1.Facets_Facet"
+            },
+            "type": "array"
+          },
+          "industries": {
+            "description": "A collection of industries with counts.",
+            "items": {
+              "$ref": "#/components/schemas/catalog.v1.Facets_Facet"
+            },
+            "type": "array"
+          },
+          "planType": {
+            "description": "A collection of plan types with counts.",
+            "items": {
+              "$ref": "#/components/schemas/catalog.v1.Facets_Facet"
+            },
+            "type": "array"
+          },
+          "priceType": {
+            "description": "A collection of price types with counts.",
+            "items": {
+              "$ref": "#/components/schemas/catalog.v1.Facets_Facet"
+            },
+            "type": "array"
+          },
+          "pricingPlans": {
+            "description": "A collection of pricing plans with counts.",
+            "items": {
+              "$ref": "#/components/schemas/catalog.v1.Facets_Facet"
+            },
+            "type": "array"
+          },
+          "sovereignty": {
+            "description": "A collection of sovereignty levels with counts.",
+            "items": {
+              "$ref": "#/components/schemas/catalog.v1.Facets_Facet"
+            },
+            "type": "array"
+          },
+          "vendor": {
+            "description": "A collection of vendors with counts.",
+            "items": {
+              "$ref": "#/components/schemas/catalog.v1.Facets_Facet"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "catalog.v1.ListProductsResponse_Product": {
+        "properties": {
+          "deliveryMethod": {
+            "description": "The product delivery method/type. For reference: SAAS - Software as a Service, SAI - STACKIT Application Image",
+            "enum": [
+              "SAAS",
+              "KUBERNETES",
+              "SAI",
+              "PROFESSIONAL_SERVICE",
+              "MANAGED_SERVICE"
+            ],
+            "example": "SAAS",
+            "type": "string"
+          },
+          "freeTrial": {
+            "$ref": "#/components/schemas/catalog.v1.Product_FreeTrial"
+          },
+          "hasAuthenticatedPlanOption": {
+            "description": "If the product has an authenticated plan option.",
+            "example": true,
+            "type": "boolean"
+          },
+          "hasFreeTrial": {
+            "description": "If the product has a free trial option.",
+            "example": true,
+            "type": "boolean"
+          },
+          "hasPrivatePlanOption": {
+            "description": "If the product has a private plan option.",
+            "example": true,
+            "type": "boolean"
+          },
+          "lifecycleState": {
+            "default": "PRODUCT_LIVE",
+            "description": "The lifecycle state of the product.",
+            "enum": [
+              "PRODUCT_LIVE",
+              "PRODUCT_PREVIEW"
+            ],
+            "example": "SAAS",
+            "type": "string"
+          },
+          "logo": {
+            "description": "The logo information.",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of the product.",
+            "example": "Cool Product Name",
+            "maxLength": 512,
+            "type": "string"
+          },
+          "productId": {
+            "description": "Unique ID of the product.",
+            "example": "marketplace-product-4c531ae5",
+            "maxLength": 29,
+            "minLength": 10,
+            "pattern": "^[a-z0-9-]{1,20}-[0-9a-f]{8}$",
+            "type": "string"
+          },
+          "sovereignty": {
+            "$ref": "#/components/schemas/catalog.v1.Sovereignty"
+          },
+          "summary": {
+            "description": "The short summary of the product.",
+            "example": "A very custom summary.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/catalog.v1.Product_PartialVendor"
+          }
+        },
+        "required": [
+          "productId",
+          "name",
+          "deliveryMethod",
+          "summary",
+          "vendor",
+          "lifecycleState"
+        ],
+        "type": "object"
+      },
+      "catalog.v1.PricingOption_NoticePeriod": {
+        "properties": {
+          "type": {
+            "description": "The notice period type.",
+            "enum": [
+              "SAME_DAY",
+              "DAYS",
+              "MONTHS"
+            ],
+            "example": "DAYS",
+            "type": "string"
+          },
+          "value": {
+            "description": "The value of the corresponding type. Omitted for SAME_DAY.",
+            "example": 14,
+            "format": "uint32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "catalog.v1.PricingOption_PricingHighlight": {
+        "properties": {
+          "highlightContent": {
+            "description": "The highlight content.",
+            "example": "This is the content of the best highlight ever.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "catalog.v1.Product_FreeTrial": {
+        "description": "Information about free trial period.",
+        "properties": {
+          "value": {
+            "description": "The amount of days of free trial highlighted in the product card.",
+            "example": 7,
+            "format": "uint32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "catalog.v1.Product_PartialVendor": {
+        "properties": {
+          "name": {
+            "description": "The product's vendor name.",
+            "example": "STACKIT",
+            "maxLength": 512,
+            "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:= -]+$",
+            "type": "string"
+          },
+          "vendorId": {
+            "description": "Unique ID of the vendor.",
+            "example": "14fef715-4ef3-4b10-8789-cd7f9bd09421",
+            "format": "uuid",
+            "maxLength": 36,
+            "minLength": 36,
+            "type": "string"
+          },
+          "websiteUrl": {
+            "description": "The vendor's website.",
+            "example": "https://example.com",
+            "format": "uri",
+            "maxLength": 512,
+            "type": "string"
+          }
+        },
+        "required": [
+          "vendorId",
+          "name",
+          "websiteUrl"
+        ],
+        "type": "object"
+      },
+      "catalog.v1.Sovereignty": {
+        "properties": {
+          "dataAccess": {
+            "description": "The data access.",
+            "enum": [
+              "WITHIN_EU",
+              "WITHIN_EUROPE"
+            ],
+            "example": "WITHIN_EU",
+            "type": "string"
+          },
+          "dataLocation": {
+            "description": "The data location.",
+            "enum": [
+              "ON_STACKIT"
+            ],
+            "example": "ON_STACKIT",
+            "type": "string"
+          },
+          "maturityLevel": {
+            "description": "The sovereignty level.",
+            "enum": [
+              "ACKNOWLEDGED",
+              "INTERMEDIATE",
+              "ADVANCED",
+              "SOVEREIGN"
+            ],
+            "example": "ADVANCED",
+            "type": "string"
+          },
+          "securityStandard": {
+            "description": "The security certification.",
+            "enum": [
+              "ISO_27001",
+              "CONFIRMED_MEASURES",
+              "SELF_DECLARATION"
+            ],
+            "example": "ISO_27001",
+            "type": "string"
+          },
+          "serviceLocation": {
+            "description": "The service location.",
+            "enum": [
+              "ON_STACKIT",
+              "GERMANY",
+              "EU"
+            ],
+            "example": "ON_STACKIT",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "catalog.v1.Vendor": {
+        "properties": {
+          "description": {
+            "description": "The vendor description.",
+            "example": "This is the example vendor.",
+            "type": "string"
+          },
+          "logo": {
+            "description": "The logo information.",
+            "type": "string"
+          },
+          "name": {
+            "description": "The product's vendor name.",
+            "example": "STACKIT",
+            "maxLength": 512,
+            "pattern": "^[a-zA-ZäüöÄÜÖ0-9,.!?()@\\/:= -]+$",
+            "type": "string"
+          },
+          "vendorId": {
+            "description": "The user-readable vendor ID.",
+            "example": "super-vendor-cd7f9bd0",
+            "maxLength": 29,
+            "minLength": 10,
+            "pattern": "^[a-z0-9-]{1,20}-[0-9a-f]{8}$",
+            "type": "string"
+          },
+          "videoUrl": {
+            "description": "The vendor video URL.",
+            "example": "https://example.com",
+            "format": "uri",
+            "maxLength": 512,
+            "type": "string"
+          },
+          "websiteUrl": {
+            "description": "The vendor's website.",
+            "example": "https://example.com",
+            "format": "uri",
+            "maxLength": 512,
+            "type": "string"
+          }
+        },
+        "required": [
+          "vendorId",
+          "name",
+          "description",
+          "logo",
+          "websiteUrl",
+          "videoUrl"
+        ],
+        "type": "object"
       },
       "contactPersonName": {
         "description": "The full name of the contact person.",

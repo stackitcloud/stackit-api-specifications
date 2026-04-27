@@ -848,9 +848,17 @@
             "type": "string"
           },
           "schedules": {
-            "description": "associated schedules",
+            "deprecated": true,
+            "description": "(deprecated) associated schedules",
             "items": {
               "$ref": "#/components/schemas/SnapshotPolicy_Schedule"
+            },
+            "type": "array"
+          },
+          "snapshotSchedules": {
+            "description": "associated schedules",
+            "items": {
+              "$ref": "#/components/schemas/SnapshotPolicy_SnapshotPolicySchedule"
             },
             "type": "array"
           }
@@ -860,16 +868,54 @@
       "SnapshotPolicy_Schedule": {
         "properties": {
           "count": {
+            "description": "Retention Count",
             "format": "uint32",
             "type": "integer"
           },
-          "prefix": {
+          "interval": {
+            "description": "Interval of the Schedule (follows the cron schedule expression in Unix-like systems)",
             "type": "string"
           },
-          "retentionPeriod": {
+          "prefix": {
+            "description": "Prefix used for the snapshots created by this policy",
             "type": "string"
           },
           "scheduleId": {
+            "description": "ID of the Schedule",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SnapshotPolicy_SnapshotPolicySchedule": {
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "description": "ID of the Schedule",
+            "type": "string"
+          },
+          "interval": {
+            "description": "Interval of the Schedule (follows the cron schedule expression in Unix-like systems)",
+            "type": "string"
+          },
+          "name": {
+            "description": "Name of the Schedule",
+            "type": "string"
+          },
+          "prefix": {
+            "description": "Prefix used for the snapshots created by this policy",
+            "type": "string"
+          },
+          "retentionCount": {
+            "description": "Retention Count",
+            "format": "uint32",
+            "type": "integer"
+          },
+          "retentionPeriod": {
+            "description": "Retention Period (ISO 8601 format or \"infinite\")",
             "type": "string"
           }
         },

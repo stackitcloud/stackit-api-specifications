@@ -122,6 +122,27 @@
         "description": "The kubeconfig for the instance.",
         "type": "object"
       },
+      "kubernetesReleaseList": {
+        "description": "A list of compatible Kubernetes releases.",
+        "properties": {
+          "k8s_releases": {
+            "description": "Array of Kubernetes version strings.",
+            "example": [
+              "v1.33.0",
+              "v1.33.1"
+            ],
+            "items": {
+              "example": "v1.33.0",
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "k8s_releases"
+        ],
+        "type": "object"
+      },
       "plan": {
         "properties": {
           "description": {
@@ -249,6 +270,53 @@
   },
   "openapi": "3.0.3",
   "paths": {
+    "/v1beta1/listcompatiblekubernetesreleases": {
+      "get": {
+        "operationId": "list-compatible-kubernetes-releases",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/kubernetesReleaseList"
+                }
+              }
+            },
+            "description": "Successful response with all compatible kubernetes releases."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequest"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "The given Talos release was not found."
+          },
+          "500": {
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      },
+      "parameters": [
+        {
+          "description": "The name of the Talos release.",
+          "in": "query",
+          "name": "talosVersion",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
     "/v1beta1/projects/{projectId}/plans": {
       "get": {
         "description": "List all possible plans for the project.",

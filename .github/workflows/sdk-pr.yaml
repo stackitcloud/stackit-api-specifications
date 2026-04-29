@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  GO_VERSION: "1.22"
+  GO_VERSION: "1.25"
   JAVA_VERSION: "17"
 
 jobs:
@@ -20,24 +20,34 @@ jobs:
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ vars.SSH_KNOWN_HOSTS }}
+      
       - name: Install Java
         uses: actions/setup-java@v5
         with:
           distribution: "temurin"
           java-version: ${{ env.JAVA_VERSION }}
+      
       - name: Checkout generator repo
         uses: actions/checkout@v6
         with:
           repository: "stackitcloud/stackit-sdk-generator"
           ref: "main"
-      - name: Build
-        uses: ./.github/actions/build/go
+      
+      - name: Install Go
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
+      
+      - name: Install project tools and dependencies
+        shell: bash
+        run: make project-tools
+      
       - name: Download OAS
         run: make download-oas
+      
       - name: Generate SDK
-        run: make generate-sdk
+        run: make generate-go-sdk
+      
       - name: Push SDK
         env:
           GH_REPO: "stackitcloud/stackit-sdk-go"
@@ -54,31 +64,42 @@ jobs:
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ vars.SSH_KNOWN_HOSTS }}
+      
       - name: Install Java
         uses: actions/setup-java@v5
         with:
           distribution: "temurin"
           java-version: ${{ env.JAVA_VERSION }}
+      
       - name: Checkout generator repo
         uses: actions/checkout@v6
         with:
           repository: "stackitcloud/stackit-sdk-generator"
           ref: "main"
+      
       - name: install uv
         uses: astral-sh/setup-uv@v7
         with:
           version: "0.10.4"
-      - name: Build
-        uses: ./.github/actions/build/python
-        with:
-          go-version: ${{ env.GO_VERSION }}
+      
+      - name: Install project tools and dependencies
+        shell: bash
+        run: |
+          python -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          make project-tools LANGUAGE=python
+      
       - name: Download OAS
         run: make download-oas
+      
       - name: Generate SDK
-        run: make generate-sdk LANGUAGE=python
+        run: make generate-python-sdk
+      
       - name: Install Python SDK
         working-directory: ./sdk-repo-updated
         run: make install-dev
+      
       - name: Push Python SDK
         env:
           GH_REPO: "stackitcloud/stackit-sdk-python"
@@ -95,22 +116,25 @@ jobs:
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ vars.SSH_KNOWN_HOSTS }}
+      
       - name: Install Java
         uses: actions/setup-java@v5
         with:
           distribution: "temurin"
           java-version: ${{ env.JAVA_VERSION }}
+      
       - name: Checkout generator repo
         uses: actions/checkout@v6
         with:
           repository: "stackitcloud/stackit-sdk-generator"
           ref: "main"
+      
       - name: Download OAS
         run: make download-oas
+      
       - name: Generate SDK
-        run: make generate-sdk
-        env:
-          LANGUAGE: "java"
+        run: make generate-java-sdk
+      
       - name: Push Java SDK
         env:
           GH_REPO: "stackitcloud/stackit-sdk-java"

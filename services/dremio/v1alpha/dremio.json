@@ -2,7 +2,7 @@
   "components": {
     "parameters": {
       "dremioId": {
-        "description": "The Dremio UUID.",
+        "description": "The Dremio instance UUID.",
         "in": "path",
         "name": "dremioId",
         "required": true,
@@ -12,7 +12,7 @@
         }
       },
       "dremioUserId": {
-        "description": "The dremio user UUID.",
+        "description": "The Dremio user UUID.",
         "in": "path",
         "name": "dremioUserId",
         "required": true,
@@ -22,7 +22,7 @@
         }
       },
       "pageSize": {
-        "description": "Maximum number of items to return",
+        "description": "Maximum number of items to return.",
         "in": "query",
         "name": "pageSize",
         "schema": {
@@ -104,7 +104,7 @@
         "type": "object"
       },
       "authentication": {
-        "description": "Dremio authentication settings. A change here triggers a Dremio restart and will incur downtime.",
+        "description": "Dremio instance authentication settings. A change here triggers a Dremio restart and will incur downtime.",
         "properties": {
           "azuread": {
             "$ref": "#/components/schemas/azuread"
@@ -154,6 +154,28 @@
         ],
         "type": "object"
       },
+      "create-dremio-instancePayload": {
+        "properties": {
+          "authentication": {
+            "$ref": "#/components/schemas/authentication"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9 ]*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName"
+        ]
+      },
       "create-dremio-userPayload": {
         "properties": {
           "description": {
@@ -201,28 +223,6 @@
           "lastName",
           "email",
           "password"
-        ]
-      },
-      "create-dremioPayload": {
-        "properties": {
-          "authentication": {
-            "$ref": "#/components/schemas/authentication"
-          },
-          "description": {
-            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
-            "maxLength": 1024,
-            "type": "string"
-          },
-          "displayName": {
-            "description": "The display name is a short name chosen by the user to identify the resource.",
-            "maxLength": 32,
-            "minLength": 1,
-            "pattern": "^[a-zA-Z0-9 ]*$",
-            "type": "string"
-          }
-        },
-        "required": [
-          "displayName"
         ]
       },
       "dremioResponse": {
@@ -439,7 +439,7 @@
             "x-go-type-skip-optional-pointer": true
           },
           "redirectUrl": {
-            "description": "The URL where Dremio is hosted. The URL must match the redirect URL set in the Identity Provider.",
+            "description": "The URL where the Dremio instance is hosted. The URL must match the redirect URL set in the Identity Provider.",
             "readOnly": true,
             "type": "string"
           },
@@ -457,7 +457,7 @@
         ],
         "type": "object"
       },
-      "update-dremioPayload": {
+      "update-dremio-instancePayload": {
         "properties": {
           "authentication": {
             "$ref": "#/components/schemas/authentication"
@@ -487,8 +487,8 @@
   "paths": {
     "/v1alpha/projects/{projectId}/regions/{regionId}/dremios": {
       "get": {
-        "description": "Returns a list of all dremio instances within the project.",
-        "operationId": "list-dremios",
+        "description": "Returns a list of all Dremio instances within the project.",
+        "operationId": "list-dremio-instances",
         "parameters": [
           {
             "$ref": "#/components/parameters/pageToken"
@@ -506,7 +506,7 @@
                 }
               }
             },
-            "description": "Successful response with all dremio instances."
+            "description": "Successful response with all Dremio instances."
           },
           "401": {
             "$ref": "#/components/responses/unauthorized"
@@ -533,13 +533,13 @@
         }
       ],
       "post": {
-        "description": "Creates a new Dremio within the project.",
-        "operationId": "create-dremio",
+        "description": "Creates a new Dremio instance within the project.",
+        "operationId": "create-dremio-instance",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/create-dremioPayload"
+                "$ref": "#/components/schemas/create-dremio-instancePayload"
               }
             }
           },
@@ -554,7 +554,7 @@
                 }
               }
             },
-            "description": "Dremio has been accepted."
+            "description": "Dremio instance has been accepted."
           },
           "400": {
             "$ref": "#/components/responses/badRequest"
@@ -581,11 +581,11 @@
     },
     "/v1alpha/projects/{projectId}/regions/{regionId}/dremios/{dremioId}": {
       "delete": {
-        "description": "Deletes the given Dremio.",
-        "operationId": "delete-dremio",
+        "description": "Deletes the given Dremio instance.",
+        "operationId": "delete-dremio-instance",
         "responses": {
           "202": {
-            "description": "Dremio deletion has been accepted."
+            "description": "Dremio instance deletion has been accepted."
           },
           "401": {
             "$ref": "#/components/responses/unauthorized"
@@ -610,7 +610,7 @@
         }
       },
       "get": {
-        "description": "Returns the details for the given Dremio.",
+        "description": "Returns the details for the given Dremio instance.",
         "operationId": "get-dremio",
         "responses": {
           "200": {
@@ -621,7 +621,7 @@
                 }
               }
             },
-            "description": "Dremio details successfully retrieved."
+            "description": "Dremio instance details successfully retrieved."
           },
           "401": {
             "$ref": "#/components/responses/unauthorized"
@@ -654,13 +654,13 @@
         }
       ],
       "put": {
-        "description": "Updates the given Dremio. Please note that changing certain fields will trigger a Dremio restart and will incur downtime. See the request body information for more details.",
-        "operationId": "update-dremio",
+        "description": "Updates the given Dremio instance. Please note that changing certain fields will trigger a Dremio restart and will incur downtime. See the request body information for more details.",
+        "operationId": "update-dremio-instance",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/update-dremioPayload"
+                "$ref": "#/components/schemas/update-dremio-instancePayload"
               }
             }
           },
@@ -675,7 +675,7 @@
                 }
               }
             },
-            "description": "Dremio update has been accepted."
+            "description": "Dremio instance update has been accepted."
           },
           "401": {
             "$ref": "#/components/responses/unauthorized"
@@ -702,7 +702,7 @@
     },
     "/v1alpha/projects/{projectId}/regions/{regionId}/dremios/{dremioId}/users": {
       "get": {
-        "description": "Returns a list of all dremio admin users for the given dremio instance.",
+        "description": "Returns a list of all Dremio admin users for the given dremio instance.",
         "operationId": "list-dremio-users",
         "parameters": [
           {
@@ -721,7 +721,7 @@
                 }
               }
             },
-            "description": "Successful response with all dremio admin users"
+            "description": "Successful response with all Dremio admin users."
           },
           "401": {
             "$ref": "#/components/responses/unauthorized"
@@ -751,7 +751,7 @@
         }
       ],
       "post": {
-        "description": "Creates a new dremio admin user for the given dremio instance",
+        "description": "Creates a new Dremio admin user for the given Dremio instance.",
         "operationId": "create-dremio-user",
         "requestBody": {
           "content": {

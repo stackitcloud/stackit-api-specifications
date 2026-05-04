@@ -343,7 +343,8 @@
         "description": "Prices' currency symbol",
         "enum": [
           "€",
-          "$"
+          "$",
+          "£"
         ],
         "example": "€",
         "type": "string"
@@ -463,6 +464,20 @@
         "minLength": 1,
         "type": "string"
       },
+      "Price": {
+        "properties": {
+          "list": {
+            "$ref": "#/components/schemas/PriceValue"
+          },
+          "monthly": {
+            "$ref": "#/components/schemas/PriceValue"
+          }
+        },
+        "required": [
+          "list",
+          "monthly"
+        ]
+      },
       "PriceValue": {
         "properties": {
           "currencyCode": {
@@ -471,14 +486,7 @@
           "currencySymbol": {
             "$ref": "#/components/schemas/CurrencySymbols"
           },
-          "monthlyPrice": {
-            "description": "Monthly price value that is valid at request time, shown with full precision",
-            "example": "0.0123456",
-            "format": "decimal",
-            "nullable": true,
-            "type": "string"
-          },
-          "rounded_value": {
+          "roundedValue": {
             "description": "Used in Portal rounded to the minimal usable precision 2 digits after 0",
             "example": "0.00012345 -\u003e 0.0012, 1,234556 -\u003e 1,23",
             "format": "decimal",
@@ -502,10 +510,10 @@
         },
         "required": [
           "value",
-          "rounded_value",
-          "value_as_int",
-          "currency_code",
-          "currency_code"
+          "roundedValue",
+          "valueAsInt",
+          "currencySymbol",
+          "currencyCode"
         ]
       },
       "Problem": {
@@ -886,6 +894,35 @@
         ],
         "type": "object"
       },
+      "PublicDeveloperPlatformSpecificAttributes": {
+        "properties": {
+          "discriminator": {
+            "type": "string"
+          },
+          "diskStoragePerNode": {
+            "description": "diskStoragePerNode",
+            "example": "10",
+            "nullable": true,
+            "type": "string"
+          },
+          "storage": {
+            "description": "Storage (e.g. `image`, `postgresql`, `snapshot`, `volume`)",
+            "example": "image",
+            "nullable": true,
+            "type": "string"
+          },
+          "type": {
+            "description": "Type (e.g. `single`, `replica`)",
+            "example": "Single",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "discriminator"
+        ],
+        "type": "object"
+      },
       "PublicLoggingAndMonitoringSpecificAttributes": {
         "properties": {
           "discriminator": {
@@ -1096,25 +1133,16 @@
             "format": "float",
             "nullable": true,
             "type": "number"
+          },
+          "type": {
+            "description": "Type (e.g. `single`, `replica`)",
+            "example": "Single",
+            "nullable": true,
+            "type": "string"
           }
         },
         "required": [
           "discriminator"
-        ],
-        "type": "object"
-      },
-      "PublicPrice": {
-        "properties": {
-          "list": {
-            "$ref": "#/components/schemas/PriceValue"
-          },
-          "monthly": {
-            "$ref": "#/components/schemas/PriceValue"
-          }
-        },
-        "required": [
-          "list",
-          "monthly"
         ],
         "type": "object"
       },
@@ -1221,7 +1249,7 @@
           {
             "properties": {
               "price": {
-                "$ref": "#/components/schemas/PublicPrice"
+                "$ref": "#/components/schemas/Price"
               },
               "productSpecificAttributes": {
                 "discriminator": {
@@ -1232,6 +1260,7 @@
                     "ConfidentialComputing": "#/components/schemas/PublicConfidentialComputingSpecificAttributes",
                     "DataAndAI": "#/components/schemas/PublicDataAndAISpecificAttributes",
                     "Database": "#/components/schemas/PublicDatabaseSpecificAttributes",
+                    "DeveloperPlatform": "#/components/schemas/PublicDeveloperPlatformSpecificAttributes",
                     "LoggingAndMonitoring": "#/components/schemas/PublicLoggingAndMonitoringSpecificAttributes",
                     "Messaging": "#/components/schemas/PublicMessagingSpecificAttributes",
                     "Network": "#/components/schemas/PublicNetworkSpecificAttributes",
@@ -1277,6 +1306,9 @@
                   },
                   {
                     "$ref": "#/components/schemas/PublicComputeEngineGPUSpecificAttributes"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PublicDeveloperPlatformSpecificAttributes"
                   }
                 ]
               }

@@ -36,6 +36,18 @@
           "$ref": "#/components/schemas/UUID"
         },
         "style": "simple"
+      },
+      "Username": {
+        "description": "Instance User identifier.",
+        "example": "myusername",
+        "explode": false,
+        "in": "path",
+        "name": "username",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "style": "simple"
       }
     },
     "schemas": {
@@ -114,7 +126,19 @@
           },
           "status": {
             "description": "The current status of the authentication definition.",
+            "enum": [
+              "Creating",
+              "Updating",
+              "Deleting",
+              "Ready",
+              "Error"
+            ],
             "example": "Ready",
+            "type": "string"
+          },
+          "status_message": {
+            "description": "Provides additional information or error details when the status is 'Error'.",
+            "example": "OIDC discovery failed: 404 Not Found",
             "type": "string"
           }
         },
@@ -272,6 +296,44 @@
           "labels"
         ]
       },
+      "CreateUserPayload": {
+        "description": "Request a STACKIT Git instance User to be created with these properties.",
+        "properties": {
+          "email": {
+            "description": "A user chosen email to distinguish multiple STACKIT Git instance Users.",
+            "format": "email",
+            "maxLength": 254,
+            "type": "string"
+          },
+          "force_send_reset_password": {
+            "default": false,
+            "description": "Whether to force sending a reset password email.",
+            "type": "boolean"
+          },
+          "name": {
+            "description": "Name of the user.",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "password": {
+            "description": "A user password to allow user/pass instance login.",
+            "format": "password",
+            "maxLength": 64,
+            "type": "string"
+          },
+          "username": {
+            "description": "A user chosen username to distinguish multiple STACKIT Git instance Users.",
+            "maxLength": 32,
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "username",
+          "email",
+          "password"
+        ]
+      },
       "FeatureToggle": {
         "description": "Feature toggles for the instance.",
         "properties": {
@@ -286,15 +348,13 @@
             "nullable": true,
             "type": "string"
           },
-          "enable_commit_signatures": {
-            "description": "Enable commit signatures.",
-            "nullable": true,
-            "type": "boolean"
-          },
           "enable_local_login": {
             "description": "Enable local login.",
             "nullable": true,
             "type": "boolean"
+          },
+          "pipelines": {
+            "$ref": "#/components/schemas/Pipelines"
           }
         },
         "type": "object"
@@ -480,6 +540,21 @@
           "instances"
         ]
       },
+      "ListUsers": {
+        "description": "A list of STACKIT Git instance Users.",
+        "properties": {
+          "users": {
+            "items": {
+              "$ref": "#/components/schemas/User"
+            },
+            "maxItems": 50,
+            "type": "array"
+          }
+        },
+        "required": [
+          "users"
+        ]
+      },
       "NotFoundErrorResponse": {
         "description": "404 Error Response.",
         "properties": {
@@ -578,6 +653,45 @@
           "op",
           "path"
         ],
+        "type": "object"
+      },
+      "PatchUserPayload": {
+        "description": "Properties to patch a Instance User. All fields are optional.",
+        "properties": {
+          "email": {
+            "description": "A user chosen email to distinguish multiple STACKIT Git instance Users.",
+            "format": "email",
+            "maxLength": 254,
+            "type": "string"
+          },
+          "name": {
+            "description": "Name of the user.",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "password": {
+            "description": "A user password to allow user/pass instance login.",
+            "format": "password",
+            "maxLength": 64,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Pipelines": {
+        "description": "Feature toggles for instance pipelines",
+        "properties": {
+          "action_url": {
+            "description": "The action URL for the pipelines",
+            "nullable": true,
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Enable pipelines for this instance",
+            "nullable": true,
+            "type": "boolean"
+          }
+        },
         "type": "object"
       },
       "Runner": {
@@ -700,6 +814,38 @@
         },
         "required": [
           "message"
+        ],
+        "type": "object"
+      },
+      "User": {
+        "description": "Describes a STACKIT Git instance User.",
+        "properties": {
+          "email": {
+            "description": "A user chosen email to distinguish multiple STACKIT Git instance Users.",
+            "format": "email",
+            "maxLength": 254,
+            "type": "string"
+          },
+          "id": {
+            "description": "A auto generated unique id which identifies the STACKIT Git instances.",
+            "readOnly": true,
+            "type": "integer"
+          },
+          "name": {
+            "description": "Name of the user.",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "username": {
+            "description": "A user chosen username to distinguish multiple STACKIT Git instance Users.",
+            "maxLength": 32,
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "email",
+          "name"
         ],
         "type": "object"
       }
@@ -1650,6 +1796,313 @@
         "x-stackit-authorization": {
           "actions": [
             "git.runner.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/instances/{instanceId}/users": {
+      "get": {
+        "description": "Lists all STACKIT Git Users within an instances.\n",
+        "operationId": "GetUsers",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListUsers"
+                }
+              }
+            },
+            "description": "Successful response with all instance users."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "Get instance Users.",
+        "x-stackit-authorization": {
+          "actions": [
+            "git.instance.users.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ProjectId"
+        },
+        {
+          "$ref": "#/components/parameters/InstanceId"
+        }
+      ],
+      "post": {
+        "description": "Creates a new STACKIT Git instance Local/Technical User.\n",
+        "operationId": "CreateUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserPayload"
+              }
+            }
+          },
+          "description": "Instance User details options.",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "description": "Instance User has been created."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "Create an Instance Local/Technical User.",
+        "x-stackit-authorization": {
+          "actions": [
+            "git.instance.users.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/instances/{instanceId}/users/{username}": {
+      "delete": {
+        "description": "Deletes a STACKIT Git instance User and destroys all associated data.\n",
+        "operationId": "DeleteUser",
+        "responses": {
+          "204": {
+            "description": "Instance User was deleted."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "409": {
+            "description": "Conflict."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "Delete Instance User.",
+        "x-stackit-authorization": {
+          "actions": [
+            "git.instance.users.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Retrieves information about a STACKIT Git instance User.",
+        "operationId": "GetUser",
+        "responses": {
+          "302": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "description": "FOUND"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "Get Instance User information.",
+        "x-stackit-authorization": {
+          "actions": [
+            "git.instance.users.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ProjectId"
+        },
+        {
+          "$ref": "#/components/parameters/InstanceId"
+        },
+        {
+          "$ref": "#/components/parameters/Username"
+        }
+      ],
+      "patch": {
+        "description": "Patches the Instance User.\n",
+        "operationId": "PatchUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "email": "my-new-email",
+                "name": "my-new-user-name",
+                "password": "my-new-password"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/PatchUserPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "description": "Instance User updated."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "409": {
+            "description": "Conflict."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "Patch Instance User.",
+        "x-stackit-authorization": {
+          "actions": [
+            "git.instance.update"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

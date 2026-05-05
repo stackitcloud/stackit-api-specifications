@@ -470,6 +470,9 @@
           "isDeletable": {
             "$ref": "#/components/schemas/instance.isDeletable"
           },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
+          },
           "name": {
             "$ref": "#/components/schemas/instance.name"
           },
@@ -1078,6 +1081,9 @@
           "flavorId": {
             "$ref": "#/components/schemas/flavor.flavorId"
           },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
+          },
           "name": {
             "$ref": "#/components/schemas/instance.name"
           },
@@ -1502,6 +1508,18 @@
         "description": "The Postgres version used for the instance. See [Versions Endpoint](/documentation/postgres-flex-service/version/v3alpha1#tag/Version) for supported version parameters.",
         "type": "string"
       },
+      "labels": {
+        "additionalProperties": {
+          "nullable": true,
+          "type": "string"
+        },
+        "description": "Key-value pairs, 63 characters max, begin and end with an alphanumerical character,\nmay contain dashes (-), underscores (_), dots (.), and alphanumerics between. Key MUST be at least 1 character.\nMax 64 labels\nRegex for keys: ^(?=.{1,63}$)([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$\nRegex for values: ^(?=.{0,63}$)(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])*$\nThe stackit- prefix is reserved and cannot be used for Keys.\n",
+        "example": {
+          "key1": "value1",
+          "key2": "value2"
+        },
+        "type": "object"
+      },
       "protect.isDeletable": {
         "description": "Protect instance from deletion.",
         "example": true,
@@ -1670,6 +1688,9 @@
           "flavorId": {
             "$ref": "#/components/schemas/flavor.flavorId.opt"
           },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
+          },
           "name": {
             "$ref": "#/components/schemas/instance.name.opt"
           },
@@ -1698,6 +1719,9 @@
           },
           "flavorId": {
             "$ref": "#/components/schemas/flavor.flavorId"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
           },
           "name": {
             "$ref": "#/components/schemas/instance.name"

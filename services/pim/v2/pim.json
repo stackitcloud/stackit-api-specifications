@@ -330,6 +330,35 @@
         ],
         "type": "object"
       },
+      "DeveloperPlatformSpecificAttributes": {
+        "properties": {
+          "discriminator": {
+            "type": "string"
+          },
+          "diskStoragePerNode": {
+            "description": "diskStoragePerNode",
+            "example": "10",
+            "nullable": true,
+            "type": "string"
+          },
+          "storage": {
+            "description": "Storage (e.g. `image`, `postgresql`, `snapshot`, `volume`)",
+            "example": "image",
+            "nullable": true,
+            "type": "string"
+          },
+          "type": {
+            "description": "Type (e.g. `single`, `replica`)",
+            "example": "Single",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "discriminator"
+        ],
+        "type": "object"
+      },
       "Error": {
         "properties": {
           "code": {
@@ -564,6 +593,12 @@
             "format": "float",
             "nullable": true,
             "type": "number"
+          },
+          "type": {
+            "description": "Type (e.g. `single`, `replica`)",
+            "example": "Single",
+            "nullable": true,
+            "type": "string"
           }
         },
         "required": [
@@ -889,6 +924,7 @@
                     "ConfidentialComputing": "#/components/schemas/ConfidentialComputingSpecificAttributes",
                     "Data\u0026AI": "#/components/schemas/DataAndAI",
                     "Database": "#/components/schemas/PublicDatabaseSpecificAttributes",
+                    "DeveloperPlatform": "#/components/schemas/DeveloperPlatformSpecificAttributes",
                     "LoggingAndMonitoring": "#/components/schemas/LoggingAndMonitoringSpecificAttributes",
                     "Messaging": "#/components/schemas/MessagingSpecificAttributes",
                     "Network": "#/components/schemas/NetworkSpecificAttributes",
@@ -934,6 +970,9 @@
                   },
                   {
                     "$ref": "#/components/schemas/SupportSpecificAttributes"
+                  },
+                  {
+                    "$ref": "#/components/schemas/DeveloperPlatformSpecificAttributes"
                   }
                 ]
               }

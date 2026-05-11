@@ -178,7 +178,7 @@
           "localAs": {
             "description": "The ASN of the local STACKIT gateway.",
             "example": 65521,
-            "format": "int32",
+            "format": "int64",
             "type": "integer"
           },
           "peerUptime": {
@@ -201,7 +201,7 @@
           "remoteAs": {
             "description": "The ASN of the remote neighbor.",
             "example": 65510,
-            "format": "int32",
+            "format": "int64",
             "type": "integer"
           },
           "remoteIP": {
@@ -421,7 +421,7 @@
         ],
         "type": "object"
       },
-      "CreateVPNGatewayPayload": {
+      "CreateGatewayPayload": {
         "properties": {
           "availabilityZones": {
             "properties": {
@@ -825,7 +825,7 @@
       },
       "PrivateASN": {
         "description": "ASN for private use (reserved by IANA), both 16Bit and 32Bit ranges are valid (RFC 6996).\n",
-        "format": "int32",
+        "format": "int64",
         "maximum": 4294967294,
         "minimum": 64512,
         "type": "integer"
@@ -1050,7 +1050,7 @@
         ],
         "type": "object"
       },
-      "UpdateVPNGatewayPayload": {
+      "UpdateGatewayPayload": {
         "properties": {
           "availabilityZones": {
             "properties": {
@@ -1132,7 +1132,7 @@
     "/v1alpha1/projects/{projectId}/regions/{region}/gateways": {
       "get": {
         "description": "Retrieve a list of all VPN gateways in a project. \nFilter the results using the `label_selector` query parameter.\n",
-        "operationId": "ListVPNGateways",
+        "operationId": "ListGateways",
         "parameters": [
           {
             "in": "path",
@@ -1197,7 +1197,7 @@
       },
       "post": {
         "description": "Provision a new VPN gateway.",
-        "operationId": "CreateVPNGateway",
+        "operationId": "CreateGateway",
         "parameters": [
           {
             "in": "path",
@@ -1220,7 +1220,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateVPNGatewayPayload"
+                "$ref": "#/components/schemas/CreateGatewayPayload"
               }
             }
           },
@@ -1267,7 +1267,7 @@
     "/v1alpha1/projects/{projectId}/regions/{region}/gateways/{gatewayId}": {
       "delete": {
         "description": "Permanently remove a VPN gateway and all its associated connections.    \nThis operation is irreversible.\n",
-        "operationId": "DeleteVPNGateway",
+        "operationId": "DeleteGateway",
         "parameters": [
           {
             "in": "path",
@@ -1324,7 +1324,7 @@
       },
       "get": {
         "description": "Get details of a VPN Gateway in a project.",
-        "operationId": "GetVPNGateway",
+        "operationId": "GetGateway",
         "parameters": [
           {
             "in": "path",
@@ -1391,7 +1391,7 @@
       },
       "put": {
         "description": "Modify the configuration of an existing VPN gateway.    \nCertain changes may trigger infrastructure updates or temporary connection re-negotiations.\n",
-        "operationId": "UpdateVPNGateway",
+        "operationId": "UpdateGateway",
         "parameters": [
           {
             "in": "path",
@@ -1423,7 +1423,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateVPNGatewayPayload"
+                "$ref": "#/components/schemas/UpdateGatewayPayload"
               }
             }
           },
@@ -1931,7 +1931,7 @@
     "/v1alpha1/projects/{projectId}/regions/{region}/gateways/{gatewayId}/status": {
       "get": {
         "description": "Get the status of a VPN gateway in a project.",
-        "operationId": "GetVPNGatewayStatus",
+        "operationId": "GetGatewayStatus",
         "parameters": [
           {
             "in": "path",

@@ -27,18 +27,25 @@
         "description": "Rule represents an individual security or validation rule.",
         "properties": {
           "description": {
-            "description": "Description of the specific rule.",
-            "example": "SQL Injection Attack Detected via libinjection",
+            "description": "SQL Injection Attack Detected via libinjection",
+            "example": "ENABLED",
             "type": "string"
           },
-          "id": {
-            "description": "The unique numeric ID of the rule.",
-            "example": 942100,
-            "format": "int32",
-            "type": "integer"
+          "mode": {
+            "description": "The current mode of the rule.",
+            "enum": [
+              "MODE_UNSPECIFIED",
+              "MODE_ENABLED",
+              "MODE_DISABLED",
+              "MODE_LOG_ONLY"
+            ],
+            "example": "MODE_ENABLED",
+            "pattern": "^(MODE_ENABLED|MODE_DISABLED|MODE_LOG_ONLY)$",
+            "title": "OWASP Core Rule Set",
+            "type": "string"
           },
           "severity": {
-            "description": "The impact level of the rule trigger.",
+            "description": "Impact level.",
             "example": "CRITICAL",
             "pattern": "^(CRITICAL|ERROR|WARNING|INFO)$",
             "type": "string"
@@ -51,21 +58,20 @@
         "properties": {
           "description": {
             "description": "A description of what this group covers.",
-            "example": "Rules designed to detect and block SQL injection attempts.",
+            "example": "A description of what this group covers.",
             "type": "string"
           },
           "groupName": {
             "description": "The name for the rule group.",
-            "example": "Multipart Enforcement (MULTIPART ATTACK)",
+            "example": "SQL Injection Attack (SQLI)",
             "pattern": "^[a-zA-Z\\(\\) ]+$",
             "type": "string"
           },
           "rules": {
-            "description": "The list of individual rules contained within this group.",
-            "items": {
+            "additionalProperties": {
               "$ref": "#/components/schemas/CRSRule"
             },
-            "type": "array"
+            "type": "object"
           }
         },
         "type": "object"
@@ -91,32 +97,6 @@
             "format": "uuid",
             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
             "readOnly": true,
-            "type": "string"
-          },
-          "region": {
-            "description": "Region",
-            "example": "eu01",
-            "format": "string",
-            "pattern": "^[a-z]{2,4}[0-9]{2}$",
-            "readOnly": true,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "CreateCoreRuleSetResponse": {
-        "description": "CreateCoreRuleSetResponse returns rule configuration name and it's rules.",
-        "properties": {
-          "active": {
-            "description": "Indicates if the OWASP core rule set is active.",
-            "example": true,
-            "title": "OWASP Core Rule Set",
-            "type": "boolean"
-          },
-          "name": {
-            "description": "Core rule set configuration name.",
-            "example": "my-core-rule-set-config",
-            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
             "type": "string"
           },
           "region": {
@@ -304,10 +284,24 @@
             "type": "boolean"
           },
           "groups": {
-            "items": {
+            "additionalProperties": {
               "$ref": "#/components/schemas/CRSRuleGroup"
             },
-            "type": "array"
+            "description": "Inventory of all available Core Rule Set groups and their current configuration. The key is the unique Group ID.",
+            "example": {
+              "942": {
+                "description": "Detects common SQL injection attacks.",
+                "group_name": "SQL Injection (SQLi)",
+                "rules": {
+                  "942100": {
+                    "description": "libinjection SQLi check",
+                    "mode": "MODE_ENABLED",
+                    "severity": "CRITICAL"
+                  }
+                }
+              }
+            },
+            "type": "object"
           },
           "name": {
             "description": "Core rule set configuration name.",
@@ -506,6 +500,85 @@
         },
         "type": "object"
       },
+      "PatchCRSRule": {
+        "properties": {
+          "mode": {
+            "description": "The current mode of the rule.",
+            "enum": [
+              "MODE_UNSPECIFIED",
+              "MODE_ENABLED",
+              "MODE_DISABLED",
+              "MODE_LOG_ONLY"
+            ],
+            "example": "MODE_LOG_ONLY",
+            "pattern": "^(MODE_ENABLED|MODE_DISABLED|MODE_LOG_ONLY)$",
+            "title": "OWASP Core Rule Set",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PatchCRSRuleGroup": {
+        "properties": {
+          "rules": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PatchCRSRule"
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "PatchCoreRuleSetPayload": {
+        "description": "PatchCoreRuleSetRequest updates a rules configuration.",
+        "properties": {
+          "active": {
+            "description": "To activate the OWASP core rule set, set this boolean to true.",
+            "example": true,
+            "title": "OWASP Core Rule Set",
+            "type": "boolean"
+          },
+          "groups": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PatchCRSRuleGroup"
+            },
+            "description": "Map of Core Rule Set groups to be patched. The key is the Group ID (e.g., 942 for SQL Injection). Only provided rules within the group will be updated; others remain unchanged.",
+            "example": {
+              "942": {
+                "rules": {
+                  "942100": {
+                    "mode": "MODE_DISABLED"
+                  }
+                }
+              }
+            },
+            "type": "object"
+          },
+          "name": {
+            "description": "Core rule set configuration name.",
+            "example": "my-core-rule-set-config",
+            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
+            "type": "string"
+          },
+          "projectId": {
+            "description": "Project identifier",
+            "example": "2438ac3c-37eb-4902-adef-ed16b4431030",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "readOnly": true,
+            "type": "string"
+          },
+          "region": {
+            "description": "Region",
+            "example": "eu01",
+            "format": "string",
+            "pattern": "^[a-z]{2,4}[0-9]{2}$",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "Quotas": {
         "description": "Quotas holds the specific quota elements for different resources",
         "properties": {
@@ -544,13 +617,29 @@
         "type": "object"
       },
       "UpdateCoreRuleSetPayload": {
-        "description": "UpdateCoreRuleSetRequest updates a rules configuration, but only if it changed.",
+        "description": "UpdateCoreRuleSetRequest updates a rules configuration, but only if it changed.\n DEPRECATED use PatchCoreRuleSet",
         "properties": {
           "active": {
             "description": "To activate the OWASP core rule set, set this boolean to true.",
             "example": true,
             "title": "OWASP Core Rule Set",
             "type": "boolean"
+          },
+          "groups": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PatchCRSRuleGroup"
+            },
+            "description": "Map of Core Rule Set groups to be patched. The key is the Group ID (e.g., 942 for SQL Injection). Only provided rules within the group will be updated; others remain unchanged.",
+            "example": {
+              "942": {
+                "rules": {
+                  "942100": {
+                    "mode": "MODE_DISABLED"
+                  }
+                }
+              }
+            },
+            "type": "object"
           },
           "name": {
             "description": "Core rule set configuration name.",
@@ -578,7 +667,7 @@
         "type": "object"
       },
       "UpdateCoreRuleSetResponse": {
-        "description": "UpdateCoreRuleSetResponse returns rule configuration name and it's rules.",
+        "description": "DEPRECATED use PatchCoreRuleSet",
         "properties": {
           "active": {
             "description": "Indicates if the OWASP core rule set is active.",
@@ -897,7 +986,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateCoreRuleSetResponse"
+                  "$ref": "#/components/schemas/GetCoreRuleSetResponse"
                 }
               }
             },
@@ -1126,8 +1215,101 @@
           }
         }
       },
+      "patch": {
+        "description": "Accepts the same structure as the GET response. Only fields provided with values will be updated.",
+        "operationId": "PatchCoreRuleSet",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchCoreRuleSetPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCoreRuleSetResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "description": "Invalid fields."
+          },
+          "401": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "500": {
+            "description": "Internal error"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Granularly update a CRS configuration",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.waf.crs.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
       "put": {
-        "description": "This endpoint will update an existing core rule set (CRS) configuration and also inturn update all WAF configurations that reference it.",
+        "description": "DEPRECATED: Use PatchCoreRuleSet",
         "operationId": "UpdateCoreRuleSet",
         "parameters": [
           {

@@ -121,6 +121,39 @@
           "type": "string"
         }
       },
+      "ruleFilters": {
+        "description": "Filtering criteria for the export",
+        "explode": true,
+        "in": "query",
+        "name": "filters",
+        "schema": {
+          "properties": {
+            "direction": {
+              "type": "string"
+            },
+            "etherType": {
+              "type": "string"
+            },
+            "instanceName": {
+              "type": "string"
+            },
+            "portRange": {
+              "type": "string"
+            },
+            "product": {
+              "type": "string"
+            },
+            "protocol": {
+              "type": "string"
+            },
+            "sourceIP": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "style": "form"
+      },
       "securityGroupId": {
         "description": "The UUID of the group.",
         "in": "query",
@@ -1000,6 +1033,95 @@
         "x-stackit-authorization": {
           "actions": [
             "ufw.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{regionId}/rules/export": {
+      "get": {
+        "description": "Returns a CSV file containing the rules for a specific project",
+        "operationId": "v1beta-export-rules",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          },
+          {
+            "$ref": "#/components/parameters/regionId"
+          },
+          {
+            "$ref": "#/components/parameters/ruleFilters"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful CSV file download"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden access. You are not allowed to get rules from this project."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Project not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          }
+        },
+        "summary": "Export rules as CSV",
+        "x-stackit-authorization": {
+          "actions": [
+            "ufw.instance.list"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

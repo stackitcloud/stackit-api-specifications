@@ -29,6 +29,16 @@
           "type": "string"
         }
       },
+      "folderId": {
+        "description": "The STACKIT portal folder UUID the key ring is part of.",
+        "in": "path",
+        "name": "folderId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
       "instanceIdPath": {
         "description": "The ID of the source, similar to a project ID but for the product service instance.",
         "in": "path",
@@ -62,6 +72,16 @@
         "schema": {
           "format": "int32",
           "type": "integer"
+        }
+      },
+      "organizationId": {
+        "description": "The STACKIT portal organization UUID the key ring is part of.",
+        "in": "path",
+        "name": "organizationId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
         }
       },
       "portRange": {
@@ -242,6 +262,25 @@
       }
     },
     "schemas": {
+      "ContainerResponse": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type"
+        ],
+        "type": "object"
+      },
       "CreateRulePayload": {
         "description": "The request body for creating a new security rule.",
         "properties": {
@@ -320,6 +359,28 @@
             "type": "string"
           }
         },
+        "type": "object"
+      },
+      "ListContainersResponse": {
+        "properties": {
+          "cursor": {
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ContainerResponse"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "cursor",
+          "limit"
+        ],
         "type": "object"
       },
       "ProviderOptionsProductMeta": {
@@ -609,6 +670,212 @@
   },
   "openapi": "3.0.3",
   "paths": {
+    "/v1beta/folders/{folderId}/children": {
+      "get": {
+        "description": "Returns a list of containers for a specific folder",
+        "operationId": "v1beta-get-folder-resources",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/folderId"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/cursor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListContainersResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden access. You are not allowed to get rules from this project."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Folder not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get containers from a folder",
+        "x-stackit-authorization": {
+          "actions": [
+            "ufw.folder.list"
+          ],
+          "resource-id": "folderId",
+          "resource-id-type": "dynamic",
+          "resource-type": "folder"
+        }
+      }
+    },
+    "/v1beta/organizations/{organizationId}/children": {
+      "get": {
+        "description": "Returns a list of containers for a specific organization",
+        "operationId": "v1beta-get-organization-resources",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/organizationId"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/cursor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListContainersResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden access. You are not allowed to get containers from this folder."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Folder not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get containers from an organization",
+        "x-stackit-authorization": {
+          "actions": [
+            "ufw.organization.list"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      }
+    },
     "/v1beta/projects/{projectId}/regions/{regionId}/rules": {
       "delete": {
         "description": "Returns success",

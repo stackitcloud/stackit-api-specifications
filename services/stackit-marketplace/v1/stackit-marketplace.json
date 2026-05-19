@@ -22,6 +22,27 @@
         },
         "description": "Malformed input"
       },
+      "Conflict": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "Conflict": {
+                "value": {
+                  "error": "Conflict",
+                  "message": "Request aborted due conflict.",
+                  "path": "/path/where/error/occurred",
+                  "status": 409,
+                  "timeStamp": "2019-08-24T14:15:22Z"
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "Conflict"
+      },
       "Forbidden": {
         "content": {
           "application/json": {
@@ -146,6 +167,27 @@
         ],
         "type": "object"
       },
+      "consumers-subscriptions-createPayload": {
+        "properties": {
+          "consumerNotificationEmail": {
+            "description": "An E-Mail address the vendor can reach the consuer about subscription updates.",
+            "type": "string"
+          },
+          "productId": {
+            "description": "The user-readable ID of the product.",
+            "type": "string"
+          },
+          "sku": {
+            "description": "The concrete variant of the product.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "productId",
+          "sku"
+        ],
+        "type": "object"
+      },
       "marketplace.subscription.v1.Assets": {
         "properties": {
           "endUserLicenseAgreement": {
@@ -180,6 +222,23 @@
           "en": {
             "description": "The file version matching the file name (localized).",
             "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "marketplace.subscription.v1.ListSubscriptionsResponse": {
+        "properties": {
+          "cursor": {
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/marketplace.subscription.v1.Subscription"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "type": "integer"
           }
         },
         "type": "object"
@@ -348,6 +407,21 @@
           "vendorWebsiteUrl"
         ],
         "type": "object"
+      },
+      "marketplace.subscription.v1.SubscriptionRedirect": {
+        "properties": {
+          "redirectTarget": {
+            "type": "string"
+          },
+          "redirectUrl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "redirectTarget",
+          "redirectUrl"
+        ],
+        "type": "object"
       }
     }
   },
@@ -363,6 +437,458 @@
   },
   "openapi": "3.0.3",
   "paths": {
+    "/v1/consumers/organizations/{organizationId}/subscriptions": {
+      "get": {
+        "description": "List all subscriptions of an organization.",
+        "operationId": "consumers-subscriptions-list-by-organization",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "organizationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "productId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/marketplace.subscription.v1.ListSubscriptionsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        },
+        "summary": "List all subscriptions of an organization.",
+        "x-stackit-authorization": {
+          "actions": [
+            "marketplace.subscription.list"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      }
+    },
+    "/v1/consumers/projects/{projectId}/subscriptions": {
+      "get": {
+        "description": "List all subscriptions of an project.",
+        "operationId": "consumers-subscriptions-list-by-project",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "productId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/marketplace.subscription.v1.ListSubscriptionsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        },
+        "summary": "List all subscriptions of an project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "marketplace.subscription.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.marketplace"
+            ]
+          }
+        }
+      },
+      "post": {
+        "description": "Create a new subscription.",
+        "operationId": "consumers-subscriptions-create",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/consumers-subscriptions-createPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/marketplace.subscription.v1.Subscription"
+                }
+              }
+            },
+            "description": "Created."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        },
+        "summary": "Create a new subscription.",
+        "x-stackit-authorization": {
+          "actions": [
+            "marketplace.subscription.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.marketplace"
+            ]
+          }
+        }
+      }
+    },
+    "/v1/consumers/projects/{projectId}/subscriptions/{subscriptionId}": {
+      "delete": {
+        "description": "Cancel a subscription.",
+        "operationId": "consumers-subscriptions-cancel",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        },
+        "summary": "Cancel a subscription.",
+        "x-stackit-authorization": {
+          "actions": [
+            "marketplace.subscription.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.marketplace"
+            ]
+          }
+        }
+      },
+      "get": {
+        "description": "Get a subscription.",
+        "operationId": "consumers-subscriptions-get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/marketplace.subscription.v1.Subscription"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "Get a subscription.",
+        "x-stackit-authorization": {
+          "actions": [
+            "marketplace.subscription.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.marketplace"
+            ]
+          }
+        }
+      }
+    },
+    "/v1/consumers/projects/{projectId}/subscriptions/{subscriptionId}/redirects": {
+      "get": {
+        "description": "Get a subscription redirect.",
+        "operationId": "consumers-subscriptions-redirects-get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "redirectTarget",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/marketplace.subscription.v1.SubscriptionRedirect"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        },
+        "summary": "Get a subscription redirect.",
+        "x-stackit-authorization": {
+          "actions": [
+            "marketplace.subscription.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.marketplace"
+            ]
+          }
+        }
+      }
+    },
+    "/v1/vendors/organizations/{organizationId}/subscriptions": {
+      "get": {
+        "description": "List all subscriptions of an organization.",
+        "operationId": "vendors-subscriptions-list-by-organization",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "organizationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "productId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/marketplace.subscription.v1.ListSubscriptionsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        },
+        "summary": "List all subscriptions of an organization.",
+        "x-stackit-authorization": {
+          "actions": [
+            "marketplace.subscription.list"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      }
+    },
     "/v1/vendors/projects/{projectId}/resolve-customer": {
       "post": {
         "description": "Resolve customer.",
@@ -415,6 +941,137 @@
         "x-stackit-authorization": {
           "actions": [
             "marketplace.subscription.approve"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.marketplace"
+            ]
+          }
+        }
+      }
+    },
+    "/v1/vendors/projects/{projectId}/subscriptions": {
+      "get": {
+        "description": "List all subscriptions of an project.",
+        "operationId": "vendors-subscriptions-list-by-project",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "productId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/marketplace.subscription.v1.ListSubscriptionsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        },
+        "summary": "List all subscriptions of an project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "marketplace.subscription.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.marketplace"
+            ]
+          }
+        }
+      }
+    },
+    "/v1/vendors/projects/{projectId}/subscriptions/{subscriptionId}": {
+      "get": {
+        "description": "Get a subscription.",
+        "operationId": "vendors-subscriptions-get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/marketplace.subscription.v1.Subscription"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        },
+        "summary": "Get a subscription.",
+        "x-stackit-authorization": {
+          "actions": [
+            "marketplace.subscription.get"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

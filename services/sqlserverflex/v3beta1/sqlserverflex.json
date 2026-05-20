@@ -404,6 +404,9 @@
           "isDeletable": {
             "$ref": "#/components/schemas/instance.isDeletable"
           },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
+          },
           "name": {
             "$ref": "#/components/schemas/instance.name"
           },
@@ -1052,6 +1055,9 @@
           "flavorId": {
             "$ref": "#/components/schemas/flavor.flavorId"
           },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
+          },
           "name": {
             "$ref": "#/components/schemas/instance.name"
           },
@@ -1531,6 +1537,21 @@
         ],
         "type": "string"
       },
+      "labels": {
+        "additionalProperties": {
+          "maxLength": 63,
+          "nullable": true,
+          "pattern": "^([A-Za-z0-9]([-A-Za-z0-9_.]*[A-Za-z0-9])?)?$",
+          "type": "string"
+        },
+        "description": "A dictionary of user-defined key-value pairs used to categorize or organize the resource.\n\n**Rules for Keys:**\n* Must be between 1 and 63 characters long.\n* Must begin and end with an alphanumeric character (`[a-z0-9A-Z]`).\n* May contain dashes (`-`), underscores (`_`), and dots (`.`).\n* **Regex:** `^(?=.{1,63}$)([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$`\n* **Restriction:** The prefix `stackit-` is strictly reserved and cannot be used.\n\n**Rules for Values:**\n* Must be between 0 (empty string) and 63 characters long.\n* If not empty, must begin and end with an alphanumeric character.\n* May contain dashes (`-`), underscores (`_`), and dots (`.`).\n* **Regex:** `^(?=.{0,63}$)(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])*$`\n",
+        "example": {
+          "environment": "production",
+          "team": "backend"
+        },
+        "maxProperties": 64,
+        "type": "object"
+      },
       "protect.isDeletable": {
         "description": "Protect instance from deletion.",
         "example": true,
@@ -1745,6 +1766,9 @@
           "flavorId": {
             "$ref": "#/components/schemas/flavor.flavorId.opt"
           },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
+          },
           "name": {
             "$ref": "#/components/schemas/instance.name.opt"
           },
@@ -1782,6 +1806,9 @@
           },
           "flavorId": {
             "$ref": "#/components/schemas/flavor.flavorId"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
           },
           "name": {
             "$ref": "#/components/schemas/instance.name"

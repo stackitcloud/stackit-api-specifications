@@ -112,6 +112,14 @@
         ],
         "type": "object"
       },
+      "CreateCredentialsPayload": {
+        "properties": {
+          "parameters": {
+            "$ref": "#/components/schemas/CredentialsParameters"
+          }
+        },
+        "type": "object"
+      },
       "CreateInstancePayload": {
         "properties": {
           "instanceName": {
@@ -179,6 +187,9 @@
         "required": [
           "id"
         ],
+        "type": "object"
+      },
+      "CredentialsParameters": {
         "type": "object"
       },
       "CredentialsResponse": {
@@ -443,19 +454,29 @@
           },
           "fluentd-tls": {
             "default": 6514,
+            "deprecated": true,
+            "description": "This property is deprecated and will be removed in a future release.",
             "format": "int32",
             "type": "integer"
           },
           "fluentd-tls-ciphers": {
+            "deprecated": true,
+            "description": "This property is deprecated and will be removed in a future release.",
             "type": "string"
           },
           "fluentd-tls-max-version": {
+            "deprecated": true,
+            "description": "This property is deprecated and will be removed in a future release.",
             "type": "string"
           },
           "fluentd-tls-min-version": {
+            "deprecated": true,
+            "description": "This property is deprecated and will be removed in a future release.",
             "type": "string"
           },
           "fluentd-tls-version": {
+            "deprecated": true,
+            "description": "This property is deprecated and will be removed in a future release.",
             "type": "string"
           },
           "fluentd-udp": {
@@ -529,6 +550,8 @@
             "type": "string"
           },
           "opensearch-tls-ciphers": {
+            "deprecated": true,
+            "description": "This property is deprecated and will be removed in a future release.",
             "items": {
               "enum": [
                 "TLSv1.2",
@@ -539,6 +562,8 @@
             "type": "array"
           },
           "opensearch-tls-protocols": {
+            "deprecated": true,
+            "description": "This property is deprecated and will be removed in a future release.",
             "items": {
               "type": "string"
             },
@@ -827,7 +852,7 @@
     "description": "The STACKIT LogMe API provides endpoints to list service offerings, manage service instances and service credentials within STACKIT portal projects.",
     "termsOfService": "https://www.stackit.de/en/general-terms-and-conditions/terms-of-use/",
     "title": "STACKIT LogMe API",
-    "version": "1.1.0"
+    "version": "1.2.0"
   },
   "openapi": "3.0.3",
   "paths": {
@@ -1342,6 +1367,16 @@
             "$ref": "#/components/parameters/instanceId"
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCredentialsPayload"
+              }
+            }
+          },
+          "description": "Parameters for requested credentials"
+        },
         "responses": {
           "200": {
             "content": {

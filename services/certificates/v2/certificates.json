@@ -1,6 +1,28 @@
 {
   "components": {
     "schemas": {
+      "CertificateUsageItem": {
+        "properties": {
+          "listenerNames": {
+            "description": "A list of listener names on this Load Balancer that are using the certificate.",
+            "example": [
+              "https-443",
+              "api-8443",
+              "legacy-tls"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "loadBalancerName": {
+            "description": "The display name of the Load Balancer.",
+            "example": "edge-lb-production",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "CertificatesQuota": {
         "description": "Certificates quotas holds the limits and usage for certificates resources",
         "properties": {
@@ -74,6 +96,88 @@
         },
         "type": "object"
       },
+      "Data": {
+        "properties": {
+          "dnsNames": {
+            "description": "Comma-separated list of all domains and IP addresses the certificate is valid for (Subject Alternative Names).",
+            "example": "example.com,*.example.com,192.168.1.1",
+            "type": "string"
+          },
+          "extendedKeyUsage": {
+            "description": "Comma-separated list of purposes the cert is valid for. 'Server Auth' is required for Load Balancer use.",
+            "example": "Server Auth,Client Auth",
+            "type": "string"
+          },
+          "fingerprintSha1": {
+            "description": "The legacy SHA1 thumbprint. Provided for cross-referencing with older systems and browsers.",
+            "example": "7a1b42c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4",
+            "pattern": "^[a-fA-F0-9]{40}$",
+            "type": "string"
+          },
+          "fingerprintSha256": {
+            "description": "The unique SHA256 hash of the raw certificate bytes. Use this as the primary unique identifier.",
+            "example": "3e0a9ef962b07c2e24d321c075ebb88c261bae231f9ba34d6ffb003619f9645c",
+            "pattern": "^[a-fA-F0-9]{64}$",
+            "type": "string"
+          },
+          "isCa": {
+            "description": "Indicates if the certificate is a Certificate Authority, meaning it can sign other certificates.",
+            "example": false,
+            "type": "boolean"
+          },
+          "isSelfSigned": {
+            "description": "Indicates if the certificate was signed by its own private key rather than a trusted third-party CA.",
+            "example": false,
+            "type": "boolean"
+          },
+          "issuerCn": {
+            "description": "The Common Name of the Certificate Authority (CA) that signed and issued the certificate.",
+            "example": "Let's Encrypt Authority X3",
+            "type": "string"
+          },
+          "keyStrength": {
+            "description": "Human-readable summary of the public key's algorithm and bit-length or curve name.",
+            "example": "RSA-2048",
+            "type": "string"
+          },
+          "notAfter": {
+            "description": "The expiration timestamp. After this date, browsers will show security warnings (RFC3339 format).",
+            "example": "2026-12-31T23:59:59Z",
+            "type": "string"
+          },
+          "notBefore": {
+            "description": "The timestamp indicating when the certificate starts being valid (RFC3339 format).",
+            "example": "2026-01-01T00:00:00Z",
+            "type": "string"
+          },
+          "organization": {
+            "description": "Organization name associated with the certificate subject.",
+            "example": "Acme Corp International",
+            "type": "string"
+          },
+          "publicKeyAlgorithm": {
+            "description": "The cryptographic algorithm used to generate the public/private key pair.",
+            "example": "RSA",
+            "type": "string"
+          },
+          "serialNumber": {
+            "description": "The unique serial number assigned by the CA, represented in uppercase hexadecimal format.",
+            "example": "5FDE32AB10C44598",
+            "type": "string"
+          },
+          "signatureAlgorithm": {
+            "description": "The algorithm used by the CA to sign this certificate.",
+            "example": "SHA256-RSA",
+            "type": "string"
+          },
+          "subjectCn": {
+            "description": "The primary identity of the certificate. Fallback sequence: Common Name -\u003e First DNS Name -\u003e Full Subject String.",
+            "example": "www.example.com",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "DeleteCertificateResponse": {
         "description": "DeleteCertificateResponse returns has empty body if successful.",
         "type": "object"
@@ -81,6 +185,9 @@
       "GetCertificateResponse": {
         "description": "GetCertificateResponse returns name, id and public key",
         "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Data"
+          },
           "id": {
             "description": "The certificates resource id",
             "example": "my-tls-certificate-v1-123456",
@@ -101,7 +208,7 @@
             "type": "object"
           },
           "name": {
-            "description": "TLS certificate name",
+            "description": "Certificate display name",
             "example": "my-tls-certificate",
             "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,251}[0-9a-z])?$",
             "type": "string"
@@ -115,6 +222,9 @@
             "description": "Region of the LoadBalancer",
             "example": "eu01",
             "type": "string"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/Usage"
           }
         },
         "type": "object"
@@ -200,6 +310,23 @@
           "message": {
             "description": "A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.",
             "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Usage": {
+        "properties": {
+          "count": {
+            "description": "Number of Load Balancers using this certificate.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "items": {
+            "description": "List of Load Balancers with their associated listeners that use this certificate.",
+            "items": {
+              "$ref": "#/components/schemas/CertificateUsageItem"
+            },
+            "type": "array"
           }
         },
         "type": "object"

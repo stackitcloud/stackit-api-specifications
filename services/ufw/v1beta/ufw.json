@@ -670,6 +670,101 @@
   },
   "openapi": "3.0.3",
   "paths": {
+    "/v1beta/folder/{folderId}/regions/{regionId}/rules/export": {
+      "get": {
+        "description": "Returns a CSV file containing the rules for a specific folder",
+        "operationId": "v1beta-export-folder-rules",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/folderId"
+          },
+          {
+            "$ref": "#/components/parameters/regionId"
+          },
+          {
+            "$ref": "#/components/parameters/ruleFilters"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful CSV file download"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden access. You are not allowed to get rules from this folder."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Project not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Export rules for folder as CSV",
+        "x-stackit-authorization": {
+          "actions": [
+            "ufw.instance.list",
+            "ufw.folder.list"
+          ],
+          "resource-id": "folderId",
+          "resource-id-type": "dynamic",
+          "resource-type": "folder"
+        }
+      }
+    },
     "/v1beta/folders/{folderId}/children": {
       "get": {
         "description": "Returns a list of containers for a specific folder",

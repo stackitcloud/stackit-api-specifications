@@ -1,10 +1,10 @@
 {
   "components": {
     "parameters": {
-      "accessIdId": {
+      "accessTokenId": {
         "description": "The Access Token UUID.",
         "in": "path",
-        "name": "accessIdId",
+        "name": "accessTokenId",
         "required": true,
         "schema": {
           "format": "uuid",
@@ -30,15 +30,6 @@
           "type": "boolean"
         }
       },
-      "pageId": {
-        "description": "A token to retrieve the next page of results.",
-        "in": "query",
-        "name": "pageId",
-        "schema": {
-          "maxLength": 1024,
-          "type": "string"
-        }
-      },
       "pageSize": {
         "description": "Maximum number of items to return",
         "in": "query",
@@ -49,6 +40,15 @@
           "maximum": 100,
           "minimum": 1,
           "type": "integer"
+        }
+      },
+      "pageToken": {
+        "description": "A token to retrieve the next page of results.",
+        "in": "query",
+        "name": "pageToken",
+        "schema": {
+          "maxLength": 1024,
+          "type": "string"
         }
       },
       "projectId": {
@@ -704,7 +704,7 @@
         "operationId": "list-telemetry-routers",
         "parameters": [
           {
-            "$ref": "#/components/parameters/pageId"
+            "$ref": "#/components/parameters/pageToken"
           },
           {
             "$ref": "#/components/parameters/pageSize"
@@ -936,7 +936,7 @@
         "operationId": "list-access-tokens",
         "parameters": [
           {
-            "$ref": "#/components/parameters/pageId"
+            "$ref": "#/components/parameters/pageToken"
           },
           {
             "$ref": "#/components/parameters/pageSize"
@@ -1039,7 +1039,7 @@
         }
       }
     },
-    "/v1/projects/{projectId}/regions/{regionId}/telemetry-routers/{telemetryRouterId}/access-tokens/{accessIdId}": {
+    "/v1/projects/{projectId}/regions/{regionId}/telemetry-routers/{telemetryRouterId}/access-tokens/{accessTokenId}": {
       "delete": {
         "description": "Delete an access token for the given Telemetry Router by its ID.",
         "operationId": "delete-access-token",
@@ -1122,7 +1122,7 @@
           "$ref": "#/components/parameters/telemetryRouterId"
         },
         {
-          "$ref": "#/components/parameters/accessIdId"
+          "$ref": "#/components/parameters/accessTokenId"
         }
       ],
       "put": {
@@ -1181,7 +1181,7 @@
         "operationId": "list-destinations",
         "parameters": [
           {
-            "$ref": "#/components/parameters/pageId"
+            "$ref": "#/components/parameters/pageToken"
           },
           {
             "$ref": "#/components/parameters/pageSize"

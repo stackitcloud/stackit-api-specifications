@@ -80,6 +80,7 @@
       },
       "RegionParam": {
         "description": "The region to retrieve the data in",
+        "explode": false,
         "in": "query",
         "name": "region",
         "schema": {
@@ -380,7 +381,7 @@
       },
       "MarketingAdvantage": {
         "properties": {
-          "advantage": {
+          "name": {
             "description": "Name of the advantage",
             "example": "API Explorer",
             "type": "string",
@@ -398,17 +399,11 @@
       },
       "MarketingApplication": {
         "properties": {
-          "application": {
+          "description": {
             "description": "Description of the application",
             "example": "API Explorer",
             "type": "string",
             "x-order": 2
-          },
-          "applicationTitle": {
-            "description": "Title of the application",
-            "example": "API Explorer",
-            "type": "string",
-            "x-order": 1
           },
           "position": {
             "description": "Position of the application",
@@ -416,13 +411,19 @@
             "format": "int64",
             "type": "integer",
             "x-order": 3
+          },
+          "title": {
+            "description": "Title of the application",
+            "example": "API Explorer",
+            "type": "string",
+            "x-order": 1
           }
         },
         "type": "object"
       },
       "MarketingFunction": {
         "properties": {
-          "function": {
+          "name": {
             "description": "Name of the function",
             "example": "API Explorer",
             "type": "string",
@@ -489,15 +490,15 @@
           "roundedValue": {
             "description": "Used in Portal rounded to the minimal usable precision 2 digits after 0",
             "example": "0.00012345 -\u003e 0.0012, 1,234556 -\u003e 1,23",
-            "format": "decimal",
-            "type": "string",
+            "format": "double",
+            "type": "number",
             "x-order": 2
           },
           "value": {
             "description": "Price value that is valid at request time, shown with full precision with 11 decimals",
             "example": "0.0012345678911",
-            "format": "decimal",
-            "type": "string",
+            "format": "double",
+            "type": "number",
             "x-order": 1
           },
           "valueAsInt": {
@@ -660,6 +661,13 @@
       },
       "PublicComputeEngineGPUSpecificAttributes": {
         "properties": {
+          "cpuOverprovisioning": {
+            "description": "CPU overprovisioning",
+            "example": false,
+            "nullable": true,
+            "type": "boolean",
+            "x-order": 15
+          },
           "discriminator": {
             "type": "string"
           },
@@ -709,6 +717,13 @@
       },
       "PublicComputeEngineSpecificAttributes": {
         "properties": {
+          "cpuOverprovisioning": {
+            "description": "CPU overprovisioning",
+            "example": false,
+            "nullable": true,
+            "type": "boolean",
+            "x-order": 15
+          },
           "discriminator": {
             "type": "string"
           },
@@ -723,6 +738,20 @@
             "example": "Intel",
             "nullable": true,
             "type": "string"
+          },
+          "licenseName": {
+            "description": "Name of license",
+            "example": "confidential-kubernetes",
+            "nullable": true,
+            "type": "string",
+            "x-order": 13
+          },
+          "metric": {
+            "description": "Metric of service",
+            "example": "CPU",
+            "nullable": true,
+            "type": "string",
+            "x-order": 14
           },
           "metro": {
             "description": "metro",
@@ -742,6 +771,29 @@
             "format": "float",
             "nullable": true,
             "type": "number"
+          },
+          "rateType": {
+            "description": "Rate type of service",
+            "example": "flat",
+            "nullable": true,
+            "type": "string",
+            "x-order": 16
+          },
+          "tierMaxValue": {
+            "description": "Tier max value",
+            "example": 10,
+            "format": "int64",
+            "nullable": true,
+            "type": "integer",
+            "x-order": 20
+          },
+          "tierMinValue": {
+            "description": "Tier min value",
+            "example": 1,
+            "format": "int64",
+            "nullable": true,
+            "type": "integer",
+            "x-order": 19
           },
           "vCPU": {
             "description": "Number of vCPU",
@@ -758,6 +810,13 @@
       },
       "PublicConfidentialComputingSpecificAttributes": {
         "properties": {
+          "cpuOverprovisioning": {
+            "description": "CPU overprovisioning",
+            "example": false,
+            "nullable": true,
+            "type": "boolean",
+            "x-order": 15
+          },
           "discriminator": {
             "type": "string"
           },
@@ -772,6 +831,20 @@
             "example": "Intel",
             "nullable": true,
             "type": "string"
+          },
+          "licenseName": {
+            "description": "Name of license",
+            "example": "confidential-kubernetes",
+            "nullable": true,
+            "type": "string",
+            "x-order": 13
+          },
+          "metric": {
+            "description": "Metric of service",
+            "example": "CPU",
+            "nullable": true,
+            "type": "string",
+            "x-order": 14
           },
           "metro": {
             "description": "metro",
@@ -791,6 +864,29 @@
             "format": "float",
             "nullable": true,
             "type": "number"
+          },
+          "rateType": {
+            "description": "Rate type of service",
+            "example": "flat",
+            "nullable": true,
+            "type": "string",
+            "x-order": 16
+          },
+          "tierMaxValue": {
+            "description": "Tier max value",
+            "example": 10,
+            "format": "int64",
+            "nullable": true,
+            "type": "integer",
+            "x-order": 20
+          },
+          "tierMinValue": {
+            "description": "Tier min value",
+            "example": 1,
+            "format": "int64",
+            "nullable": true,
+            "type": "integer",
+            "x-order": 19
           },
           "vCPU": {
             "description": "Number of vCPU",
@@ -1549,13 +1645,6 @@
           "category": {
             "$ref": "#/components/schemas/Category"
           },
-          "cpuOverprovisioning": {
-            "description": "CPU overprovisioning",
-            "example": false,
-            "nullable": true,
-            "type": "boolean",
-            "x-order": 15
-          },
           "deprecated": {
             "description": "Attribute that indicates if product is deprecated or not.",
             "example": true,
@@ -1592,26 +1681,12 @@
             "type": "string",
             "x-order": 2
           },
-          "licenseName": {
-            "description": "Name of license",
-            "example": "confidential-kubernetes",
-            "nullable": true,
-            "type": "string",
-            "x-order": 13
-          },
           "maturityModelState": {
             "description": "State of the SKU following the mandatory product‘s maturity model progress (e.g. `beta`, `ga`)",
             "example": "beta",
             "nullable": true,
             "type": "string",
             "x-order": 8
-          },
-          "metric": {
-            "description": "Metric of service",
-            "example": "CPU",
-            "nullable": true,
-            "type": "string",
-            "x-order": 14
           },
           "name": {
             "description": "How the line item will appear on the bill",
@@ -1629,13 +1704,6 @@
           },
           "product": {
             "$ref": "#/components/schemas/Product"
-          },
-          "rateType": {
-            "description": "Rate type of service",
-            "example": "flat",
-            "nullable": true,
-            "type": "string",
-            "x-order": 16
           },
           "region": {
             "description": "Region of sku",
@@ -1657,22 +1725,6 @@
             "nullable": true,
             "type": "string",
             "x-order": 11
-          },
-          "tierMaxValue": {
-            "description": "Tier max value",
-            "example": 10,
-            "format": "int64",
-            "nullable": true,
-            "type": "integer",
-            "x-order": 20
-          },
-          "tierMinValue": {
-            "description": "Tier min value",
-            "example": 1,
-            "format": "int64",
-            "nullable": true,
-            "type": "integer",
-            "x-order": 19
           },
           "title": {
             "description": "Service name",

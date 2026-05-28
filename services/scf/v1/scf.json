@@ -260,17 +260,6 @@
         ],
         "type": "object"
       },
-      "OrgRoleCreateBffRequest": {
-        "properties": {
-          "type": {
-            "$ref": "#/components/schemas/OrgRoleType"
-          }
-        },
-        "required": [
-          "type"
-        ],
-        "type": "object"
-      },
       "OrgRoleResponse": {
         "properties": {
           "guid": {
@@ -323,7 +312,7 @@
           "createdAt": {
             "example": "2024-10-28T07:07:54.52Z",
             "format": "date-time",
-            "title": "The time with zone when the space was created.",
+            "title": "The time with zone when the organization was created.",
             "type": "string"
           },
           "guid": {
@@ -357,7 +346,7 @@
           "updatedAt": {
             "example": "2024-10-28T07:07:54.53Z",
             "format": "date-time",
-            "title": "The time with zone when the space was last updated.",
+            "title": "The time with zone when the organization was last updated.",
             "type": "string"
           }
         },
@@ -372,24 +361,6 @@
           "updatedAt",
           "quotaId",
           "suspended"
-        ],
-        "type": "object"
-      },
-      "OrganizationCreateBffResponse": {
-        "properties": {
-          "org": {
-            "$ref": "#/components/schemas/OrganizationCreateResponse"
-          },
-          "roles": {
-            "additionalProperties": {
-              "$ref": "#/components/schemas/OrgRoleResponse"
-            },
-            "type": "object"
-          }
-        },
-        "required": [
-          "org",
-          "roles"
         ],
         "type": "object"
       },
@@ -590,6 +561,11 @@
         "title": "pagination details",
         "type": "object"
       },
+      "PlatformDisplayName": {
+        "example": "Shared Cloud Foundry (public)",
+        "title": "The name of the platform.",
+        "type": "string"
+      },
       "PlatformId": {
         "example": "00000000-0000-0000-0000-000000000000",
         "format": "uuid",
@@ -629,9 +605,7 @@
             "type": "string"
           },
           "displayName": {
-            "example": "SIT Dedicated",
-            "title": "Type of the platform can be displayed by STACKIT Portal.",
-            "type": "string"
+            "$ref": "#/components/schemas/PlatformDisplayName"
           },
           "guid": {
             "$ref": "#/components/schemas/PlatformId"
@@ -924,24 +898,6 @@
         ],
         "type": "object"
       },
-      "SpaceCreatedBffResponse": {
-        "properties": {
-          "orgRole": {
-            "$ref": "#/components/schemas/OrgRoleResponse"
-          },
-          "space": {
-            "$ref": "#/components/schemas/Space"
-          },
-          "spaceRole": {
-            "$ref": "#/components/schemas/SpaceRoleCreateResponse"
-          }
-        },
-        "required": [
-          "space",
-          "spaceRole"
-        ],
-        "type": "object"
-      },
       "SpaceDeleteResponse": {
         "properties": {
           "message": {
@@ -969,31 +925,6 @@
         "maxLength": 255,
         "minLength": 1,
         "type": "string"
-      },
-      "SpaceRoleCreateBffRequest": {
-        "properties": {
-          "type": {
-            "$ref": "#/components/schemas/SpaceRoleType"
-          }
-        },
-        "required": [
-          "type"
-        ],
-        "type": "object"
-      },
-      "SpaceRoleCreateBffResponse": {
-        "properties": {
-          "orgRole": {
-            "$ref": "#/components/schemas/OrgRoleResponse"
-          },
-          "spaceRole": {
-            "$ref": "#/components/schemas/SpaceRoleCreateResponse"
-          }
-        },
-        "required": [
-          "spaceRole"
-        ],
-        "type": "object"
       },
       "SpaceRoleCreateResponse": {
         "properties": {

@@ -1889,7 +1889,7 @@
     }
   },
   "info": {
-    "description": "API used to create and manage your CDN distributions.",
+    "description": "**DEPRECATED:** This API version (1beta2.0.0) is deprecated. Please migrate to the version (v1). API used to create and manage your CDN distributions.",
     "title": "STACKIT CDN API",
     "version": "1beta2.0.0"
   },
@@ -1897,6 +1897,7 @@
   "paths": {
     "/v1beta2/projects/{projectId}/distributions": {
       "get": {
+        "deprecated": true,
         "description": "ListDistributions returns a list of all CDN distributions associated with\na given project, ordered by their distribution Id.\n",
         "operationId": "ListDistributions",
         "parameters": [
@@ -2188,6 +2189,7 @@
         }
       },
       "post": {
+        "deprecated": true,
         "description": "CreateDistribution will create a new CDN distribution",
         "operationId": "CreateDistribution",
         "parameters": [
@@ -2385,6 +2387,7 @@
     },
     "/v1beta2/projects/{projectId}/distributions/{distributionId}": {
       "delete": {
+        "deprecated": true,
         "description": "DeleteDistribution accepts a project- and distribution-Id and will delete a distribution.\n",
         "operationId": "DeleteDistribution",
         "parameters": [
@@ -2516,6 +2519,7 @@
         }
       },
       "get": {
+        "deprecated": true,
         "description": "This returns a specific distribution by its Id. If no distribution with the given Id exists the endpoint returns 404. Trying to get a deleted distributions also return 404.",
         "operationId": "GetDistribution",
         "parameters": [
@@ -2756,6 +2760,7 @@
         }
       },
       "patch": {
+        "deprecated": true,
         "description": "Modify a CDN distribution with a partial update. Only the fields specified in the request will be modified.",
         "operationId": "PatchDistribution",
         "parameters": [
@@ -2941,6 +2946,7 @@
     },
     "/v1beta2/projects/{projectId}/distributions/{distributionId}/cache": {
       "get": {
+        "deprecated": true,
         "description": "Return caching info metadata, which contains the last cache purging time and a history of the most recent *full* purges.\n\nIf (and only if) you provide the path query parameter, the history will also contain granular cache purges.\nThe request will not fail if no data about a path is found.\n",
         "operationId": "GetCacheInfo",
         "parameters": [
@@ -3056,6 +3062,7 @@
     },
     "/v1beta2/projects/{projectId}/distributions/{distributionId}/cache/paths": {
       "get": {
+        "deprecated": true,
         "description": "This returns paths that are present in the cache purging history.\nOnly substrings of the provided input are returned.\nThe response is sorted in descending order by the most recent purge.\n\nSo, assuming you have have the following purged for a distribution\n- `/test/1` at `2025-01-01`\n- `/test/2` at `2025-01-02`\n- `/someOtherPath/1` at `2025-01-03`\n- `/test/1` at `2025-01-04`\n- `/test/3` at `2025-01-05`,\nthis would return the following paths, in the following order, assuming `/te` was the search parameter:\n- `/test/3`\n- `/test/1`\n- `/test/2`\n",
         "operationId": "FindCachePaths",
         "parameters": [
@@ -3173,6 +3180,7 @@
     },
     "/v1beta2/projects/{projectId}/distributions/{distributionId}/cache/purge": {
       "post": {
+        "deprecated": true,
         "description": "Clear the cache for this distribution.\nAll content, regardless of its staleness, will get refetched from the host.\n",
         "operationId": "PurgeCache",
         "parameters": [
@@ -3287,6 +3295,7 @@
     },
     "/v1beta2/projects/{projectId}/distributions/{distributionId}/customDomains/{domain}": {
       "delete": {
+        "deprecated": true,
         "description": "Removes a custom domain\n",
         "operationId": "DeleteCustomDomain",
         "parameters": [
@@ -3395,6 +3404,7 @@
         }
       },
       "get": {
+        "deprecated": true,
         "description": "Returns a 200 and the custom domain if this custom domain was associated to this distribution, else 404\n",
         "operationId": "GetCustomDomain",
         "parameters": [
@@ -3514,6 +3524,7 @@
         }
       },
       "put": {
+        "deprecated": true,
         "description": "Creates a new custom domain. If it already exists, this will overwrite the previous custom domain's properties.\n",
         "operationId": "PutCustomDomain",
         "parameters": [
@@ -3635,6 +3646,7 @@
     },
     "/v1beta2/projects/{projectId}/distributions/{distributionId}/logs": {
       "get": {
+        "deprecated": true,
         "operationId": "GetLogs",
         "parameters": [
           {
@@ -3836,6 +3848,7 @@
     },
     "/v1beta2/projects/{projectId}/distributions/{distributionId}/logs/searchFilters": {
       "get": {
+        "deprecated": true,
         "operationId": "GetLogsSearchFilters",
         "parameters": [
           {
@@ -3941,6 +3954,7 @@
     },
     "/v1beta2/projects/{projectId}/distributions/{distributionId}/statistics": {
       "get": {
+        "deprecated": true,
         "description": "Returns the statistics of the distribution in the given\ntime range. The response is a list of statistics records. Each record aggregates the statistics for its time interval.\nIn case no statistics for a time interval exist, no record is returned.\nThe time range for which statistics should be returned can be configured using query parameters.\n\nTimestamps are assumed to be UTC. This is especially important for the \"buckets\" when you, for example, return daily information. A day always starts and ends at 00:00Z.\n\n**Important Note:** Lower bounds are inclusive, upper bounds are exclusive. If you, for example, want a daily grouped which starts on the 1st Jan and also contains the full 10th Jan day, you would define `2025-01-01T00:00:00Z` as the lower and `2025-01-11T00:00:00Z` as the upper bound.\n\nThe upper bound is optional. If you omit it, the API will use the start of the next interval as the upper bound.\nExample: if `interval` is `hourly`, `from` would default to the start of the next hour, if it's `daily`, `from` would default to the start of the next day, etc.\n",
         "operationId": "GetStatistics",
         "parameters": [
@@ -4172,6 +4186,7 @@
     },
     "/v1beta2/projects/{projectId}/waf/collections": {
       "get": {
+        "deprecated": true,
         "description": "Returns all WAF rule collections available to the project",
         "operationId": "ListWafCollections",
         "parameters": [

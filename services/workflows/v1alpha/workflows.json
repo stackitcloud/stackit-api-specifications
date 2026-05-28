@@ -1,0 +1,2315 @@
+{
+  "components": {
+    "parameters": {
+      "bundleName": {
+        "description": "The unique name of the DAG bundle. Must be a valid DNS label (lowercase alphanumeric and hyphens, max 63 characters).\n",
+        "in": "path",
+        "name": "bundleName",
+        "required": true,
+        "schema": {
+          "maxLength": 63,
+          "pattern": "^[a-z][a-z0-9-]{0,62}$",
+          "type": "string"
+        }
+      },
+      "instanceId": {
+        "description": "The STACKIT Workflows instance UUID.",
+        "in": "path",
+        "name": "instanceId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "projectId": {
+        "description": "The STACKIT portal project UUID the STACKIT Workflows instance is part of.",
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "regionId": {
+        "description": "The STACKIT region the STACKIT Workflows instance is part of.",
+        "in": "path",
+        "name": "regionId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "schemas": {
+      "BasicAuth": {
+        "properties": {
+          "password": {
+            "description": "The password or token",
+            "type": "string"
+          },
+          "type": {
+            "description": "Type of authentication",
+            "type": "string"
+          },
+          "username": {
+            "description": "The username",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "BasicAuthResponse": {
+        "description": "Basic authentication as returned in API responses. The password field is always masked (\"**********\") and never contains the real value.\n",
+        "properties": {
+          "password": {
+            "description": "Always returned as \"**********\". The actual password is never exposed in API responses.\n",
+            "type": "string",
+            "writeOnly": true
+          },
+          "type": {
+            "description": "Type of authentication",
+            "type": "string"
+          },
+          "username": {
+            "description": "The username",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CreateDagBundleConfig": {
+        "description": "A DAG bundle configuration for instance creation (same shape as DagBundle).\n",
+        "discriminator": {
+          "mapping": {
+            "git": "#/components/schemas/GitDagBundle",
+            "s3": "#/components/schemas/S3DagBundle"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/GitDagBundle"
+          },
+          {
+            "$ref": "#/components/schemas/S3DagBundle"
+          }
+        ],
+        "type": "object"
+      },
+      "DagBundle": {
+        "description": "A DAG bundle configuration. Discriminated by the \"type\" field. Supported types are \"git\" and \"s3\".\n",
+        "discriminator": {
+          "mapping": {
+            "git": "#/components/schemas/GitDagBundle",
+            "s3": "#/components/schemas/S3DagBundle"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/GitDagBundle"
+          },
+          {
+            "$ref": "#/components/schemas/S3DagBundle"
+          }
+        ],
+        "type": "object"
+      },
+      "DagBundleResponse": {
+        "description": "A DAG bundle as returned by the API. Auth structure (type, username) is included but credentials (passwords, secret keys) are masked. Discriminated by the \"type\" field.\n",
+        "discriminator": {
+          "mapping": {
+            "git": "#/components/schemas/GitDagBundleResponse",
+            "s3": "#/components/schemas/S3DagBundleResponse"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/GitDagBundleResponse"
+          },
+          {
+            "$ref": "#/components/schemas/S3DagBundleResponse"
+          }
+        ],
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "example": {
+          "code": 404,
+          "fields": {
+            "database": "workflows"
+          },
+          "message": "instance not found"
+        },
+        "properties": {
+          "code": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "fields": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": "object"
+          },
+          "message": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message",
+          "type",
+          "code"
+        ],
+        "type": "object"
+      },
+      "GitAuth": {
+        "description": "Authentication for Git repositories",
+        "discriminator": {
+          "mapping": {
+            "basic": "#/components/schemas/BasicAuth",
+            "none": "#/components/schemas/NoAuth"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/BasicAuth"
+          },
+          {
+            "$ref": "#/components/schemas/NoAuth"
+          }
+        ],
+        "type": "object"
+      },
+      "GitAuthResponse": {
+        "description": "Authentication configuration as returned in API responses. Credentials (passwords) are always masked and never returned in plain text.\n",
+        "discriminator": {
+          "mapping": {
+            "basic": "#/components/schemas/BasicAuthResponse",
+            "none": "#/components/schemas/NoAuth"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/BasicAuthResponse"
+          },
+          {
+            "$ref": "#/components/schemas/NoAuth"
+          }
+        ],
+        "type": "object"
+      },
+      "GitDagBundle": {
+        "description": "A Git-based DAG bundle. Maps to airflow.providers.git.bundles.git.GitDagBundle.\n",
+        "example": {
+          "auth": {
+            "password": "ghp_xxxxxxxxxxxx",
+            "type": "basic",
+            "username": "github_pat"
+          },
+          "branch": "main",
+          "name": "my-dags",
+          "subdir": "dags/production",
+          "type": "git",
+          "url": "https://github.com/org/airflow-dags.git"
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/GitAuth"
+          },
+          "branch": {
+            "description": "The branch, tag or ref to track.",
+            "type": "string"
+          },
+          "name": {
+            "description": "Unique name for this bundle within the instance. Must be a valid DNS label (lowercase alphanumeric and hyphens, starting with a letter, max 63 characters).\n",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9-]{0,62}$",
+            "type": "string"
+          },
+          "refreshInterval": {
+            "description": "How often (in seconds) to check for new commits. Defaults to 60.",
+            "minimum": 10,
+            "type": "integer"
+          },
+          "subdir": {
+            "description": "Subdirectory within the repository containing DAG files. Defaults to root. Leading and trailing slashes are stripped automatically — the following four forms are all equivalent and stored as `dags/production`: `/dags/production/`, `dags/production/`, `/dags/production`, `dags/production`.\n",
+            "example": "dags/production",
+            "type": "string"
+          },
+          "type": {
+            "description": "Bundle type identifier.",
+            "enum": [
+              "git"
+            ],
+            "type": "string"
+          },
+          "url": {
+            "description": "The URL of the Git repository.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "url",
+          "branch",
+          "auth"
+        ],
+        "type": "object"
+      },
+      "GitDagBundleResponse": {
+        "description": "A Git-based DAG bundle as returned by the API. The auth structure (type, username) is included; passwords are masked.\n",
+        "example": {
+          "auth": {
+            "password": "**********",
+            "type": "basic",
+            "username": "github_pat"
+          },
+          "branch": "main",
+          "name": "my-dags",
+          "subdir": "dags/production",
+          "type": "git",
+          "url": "https://github.com/org/airflow-dags.git"
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/GitAuthResponse"
+          },
+          "branch": {
+            "description": "The branch, tag or ref being tracked.",
+            "type": "string"
+          },
+          "name": {
+            "description": "Unique name for this bundle within the instance.",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9-]{0,62}$",
+            "type": "string"
+          },
+          "refreshInterval": {
+            "description": "How often (in seconds) to check for new commits.",
+            "minimum": 10,
+            "type": "integer"
+          },
+          "subdir": {
+            "description": "Subdirectory within the repository containing DAG files. Leading and trailing slashes are stripped automatically. Absent when set to root.\n",
+            "type": "string"
+          },
+          "type": {
+            "description": "Bundle type identifier.",
+            "enum": [
+              "git"
+            ],
+            "type": "string"
+          },
+          "url": {
+            "description": "The URL of the Git repository.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "url",
+          "branch",
+          "auth"
+        ],
+        "type": "object"
+      },
+      "GitRepository": {
+        "example": {
+          "auth": {
+            "password": "123456",
+            "type": "basic",
+            "username": "github_pat"
+          },
+          "url": "https://git.example.com/workflows-dags"
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/GitAuth"
+          },
+          "branch": {
+            "description": "The branch in the repository to use",
+            "type": "string"
+          },
+          "url": {
+            "description": "The URL of the Git repository.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "auth",
+          "branch"
+        ]
+      },
+      "IdentityProvider": {
+        "description": "Configuration for the identity provider used.",
+        "discriminator": {
+          "mapping": {
+            "oauth2": "#/components/schemas/OAuth2IdentityProvider",
+            "stackit": "#/components/schemas/StackITIdentityProvider"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/StackITIdentityProvider"
+          },
+          {
+            "$ref": "#/components/schemas/OAuth2IdentityProvider"
+          }
+        ],
+        "type": "object"
+      },
+      "Instance": {
+        "properties": {
+          "createdAt": {
+            "description": "The date and time the creation of the STACKIT Workflows instance was triggered.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "dagBundles": {
+            "description": "All configured DAG bundles. This is the canonical source of truth for DAG sources. Available for Airflow 3 instances.\n",
+            "items": {
+              "$ref": "#/components/schemas/DagBundle"
+            },
+            "type": "array"
+          },
+          "dagsRepository": {
+            "$ref": "#/components/schemas/GitRepository"
+          },
+          "description": {
+            "description": "A user chosen description to distinguish multiple STACKIT Workflows instances.",
+            "maxLength": 256,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The displayed name of the STACKIT Workflows instance.",
+            "maxLength": 25,
+            "type": "string"
+          },
+          "endpoints": {
+            "$ref": "#/components/schemas/endpoints"
+          },
+          "id": {
+            "description": "A auto generated unique id which identifies the STACKIT Workflows instance.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "identityProvider": {
+            "$ref": "#/components/schemas/IdentityProvider"
+          },
+          "network": {
+            "$ref": "#/components/schemas/Network"
+          },
+          "observabilityId": {
+            "description": "Unique identifier of the customer's observability instance.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "projectId": {
+            "description": "The STACKIT portal project UUID the STACKIT Workflows instance is part of.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "regionId": {
+            "description": "The STACKIT region the STACKIT Workflows instance is part of.",
+            "type": "string"
+          },
+          "status": {
+            "description": "The current status of the STACKIT Workflows instance.",
+            "enum": [
+              "creating",
+              "active",
+              "updating",
+              "deleting",
+              "failed"
+            ],
+            "type": "string"
+          },
+          "statusMessage": {
+            "description": "A message related to the current status.",
+            "type": "string"
+          },
+          "version": {
+            "description": "The currently configured STACKIT Workflows instance version.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "projectId",
+          "regionId",
+          "endpoints",
+          "displayName",
+          "version",
+          "identityProvider",
+          "status",
+          "createdAt"
+        ]
+      },
+      "ListDagBundlesResponse": {
+        "properties": {
+          "dagBundles": {
+            "description": "List of all configured DAG bundles. Authentication type and username are returned for informational purposes; passwords and secrets are always masked.\n",
+            "items": {
+              "$ref": "#/components/schemas/DagBundleResponse"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "dagBundles"
+        ]
+      },
+      "ListInstancesResponse": {
+        "properties": {
+          "instances": {
+            "items": {
+              "$ref": "#/components/schemas/Instance"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "instances"
+        ]
+      },
+      "Network": {
+        "example": {
+          "id": "00000000-0000-0000-0000-000000000000"
+        },
+        "properties": {
+          "id": {
+            "title": "ID of the SNA network into which STACKIT Workflows instance will be deployed",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "NoAuth": {
+        "description": "No authentication required",
+        "properties": {
+          "type": {
+            "description": "Type of authentication",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "OAuth2IdentityProvider": {
+        "description": "Configuration for the custom OAuth2 identity provider used.",
+        "properties": {
+          "apiAudience": {
+            "description": "Expected audience(s) for API token validation when using the session endpoint for token exchange.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "clientId": {
+            "description": "The client id of the STACKIT Workflows application in the identity provider.",
+            "type": "string"
+          },
+          "clientSecret": {
+            "description": "The client secret of the STACKIT Workflows application in the identity provider.\n",
+            "type": "string"
+          },
+          "discoveryEndpoint": {
+            "description": "Discovery endpoint of the OAuth2 identity provider. This endpoint is used to fetch the OpenID configuration. Typically, this endpoint ends with `/.well-known/openid-configuration`.\n",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of the OAuth2 identity provider that will show in STACKIT Workflows instance. The following special values modify the way a token is parsed. If any of the following IdPs is used, please specify the corresponding value: `azure`, `okta`, `aws_cognito`, `keycloak`\n",
+            "type": "string"
+          },
+          "resource": {
+            "description": "RFC 8707 Resource Indicators for OAuth 2.0. Optional resource parameter to indicate which resource the token is intended for.\n",
+            "type": "string"
+          },
+          "rolesClaim": {
+            "description": "Dot-separated path to extract roles from JWT claims (e.g., \"realm_access.roles\" or \"resource_access.my_client.roles\"). If not specified, provider-specific defaults are used.\n",
+            "type": "string"
+          },
+          "scope": {
+            "description": "Scopes to request for Authorization Code Flows. (UI login)",
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "oauth2"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "clientId",
+          "clientSecret",
+          "scope",
+          "discoveryEndpoint"
+        ],
+        "type": "object"
+      },
+      "OAuth2IdentityProviderUpdate": {
+        "description": "Request to update an OAuth2 identity provider configuration",
+        "properties": {
+          "apiAudience": {
+            "description": "Updated expected audience(s) for API token validation. Set to empty array to disable audience validation.\n",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "clientId": {
+            "description": "Updated client id of the STACKIT Workflows application in the identity provider. If changed, requires to also set the client secret.",
+            "type": "string"
+          },
+          "clientSecret": {
+            "description": "Updated client secret of the STACKIT Workflows application in the identity provider.",
+            "type": "string"
+          },
+          "discoveryEndpoint": {
+            "description": "Updated discovery endpoint of the OAuth2 identity provider. If changed, requires to also set the client id and client secret.\n",
+            "type": "string"
+          },
+          "name": {
+            "description": "Updated name of the OAuth2 identity provider.",
+            "type": "string"
+          },
+          "resource": {
+            "description": "Updated RFC 8707 resource parameter. Set to empty string to remove the resource parameter.\n",
+            "type": "string"
+          },
+          "rolesClaim": {
+            "description": "Updated dot-separated path to extract roles from JWT claims. Set to empty string to use provider-specific defaults.\n",
+            "type": "string"
+          },
+          "scope": {
+            "description": "Updated scopes to request for Authorization Code Flows. (UI login)",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ProviderOptions": {
+        "example": {
+          "versions": [
+            {
+              "expirationDate": "2000-01-23T04:56:07Z",
+              "state": "preview",
+              "version": "2.10"
+            },
+            {
+              "expirationDate": "2000-01-23T04:56:07Z",
+              "state": "supported",
+              "version": "2.9"
+            }
+          ]
+        },
+        "properties": {
+          "versions": {
+            "items": {
+              "$ref": "#/components/schemas/SupportedVersion"
+            },
+            "title": "List of supported STACKIT Workflows versions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "versions"
+        ],
+        "type": "object"
+      },
+      "S3AccessKeyAuth": {
+        "description": "S3 access key credentials (access key ID + secret access key).",
+        "properties": {
+          "accessKeyId": {
+            "description": "The S3 access key ID.",
+            "type": "string"
+          },
+          "secretAccessKey": {
+            "description": "The S3 secret access key. This value is write-only and will not be returned in API responses.\n",
+            "type": "string"
+          },
+          "type": {
+            "description": "Type of authentication",
+            "enum": [
+              "accessKey"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "accessKeyId",
+          "secretAccessKey"
+        ],
+        "type": "object"
+      },
+      "S3AccessKeyAuthResponse": {
+        "description": "S3 access key credentials as returned in API responses. The secret access key is always masked (\"**********\") and never contains the real value.\n",
+        "properties": {
+          "accessKeyId": {
+            "description": "The S3 access key ID.",
+            "type": "string"
+          },
+          "secretAccessKey": {
+            "description": "Always returned as \"**********\". The actual secret access key is never exposed in API responses.\n",
+            "type": "string"
+          },
+          "type": {
+            "description": "Type of authentication",
+            "enum": [
+              "accessKey"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "accessKeyId"
+        ],
+        "type": "object"
+      },
+      "S3Auth": {
+        "description": "Authentication for S3-compatible object storage",
+        "discriminator": {
+          "mapping": {
+            "accessKey": "#/components/schemas/S3AccessKeyAuth",
+            "none": "#/components/schemas/NoAuth"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/S3AccessKeyAuth"
+          },
+          {
+            "$ref": "#/components/schemas/NoAuth"
+          }
+        ],
+        "type": "object"
+      },
+      "S3AuthResponse": {
+        "description": "S3 authentication configuration as returned in API responses. Secret keys are always masked and never returned in plain text.\n",
+        "discriminator": {
+          "mapping": {
+            "accessKey": "#/components/schemas/S3AccessKeyAuthResponse",
+            "none": "#/components/schemas/NoAuth"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/S3AccessKeyAuthResponse"
+          },
+          {
+            "$ref": "#/components/schemas/NoAuth"
+          }
+        ],
+        "type": "object"
+      },
+      "S3DagBundle": {
+        "description": "An S3-based DAG bundle. Maps to airflow.providers.amazon.aws.bundles.s3.S3DagBundle. Compatible with any S3-compatible object storage (e.g. STACKIT Object Storage).\n",
+        "example": {
+          "bucketName": "my-airflow-dags",
+          "endpoint": "https://object.storage.eu01.onstackit.cloud",
+          "name": "s3-dags",
+          "prefix": "dags/",
+          "s3Auth": {
+            "accessKeyId": "AKIA...",
+            "secretAccessKey": "wJalr...",
+            "type": "accessKey"
+          },
+          "type": "s3"
+        },
+        "properties": {
+          "bucketName": {
+            "description": "The S3 bucket name containing DAG files.",
+            "type": "string"
+          },
+          "endpoint": {
+            "description": "S3-compatible endpoint URL. Defaults to https://object.storage.eu01.onstackit.cloud\n",
+            "type": "string"
+          },
+          "name": {
+            "description": "Unique name for this bundle within the instance. Must be a valid DNS label (lowercase alphanumeric and hyphens, starting with a letter, max 63 characters).\n",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9-]{0,62}$",
+            "type": "string"
+          },
+          "prefix": {
+            "description": "Key prefix (folder path) within the bucket. Defaults to root.",
+            "type": "string"
+          },
+          "refreshInterval": {
+            "description": "How often (in seconds) to check for new objects. Defaults to 60.",
+            "minimum": 10,
+            "type": "integer"
+          },
+          "s3Auth": {
+            "$ref": "#/components/schemas/S3Auth"
+          },
+          "type": {
+            "description": "Bundle type identifier.",
+            "enum": [
+              "s3"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "bucketName",
+          "s3Auth"
+        ],
+        "type": "object"
+      },
+      "S3DagBundleResponse": {
+        "description": "An S3-based DAG bundle as returned by the API. The s3Auth structure (type, accessKeyId) is included; secret keys are masked.\n",
+        "example": {
+          "bucketName": "my-airflow-dags",
+          "endpoint": "https://object.storage.eu01.onstackit.cloud",
+          "name": "s3-dags",
+          "prefix": "dags/",
+          "s3Auth": {
+            "accessKeyId": "AKIA...",
+            "secretAccessKey": "**********",
+            "type": "accessKey"
+          },
+          "type": "s3"
+        },
+        "properties": {
+          "bucketName": {
+            "description": "The S3 bucket name containing DAG files.",
+            "type": "string"
+          },
+          "endpoint": {
+            "description": "S3-compatible endpoint URL.",
+            "type": "string"
+          },
+          "name": {
+            "description": "Unique name for this bundle within the instance.",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9-]{0,62}$",
+            "type": "string"
+          },
+          "prefix": {
+            "description": "Key prefix (folder path) within the bucket.",
+            "type": "string"
+          },
+          "refreshInterval": {
+            "description": "How often (in seconds) to check for new objects.",
+            "minimum": 10,
+            "type": "integer"
+          },
+          "s3Auth": {
+            "$ref": "#/components/schemas/S3AuthResponse"
+          },
+          "type": {
+            "description": "Bundle type identifier.",
+            "enum": [
+              "s3"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "bucketName",
+          "s3Auth"
+        ],
+        "type": "object"
+      },
+      "StackITIdentityProvider": {
+        "description": "The default STACKIT identity provider.",
+        "properties": {
+          "type": {
+            "enum": [
+              "stackit"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "SupportedVersion": {
+        "example": {
+          "expirationDate": "2000-01-23T04:56:07Z",
+          "state": "supported",
+          "version": "2.9"
+        },
+        "properties": {
+          "expirationDate": {
+            "format": "date-time",
+            "title": "Expiration date until the version will be supported if known yet",
+            "type": "string"
+          },
+          "state": {
+            "title": "State of this STACKIT Workflows Version.",
+            "type": "string"
+          },
+          "version": {
+            "title": "STACKIT Workflows version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "state"
+        ],
+        "type": "object"
+      },
+      "UpdateGitDagBundlePayload": {
+        "description": "Partial update payload for a Git DAG bundle. All fields except \"type\" are optional; only the provided fields will be updated.\n",
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/GitAuth"
+          },
+          "branch": {
+            "description": "Updated branch/tag/ref to track.",
+            "type": "string"
+          },
+          "refreshInterval": {
+            "description": "Updated refresh interval in seconds.",
+            "minimum": 10,
+            "type": "integer"
+          },
+          "subdir": {
+            "description": "Updated subdirectory within the repository. Set to empty string or \"/\" to clear an existing subdir.\n",
+            "type": "string"
+          },
+          "type": {
+            "description": "Bundle type identifier — must match the existing bundle's type.",
+            "enum": [
+              "git"
+            ],
+            "type": "string"
+          },
+          "url": {
+            "description": "Updated Git repository URL. If changed, auth must also be provided.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "UpdateS3DagBundlePayload": {
+        "description": "Partial update payload for an S3 DAG bundle. All fields except \"type\" are optional; only the provided fields will be updated.\n",
+        "properties": {
+          "bucketName": {
+            "description": "Updated S3 bucket name. If changed, s3Auth must also be provided.",
+            "type": "string"
+          },
+          "endpoint": {
+            "description": "Updated S3-compatible endpoint URL. If changed, s3Auth must also be provided.",
+            "type": "string"
+          },
+          "prefix": {
+            "description": "Updated key prefix within the bucket.",
+            "type": "string"
+          },
+          "refreshInterval": {
+            "description": "Updated refresh interval in seconds.",
+            "minimum": 10,
+            "type": "integer"
+          },
+          "s3Auth": {
+            "$ref": "#/components/schemas/S3Auth"
+          },
+          "type": {
+            "description": "Bundle type identifier — must match the existing bundle's type.",
+            "enum": [
+              "s3"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "create-dag-bundlePayload": {
+        "description": "A DAG bundle configuration. Discriminated by the \"type\" field. Supported types are \"git\" and \"s3\".\n",
+        "discriminator": {
+          "mapping": {
+            "git": "#/components/schemas/GitDagBundle",
+            "s3": "#/components/schemas/S3DagBundle"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/GitDagBundle"
+          },
+          {
+            "$ref": "#/components/schemas/S3DagBundle"
+          }
+        ],
+        "type": "object"
+      },
+      "create-instancePayload": {
+        "properties": {
+          "dagBundles": {
+            "description": "List of DAG bundles to configure. Supports Git and S3 sources. If provided, this takes precedence over dagsRepository. At least one bundle must be specified. Maximum 10 bundles. Only supported for Airflow 3 versions.\n",
+            "items": {
+              "$ref": "#/components/schemas/CreateDagBundleConfig"
+            },
+            "maxItems": 10,
+            "type": "array"
+          },
+          "dagsRepository": {
+            "$ref": "#/components/schemas/GitRepository"
+          },
+          "description": {
+            "description": "A user chosen description to distinguish multiple STACKIT Workflows instances.",
+            "maxLength": 256,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The displayed name to distinguish multiple STACKIT Workflows instances.",
+            "maxLength": 25,
+            "type": "string"
+          },
+          "identityProvider": {
+            "$ref": "#/components/schemas/IdentityProvider"
+          },
+          "network": {
+            "$ref": "#/components/schemas/Network"
+          },
+          "observabilityId": {
+            "description": "Unique identifier of the customer's observability instance.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "version": {
+            "description": "The version of the STACKIT Workflows to use. For valid versions please take a look at [provider-options](#tag/provider-options/operation/get-provider-options)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName",
+          "version"
+        ]
+      },
+      "endpoints": {
+        "description": "A collection of endpoints offered by the Workflows instance.",
+        "properties": {
+          "redirectUrl": {
+            "description": "The authentication callback URL.",
+            "type": "string"
+          },
+          "url": {
+            "description": "The URL for the UI of the Workflows instance.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "redirectUrl"
+        ]
+      },
+      "update-dag-bundlePayload": {
+        "description": "Partial update payload for a DAG bundle. The \"type\" field must be provided and must match the existing bundle's type (\"git\" or \"s3\"). Only the provided fields will be updated. Supplying fields that belong to the wrong type will be rejected.\n",
+        "discriminator": {
+          "mapping": {
+            "git": "#/components/schemas/UpdateGitDagBundlePayload",
+            "s3": "#/components/schemas/UpdateS3DagBundlePayload"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/UpdateGitDagBundlePayload"
+          },
+          {
+            "$ref": "#/components/schemas/UpdateS3DagBundlePayload"
+          }
+        ],
+        "type": "object"
+      },
+      "update-dags-repositoryPayload": {
+        "description": "Request to update a DAGs repository configuration",
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/GitAuth"
+          },
+          "branch": {
+            "description": "The branch in the repository to use",
+            "type": "string"
+          },
+          "url": {
+            "description": "The URL of the Git repository.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "update-identity-providerPayload": {
+        "description": "Request to update an identity provider configuration",
+        "discriminator": {
+          "mapping": {
+            "oauth2": "#/components/schemas/OAuth2IdentityProviderUpdate",
+            "stackit": "#/components/schemas/StackITIdentityProvider"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/StackITIdentityProvider"
+          },
+          {
+            "$ref": "#/components/schemas/OAuth2IdentityProviderUpdate"
+          }
+        ],
+        "type": "object"
+      },
+      "update-instancePayload": {
+        "properties": {
+          "description": {
+            "description": "A user chosen description to distinguish multiple STACKIT Workflows instances. If not provided, the description won't be updated. Set to empty string to remove the description.",
+            "maxLength": 256,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The displayed name to distinguish multiple STACKIT Workflows instances. If not provided, the display name won't be updated.",
+            "maxLength": 25,
+            "type": "string"
+          },
+          "version": {
+            "description": "The STACKIT Workflows version to use. For valid versions please take a look at [provider-options](#tag/provider-options/operation/get-provider-options) If not provided, the version won't be updated.",
+            "type": "string"
+          }
+        }
+      },
+      "update-observabilityPayload": {
+        "description": "Request to update the Observability configuration",
+        "properties": {
+          "observabilityId": {
+            "description": "Unique identifier of the customer's observability instance.",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "This API provides endpoints for managing Workflows.\n",
+    "title": "STACKIT Workflows API",
+    "version": "1alpha.0.1"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1alpha/projects/{projectId}/regions/{regionId}/instances": {
+      "get": {
+        "description": "Returns a list of all STACKIT Workflows instances within the project.",
+        "operationId": "list-instances",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListInstancesResponse"
+                }
+              }
+            },
+            "description": "Successful response with all STACKIT Workflows instances."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden. You are not allowed to access the requested resource."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "workflows.instance.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        }
+      ],
+      "post": {
+        "description": "Creates a new STACKIT Workflows instance within the project.",
+        "operationId": "create-instance",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/create-instancePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Instance"
+                }
+              }
+            },
+            "description": "STACKIT Workflows instance was created successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden. You are not allowed to create a STACKIT Wokflows instance."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "workflows.instance.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/regions/{regionId}/instances/{instanceId}": {
+      "delete": {
+        "description": "Deletes the given STACKIT Workflows instance.",
+        "operationId": "delete-instance",
+        "responses": {
+          "204": {
+            "description": "STACKIT Workflows instance was deleted successfully."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden. You are not allowed to delete the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found. STACKIT Workflows instance not found."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "If two requests try to update the resource at the same time one will succeeded and the other will fail with a 409 Conflict."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "workflows.instance.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns the details for the given STACKIT Workflows instance.",
+        "operationId": "get-instance",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Instance"
+                }
+              }
+            },
+            "description": "STACKIT Workflows instance details successfully retrieved."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden. You are not allowed to access the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found. STACKIT Workflows instance not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "workflows.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/instanceId"
+        }
+      ],
+      "patch": {
+        "description": "Updates core Attributes of this STACKIT Workflows Instance.",
+        "operationId": "update-instance",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/update-instancePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Instance"
+                }
+              }
+            },
+            "description": "STACKIT Workflows was updated successfully."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden. You are not allowed to update the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found. STACKIT Workflows not found."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid Update"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "workflows.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/regions/{regionId}/instances/{instanceId}/dag-bundles": {
+      "get": {
+        "description": "Returns a list of all DAG bundles configured for this STACKIT Workflows instance.",
+        "operationId": "list-dag-bundles",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListDagBundlesResponse"
+                }
+              }
+            },
+            "description": "Successful response with all DAG bundles."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden. You are not allowed to access the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found. STACKIT Workflows instance not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "workflows.dag-bundles.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/instanceId"
+        }
+      ],
+      "post": {
+        "description": "Adds a new DAG bundle to this STACKIT Workflows instance. Only supported for Airflow 3 instances. Maximum 10 bundles per instance.\n",
+        "operationId": "create-dag-bundle",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/create-dag-bundlePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DagBundleResponse"
+                }
+              }
+            },
+            "description": "DAG bundle was created successfully."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request. Invalid bundle configuration."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden. You are not allowed to update the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found. STACKIT Workflows instance not found."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict. A bundle with the same name already exists."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "workflows.dag-bundles.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/regions/{regionId}/instances/{instanceId}/dag-bundles/{bundleName}": {
+      "delete": {
+        "description": "Removes a DAG bundle from this STACKIT Workflows instance. At least one bundle must remain configured. Only supported for Airflow 3 instances.\n",
+        "operationId": "delete-dag-bundle",
+        "responses": {
+          "204": {
+            "description": "DAG bundle was deleted successfully."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request. Cannot delete the last remaining bundle."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden. You are not allowed to update the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found. STACKIT Workflows instance or bundle not found."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict. Cannot delete the last remaining bundle."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "workflows.dag-bundles.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns the configuration of a single DAG bundle.",
+        "operationId": "get-dag-bundle",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DagBundleResponse"
+                }
+              }
+            },
+            "description": "DAG bundle details successfully retrieved."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden. You are not allowed to access the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found. STACKIT Workflows instance or bundle not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "workflows.dag-bundles.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/instanceId"
+        },
+        {
+          "$ref": "#/components/parameters/bundleName"
+        }
+      ],
+      "patch": {
+        "description": "Updates an existing DAG bundle. The bundle type (git/s3) is inferred from the existing bundle and cannot be changed. To change the type, delete and recreate the bundle. Only supported for Airflow 3 instances.\n",
+        "operationId": "update-dag-bundle",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/update-dag-bundlePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DagBundleResponse"
+                }
+              }
+            },
+            "description": "DAG bundle was updated successfully."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request. Invalid bundle configuration."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden. You are not allowed to update the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found. STACKIT Workflows instance or bundle not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "workflows.dag-bundles.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/regions/{regionId}/instances/{instanceId}/dags-repository": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/instanceId"
+        }
+      ],
+      "patch": {
+        "description": "Updates the DAGs repository configuration for this STACKIT Workflows instance.",
+        "operationId": "update-dags-repository",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/update-dags-repositoryPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Instance"
+                }
+              }
+            },
+            "description": "DAGs repository was updated successfully."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request. Invalid repository configuration."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden. You are not allowed to update the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found. STACKIT Workflows instance not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "workflows.dags-repository.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/regions/{regionId}/instances/{instanceId}/identity-provider": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/instanceId"
+        }
+      ],
+      "patch": {
+        "description": "Updates the identity provider configuration for this STACKIT Workflows instance.",
+        "operationId": "update-identity-provider",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/update-identity-providerPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Instance"
+                }
+              }
+            },
+            "description": "Identity provider was updated successfully."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request. Invalid identity provider configuration."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden. You are not allowed to update the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found. STACKIT Workflows instance not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "workflows.identity-provider.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/regions/{regionId}/instances/{instanceId}/observability": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/instanceId"
+        }
+      ],
+      "patch": {
+        "description": "Updates the Observability configuration for this STACKIT Workflows instance.",
+        "operationId": "update-observability",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/update-observabilityPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Instance"
+                }
+              }
+            },
+            "description": "Observability configuration was updated successfully."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request. Invalid Observability configuration."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden. You are not allowed to update the requested resource."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found. STACKIT Workflows instance not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error. The application experienced some unexpected situation."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "workflows.observability.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha/regions/{regionId}/provider-options": {
+      "get": {
+        "description": "Returns a list of supported configuration options for this region.",
+        "operationId": "get-provider-options",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderOptions"
+                }
+              }
+            },
+            "description": "Successful response with all supported configuration options."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. You may have provided no or wrong credentials."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error. The application experienced an unexpected situation."
+          }
+        },
+        "summary": "Get provider options",
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/regionId"
+        }
+      ]
+    }
+  },
+  "servers": [
+    {
+      "url": "https://workflows.api.stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "global"
+        }
+      }
+    }
+  ]
+}

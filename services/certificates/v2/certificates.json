@@ -1,28 +1,6 @@
 {
   "components": {
     "schemas": {
-      "CertificateUsageItem": {
-        "properties": {
-          "listenerNames": {
-            "description": "A list of listener names on this Load Balancer that are using the certificate.",
-            "example": [
-              "https-443",
-              "api-8443",
-              "legacy-tls"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "loadBalancerName": {
-            "description": "The display name of the Load Balancer.",
-            "example": "edge-lb-production",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "CertificatesQuota": {
         "description": "Certificates quotas holds the limits and usage for certificates resources",
         "properties": {
@@ -324,9 +302,31 @@
           "items": {
             "description": "List of Load Balancers with their associated listeners that use this certificate.",
             "items": {
-              "$ref": "#/components/schemas/CertificateUsageItem"
+              "$ref": "#/components/schemas/UsageItem"
             },
             "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "UsageItem": {
+        "properties": {
+          "listenerNames": {
+            "description": "A list of listener names on this Load Balancer that are using the certificate.",
+            "example": [
+              "https-443",
+              "api-8443",
+              "legacy-tls"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "loadBalancerName": {
+            "description": "The display name of the Load Balancer.",
+            "example": "edge-lb-production",
+            "type": "string"
           }
         },
         "type": "object"

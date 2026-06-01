@@ -79,8 +79,8 @@
         },
         "type": "object"
       },
-      "CreateDagBundleConfig": {
-        "description": "A DAG bundle configuration for instance creation (same shape as DagBundle).\n",
+      "CreateDagBundlePayload": {
+        "description": "A DAG bundle configuration. Discriminated by the \"type\" field. Supported types are \"git\" and \"s3\".\n",
         "discriminator": {
           "mapping": {
             "git": "#/components/schemas/GitDagBundle",
@@ -97,6 +97,58 @@
           }
         ],
         "type": "object"
+      },
+      "CreateInstancePayload": {
+        "properties": {
+          "dagBundles": {
+            "description": "List of DAG bundles to configure. Supports Git and S3 sources. If provided, this takes precedence over dagsRepository. At least one bundle must be specified. Maximum 10 bundles. Only supported for Airflow 3 versions.\n",
+            "items": {
+              "$ref": "#/components/schemas/DagBundleSpec"
+            },
+            "maxItems": 10,
+            "type": "array"
+          },
+          "dagsRepository": {
+            "$ref": "#/components/schemas/GitRepository"
+          },
+          "description": {
+            "description": "A user chosen description to distinguish multiple STACKIT Workflows instances.",
+            "maxLength": 256,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The displayed name to distinguish multiple STACKIT Workflows instances.",
+            "maxLength": 25,
+            "type": "string"
+          },
+          "enableAirflowExampleDags": {
+            "description": "Whether to enable the Airflow built-in example DAGs in this instance. Maps to airflow.config.core.load_examples in the Helm chart. Only supported for Airflow 3 instances. Defaults to false.\n",
+            "type": "boolean"
+          },
+          "enableStackitExampleDags": {
+            "description": "Whether to include the STACKIT sample DAGs in this instance. Only supported for Airflow 3 instances. Defaults to false.\n",
+            "type": "boolean"
+          },
+          "identityProvider": {
+            "$ref": "#/components/schemas/IdentityProvider"
+          },
+          "network": {
+            "$ref": "#/components/schemas/Network"
+          },
+          "observabilityId": {
+            "description": "Unique identifier of the customer's observability instance.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "version": {
+            "description": "The version of the STACKIT Workflows to use. For valid versions please take a look at [provider-options](#tag/provider-options/operation/get-provider-options)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName",
+          "version"
+        ]
       },
       "DagBundle": {
         "description": "A DAG bundle configuration. Discriminated by the \"type\" field. Supported types are \"git\" and \"s3\".\n",
@@ -135,6 +187,42 @@
           }
         ],
         "type": "object"
+      },
+      "DagBundleSpec": {
+        "description": "A DAG bundle configuration used when creating an instance. Same shape as DagBundle.\n",
+        "discriminator": {
+          "mapping": {
+            "git": "#/components/schemas/GitDagBundle",
+            "s3": "#/components/schemas/S3DagBundle"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/GitDagBundle"
+          },
+          {
+            "$ref": "#/components/schemas/S3DagBundle"
+          }
+        ],
+        "type": "object"
+      },
+      "Endpoints": {
+        "description": "A collection of endpoints offered by the Workflows instance.",
+        "properties": {
+          "redirectUrl": {
+            "description": "The authentication callback URL.",
+            "type": "string"
+          },
+          "url": {
+            "description": "The URL for the UI of the Workflows instance.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "redirectUrl"
+        ]
       },
       "ErrorResponse": {
         "example": {
@@ -401,8 +489,16 @@
             "maxLength": 25,
             "type": "string"
           },
+          "enableAirflowExampleDags": {
+            "description": "Whether the Airflow built-in example DAGs are enabled in this instance. Only supported for Airflow 3 instances.\n",
+            "type": "boolean"
+          },
+          "enableStackitExampleDags": {
+            "description": "Whether the STACKIT sample DAGs are included in this instance. Only supported for Airflow 3 instances.\n",
+            "type": "boolean"
+          },
           "endpoints": {
-            "$ref": "#/components/schemas/endpoints"
+            "$ref": "#/components/schemas/Endpoints"
           },
           "id": {
             "description": "A auto generated unique id which identifies the STACKIT Workflows instance.",
@@ -565,7 +661,7 @@
         ],
         "type": "object"
       },
-      "OAuth2IdentityProviderUpdate": {
+      "OAuth2IdentityProviderPatch": {
         "description": "Request to update an OAuth2 identity provider configuration",
         "properties": {
           "apiAudience": {
@@ -880,6 +976,42 @@
         ],
         "type": "object"
       },
+      "UpdateDagBundlePayload": {
+        "description": "Partial update payload for a DAG bundle. The \"type\" field must be provided and must match the existing bundle's type (\"git\" or \"s3\"). Only the provided fields will be updated. Supplying fields that belong to the wrong type will be rejected.\n",
+        "discriminator": {
+          "mapping": {
+            "git": "#/components/schemas/UpdateGitDagBundlePayload",
+            "s3": "#/components/schemas/UpdateS3DagBundlePayload"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/UpdateGitDagBundlePayload"
+          },
+          {
+            "$ref": "#/components/schemas/UpdateS3DagBundlePayload"
+          }
+        ],
+        "type": "object"
+      },
+      "UpdateDagsRepositoryPayload": {
+        "description": "Request to update a DAGs repository configuration",
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/GitAuth"
+          },
+          "branch": {
+            "description": "The branch in the repository to use",
+            "type": "string"
+          },
+          "url": {
+            "description": "The URL of the Git repository.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "UpdateGitDagBundlePayload": {
         "description": "Partial update payload for a Git DAG bundle. All fields except \"type\" are optional; only the provided fields will be updated.\n",
         "properties": {
@@ -914,6 +1046,62 @@
         "required": [
           "type"
         ],
+        "type": "object"
+      },
+      "UpdateIdentityProviderPayload": {
+        "description": "Request to update an identity provider configuration",
+        "discriminator": {
+          "mapping": {
+            "oauth2": "#/components/schemas/OAuth2IdentityProviderPatch",
+            "stackit": "#/components/schemas/StackITIdentityProvider"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/StackITIdentityProvider"
+          },
+          {
+            "$ref": "#/components/schemas/OAuth2IdentityProviderPatch"
+          }
+        ],
+        "type": "object"
+      },
+      "UpdateInstancePayload": {
+        "properties": {
+          "description": {
+            "description": "A user chosen description to distinguish multiple STACKIT Workflows instances. If not provided, the description won't be updated. Set to empty string to remove the description.",
+            "maxLength": 256,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The displayed name to distinguish multiple STACKIT Workflows instances. If not provided, the display name won't be updated.",
+            "maxLength": 25,
+            "type": "string"
+          },
+          "enableAirflowExampleDags": {
+            "description": "Whether to enable the Airflow built-in example DAGs in this instance. Maps to airflow.config.core.load_examples in the Helm chart. Only supported for Airflow 3 instances. If not provided, the setting won't be updated.\n",
+            "type": "boolean"
+          },
+          "enableStackitExampleDags": {
+            "description": "Whether to include the STACKIT sample DAGs in this instance. Only supported for Airflow 3 instances. If not provided, the setting won't be updated.\n",
+            "type": "boolean"
+          },
+          "version": {
+            "description": "The STACKIT Workflows version to use. For valid versions please take a look at [provider-options](#tag/provider-options/operation/get-provider-options) If not provided, the version won't be updated.",
+            "type": "string"
+          }
+        }
+      },
+      "UpdateObservabilityPayload": {
+        "description": "Request to update the Observability configuration",
+        "properties": {
+          "observabilityId": {
+            "description": "Unique identifier of the customer's observability instance.",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
         "type": "object"
       },
       "UpdateS3DagBundlePayload": {
@@ -951,170 +1139,6 @@
           "type"
         ],
         "type": "object"
-      },
-      "create-dag-bundlePayload": {
-        "description": "A DAG bundle configuration. Discriminated by the \"type\" field. Supported types are \"git\" and \"s3\".\n",
-        "discriminator": {
-          "mapping": {
-            "git": "#/components/schemas/GitDagBundle",
-            "s3": "#/components/schemas/S3DagBundle"
-          },
-          "propertyName": "type"
-        },
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/GitDagBundle"
-          },
-          {
-            "$ref": "#/components/schemas/S3DagBundle"
-          }
-        ],
-        "type": "object"
-      },
-      "create-instancePayload": {
-        "properties": {
-          "dagBundles": {
-            "description": "List of DAG bundles to configure. Supports Git and S3 sources. If provided, this takes precedence over dagsRepository. At least one bundle must be specified. Maximum 10 bundles. Only supported for Airflow 3 versions.\n",
-            "items": {
-              "$ref": "#/components/schemas/CreateDagBundleConfig"
-            },
-            "maxItems": 10,
-            "type": "array"
-          },
-          "dagsRepository": {
-            "$ref": "#/components/schemas/GitRepository"
-          },
-          "description": {
-            "description": "A user chosen description to distinguish multiple STACKIT Workflows instances.",
-            "maxLength": 256,
-            "type": "string"
-          },
-          "displayName": {
-            "description": "The displayed name to distinguish multiple STACKIT Workflows instances.",
-            "maxLength": 25,
-            "type": "string"
-          },
-          "identityProvider": {
-            "$ref": "#/components/schemas/IdentityProvider"
-          },
-          "network": {
-            "$ref": "#/components/schemas/Network"
-          },
-          "observabilityId": {
-            "description": "Unique identifier of the customer's observability instance.",
-            "format": "uuid",
-            "type": "string"
-          },
-          "version": {
-            "description": "The version of the STACKIT Workflows to use. For valid versions please take a look at [provider-options](#tag/provider-options/operation/get-provider-options)",
-            "type": "string"
-          }
-        },
-        "required": [
-          "displayName",
-          "version"
-        ]
-      },
-      "endpoints": {
-        "description": "A collection of endpoints offered by the Workflows instance.",
-        "properties": {
-          "redirectUrl": {
-            "description": "The authentication callback URL.",
-            "type": "string"
-          },
-          "url": {
-            "description": "The URL for the UI of the Workflows instance.",
-            "type": "string"
-          }
-        },
-        "required": [
-          "url",
-          "redirectUrl"
-        ]
-      },
-      "update-dag-bundlePayload": {
-        "description": "Partial update payload for a DAG bundle. The \"type\" field must be provided and must match the existing bundle's type (\"git\" or \"s3\"). Only the provided fields will be updated. Supplying fields that belong to the wrong type will be rejected.\n",
-        "discriminator": {
-          "mapping": {
-            "git": "#/components/schemas/UpdateGitDagBundlePayload",
-            "s3": "#/components/schemas/UpdateS3DagBundlePayload"
-          },
-          "propertyName": "type"
-        },
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/UpdateGitDagBundlePayload"
-          },
-          {
-            "$ref": "#/components/schemas/UpdateS3DagBundlePayload"
-          }
-        ],
-        "type": "object"
-      },
-      "update-dags-repositoryPayload": {
-        "description": "Request to update a DAGs repository configuration",
-        "properties": {
-          "auth": {
-            "$ref": "#/components/schemas/GitAuth"
-          },
-          "branch": {
-            "description": "The branch in the repository to use",
-            "type": "string"
-          },
-          "url": {
-            "description": "The URL of the Git repository.",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "update-identity-providerPayload": {
-        "description": "Request to update an identity provider configuration",
-        "discriminator": {
-          "mapping": {
-            "oauth2": "#/components/schemas/OAuth2IdentityProviderUpdate",
-            "stackit": "#/components/schemas/StackITIdentityProvider"
-          },
-          "propertyName": "type"
-        },
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/StackITIdentityProvider"
-          },
-          {
-            "$ref": "#/components/schemas/OAuth2IdentityProviderUpdate"
-          }
-        ],
-        "type": "object"
-      },
-      "update-instancePayload": {
-        "properties": {
-          "description": {
-            "description": "A user chosen description to distinguish multiple STACKIT Workflows instances. If not provided, the description won't be updated. Set to empty string to remove the description.",
-            "maxLength": 256,
-            "type": "string"
-          },
-          "displayName": {
-            "description": "The displayed name to distinguish multiple STACKIT Workflows instances. If not provided, the display name won't be updated.",
-            "maxLength": 25,
-            "type": "string"
-          },
-          "version": {
-            "description": "The STACKIT Workflows version to use. For valid versions please take a look at [provider-options](#tag/provider-options/operation/get-provider-options) If not provided, the version won't be updated.",
-            "type": "string"
-          }
-        }
-      },
-      "update-observabilityPayload": {
-        "description": "Request to update the Observability configuration",
-        "properties": {
-          "observabilityId": {
-            "description": "Unique identifier of the customer's observability instance.",
-            "format": "uuid",
-            "type": "string"
-          }
-        },
-        "type": "object"
       }
     }
   },
@@ -1128,7 +1152,7 @@
     "/v1alpha/projects/{projectId}/regions/{regionId}/instances": {
       "get": {
         "description": "Returns a list of all STACKIT Workflows instances within the project.",
-        "operationId": "list-instances",
+        "operationId": "ListInstances",
         "responses": {
           "200": {
             "content": {
@@ -1200,12 +1224,12 @@
       ],
       "post": {
         "description": "Creates a new STACKIT Workflows instance within the project.",
-        "operationId": "create-instance",
+        "operationId": "CreateInstance",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/create-instancePayload"
+                "$ref": "#/components/schemas/CreateInstancePayload"
               }
             }
           },
@@ -1276,7 +1300,7 @@
     "/v1alpha/projects/{projectId}/regions/{regionId}/instances/{instanceId}": {
       "delete": {
         "description": "Deletes the given STACKIT Workflows instance.",
-        "operationId": "delete-instance",
+        "operationId": "DeleteInstance",
         "responses": {
           "204": {
             "description": "STACKIT Workflows instance was deleted successfully."
@@ -1353,7 +1377,7 @@
       },
       "get": {
         "description": "Returns the details for the given STACKIT Workflows instance.",
-        "operationId": "get-instance",
+        "operationId": "GetInstance",
         "responses": {
           "200": {
             "content": {
@@ -1438,12 +1462,12 @@
       ],
       "patch": {
         "description": "Updates core Attributes of this STACKIT Workflows Instance.",
-        "operationId": "update-instance",
+        "operationId": "UpdateInstance",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/update-instancePayload"
+                "$ref": "#/components/schemas/UpdateInstancePayload"
               }
             }
           },
@@ -1534,7 +1558,7 @@
     "/v1alpha/projects/{projectId}/regions/{regionId}/instances/{instanceId}/dag-bundles": {
       "get": {
         "description": "Returns a list of all DAG bundles configured for this STACKIT Workflows instance.",
-        "operationId": "list-dag-bundles",
+        "operationId": "ListDagBundles",
         "responses": {
           "200": {
             "content": {
@@ -1619,12 +1643,12 @@
       ],
       "post": {
         "description": "Adds a new DAG bundle to this STACKIT Workflows instance. Only supported for Airflow 3 instances. Maximum 10 bundles per instance.\n",
-        "operationId": "create-dag-bundle",
+        "operationId": "CreateDagBundle",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/create-dag-bundlePayload"
+                "$ref": "#/components/schemas/CreateDagBundlePayload"
               }
             }
           },
@@ -1715,7 +1739,7 @@
     "/v1alpha/projects/{projectId}/regions/{regionId}/instances/{instanceId}/dag-bundles/{bundleName}": {
       "delete": {
         "description": "Removes a DAG bundle from this STACKIT Workflows instance. At least one bundle must remain configured. Only supported for Airflow 3 instances.\n",
-        "operationId": "delete-dag-bundle",
+        "operationId": "DeleteDagBundle",
         "responses": {
           "204": {
             "description": "DAG bundle was deleted successfully."
@@ -1792,7 +1816,7 @@
       },
       "get": {
         "description": "Returns the configuration of a single DAG bundle.",
-        "operationId": "get-dag-bundle",
+        "operationId": "GetDagBundle",
         "responses": {
           "200": {
             "content": {
@@ -1870,12 +1894,12 @@
       ],
       "patch": {
         "description": "Updates an existing DAG bundle. The bundle type (git/s3) is inferred from the existing bundle and cannot be changed. To change the type, delete and recreate the bundle. Only supported for Airflow 3 instances.\n",
-        "operationId": "update-dag-bundle",
+        "operationId": "UpdateDagBundle",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/update-dag-bundlePayload"
+                "$ref": "#/components/schemas/UpdateDagBundlePayload"
               }
             }
           },
@@ -1967,12 +1991,12 @@
       ],
       "patch": {
         "description": "Updates the DAGs repository configuration for this STACKIT Workflows instance.",
-        "operationId": "update-dags-repository",
+        "operationId": "UpdateDagsRepository",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/update-dags-repositoryPayload"
+                "$ref": "#/components/schemas/UpdateDagsRepositoryPayload"
               }
             }
           },
@@ -2064,12 +2088,12 @@
       ],
       "patch": {
         "description": "Updates the identity provider configuration for this STACKIT Workflows instance.",
-        "operationId": "update-identity-provider",
+        "operationId": "UpdateIdentityProvider",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/update-identity-providerPayload"
+                "$ref": "#/components/schemas/UpdateIdentityProviderPayload"
               }
             }
           },
@@ -2161,12 +2185,12 @@
       ],
       "patch": {
         "description": "Updates the Observability configuration for this STACKIT Workflows instance.",
-        "operationId": "update-observability",
+        "operationId": "UpdateObservability",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/update-observabilityPayload"
+                "$ref": "#/components/schemas/UpdateObservabilityPayload"
               }
             }
           },
@@ -2247,7 +2271,7 @@
     "/v1alpha/regions/{regionId}/provider-options": {
       "get": {
         "description": "Returns a list of supported configuration options for this region.",
-        "operationId": "get-provider-options",
+        "operationId": "GetProviderOptions",
         "responses": {
           "200": {
             "content": {

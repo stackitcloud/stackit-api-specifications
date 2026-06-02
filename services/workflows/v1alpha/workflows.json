@@ -103,7 +103,7 @@
           "dagBundles": {
             "description": "List of DAG bundles to configure. Supports Git and S3 sources. If provided, this takes precedence over dagsRepository. At least one bundle must be specified. Maximum 10 bundles. Only supported for Airflow 3 versions.\n",
             "items": {
-              "$ref": "#/components/schemas/DagBundleSpec"
+              "$ref": "#/components/schemas/DagBundle"
             },
             "maxItems": 10,
             "type": "array"
@@ -184,25 +184,6 @@
           },
           {
             "$ref": "#/components/schemas/S3DagBundleResponse"
-          }
-        ],
-        "type": "object"
-      },
-      "DagBundleSpec": {
-        "description": "A DAG bundle configuration used when creating an instance. Same shape as DagBundle.\n",
-        "discriminator": {
-          "mapping": {
-            "git": "#/components/schemas/GitDagBundle",
-            "s3": "#/components/schemas/S3DagBundle"
-          },
-          "propertyName": "type"
-        },
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/GitDagBundle"
-          },
-          {
-            "$ref": "#/components/schemas/S3DagBundle"
           }
         ],
         "type": "object"

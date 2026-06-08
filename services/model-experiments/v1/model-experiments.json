@@ -27,11 +27,11 @@
         },
         "style": "simple"
       },
-      "tId": {
+      "tokenId": {
         "description": "token id",
         "example": "94649fc3-5e97-4229-a891-b840f6bd67a8",
         "in": "path",
-        "name": "tId",
+        "name": "tokenId",
         "required": true,
         "schema": {
           "format": "uuid",
@@ -219,7 +219,7 @@
         ],
         "type": "object"
       },
-      "CreateTokenResponse": {
+      "CreateInstanceTokenResponse": {
         "properties": {
           "message": {
             "example": "successfully created instance token",
@@ -249,7 +249,7 @@
         ],
         "type": "object"
       },
-      "DeleteTokenResponse": {
+      "DeleteInstanceTokenResponse": {
         "properties": {
           "message": {
             "example": "successfully deleted instance token",
@@ -307,7 +307,7 @@
         ],
         "type": "object"
       },
-      "GetTokenResponse": {
+      "GetInstanceTokenResponse": {
         "properties": {
           "message": {
             "example": "successfully fetched instance token",
@@ -412,25 +412,7 @@
         },
         "type": "object"
       },
-      "ListInstanceResponse": {
-        "properties": {
-          "instances": {
-            "items": {
-              "$ref": "#/components/schemas/Instance"
-            },
-            "type": "array"
-          },
-          "message": {
-            "example": "successfully fetched instances",
-            "type": "string"
-          }
-        },
-        "required": [
-          "instances"
-        ],
-        "type": "object"
-      },
-      "ListTokenResponse": {
+      "ListInstanceTokensResponse": {
         "properties": {
           "message": {
             "example": "successfully fetched instance tokens",
@@ -445,6 +427,24 @@
         },
         "required": [
           "tokens"
+        ],
+        "type": "object"
+      },
+      "ListInstancesResponse": {
+        "properties": {
+          "instances": {
+            "items": {
+              "$ref": "#/components/schemas/Instance"
+            },
+            "type": "array"
+          },
+          "message": {
+            "example": "successfully fetched instances",
+            "type": "string"
+          }
+        },
+        "required": [
+          "instances"
         ],
         "type": "object"
       },
@@ -511,7 +511,7 @@
         },
         "type": "object"
       },
-      "PartialUpdateTokenResponse": {
+      "PartialUpdateInstanceTokenResponse": {
         "properties": {
           "message": {
             "example": "successfully updated instance token",
@@ -658,7 +658,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListInstanceResponse"
+                  "$ref": "#/components/schemas/ListInstancesResponse"
                 }
               }
             },
@@ -980,7 +980,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListTokenResponse"
+                  "$ref": "#/components/schemas/ListInstanceTokensResponse"
                 }
               }
             },
@@ -1074,7 +1074,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateTokenResponse"
+                  "$ref": "#/components/schemas/CreateInstanceTokenResponse"
                 }
               }
             },
@@ -1112,7 +1112,7 @@
         }
       }
     },
-    "/v1/projects/{projectId}/regions/{regionId}/instances/{instanceId}/tokens/{tId}": {
+    "/v1/projects/{projectId}/regions/{regionId}/instances/{instanceId}/tokens/{tokenId}": {
       "delete": {
         "description": "delete an auth token in an instance",
         "operationId": "DeleteInstanceToken",
@@ -1121,7 +1121,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DeleteTokenResponse"
+                  "$ref": "#/components/schemas/DeleteInstanceTokenResponse"
                 }
               }
             },
@@ -1169,7 +1169,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetTokenResponse"
+                  "$ref": "#/components/schemas/GetInstanceTokenResponse"
                 }
               }
             },
@@ -1237,7 +1237,7 @@
           "description": "token id",
           "example": "94649fc3-5e97-4229-a891-b840f6bd67a8",
           "in": "path",
-          "name": "tId",
+          "name": "tokenId",
           "required": true,
           "schema": {
             "format": "uuid",
@@ -1275,7 +1275,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PartialUpdateTokenResponse"
+                  "$ref": "#/components/schemas/PartialUpdateInstanceTokenResponse"
                 }
               }
             },

@@ -1683,6 +1683,14 @@
       "CreateSnapshotPayload": {
         "description": "Object that represents a snapshot.",
         "properties": {
+          "availabilityZone": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AvailabilityZone"
+              }
+            ],
+            "readOnly": true
+          },
           "createdAt": {
             "allOf": [
               {
@@ -2943,7 +2951,7 @@
         "type": "object"
       },
       "NetworkRange": {
-        "description": "Object that represents a network range.",
+        "description": "Object that represents a network range of a network area.",
         "properties": {
           "createdAt": {
             "allOf": [
@@ -2979,7 +2987,7 @@
         "type": "object"
       },
       "NetworkRangeList": {
-        "description": "A list of network ranges.",
+        "description": "A list of network area network ranges.",
         "items": {
           "$ref": "#/components/schemas/NetworkRange"
         },
@@ -2988,7 +2996,7 @@
         "type": "array"
       },
       "NetworkRangeListResponse": {
-        "description": "Network Range list response.",
+        "description": "Network Range list response of a network area.",
         "properties": {
           "items": {
             "$ref": "#/components/schemas/NetworkRangeList"
@@ -4488,6 +4496,14 @@
       "Snapshot": {
         "description": "Object that represents a snapshot.",
         "properties": {
+          "availabilityZone": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AvailabilityZone"
+              }
+            ],
+            "readOnly": true
+          },
           "createdAt": {
             "allOf": [
               {
@@ -8005,6 +8021,99 @@
         }
       }
     },
+    "/v2/projects/{projectId}/regions/{region}/images/{imageId}/publish": {
+      "delete": {
+        "description": "Update the scope property of an existing Image inside a project to local.",
+        "operationId": "UpdateImageScopeLocal",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Image"
+                }
+              }
+            },
+            "description": "Response to update image-scope to local. Provide the updated image object."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update Image Scope to Local.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.image.publish.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        },
+        {
+          "$ref": "#/components/parameters/v1ImageID"
+        }
+      ],
+      "put": {
+        "description": "Update the scope property of an existing Image inside a project to public.",
+        "operationId": "UpdateImageScopePublic",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Image"
+                }
+              }
+            },
+            "description": "Response to update image-scope to public. Provide the updated image object."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update Image Scope to Public.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.image.publish.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
     "/v2/projects/{projectId}/regions/{region}/images/{imageId}/share": {
       "delete": {
         "description": "Remove the image share. New scope will be local.",
@@ -11013,7 +11122,7 @@
     },
     "/v2/projects/{projectId}/regions/{region}/servers/{serverId}/service-accounts": {
       "get": {
-        "description": "Get the list of the service accounts of the server.",
+        "description": "Get service account of the server in a list.",
         "operationId": "ListServerServiceAccounts",
         "responses": {
           "200": {
@@ -11024,7 +11133,7 @@
                 }
               }
             },
-            "description": "List service accounts."
+            "description": "List service account."
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -11042,7 +11151,7 @@
             "$ref": "#/components/responses/InternalServerError"
           }
         },
-        "summary": "List all service accounts of the Server.",
+        "summary": "List the service account of the Server.",
         "x-stackit-authorization": {
           "actions": [
             "iaas.server.service-account.list"
@@ -11066,7 +11175,7 @@
     },
     "/v2/projects/{projectId}/regions/{region}/servers/{serverId}/service-accounts/{serviceAccountMail}": {
       "delete": {
-        "description": "Detach an additional service account from the server.",
+        "description": "Detach a service account from the server.",
         "operationId": "RemoveServiceAccountFromServer",
         "responses": {
           "200": {
@@ -11123,7 +11232,7 @@
         }
       ],
       "put": {
-        "description": "Attach an additional service account to the server.",
+        "description": "Attach a service account to the server.",
         "operationId": "AddServiceAccountToServer",
         "responses": {
           "201": {

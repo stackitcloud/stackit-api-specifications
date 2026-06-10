@@ -2846,7 +2846,7 @@
         "type": "object"
       },
       "NetworkRange": {
-        "description": "Object that represents a network range.",
+        "description": "Object that represents a network range of a network area.",
         "properties": {
           "createdAt": {
             "allOf": [
@@ -2882,7 +2882,7 @@
         "type": "object"
       },
       "NetworkRangeList": {
-        "description": "A list of network ranges.",
+        "description": "A list of network area network ranges.",
         "items": {
           "$ref": "#/components/schemas/NetworkRange"
         },
@@ -2891,7 +2891,7 @@
         "type": "array"
       },
       "NetworkRangeListResponse": {
-        "description": "Network Range list response.",
+        "description": "Network Range list response of a network area.",
         "properties": {
           "items": {
             "$ref": "#/components/schemas/NetworkRangeList"
@@ -4391,6 +4391,14 @@
       "Snapshot": {
         "description": "Object that represents a snapshot.",
         "properties": {
+          "availabilityZone": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AvailabilityZone"
+              }
+            ],
+            "readOnly": true
+          },
           "createdAt": {
             "allOf": [
               {
@@ -4778,6 +4786,227 @@
         "format": "date-time",
         "type": "string"
       },
+      "V2beta1CreateNetworkAreaRegionPayload": {
+        "description": "The basic properties of a regional network area.",
+        "properties": {
+          "ipv4": {
+            "$ref": "#/components/schemas/RegionalAreaIPv4"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourceState"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "type": "object"
+      },
+      "V2beta1CreateSnapshotPayload": {
+        "description": "Object that represents a snapshot.",
+        "properties": {
+          "availabilityZone": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AvailabilityZone"
+              }
+            ],
+            "readOnly": true
+          },
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "size": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SizeInGB"
+              }
+            ],
+            "readOnly": true
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SnapshotStatus"
+              }
+            ],
+            "readOnly": true
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "volumeId": {
+            "$ref": "#/components/schemas/UUID"
+          }
+        },
+        "required": [
+          "volumeId"
+        ],
+        "type": "object"
+      },
+      "V2beta1UpdateBackupPayload": {
+        "description": "Object that represents a backup.",
+        "properties": {
+          "availabilityZone": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AvailabilityZone"
+              }
+            ],
+            "readOnly": true
+          },
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "encrypted": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VolumeEncryption"
+              }
+            ],
+            "readOnly": true
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "size": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SizeInGB"
+              }
+            ],
+            "readOnly": true
+          },
+          "snapshotId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BackupStatus"
+              }
+            ],
+            "readOnly": true
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "volumeId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "type": "object"
+      },
+      "V2beta1UpdateNetworkAreaRegionPayload": {
+        "description": "Object that represents the request body for a regional network area update.",
+        "properties": {
+          "ipv4": {
+            "$ref": "#/components/schemas/UpdateRegionalAreaIPv4"
+          }
+        },
+        "type": "object"
+      },
+      "V2beta1UpdateNetworkAreaRoutePayload": {
+        "description": "Object that represents the request body for a route update.",
+        "properties": {
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          }
+        },
+        "type": "object"
+      },
+      "V2beta1UpdateSecurityGroupPayload": {
+        "description": "Object that represents an update request body of a security group.",
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          }
+        },
+        "type": "object"
+      },
+      "V2beta1UpdateSnapshotPayload": {
+        "description": "Object that represents an update request body of a snapshot.",
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          }
+        },
+        "type": "object"
+      },
       "VCPUs": {
         "description": "The number of virtual CPUs of a server.",
         "example": 4,
@@ -5106,219 +5335,6 @@
         "description": "Name of the region.",
         "example": "eu01",
         "type": "string"
-      },
-      "v2beta1ConfigureNetworkAreaRegionPayload": {
-        "description": "The basic properties of a regional network area.",
-        "properties": {
-          "ipv4": {
-            "$ref": "#/components/schemas/RegionalAreaIPv4"
-          },
-          "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ResourceState"
-              }
-            ],
-            "readOnly": true
-          }
-        },
-        "type": "object"
-      },
-      "v2beta1CreateSnapshotPayload": {
-        "description": "Object that represents a snapshot.",
-        "properties": {
-          "createdAt": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/CreatedAt"
-              }
-            ],
-            "readOnly": true
-          },
-          "description": {
-            "$ref": "#/components/schemas/Description"
-          },
-          "id": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UUID"
-              }
-            ],
-            "readOnly": true
-          },
-          "labels": {
-            "$ref": "#/components/schemas/Labels"
-          },
-          "name": {
-            "$ref": "#/components/schemas/GenericName"
-          },
-          "size": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/SizeInGB"
-              }
-            ],
-            "readOnly": true
-          },
-          "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/SnapshotStatus"
-              }
-            ],
-            "readOnly": true
-          },
-          "updatedAt": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UpdatedAt"
-              }
-            ],
-            "readOnly": true
-          },
-          "volumeId": {
-            "$ref": "#/components/schemas/UUID"
-          }
-        },
-        "required": [
-          "volumeId"
-        ],
-        "type": "object"
-      },
-      "v2beta1UpdateBackupPayload": {
-        "description": "Object that represents a backup.",
-        "properties": {
-          "availabilityZone": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AvailabilityZone"
-              }
-            ],
-            "readOnly": true
-          },
-          "createdAt": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/CreatedAt"
-              }
-            ],
-            "readOnly": true
-          },
-          "description": {
-            "$ref": "#/components/schemas/Description"
-          },
-          "encrypted": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/VolumeEncryption"
-              }
-            ],
-            "readOnly": true
-          },
-          "id": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UUID"
-              }
-            ],
-            "readOnly": true
-          },
-          "labels": {
-            "$ref": "#/components/schemas/Labels"
-          },
-          "name": {
-            "$ref": "#/components/schemas/GenericName"
-          },
-          "size": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/SizeInGB"
-              }
-            ],
-            "readOnly": true
-          },
-          "snapshotId": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UUID"
-              }
-            ],
-            "readOnly": true
-          },
-          "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/BackupStatus"
-              }
-            ],
-            "readOnly": true
-          },
-          "updatedAt": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UpdatedAt"
-              }
-            ],
-            "readOnly": true
-          },
-          "volumeId": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UUID"
-              }
-            ],
-            "readOnly": true
-          }
-        },
-        "type": "object"
-      },
-      "v2beta1UpdateNetworkAreaRegionPayload": {
-        "description": "Object that represents the request body for a regional network area update.",
-        "properties": {
-          "ipv4": {
-            "$ref": "#/components/schemas/UpdateRegionalAreaIPv4"
-          }
-        },
-        "type": "object"
-      },
-      "v2beta1UpdateRouteOfAreaPayload": {
-        "description": "Object that represents the request body for a route update.",
-        "properties": {
-          "labels": {
-            "$ref": "#/components/schemas/Labels"
-          }
-        },
-        "type": "object"
-      },
-      "v2beta1UpdateSecurityGroupPayload": {
-        "description": "Object that represents an update request body of a security group.",
-        "properties": {
-          "description": {
-            "$ref": "#/components/schemas/Description"
-          },
-          "labels": {
-            "$ref": "#/components/schemas/Labels"
-          },
-          "name": {
-            "$ref": "#/components/schemas/GenericName"
-          }
-        },
-        "type": "object"
-      },
-      "v2beta1UpdateSnapshotPayload": {
-        "description": "Object that represents an update request body of a snapshot.",
-        "properties": {
-          "description": {
-            "$ref": "#/components/schemas/Description"
-          },
-          "labels": {
-            "$ref": "#/components/schemas/Labels"
-          },
-          "name": {
-            "$ref": "#/components/schemas/GenericName"
-          }
-        },
-        "type": "object"
       }
     }
   },
@@ -5872,7 +5888,7 @@
     "/v2beta1/organizations/{organizationId}/network-areas/{areaId}/regions": {
       "get": {
         "description": "Get a list of all configured regions.",
-        "operationId": "v2beta1ListAreaRegions",
+        "operationId": "V2beta1ListNetworkAreaRegions",
         "responses": {
           "200": {
             "content": {
@@ -5922,7 +5938,7 @@
     "/v2beta1/organizations/{organizationId}/network-areas/{areaId}/regions/{region}": {
       "delete": {
         "description": "Delete a current configuration of region for a network area.",
-        "operationId": "v2beta1DeleteNetworkAreaRegion",
+        "operationId": "V2beta1DeleteNetworkAreaRegion",
         "responses": {
           "202": {
             "description": "Regional configuration has been deleted."
@@ -5958,7 +5974,7 @@
       },
       "get": {
         "description": "Get details about a configured region in a network area.",
-        "operationId": "v2beta1GetAreaRegion",
+        "operationId": "V2beta1GetNetworkAreaRegion",
         "responses": {
           "200": {
             "content": {
@@ -6009,12 +6025,12 @@
       ],
       "patch": {
         "description": "Update a new region for a network area.",
-        "operationId": "v2beta1UpdateNetworkAreaRegion",
+        "operationId": "V2beta1UpdateNetworkAreaRegion",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/v2beta1UpdateNetworkAreaRegionPayload"
+                "$ref": "#/components/schemas/V2beta1UpdateNetworkAreaRegionPayload"
               }
             }
           },
@@ -6063,12 +6079,12 @@
       },
       "put": {
         "description": "Configure a new region for a network area.",
-        "operationId": "v2beta1ConfigureNetworkAreaRegion",
+        "operationId": "V2beta1CreateNetworkAreaRegion",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/v2beta1ConfigureNetworkAreaRegionPayload"
+                "$ref": "#/components/schemas/V2beta1CreateNetworkAreaRegionPayload"
               }
             }
           },
@@ -6524,12 +6540,12 @@
       ],
       "patch": {
         "description": "Update a network route defined in a network area.",
-        "operationId": "v2beta1UpdateRouteOfArea",
+        "operationId": "V2beta1UpdateNetworkAreaRoute",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/v2beta1UpdateRouteOfAreaPayload"
+                "$ref": "#/components/schemas/V2beta1UpdateNetworkAreaRoutePayload"
               }
             }
           },
@@ -7593,7 +7609,7 @@
       ],
       "patch": {
         "description": "Update name or labels of the backup.",
-        "operationId": "v2beta1UpdateBackup",
+        "operationId": "V2beta1UpdateBackup",
         "requestBody": {
           "content": {
             "application/json": {
@@ -7612,7 +7628,7 @@
                 }
               },
               "schema": {
-                "$ref": "#/components/schemas/v2beta1UpdateBackupPayload"
+                "$ref": "#/components/schemas/V2beta1UpdateBackupPayload"
               }
             }
           },
@@ -7973,6 +7989,99 @@
         "x-stackit-authorization": {
           "actions": [
             "iaas.image.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v2beta1/projects/{projectId}/regions/{region}/images/{imageId}/publish": {
+      "delete": {
+        "description": "Update the scope property of an existing Image inside a project to local.",
+        "operationId": "UpdateImageScopeLocal",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Image"
+                }
+              }
+            },
+            "description": "Response to update image-scope to local. Provide the updated image object."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update Image Scope to Local.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.image.publish.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        },
+        {
+          "$ref": "#/components/parameters/v1ImageID"
+        }
+      ],
+      "put": {
+        "description": "Update the scope property of an existing Image inside a project to public.",
+        "operationId": "UpdateImageScopePublic",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Image"
+                }
+              }
+            },
+            "description": "Response to update image-scope to public. Provide the updated image object."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update Image Scope to Public.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.image.publish.create"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",
@@ -9645,12 +9754,12 @@
       ],
       "patch": {
         "description": "Update labels of the security group.",
-        "operationId": "v2beta1UpdateSecurityGroup",
+        "operationId": "V2beta1UpdateSecurityGroup",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/v2beta1UpdateSecurityGroupPayload"
+                "$ref": "#/components/schemas/V2beta1UpdateSecurityGroupPayload"
               }
             }
           },
@@ -11543,7 +11652,7 @@
     "/v2beta1/projects/{projectId}/regions/{region}/snapshots": {
       "get": {
         "description": "Get a list of all snapshots inside a project.",
-        "operationId": "v2beta1ListSnapshotsInProject",
+        "operationId": "V2beta1ListSnapshots",
         "parameters": [
           {
             "$ref": "#/components/parameters/v1LabelSelector"
@@ -11596,7 +11705,7 @@
       ],
       "post": {
         "description": "Create a new Snapshot from a Volume in a project.",
-        "operationId": "v2beta1CreateSnapshot",
+        "operationId": "V2beta1CreateSnapshot",
         "requestBody": {
           "content": {
             "application/json": {
@@ -11605,7 +11714,7 @@
                 "volumeId": "d61a8564-c8dd-4ffb-bc15-143e7d0c85ed"
               },
               "schema": {
-                "$ref": "#/components/schemas/v2beta1CreateSnapshotPayload"
+                "$ref": "#/components/schemas/V2beta1CreateSnapshotPayload"
               }
             }
           },
@@ -11653,7 +11762,7 @@
     "/v2beta1/projects/{projectId}/regions/{region}/snapshots/{snapshotId}": {
       "delete": {
         "description": "Delete a snapshot that is part of the project.",
-        "operationId": "v2beta1DeleteSnapshot",
+        "operationId": "V2beta1DeleteSnapshot",
         "responses": {
           "204": {
             "description": "Snapshot delete request has been accepted."
@@ -11686,7 +11795,7 @@
       },
       "get": {
         "description": "Get details about a block device snapshot.",
-        "operationId": "v2beta1GetSnapshot",
+        "operationId": "V2beta1GetSnapshot",
         "responses": {
           "200": {
             "content": {
@@ -11737,7 +11846,7 @@
       ],
       "patch": {
         "description": "Update information like name or labels of the snapshot.",
-        "operationId": "v2beta1UpdateSnapshot",
+        "operationId": "V2beta1UpdateSnapshot",
         "requestBody": {
           "content": {
             "application/json": {
@@ -11756,7 +11865,7 @@
                 }
               },
               "schema": {
-                "$ref": "#/components/schemas/v2beta1UpdateSnapshotPayload"
+                "$ref": "#/components/schemas/V2beta1UpdateSnapshotPayload"
               }
             }
           },

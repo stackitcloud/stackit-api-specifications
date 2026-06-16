@@ -32,9 +32,26 @@
         "summary": "Forbidden",
         "value": {
           "code": 403,
-          "message": "user is not allowed to perform this operation",
+          "message": "Unauthorized: user is not allowed to perform this operation",
           "traceId": "58bab3ea361c37c25d72041afdd8aca2",
           "type": "FORBIDDEN_ERROR"
+        }
+      },
+      "instanceNameConflictError": {
+        "summary": "Conflict - instance name already exists",
+        "value": {
+          "code": 409,
+          "message": "An instance with the requested name already exists in the project.",
+          "traceId": "58bab3ea361c37c25d72041afdd8aca2",
+          "type": "ALREADY_EXISTS_ERROR"
+        }
+      },
+      "instanceNotReadyError": {
+        "value": {
+          "code": 423,
+          "message": "The instance is not yet ready to perform this operation.",
+          "traceId": "58bab3ea361c37c25d72041afdd8aca2",
+          "type": "INSTANCE_NOT_READY_ERROR"
         }
       },
       "internalServerError": {
@@ -71,6 +88,24 @@
           "message": "authorization header is missing",
           "traceId": "58bab3ea361c37c25d72041afdd8aca2",
           "type": "UNAUTHORIZED_ERROR"
+        }
+      },
+      "unavailableServerError": {
+        "summary": "Unavailable Server Error",
+        "value": {
+          "code": 503,
+          "message": "A required downstream service is currently unresponsive",
+          "traceId": "58bab3ea361c37c25d72041afdd8aca2",
+          "type": "UNAVAILABLE_SERVICE_ERROR"
+        }
+      },
+      "userConflictError": {
+        "summary": "User Conflict Error",
+        "value": {
+          "code": 409,
+          "message": "сan not delete user while active databases exist.",
+          "traceId": "58bab3ea361c37c25d72041afdd8aca2",
+          "type": "USER_CONFLICT_ERROR"
         }
       },
       "validationError": {
@@ -150,7 +185,10 @@
         "schema": {
           "$ref": "#/components/schemas/flavor.sort"
         },
-        "style": "form"
+        "style": "form",
+        "x-oapi-codegen-extra-tags": {
+          "validate": "omitempty,flavor_sort"
+        }
       },
       "flavorId": {
         "description": "The ID of the flavor.",
@@ -174,7 +212,10 @@
         "schema": {
           "type": "string"
         },
-        "style": "simple"
+        "style": "simple",
+        "x-oapi-codegen-extra-tags": {
+          "validate": "uuid_rfc4122"
+        }
       },
       "instance.sort": {
         "description": "Sorting of the items to be returned on each page.",
@@ -216,7 +257,10 @@
         "schema": {
           "type": "string"
         },
-        "style": "simple"
+        "style": "simple",
+        "x-oapi-codegen-extra-tags": {
+          "validate": "uuid_rfc4122"
+        }
       },
       "region": {
         "description": "The region which should be addressed",
@@ -227,11 +271,15 @@
         "required": true,
         "schema": {
           "enum": [
-            "eu01"
+            "eu01",
+            "eu02"
           ],
           "type": "string"
         },
-        "style": "simple"
+        "style": "simple",
+        "x-oapi-codegen-extra-tags": {
+          "validate": "region"
+        }
       },
       "size": {
         "description": "Number of items to be returned on each page.",
@@ -275,6 +323,37 @@
       }
     },
     "schemas": {
+      "BackupData": {
+        "properties": {
+          "completionTime": {
+            "$ref": "#/components/schemas/backup.completionTime"
+          },
+          "id": {
+            "$ref": "#/components/schemas/backup.id"
+          },
+          "name": {
+            "$ref": "#/components/schemas/backup.name"
+          },
+          "retainedUntil": {
+            "$ref": "#/components/schemas/backup.retainedUntil"
+          },
+          "size": {
+            "$ref": "#/components/schemas/backup.size"
+          },
+          "type": {
+            "$ref": "#/components/schemas/backup.type"
+          }
+        },
+        "required": [
+          "completionTime",
+          "id",
+          "name",
+          "retainedUntil",
+          "size",
+          "type"
+        ],
+        "type": "object"
+      },
       "CloneResponse": {
         "properties": {
           "id": {
@@ -319,6 +398,9 @@
           "password": {
             "$ref": "#/components/schemas/user.password"
           },
+          "state": {
+            "$ref": "#/components/schemas/user.state"
+          },
           "status": {
             "$ref": "#/components/schemas/user.status"
           }
@@ -327,6 +409,7 @@
           "id",
           "name",
           "password",
+          "state",
           "status"
         ],
         "type": "object"
@@ -364,35 +447,7 @@
         "type": "object"
       },
       "GetBackupResponse": {
-        "properties": {
-          "completionTime": {
-            "$ref": "#/components/schemas/backup.completionTime"
-          },
-          "id": {
-            "$ref": "#/components/schemas/backup.id"
-          },
-          "name": {
-            "$ref": "#/components/schemas/backup.name"
-          },
-          "retainedUntil": {
-            "$ref": "#/components/schemas/backup.retainedUntil"
-          },
-          "size": {
-            "$ref": "#/components/schemas/backup.size"
-          },
-          "type": {
-            "$ref": "#/components/schemas/backup.type"
-          }
-        },
-        "required": [
-          "completionTime",
-          "id",
-          "name",
-          "retainedUntil",
-          "size",
-          "type"
-        ],
-        "type": "object"
+        "$ref": "#/components/schemas/BackupData"
       },
       "GetCollationsResponse": {
         "properties": {
@@ -485,6 +540,9 @@
           "retentionDays": {
             "$ref": "#/components/schemas/retentionDays"
           },
+          "state": {
+            "$ref": "#/components/schemas/state"
+          },
           "status": {
             "$ref": "#/components/schemas/status"
           },
@@ -503,6 +561,7 @@
           "name",
           "replicas",
           "retentionDays",
+          "state",
           "status",
           "storage",
           "version",
@@ -530,6 +589,9 @@
             },
             "type": "array"
           },
+          "state": {
+            "$ref": "#/components/schemas/user.state"
+          },
           "status": {
             "$ref": "#/components/schemas/user.status"
           }
@@ -538,6 +600,7 @@
           "id",
           "name",
           "roles",
+          "state",
           "status"
         ],
         "type": "object"
@@ -558,35 +621,7 @@
         "type": "object"
       },
       "ListBackup": {
-        "properties": {
-          "completionTime": {
-            "$ref": "#/components/schemas/backup.completionTime"
-          },
-          "id": {
-            "$ref": "#/components/schemas/backup.id"
-          },
-          "name": {
-            "$ref": "#/components/schemas/backup.name"
-          },
-          "retainedUntil": {
-            "$ref": "#/components/schemas/backup.retainedUntil"
-          },
-          "size": {
-            "$ref": "#/components/schemas/backup.size"
-          },
-          "type": {
-            "$ref": "#/components/schemas/backup.type"
-          }
-        },
-        "required": [
-          "completionTime",
-          "id",
-          "name",
-          "retainedUntil",
-          "size",
-          "type"
-        ],
-        "type": "object"
+        "$ref": "#/components/schemas/BackupData"
       },
       "ListBackupResponse": {
         "properties": {
@@ -696,6 +731,9 @@
           "name": {
             "$ref": "#/components/schemas/instance.name"
           },
+          "state": {
+            "$ref": "#/components/schemas/state"
+          },
           "status": {
             "$ref": "#/components/schemas/status"
           }
@@ -703,6 +741,7 @@
         "required": [
           "id",
           "name",
+          "state",
           "status",
           "isDeletable"
         ],
@@ -734,9 +773,10 @@
             "example": [
               "createdb",
               "nocreatedb",
-              "nocreaterole",
               "login",
               "nologin",
+              "createrole",
+              "nocreaterole",
               "replication"
             ],
             "items": {
@@ -760,6 +800,9 @@
           "name": {
             "$ref": "#/components/schemas/user.name"
           },
+          "state": {
+            "$ref": "#/components/schemas/user.state"
+          },
           "status": {
             "$ref": "#/components/schemas/user.status"
           }
@@ -767,6 +810,7 @@
         "required": [
           "id",
           "name",
+          "state",
           "status"
         ],
         "type": "object"
@@ -840,6 +884,9 @@
           "password": {
             "$ref": "#/components/schemas/user.password"
           },
+          "state": {
+            "$ref": "#/components/schemas/user.state"
+          },
           "status": {
             "$ref": "#/components/schemas/user.status"
           }
@@ -847,6 +894,7 @@
         "required": [
           "name",
           "password",
+          "state",
           "status"
         ],
         "type": "object"
@@ -1011,6 +1059,9 @@
       },
       "clone.instanceOverrides": {
         "properties": {
+          "name": {
+            "$ref": "#/components/schemas/clone.name.opt"
+          },
           "performanceClass": {
             "$ref": "#/components/schemas/clone.storage.class"
           },
@@ -1023,6 +1074,13 @@
           "performanceClass"
         ],
         "type": "object"
+      },
+      "clone.name.opt": {
+        "description": "The name of the cloned instance. If not provided, the default naming behavior of appending '-clone' to the source instance name is used.",
+        "example": "my-cloned-instance",
+        "maxLength": 63,
+        "minLength": 3,
+        "type": "string"
       },
       "clone.pointInTime": {
         "description": "the time for the point in time recovery it will be calculated between first backup and last backup",
@@ -1121,17 +1179,13 @@
             "$ref": "#/components/schemas/user.name"
           },
           "roles": {
-            "description": "A list containing the user roles for the instance.",
-            "example": [
-              "createdb",
-              "login"
-            ],
+            "description": "A list containing the user roles for the instance. Please refer to the List Roles endpoint for a list of all available Roles.",
             "items": {
               "$ref": "#/components/schemas/user.role"
             },
             "type": "array",
             "x-oapi-codegen-extra-tags": {
-              "validate": "omitempty,unique_user_role"
+              "validate": "required,unique_user_role"
             }
           }
         },
@@ -1337,7 +1391,7 @@
         "type": "object"
       },
       "instance.encryption": {
-        "description": "The configuration for instance's volume and backup storage encryption.\n\n⚠︝ **Note:** This feature is in private preview. Supplying this object is only permitted for enabled accounts. If your account does not have access, the request will be rejected.\n",
+        "description": "The configuration for instance's volume and backup storage encryption.\n\n⚠️ **Note:** This feature is in private preview. Supplying this object is only permitted for enabled accounts. If your account does not have access, the request will be rejected.\n",
         "properties": {
           "kekKeyId": {
             "description": "The encryption-key key identifier",
@@ -1382,6 +1436,7 @@
       "instance.id": {
         "description": "The ID of the instance.",
         "example": "df727477-8991-486c-a3ed-d11d9d9beb1c",
+        "format": "uuid",
         "type": "string"
       },
       "instance.isDeletable": {
@@ -1392,11 +1447,15 @@
       "instance.name": {
         "description": "The name of the instance.",
         "example": "postgres-instance",
+        "maxLength": 63,
+        "minLength": 3,
         "type": "string"
       },
       "instance.name.opt": {
         "description": "The name of the instance.",
         "example": "postgres-instance",
+        "maxLength": 63,
+        "minLength": 3,
         "type": "string"
       },
       "instance.network": {
@@ -1475,6 +1534,8 @@
           "is_deletable.asc",
           "name.asc",
           "name.desc",
+          "state.asc",
+          "state.desc",
           "status.asc",
           "status.desc"
         ],
@@ -1558,13 +1619,21 @@
         "description": "How long backups are retained. The value can only be between 32 and 90 days.",
         "example": 35,
         "format": "uint32",
+        "maximum": 365,
+        "minimum": 32,
+        "nullable": true,
         "type": "integer"
       },
       "retentionDays.opt": {
         "description": "How long backups are retained. The value can only be between 32 and 90 days.",
         "example": 35,
         "format": "uint32",
+        "maximum": 365,
+        "minimum": 32,
         "type": "integer"
+      },
+      "state": {
+        "$ref": "#/components/schemas/status"
       },
       "status": {
         "description": "The current status of the instance.",
@@ -1572,6 +1641,7 @@
           "READY",
           "PENDING",
           "PROGRESSING",
+          "WAITING",
           "FAILURE",
           "UNKNOWN",
           "TERMINATING"
@@ -1760,11 +1830,7 @@
             "$ref": "#/components/schemas/user.name.opt"
           },
           "roles": {
-            "description": "A list containing the user roles for the instance.",
-            "example": [
-              "createdb",
-              "login"
-            ],
+            "description": "A list containing the user roles for the instance. Please refer to the List Roles endpoint for a list of all available Roles.",
             "items": {
               "$ref": "#/components/schemas/user.role"
             },
@@ -1782,11 +1848,7 @@
             "$ref": "#/components/schemas/user.name"
           },
           "roles": {
-            "description": "A list containing the user roles for the instance.",
-            "example": [
-              "createdb",
-              "login"
-            ],
+            "description": "A list containing the user roles for the instance. Please refer to the List Roles endpoint for a list of all available Roles.",
             "items": {
               "$ref": "#/components/schemas/user.role"
             },
@@ -1800,11 +1862,6 @@
           "roles"
         ],
         "type": "object"
-      },
-      "user.host": {
-        "description": "The host of the instance in which the user belongs to.",
-        "example": "19feb036-9b61-11ee-b9d1-0242ac120002.postgresql.eu01.onstackit.cloud",
-        "type": "string"
       },
       "user.id": {
         "description": "The ID of the user.",
@@ -1827,19 +1884,11 @@
         "example": "password123",
         "type": "string"
       },
-      "user.port": {
-        "description": "The port of the instance in which the user belongs to.",
-        "example": 5432,
-        "format": "uint32",
-        "type": "integer"
-      },
       "user.role": {
-        "description": "The user role for the instance.",
-        "enum": [
-          "createdb",
-          "login"
-        ],
+        "description": "The user role for the instance. Valid roles depend on the Postgres version of the instance;\nretrieve the allowed roles via GET roles endpoint.\n",
         "example": "login",
+        "maxLength": 63,
+        "minLength": 1,
         "type": "string"
       },
       "user.sort": {
@@ -1848,10 +1897,15 @@
           "id.desc",
           "name.desc",
           "name.asc",
+          "state.desc",
+          "state.asc",
           "status.desc",
           "status.asc"
         ],
         "type": "string"
+      },
+      "user.state": {
+        "$ref": "#/components/schemas/user.status"
       },
       "user.status": {
         "description": "The current status of the user.",
@@ -2026,6 +2080,21 @@
               }
             },
             "description": "Endpoint not implemented yet"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Get Flavors",
@@ -2145,6 +2214,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "List Instances",
@@ -2279,6 +2363,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Create Instance",
@@ -2400,6 +2499,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Delete Instance",
@@ -2511,6 +2625,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Get Specific Instance",
@@ -2637,6 +2766,21 @@
             },
             "description": "Request failed due to body validation"
           },
+          "423": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "tooEarlyError": {
+                    "$ref": "#/components/examples/instanceNotReadyError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Too Early: The instance is not yet ready to perform this operation."
+          },
           "500": {
             "content": {
               "application/json": {
@@ -2651,6 +2795,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Update Instance Partially",
@@ -2777,6 +2936,21 @@
             },
             "description": "Request failed due to body validation"
           },
+          "423": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "tooEarlyError": {
+                    "$ref": "#/components/examples/instanceNotReadyError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Too Early: The instance is not yet ready to perform this operation."
+          },
           "500": {
             "content": {
               "application/json": {
@@ -2791,6 +2965,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Update Instance",
@@ -2928,6 +3117,21 @@
               }
             },
             "description": "Endpoint not implemented yet"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "List backups",
@@ -3059,6 +3263,21 @@
               }
             },
             "description": "Endpoint not implemented yet"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Get specific backup",
@@ -3168,6 +3387,21 @@
             },
             "description": "Not found: The requested resource was not found."
           },
+          "409": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "instanceNameConflictError": {
+                    "$ref": "#/components/examples/instanceNameConflictError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Conflict: The request could not be processed due to a conflict, e.g. an instance with the requested name already exists."
+          },
           "422": {
             "content": {
               "application/json": {
@@ -3207,6 +3441,21 @@
               }
             },
             "description": "Endpoint not implemented yet"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Clone Instance",
@@ -3335,6 +3584,21 @@
               }
             },
             "description": "Endpoint not implemented yet"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Get Collations for an Instance",
@@ -3457,6 +3721,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "List Databases",
@@ -3580,21 +3859,6 @@
             },
             "description": "Database name already exists"
           },
-          "412": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "preconditionFailedError": {
-                    "$ref": "#/components/examples/failedPreconditionError"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Precondition Failed: The precondition for this operation was not met."
-          },
           "422": {
             "content": {
               "application/json": {
@@ -3604,6 +3868,21 @@
               }
             },
             "description": "Request failed due to body validation"
+          },
+          "423": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "tooEarlyError": {
+                    "$ref": "#/components/examples/instanceNotReadyError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Too Early: The instance is not yet ready to perform this operation."
           },
           "500": {
             "content": {
@@ -3619,6 +3898,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Create Database",
@@ -3714,12 +4008,12 @@
             },
             "description": "Not found: The requested resource was not found."
           },
-          "412": {
+          "423": {
             "content": {
               "application/json": {
                 "examples": {
-                  "preconditionFailedError": {
-                    "$ref": "#/components/examples/failedPreconditionError"
+                  "tooEarlyError": {
+                    "$ref": "#/components/examples/instanceNotReadyError"
                   }
                 },
                 "schema": {
@@ -3727,7 +4021,7 @@
                 }
               }
             },
-            "description": "Precondition Failed: The precondition for this operation was not met."
+            "description": "Too Early: The instance is not yet ready to perform this operation."
           },
           "500": {
             "content": {
@@ -3743,6 +4037,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Delete Database",
@@ -3857,6 +4166,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Get Specific Database",
@@ -3961,21 +4285,6 @@
             },
             "description": "Not found: The requested resource was not found."
           },
-          "412": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "preconditionFailedError": {
-                    "$ref": "#/components/examples/failedPreconditionError"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Precondition Failed: The precondition for this operation was not met."
-          },
           "422": {
             "content": {
               "application/json": {
@@ -3985,6 +4294,21 @@
               }
             },
             "description": "Request failed due to body validation"
+          },
+          "423": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "tooEarlyError": {
+                    "$ref": "#/components/examples/instanceNotReadyError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Too Early: The instance is not yet ready to perform this operation."
           },
           "500": {
             "content": {
@@ -4000,6 +4324,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Update Database partially",
@@ -4104,21 +4443,6 @@
             },
             "description": "Not found: The requested resource was not found."
           },
-          "412": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "preconditionFailedError": {
-                    "$ref": "#/components/examples/failedPreconditionError"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Precondition Failed: The precondition for this operation was not met."
-          },
           "422": {
             "content": {
               "application/json": {
@@ -4128,6 +4452,21 @@
               }
             },
             "description": "Request failed due to body validation"
+          },
+          "423": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "tooEarlyError": {
+                    "$ref": "#/components/examples/instanceNotReadyError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Too Early: The instance is not yet ready to perform this operation."
           },
           "500": {
             "content": {
@@ -4143,6 +4482,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Update Database",
@@ -4292,6 +4646,21 @@
               }
             },
             "description": "Endpoint not implemented yet"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Protect Instance",
@@ -4405,6 +4774,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "List Roles",
@@ -4527,6 +4911,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "List Users",
@@ -4635,12 +5034,12 @@
             },
             "description": "Not found: The requested resource was not found."
           },
-          "412": {
+          "409": {
             "content": {
               "application/json": {
                 "examples": {
-                  "preconditionFailedError": {
-                    "$ref": "#/components/examples/failedPreconditionError"
+                  "notFoundError": {
+                    "$ref": "#/components/examples/alreadyExistsError"
                   }
                 },
                 "schema": {
@@ -4648,7 +5047,7 @@
                 }
               }
             },
-            "description": "Precondition Failed: The precondition for this operation was not met."
+            "description": "User name already exists"
           },
           "422": {
             "content": {
@@ -4659,6 +5058,21 @@
               }
             },
             "description": "Request failed due to body validation"
+          },
+          "423": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "tooEarlyError": {
+                    "$ref": "#/components/examples/instanceNotReadyError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Too Early: The instance is not yet ready to perform this operation."
           },
           "500": {
             "content": {
@@ -4674,6 +5088,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Create User",
@@ -4769,12 +5198,12 @@
             },
             "description": "Not found: The requested resource was not found."
           },
-          "412": {
+          "409": {
             "content": {
               "application/json": {
                 "examples": {
-                  "preconditionFailedError": {
-                    "$ref": "#/components/examples/failedPreconditionError"
+                  "conflictError": {
+                    "$ref": "#/components/examples/userConflictError"
                   }
                 },
                 "schema": {
@@ -4782,7 +5211,22 @@
                 }
               }
             },
-            "description": "Precondition Failed: The precondition for this operation was not met."
+            "description": "Cannot delete user while active databases exist."
+          },
+          "423": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "tooEarlyError": {
+                    "$ref": "#/components/examples/instanceNotReadyError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Too Early: The instance is not yet ready to perform this operation."
           },
           "500": {
             "content": {
@@ -4798,6 +5242,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Delete User",
@@ -4912,6 +5371,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Get User",
@@ -5015,21 +5489,6 @@
             },
             "description": "Not found: The requested resource was not found."
           },
-          "412": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "preconditionFailedError": {
-                    "$ref": "#/components/examples/failedPreconditionError"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Precondition Failed: The precondition for this operation was not met."
-          },
           "422": {
             "content": {
               "application/json": {
@@ -5039,6 +5498,21 @@
               }
             },
             "description": "Request failed due to body validation"
+          },
+          "423": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "tooEarlyError": {
+                    "$ref": "#/components/examples/instanceNotReadyError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Too Early: The instance is not yet ready to perform this operation."
           },
           "500": {
             "content": {
@@ -5054,6 +5528,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Update User Partially",
@@ -5158,21 +5647,6 @@
             },
             "description": "Not found: The requested resource was not found."
           },
-          "412": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "preconditionFailedError": {
-                    "$ref": "#/components/examples/failedPreconditionError"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Precondition Failed: The precondition for this operation was not met."
-          },
           "422": {
             "content": {
               "application/json": {
@@ -5182,6 +5656,21 @@
               }
             },
             "description": "Request failed due to body validation"
+          },
+          "423": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "tooEarlyError": {
+                    "$ref": "#/components/examples/instanceNotReadyError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Too Early: The instance is not yet ready to perform this operation."
           },
           "500": {
             "content": {
@@ -5197,6 +5686,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Update User",
@@ -5299,21 +5803,6 @@
             },
             "description": "Not found: The requested resource was not found."
           },
-          "412": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "preconditionFailedError": {
-                    "$ref": "#/components/examples/failedPreconditionError"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            },
-            "description": "Precondition Failed: The precondition for this operation was not met."
-          },
           "422": {
             "content": {
               "application/json": {
@@ -5323,6 +5812,21 @@
               }
             },
             "description": "Request failed due to body validation"
+          },
+          "423": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "tooEarlyError": {
+                    "$ref": "#/components/examples/instanceNotReadyError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Too Early: The instance is not yet ready to perform this operation."
           },
           "500": {
             "content": {
@@ -5338,6 +5842,21 @@
               }
             },
             "description": "Internal Server Error: An internal occurred while processing the request. Please contact the support or try again later."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "internalServerError": {
+                    "$ref": "#/components/examples/unavailableServerError"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
         "summary": "Reset User",

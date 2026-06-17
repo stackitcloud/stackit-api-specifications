@@ -1,0 +1,1646 @@
+{
+  "components": {
+    "parameters": {
+      "cursor": {
+        "description": "A pagination cursor that represents a position in the dataset. If given, results will be returned from the item after the cursor. If not given, results will be returned from the beginning.",
+        "in": "query",
+        "name": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "direction": {
+        "description": "The direction of the rule (e.g., \"ingress\", \"egress\").",
+        "in": "query",
+        "name": "direction",
+        "schema": {
+          "enum": [
+            "ingress",
+            "egress"
+          ],
+          "type": "string"
+        }
+      },
+      "etherType": {
+        "description": "The ether type for the rule.",
+        "in": "query",
+        "name": "etherType",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "folderId": {
+        "description": "The STACKIT portal folder UUID the key ring is part of.",
+        "in": "path",
+        "name": "folderId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "instanceIdPath": {
+        "description": "The ID of the source, similar to a project ID but for the product service instance.",
+        "in": "path",
+        "name": "instanceId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "instanceIdQuery": {
+        "description": "The ID of the source, similar to a project ID but for the product service instance.",
+        "in": "query",
+        "name": "instanceId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "limit": {
+        "description": "The maximum number of items to return in the response. If maximum is exceeded, maximum is used.",
+        "in": "query",
+        "name": "limit",
+        "schema": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "offset": {
+        "description": "The offset for the rule in the instance it is associated with.",
+        "in": "query",
+        "name": "offset",
+        "schema": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "organizationId": {
+        "description": "The STACKIT portal organization UUID the key ring is part of.",
+        "in": "path",
+        "name": "organizationId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "portRange": {
+        "description": "The port range for the rule.",
+        "example": "80-8080",
+        "in": "query",
+        "name": "portRange",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "product": {
+        "description": "The product service (e.g., Load Balancer, Redis).",
+        "in": "query",
+        "name": "product",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "projectId": {
+        "description": "The STACKIT portal project UUID the key ring is part of.",
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "protocol": {
+        "description": "The protocol for the rule (e.g., \"tcp\", \"udp\").",
+        "in": "query",
+        "name": "protocol",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "region": {
+        "description": "The region where the project is located.",
+        "in": "query",
+        "name": "region",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "regionId": {
+        "description": "The STACKIT region name the resource is located in.",
+        "in": "path",
+        "name": "regionId",
+        "required": true,
+        "schema": {
+          "enum": [
+            "eu01",
+            "eu02"
+          ],
+          "type": "string"
+        }
+      },
+      "ruleFilters": {
+        "description": "Filtering criteria for the export",
+        "explode": true,
+        "in": "query",
+        "name": "filters",
+        "schema": {
+          "properties": {
+            "direction": {
+              "type": "string"
+            },
+            "etherType": {
+              "type": "string"
+            },
+            "instanceName": {
+              "type": "string"
+            },
+            "portRange": {
+              "type": "string"
+            },
+            "product": {
+              "type": "string"
+            },
+            "protocol": {
+              "type": "string"
+            },
+            "sourceIP": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "style": "form"
+      },
+      "securityGroupId": {
+        "description": "The UUID of the group.",
+        "in": "query",
+        "name": "securityGroupId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "serviceId": {
+        "description": "The STACKIT service the resource belongs to.",
+        "in": "path",
+        "name": "serviceId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "sortBy": {
+        "description": "The field to sort the response by.",
+        "in": "query",
+        "name": "sortBy",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "sortOrder": {
+        "description": "The order to sort the response by.",
+        "in": "query",
+        "name": "sortOrder",
+        "schema": {
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "type": "string"
+        }
+      },
+      "sourceIP": {
+        "description": "The IP for the rule.",
+        "example": "1.2.3.4/32",
+        "in": "query",
+        "name": "sourceIP",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "type": {
+        "description": "The type of the rule (e.g., \"ACL\", \"PublicIP\", \"SecurityRule\").",
+        "in": "query",
+        "name": "type",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "badRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "Bad Request. The data provided by the client did not match expectations."
+      },
+      "internalServerError": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "Internal server error. The application experienced some unexpected situation."
+      },
+      "unauthorized": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "Unauthorized. You may have provided no or wrong credentials."
+      }
+    },
+    "schemas": {
+      "ContainerResponse": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type"
+        ],
+        "type": "object"
+      },
+      "CreateRulePayload": {
+        "description": "The request body for creating a new security rule.",
+        "properties": {
+          "description": {
+            "description": "A description for the rule.",
+            "example": "Allow HTTP traffic",
+            "type": "string"
+          },
+          "direction": {
+            "description": "The direction of the traffic, typically \"ingress\" or \"egress\".",
+            "example": "ingress",
+            "type": "string"
+          },
+          "etherType": {
+            "description": "Specifies the bound of the rule.",
+            "example": "IPv4",
+            "type": "string"
+          },
+          "instanceId": {
+            "description": "The ID of the product, similar to a project ID.",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "string"
+          },
+          "offset": {
+            "description": "Position in the list.",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "portRange": {
+            "description": "The Port range to which the rule applies.",
+            "example": "8080-8090",
+            "type": "string"
+          },
+          "product": {
+            "description": "The source service (e.g., Load Balancer, Redis).",
+            "example": "Load Balancer",
+            "type": "string"
+          },
+          "protocol": {
+            "description": "The network protocol (e.g., \"TCP\", \"UDP\", \"ICMP\").",
+            "example": "TCP",
+            "type": "string"
+          },
+          "securityGroupId": {
+            "description": "The ID of the Group.",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "string"
+          },
+          "sourceIP": {
+            "description": "The IP (CIDR) to which the rule applies.",
+            "example": "0.0.0.0/0",
+            "type": "string"
+          },
+          "type": {
+            "description": "The type of the rule (e.g., \"ACL\", \"PublicIP\", \"SecurityRule\").",
+            "example": "ACL",
+            "type": "string"
+          }
+        },
+        "required": [
+          "product",
+          "instanceId",
+          "type",
+          "sourceIP"
+        ],
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "code": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ListContainersResponse": {
+        "properties": {
+          "cursor": {
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ContainerResponse"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "cursor",
+          "limit"
+        ],
+        "type": "object"
+      },
+      "ProviderOptionsProductMeta": {
+        "properties": {
+          "actions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "types": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "types",
+          "actions"
+        ],
+        "type": "object"
+      },
+      "ProviderOptionsResponse": {
+        "properties": {
+          "productMeta": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ProviderOptionsProductMeta"
+            },
+            "type": "object"
+          },
+          "products": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "types": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "types",
+          "products",
+          "productMeta"
+        ],
+        "type": "object"
+      },
+      "RuleResponse": {
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "destination": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "errorMessage": {
+            "type": "string"
+          },
+          "etherType": {
+            "type": "string"
+          },
+          "instanceId": {
+            "type": "string"
+          },
+          "instanceName": {
+            "type": "string"
+          },
+          "ipRange": {
+            "type": "string"
+          },
+          "offset": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "portRange": {
+            "type": "string"
+          },
+          "product": {
+            "type": "string"
+          },
+          "protocol": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "remoteSecurityGroupId": {
+            "type": "string"
+          },
+          "securityGroup": {
+            "type": "string"
+          },
+          "securityGroupId": {
+            "type": "string"
+          },
+          "sourceIP": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "product",
+          "instanceId",
+          "destination",
+          "sourceIP",
+          "ipRange"
+        ],
+        "type": "object"
+      },
+      "SecurityRuleResponse": {
+        "properties": {
+          "success": {
+            "description": "Represents if the call was successfully made",
+            "example": true,
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "SecurityRulesResponse": {
+        "properties": {
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/RuleResponse"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "rules"
+        ],
+        "type": "object"
+      },
+      "ServicesResponse": {
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "instanceId": {
+            "type": "string"
+          },
+          "instanceName": {
+            "type": "string"
+          },
+          "product": {
+            "type": "string"
+          },
+          "remoteSecurityGroupId": {
+            "type": "string"
+          },
+          "securityGroup": {
+            "type": "string"
+          },
+          "securityGroupId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "product",
+          "instanceId"
+        ],
+        "type": "object"
+      },
+      "UpdateRulePayload": {
+        "description": "The request body for creating a new security rule.",
+        "properties": {
+          "description": {
+            "description": "A description for the rule.",
+            "example": "Allow HTTP traffic",
+            "type": "string"
+          },
+          "direction": {
+            "description": "The direction of the traffic, typically \"ingress\" or \"egress\".",
+            "example": "ingress",
+            "type": "string"
+          },
+          "etherType": {
+            "description": "Specifies the bound of the rule.",
+            "example": "IPv4",
+            "type": "string"
+          },
+          "instanceId": {
+            "description": "The ID of the product, similar to a project ID.",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "string"
+          },
+          "offset": {
+            "description": "Position in the list.",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "portRange": {
+            "description": "The Port range to which the rule applies.",
+            "example": "8080-8090",
+            "type": "string"
+          },
+          "product": {
+            "description": "The source service (e.g., Load Balancer, Redis).",
+            "example": "Load Balancer",
+            "type": "string"
+          },
+          "protocol": {
+            "description": "The network protocol (e.g., \"TCP\", \"UDP\", \"ICMP\").",
+            "example": "TCP",
+            "type": "string"
+          },
+          "securityGroupId": {
+            "description": "The ID of the Group.",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "string"
+          },
+          "sourceIP": {
+            "description": "The IP (CIDR) to which the rule applies.",
+            "example": "0.0.0.0/0",
+            "type": "string"
+          },
+          "type": {
+            "description": "The type of the rule (e.g., \"ACL\", \"PublicIP\", \"SecurityRule\").",
+            "example": "ACL",
+            "type": "string"
+          }
+        },
+        "required": [
+          "product",
+          "instanceId",
+          "type",
+          "sourceIP"
+        ],
+        "type": "object"
+      },
+      "VersionResponse": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "updateUfwRequest": {
+        "properties": {
+          "cidrs": {
+            "description": "The list of CIDRs currently set on the instance.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 128,
+            "type": "array"
+          }
+        },
+        "required": [
+          "cidrs"
+        ]
+      }
+    }
+  },
+  "info": {
+    "description": "API for managing and controlling the STACKIT Unified Firewall.",
+    "title": "STACKIT Unified Firewall API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1/folder/{folderId}/regions/{regionId}/rules/export": {
+      "get": {
+        "description": "Returns a CSV file containing the rules for a specific folder",
+        "operationId": "v1-export-folder-rules",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/folderId"
+          },
+          {
+            "$ref": "#/components/parameters/regionId"
+          },
+          {
+            "$ref": "#/components/parameters/ruleFilters"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful CSV file download"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden access. You are not allowed to get rules from this folder."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Project not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Export rules for folder as CSV",
+        "x-stackit-authorization": {
+          "actions": [
+            "ufw.instance.list",
+            "ufw.folder.list"
+          ],
+          "resource-id": "folderId",
+          "resource-id-type": "dynamic",
+          "resource-type": "folder"
+        }
+      }
+    },
+    "/v1/folders/{folderId}/children": {
+      "get": {
+        "description": "Returns a list of containers for a specific folder",
+        "operationId": "v1-get-folder-resources",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/folderId"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/cursor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListContainersResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden access. You are not allowed to get rules from this project."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Folder not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get containers from a folder",
+        "x-stackit-authorization": {
+          "actions": [
+            "ufw.folder.list"
+          ],
+          "resource-id": "folderId",
+          "resource-id-type": "dynamic",
+          "resource-type": "folder"
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/children": {
+      "get": {
+        "description": "Returns a list of containers for a specific organization",
+        "operationId": "v1-get-organization-resources",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/organizationId"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/cursor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListContainersResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden access. You are not allowed to get containers from this folder."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Folder not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get containers from an organization",
+        "x-stackit-authorization": {
+          "actions": [
+            "ufw.organization.list"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{regionId}/rules": {
+      "delete": {
+        "description": "Returns success",
+        "operationId": "DeleteRule",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          },
+          {
+            "$ref": "#/components/parameters/regionId"
+          },
+          {
+            "$ref": "#/components/parameters/product"
+          },
+          {
+            "$ref": "#/components/parameters/instanceIdQuery"
+          },
+          {
+            "$ref": "#/components/parameters/type"
+          },
+          {
+            "$ref": "#/components/parameters/sourceIP"
+          },
+          {
+            "$ref": "#/components/parameters/offset"
+          },
+          {
+            "$ref": "#/components/parameters/securityGroupId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityRuleResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden access. You are not allowed to get rules from this project."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Project not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Delete rule for a project",
+        "x-stackit-authorization": {
+          "actions": [
+            "ufw.instance.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns a list of rules for a specific project",
+        "operationId": "ListRules",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          },
+          {
+            "$ref": "#/components/parameters/regionId"
+          },
+          {
+            "$ref": "#/components/parameters/securityGroupId"
+          },
+          {
+            "$ref": "#/components/parameters/product"
+          },
+          {
+            "$ref": "#/components/parameters/instanceIdQuery"
+          },
+          {
+            "$ref": "#/components/parameters/type"
+          },
+          {
+            "$ref": "#/components/parameters/sourceIP"
+          },
+          {
+            "$ref": "#/components/parameters/portRange"
+          },
+          {
+            "$ref": "#/components/parameters/protocol"
+          },
+          {
+            "$ref": "#/components/parameters/direction"
+          },
+          {
+            "$ref": "#/components/parameters/etherType"
+          },
+          {
+            "$ref": "#/components/parameters/sortBy"
+          },
+          {
+            "$ref": "#/components/parameters/sortOrder"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/cursor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityRulesResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden access. You are not allowed to get rules from this project."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Project not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get rules for a project",
+        "x-stackit-authorization": {
+          "actions": [
+            "ufw.instance.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Returns the created rule for a specific project",
+        "operationId": "CreateRule",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          },
+          {
+            "$ref": "#/components/parameters/regionId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRulePayload"
+              }
+            }
+          },
+          "description": "Request an Rule creation."
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityRuleResponse"
+                }
+              }
+            },
+            "description": "Rule was created successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden access. You are not allowed to get rules from this project."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Project not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Create rule for a project",
+        "x-stackit-authorization": {
+          "actions": [
+            "ufw.instance.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "put": {
+        "description": "Returns the updated rule for a specific project",
+        "operationId": "UpdateRule",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          },
+          {
+            "$ref": "#/components/parameters/regionId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRulePayload"
+              }
+            }
+          },
+          "description": "Request an Rule update."
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityRuleResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden access. You are not allowed to get rules from this project."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Project not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Update rule for a project",
+        "x-stackit-authorization": {
+          "actions": [
+            "ufw.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{regionId}/rules/export": {
+      "get": {
+        "description": "Returns a CSV file containing the rules for a specific project",
+        "operationId": "v1-export-rules",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          },
+          {
+            "$ref": "#/components/parameters/regionId"
+          },
+          {
+            "$ref": "#/components/parameters/ruleFilters"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful CSV file download"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden access. You are not allowed to get rules from this project."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Project not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          }
+        },
+        "summary": "Export rules as CSV",
+        "x-stackit-authorization": {
+          "actions": [
+            "ufw.instance.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{regionId}/services/{serviceId}": {
+      "get": {
+        "description": "Get a list of available instances per service that are stored in the project.",
+        "operationId": "ListInstancesForService",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ServicesResponse"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden access. You are not allowed to get rules from this project."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get a list of available instances.",
+        "x-stackit-authorization": {
+          "actions": [
+            "ufw.services.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/serviceId"
+        }
+      ]
+    },
+    "/v1/regions/{regionId}/provider-options": {
+      "get": {
+        "description": "Returns a list of supported configuration options for this region.",
+        "operationId": "ListProviderOptions",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ProviderOptionsResponse"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get Provider Options",
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/regionId"
+        }
+      ]
+    }
+  },
+  "servers": [
+    {
+      "url": "https://ufw.api.stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "global"
+        }
+      }
+    }
+  ]
+}

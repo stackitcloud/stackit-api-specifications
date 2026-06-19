@@ -1059,19 +1059,26 @@
       },
       "clone.instanceOverrides": {
         "properties": {
+          "class": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/clone.storage.class"
+              }
+            ],
+            "description": "The storage class for the storage. If both 'class' and 'performanceClass' are provided, the value of 'class' will take precedence."
+          },
           "name": {
             "$ref": "#/components/schemas/clone.name.opt"
           },
           "performanceClass": {
-            "$ref": "#/components/schemas/clone.storage.class"
+            "$ref": "#/components/schemas/clone.storage.class.deprecated"
           },
           "size": {
             "$ref": "#/components/schemas/clone.storage.size"
           }
         },
         "required": [
-          "size",
-          "performanceClass"
+          "size"
         ],
         "type": "object"
       },
@@ -1090,6 +1097,12 @@
       },
       "clone.storage.class": {
         "description": "The storage class for the storage.",
+        "example": "premium-perf12-stackit",
+        "type": "string"
+      },
+      "clone.storage.class.deprecated": {
+        "deprecated": true,
+        "description": "Deprecated: The storage class for the storage. Use the 'class' field instead. If both fields are provided, the value of 'class' will take precedence.",
         "example": "premium-perf12-stackit",
         "type": "string"
       },
@@ -1650,8 +1663,16 @@
       "storage": {
         "description": "The object containing information about the storage size and class.",
         "properties": {
+          "class": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/storage.class"
+              }
+            ],
+            "description": "The storage class for the storage. If both 'class' and 'performanceClass' are provided, the value of 'class' will take precedence."
+          },
           "performanceClass": {
-            "$ref": "#/components/schemas/storage.class"
+            "$ref": "#/components/schemas/storage.class.deprecated"
           },
           "size": {
             "$ref": "#/components/schemas/storage.size"
@@ -1669,18 +1690,37 @@
         "example": "premium-perf12-stackit",
         "type": "string"
       },
+      "storage.class.create.deprecated": {
+        "deprecated": true,
+        "description": "Deprecated: The storage class for the storage. Use the 'class' field instead. If both fields are provided, the value of 'class' will take precedence.",
+        "example": "premium-perf12-stackit",
+        "type": "string"
+      },
+      "storage.class.deprecated": {
+        "deprecated": true,
+        "description": "Deprecated: The storage class for the storage. Use the 'class' field instead. If both fields are provided, the value of 'class' will take precedence.",
+        "example": "premium-perf12-stackit",
+        "type": "string"
+      },
       "storage.create": {
         "description": "The object containing information about the storage size and class.",
         "properties": {
+          "class": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/storage.class.create"
+              }
+            ],
+            "description": "The storage class for the storage. If both 'class' and 'performanceClass' are provided, the value of 'class' will take precedence."
+          },
           "performanceClass": {
-            "$ref": "#/components/schemas/storage.class.create"
+            "$ref": "#/components/schemas/storage.class.create.deprecated"
           },
           "size": {
             "$ref": "#/components/schemas/storage.size.create"
           }
         },
         "required": [
-          "performanceClass",
           "size"
         ],
         "type": "object"

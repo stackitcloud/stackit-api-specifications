@@ -1,0 +1,33 @@
+name: Install SSH Key
+description: Install an SSH private key, known_hosts entries, and optional SSH config.
+inputs:
+  key:
+    description: SSH private key content
+    required: true
+  known_hosts:
+    description: known_hosts content or "unnecessary" to skip custom entries
+    required: true
+  name:
+    description: SSH key filename under ~/.ssh/
+    required: false
+    default: id_rsa
+  config:
+    description: Optional SSH config content to append to ~/.ssh/config
+    required: false
+    default: ""
+  if_key_exists:
+    description: What to do if the target key file already exists
+    required: false
+    default: fail
+runs:
+  using: composite
+  steps:
+    - name: Install SSH key material
+      shell: bash
+      env:
+        INPUT_KEY: ${{ inputs.key }}
+        INPUT_KNOWN_HOSTS: ${{ inputs.known_hosts }}
+        INPUT_NAME: ${{ inputs.name }}
+        INPUT_CONFIG: ${{ inputs.config }}
+        INPUT_IF_KEY_EXISTS: ${{ inputs.if_key_exists }}
+      run: ${{ github.action_path }}/install.sh

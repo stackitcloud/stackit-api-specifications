@@ -7,51 +7,64 @@ on:
   workflow_dispatch:
 
 env:
-  GO_VERSION: "1.25"
+  GO_VERSION:   "1.25"
   JAVA_VERSION: "17"
+  UV_VERSION:   "0.10.4"
 
 jobs:
   main-go:
     name: "[Go] Update SDK Repo"
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout workflow repo
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          path: workflow-repo
+          sparse-checkout: |
+            .github/actions/install-ssh-key
+
       - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2
+        uses: ./workflow-repo/.github/actions/install-ssh-key
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ vars.SSH_KNOWN_HOSTS }}
       
       - name: Install Java
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@ad2b38190b15e4d6bdf0c97fb4fca8412226d287 # v5.3.0
         with:
           distribution: "temurin"
           java-version: ${{ env.JAVA_VERSION }}
       
       - name: Checkout generator repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           repository: "stackitcloud/stackit-sdk-generator"
           ref: "main"
+          path: generator-repo
       
       - name: Install Go
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
         with:
           go-version: ${{ env.GO_VERSION }}
       
       - name: Install project tools and dependencies
         shell: bash
+        working-directory: ./generator-repo
         run: make project-tools
       
       - name: Download OAS
+        working-directory: ./generator-repo
         run: make download-oas
       
       - name: Generate SDK
+        working-directory: ./generator-repo
         run: make generate-go-sdk
       
       - name: Push SDK
         env:
           GH_REPO: "stackitcloud/stackit-sdk-go"
           GH_TOKEN: ${{ secrets.SDK_PR_TOKEN }}
+        working-directory: ./generator-repo
         run: |
           scripts/sdk-create-pr.sh "oas-bot-${{ github.run_id }}" "Generated from GitHub run [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
 
@@ -59,31 +72,40 @@ jobs:
     name: "[Python] Update SDK Repo"
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout workflow repo
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          path: workflow-repo
+          sparse-checkout: |
+            .github/actions/install-ssh-key
+
       - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2
+        uses: ./workflow-repo/.github/actions/install-ssh-key
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ vars.SSH_KNOWN_HOSTS }}
       
       - name: Install Java
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@ad2b38190b15e4d6bdf0c97fb4fca8412226d287 # v5.3.0
         with:
           distribution: "temurin"
           java-version: ${{ env.JAVA_VERSION }}
       
       - name: Checkout generator repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           repository: "stackitcloud/stackit-sdk-generator"
           ref: "main"
+          path: generator-repo
       
       - name: install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
         with:
-          version: "0.10.4"
+          version: ${{ env.UV_VERSION }}
       
       - name: Install project tools and dependencies
         shell: bash
+        working-directory: ./generator-repo
         run: |
           python -m venv .venv
           . .venv/bin/activate
@@ -91,19 +113,22 @@ jobs:
           make project-tools LANGUAGE=python
       
       - name: Download OAS
+        working-directory: ./generator-repo
         run: make download-oas
       
       - name: Generate SDK
+        working-directory: ./generator-repo
         run: make generate-python-sdk
       
       - name: Install Python SDK
-        working-directory: ./sdk-repo-updated
+        working-directory: ./generator-repo/sdk-repo-updated
         run: make install-dev
       
       - name: Push Python SDK
         env:
           GH_REPO: "stackitcloud/stackit-sdk-python"
           GH_TOKEN: ${{ secrets.SDK_PR_TOKEN }}
+        working-directory: ./generator-repo
         run: |
           scripts/sdk-create-pr.sh "generator-bot-${{ github.run_id }}" "Generated from GitHub run [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" "git@github.com:stackitcloud/stackit-sdk-python.git" "python"
 
@@ -111,8 +136,15 @@ jobs:
     name: "[Java] Update SDK Repo"
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout workflow repo
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          path: workflow-repo
+          sparse-checkout: |
+            .github/actions/install-ssh-key
+
       - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2
+        uses: ./workflow-repo/.github/actions/install-ssh-key
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ vars.SSH_KNOWN_HOSTS }}
@@ -124,20 +156,24 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
       
       - name: Checkout generator repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           repository: "stackitcloud/stackit-sdk-generator"
           ref: "main"
+          path: generator-repo
       
       - name: Download OAS
+        working-directory: ./generator-repo
         run: make download-oas
       
       - name: Generate SDK
+        working-directory: ./generator-repo
         run: make generate-java-sdk
       
       - name: Push Java SDK
         env:
           GH_REPO: "stackitcloud/stackit-sdk-java"
           GH_TOKEN: ${{ secrets.SDK_PR_TOKEN }}
+        working-directory: ./generator-repo
         run: |
           scripts/sdk-create-pr.sh "generator-bot-${{ github.run_id }}" "Generated from GitHub run [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" "git@github.com:stackitcloud/stackit-sdk-java.git" "java"

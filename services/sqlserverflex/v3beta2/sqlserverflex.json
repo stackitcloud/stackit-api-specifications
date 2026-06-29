@@ -23,10 +23,7 @@
         "schema": {
           "$ref": "#/components/schemas/backup.sort"
         },
-        "style": "form",
-        "x-oapi-codegen-extra-tags": {
-          "validate": "omitempty,backup_sort"
-        }
+        "style": "form"
       },
       "database": {
         "description": "The name of the database.",
@@ -49,10 +46,7 @@
         "schema": {
           "$ref": "#/components/schemas/database.sort"
         },
-        "style": "form",
-        "x-oapi-codegen-extra-tags": {
-          "validate": "omitempty,database_sort"
-        }
+        "style": "form"
       },
       "flavor": {
         "description": "The id of an instance flavor.",
@@ -75,10 +69,7 @@
         "schema": {
           "$ref": "#/components/schemas/flavor.sort"
         },
-        "style": "form",
-        "x-oapi-codegen-extra-tags": {
-          "validate": "omitempty,flavor_sort"
-        }
+        "style": "form"
       },
       "instance": {
         "description": "The ID of the instance.",
@@ -101,10 +92,7 @@
         "schema": {
           "$ref": "#/components/schemas/instance.sort"
         },
-        "style": "form",
-        "x-oapi-codegen-extra-tags": {
-          "validate": "omitempty,instance_sort"
-        }
+        "style": "form"
       },
       "page": {
         "description": "Number of the page of items list to be returned.",
@@ -181,13 +169,31 @@
         "schema": {
           "$ref": "#/components/schemas/user.sort"
         },
-        "style": "form",
-        "x-oapi-codegen-extra-tags": {
-          "validate": "omitempty,user_sort"
-        }
+        "style": "form"
       }
     },
     "schemas": {
+      "CreateDatabasePayload": {
+        "properties": {
+          "collation": {
+            "$ref": "#/components/schemas/database.collation"
+          },
+          "compatibility": {
+            "$ref": "#/components/schemas/database.compatibility"
+          },
+          "name": {
+            "$ref": "#/components/schemas/database.name"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/database.owner"
+          }
+        },
+        "required": [
+          "name",
+          "owner"
+        ],
+        "type": "object"
+      },
       "CreateDatabaseResponse": {
         "properties": {
           "id": {
@@ -199,6 +205,59 @@
         ],
         "type": "object"
       },
+      "CreateInstancePayload": {
+        "properties": {
+          "backupSchedule": {
+            "$ref": "#/components/schemas/backup.schedule"
+          },
+          "encryption": {
+            "$ref": "#/components/schemas/instance.encryption"
+          },
+          "flavorId": {
+            "$ref": "#/components/schemas/flavor.flavorId"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/instance.name"
+          },
+          "network": {
+            "description": "the network configuration of the instance.",
+            "properties": {
+              "accessScope": {
+                "$ref": "#/components/schemas/instance.network.accessScope"
+              },
+              "acl": {
+                "$ref": "#/components/schemas/acl"
+              }
+            },
+            "required": [
+              "acl"
+            ],
+            "type": "object"
+          },
+          "retentionDays": {
+            "$ref": "#/components/schemas/instance.retentionDays"
+          },
+          "storage": {
+            "$ref": "#/components/schemas/storage.create"
+          },
+          "version": {
+            "$ref": "#/components/schemas/instance.version"
+          }
+        },
+        "required": [
+          "backupSchedule",
+          "flavorId",
+          "name",
+          "storage",
+          "version",
+          "retentionDays",
+          "network"
+        ],
+        "type": "object"
+      },
       "CreateInstanceResponse": {
         "properties": {
           "id": {
@@ -207,6 +266,32 @@
         },
         "required": [
           "id"
+        ],
+        "type": "object"
+      },
+      "CreateUserPayload": {
+        "properties": {
+          "default_database": {
+            "$ref": "#/components/schemas/user.database"
+          },
+          "roles": {
+            "description": "A list containing the user roles for the instance. A list with the valid user roles can be retrieved using the List Roles endpoint.",
+            "example": [
+              "##STACKIT_LoginManager##",
+              "##STACKIT_DatabaseManager##"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/user.role"
+            },
+            "type": "array"
+          },
+          "username": {
+            "$ref": "#/components/schemas/user.name"
+          }
+        },
+        "required": [
+          "roles",
+          "username"
         ],
         "type": "object"
       },
@@ -262,26 +347,22 @@
             "description": "The http error code of the error.",
             "example": 400,
             "format": "int32",
-            "type": "integer",
-            "x-go-custom-tag": "validate:\"required,errorCode\""
+            "type": "integer"
           },
           "message": {
             "description": "More detailed information about the error.",
             "example": "database not found",
-            "type": "string",
-            "x-go-custom-tag": "validate:\"required,errorMsg\""
+            "type": "string"
           },
           "traceId": {
             "description": "The trace id of the request.",
             "example": "885bef8bbc18649c",
-            "type": "string",
-            "x-go-custom-tag": "validate:\"required,traceID\""
+            "type": "string"
           },
           "type": {
             "description": "Describes in which state the api was when the error happened.",
             "example": "INTERNAL_ERROR",
-            "type": "string",
-            "x-go-custom-tag": "validate:\"required,errorType\""
+            "type": "string"
           }
         },
         "required": [
@@ -298,9 +379,6 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/backup.completionTime"
-              },
-              {
-                "x-go-custom-tag": "validate:\"required,time\""
               }
             ]
           },
@@ -308,9 +386,6 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/backup.id"
-              },
-              {
-                "x-go-custom-tag": "validate:\"required,backupId\""
               }
             ]
           },
@@ -318,9 +393,6 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/backup.name"
-              },
-              {
-                "x-go-custom-tag": "validate:\"required,backupName\""
               }
             ]
           },
@@ -328,9 +400,6 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/backup.retainedUntil"
-              },
-              {
-                "x-go-custom-tag": "validate:\"required,time\""
               }
             ]
           },
@@ -338,9 +407,6 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/backup.size"
-              },
-              {
-                "x-go-custom-tag": "validate:\"required,min=1,max=1073741824000\""
               }
             ]
           },
@@ -348,9 +414,6 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/backup.type"
-              },
-              {
-                "x-go-custom-tag": "validate:\"required,backupType\""
               }
             ]
           }
@@ -566,9 +629,6 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/backup.completionTime"
-              },
-              {
-                "x-go-custom-tag": "validate:\"required,time\""
               }
             ]
           },
@@ -576,9 +636,6 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/backup.id"
-              },
-              {
-                "x-go-custom-tag": "validate:\"required,backupId\""
               }
             ]
           },
@@ -586,9 +643,6 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/backup.name"
-              },
-              {
-                "x-go-custom-tag": "validate:\"required,backupName\""
               }
             ]
           },
@@ -596,9 +650,6 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/backup.retainedUntil"
-              },
-              {
-                "x-go-custom-tag": "validate:\"required,time\""
               }
             ]
           },
@@ -606,9 +657,6 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/backup.size"
-              },
-              {
-                "x-go-custom-tag": "validate:\"required,min=1,max=1073741824000\""
               }
             ]
           },
@@ -616,9 +664,6 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/backup.type"
-              },
-              {
-                "x-go-custom-tag": "validate:\"required,backupType\""
               }
             ]
           }
@@ -659,14 +704,12 @@
             "items": {
               "$ref": "#/components/schemas/ListBackup"
             },
-            "type": "array",
-            "x-go-custom-tag": "validate:\"required,dive\""
+            "type": "array"
           },
           "databaseName": {
             "description": "Name of the database the backups belong to",
             "example": "lummerland",
-            "type": "string",
-            "x-go-custom-tag": "validate:\"required,databaseName\""
+            "type": "string"
           }
         },
         "required": [
@@ -886,27 +929,22 @@
         "properties": {
           "page": {
             "format": "int64",
-            "type": "integer",
-            "x-go-custom-tag": "validate:\"required\""
+            "type": "integer"
           },
           "size": {
             "format": "int64",
-            "type": "integer",
-            "x-go-custom-tag": "validate:\"required\""
+            "type": "integer"
           },
           "sort": {
-            "type": "string",
-            "x-go-custom-tag": "validate:\"required\""
+            "type": "string"
           },
           "totalPages": {
             "format": "int64",
-            "type": "integer",
-            "x-go-custom-tag": "validate:\"required\""
+            "type": "integer"
           },
           "totalRows": {
             "format": "int64",
-            "type": "integer",
-            "x-go-custom-tag": "validate:\"required\""
+            "type": "integer"
           }
         },
         "required": [
@@ -915,6 +953,17 @@
           "totalRows",
           "totalPages",
           "sort"
+        ],
+        "type": "object"
+      },
+      "ProtectInstancePayload": {
+        "properties": {
+          "isDeletable": {
+            "$ref": "#/components/schemas/protect.isDeletable"
+          }
+        },
+        "required": [
+          "isDeletable"
         ],
         "type": "object"
       },
@@ -949,6 +998,136 @@
           "password",
           "uri",
           "status"
+        ],
+        "type": "object"
+      },
+      "RestoreDatabaseFromBackupPayload": {
+        "description": "Request to restore a database.",
+        "properties": {
+          "database_name": {
+            "description": "The name of the database on the instance to be restore.",
+            "example": "customer_production_db",
+            "type": "string"
+          },
+          "source": {
+            "description": "The source of the restore.",
+            "discriminator": {
+              "mapping": {
+                "BACKUP": "#/components/schemas/source.backup",
+                "EXTERNAL_S3": "#/components/schemas/source.externalS3"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/source.backup"
+              },
+              {
+                "$ref": "#/components/schemas/source.externalS3"
+              }
+            ]
+          }
+        },
+        "required": [
+          "database_name",
+          "source"
+        ],
+        "type": "object"
+      },
+      "TriggerRestorePayload": {
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/database.name"
+          },
+          "restoreDateTime": {
+            "$ref": "#/components/schemas/backup.restoreTime"
+          }
+        },
+        "required": [
+          "name",
+          "restoreDateTime"
+        ],
+        "type": "object"
+      },
+      "UpdateInstancePartiallyPayload": {
+        "properties": {
+          "backupSchedule": {
+            "$ref": "#/components/schemas/backup.schedule.opt"
+          },
+          "flavorId": {
+            "$ref": "#/components/schemas/flavor.flavorId.opt"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/instance.name.opt"
+          },
+          "network": {
+            "description": "the network configuration of the instance.",
+            "properties": {
+              "acl": {
+                "$ref": "#/components/schemas/acl"
+              }
+            },
+            "type": "object"
+          },
+          "retentionDays": {
+            "$ref": "#/components/schemas/instance.retentionDays.opt"
+          },
+          "storage": {
+            "$ref": "#/components/schemas/storage.update"
+          },
+          "version": {
+            "$ref": "#/components/schemas/instance.version.opt"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateInstancePayload": {
+        "properties": {
+          "backupSchedule": {
+            "$ref": "#/components/schemas/backup.schedule"
+          },
+          "flavorId": {
+            "$ref": "#/components/schemas/flavor.flavorId"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/instance.name"
+          },
+          "network": {
+            "description": "the network configuration of the instance.",
+            "properties": {
+              "acl": {
+                "$ref": "#/components/schemas/acl"
+              }
+            },
+            "required": [
+              "acl"
+            ],
+            "type": "object"
+          },
+          "retentionDays": {
+            "$ref": "#/components/schemas/instance.retentionDays"
+          },
+          "storage": {
+            "$ref": "#/components/schemas/storage.update"
+          },
+          "version": {
+            "$ref": "#/components/schemas/instance.version"
+          }
+        },
+        "required": [
+          "backupSchedule",
+          "flavorId",
+          "name",
+          "storage",
+          "version",
+          "retentionDays",
+          "network"
         ],
         "type": "object"
       },
@@ -1031,33 +1210,28 @@
           "command": {
             "description": "the command that was executed",
             "example": "RESTORE DATABASE",
-            "type": "string",
-            "x-go-custom-tag": "validate:\"required,restoreCommand\""
+            "type": "string"
           },
           "database_name": {
             "description": "the name of the database that is being restored",
             "example": "Peter_PAN",
-            "type": "string",
-            "x-go-custom-tag": "validate:\"required,databaseName\""
+            "type": "string"
           },
           "estimated_completion_time": {
             "description": "the projected time when the restore should be completed",
             "example": "2023-09-25T12:17:30",
-            "type": "string",
-            "x-go-custom-tag": "validate:\"required,time\""
+            "type": "string"
           },
           "percent_complete": {
             "description": "the percentage of the current running restore job",
             "example": 20,
             "format": "int32",
-            "type": "integer",
-            "x-go-custom-tag": "validate:\"required,min=0,max=100\""
+            "type": "integer"
           },
           "start_time": {
             "description": "the start time of the current running restore job",
             "example": "2023-09-25T12:14:48",
-            "type": "string",
-            "x-go-custom-tag": "validate:\"required,time\""
+            "type": "string"
           }
         },
         "required": [
@@ -1106,112 +1280,6 @@
         "description": "The type of the backup, which can be automated or manual triggered.",
         "example": "AUTOMATED",
         "type": "string"
-      },
-      "createDatabaseRequestPayload": {
-        "properties": {
-          "collation": {
-            "$ref": "#/components/schemas/database.collation"
-          },
-          "compatibility": {
-            "$ref": "#/components/schemas/database.compatibility"
-          },
-          "name": {
-            "$ref": "#/components/schemas/database.name"
-          },
-          "owner": {
-            "$ref": "#/components/schemas/database.owner"
-          }
-        },
-        "required": [
-          "name",
-          "owner"
-        ],
-        "type": "object"
-      },
-      "createInstanceRequestPayload": {
-        "properties": {
-          "backupSchedule": {
-            "$ref": "#/components/schemas/backup.schedule"
-          },
-          "encryption": {
-            "$ref": "#/components/schemas/instance.encryption"
-          },
-          "flavorId": {
-            "$ref": "#/components/schemas/flavor.flavorId"
-          },
-          "labels": {
-            "$ref": "#/components/schemas/labels"
-          },
-          "name": {
-            "$ref": "#/components/schemas/instance.name"
-          },
-          "network": {
-            "description": "the network configuration of the instance.",
-            "properties": {
-              "accessScope": {
-                "$ref": "#/components/schemas/instance.network.accessScope"
-              },
-              "acl": {
-                "$ref": "#/components/schemas/acl"
-              }
-            },
-            "required": [
-              "acl"
-            ],
-            "type": "object",
-            "x-oapi-codegen-extra-tags": {
-              "validate": "required"
-            }
-          },
-          "retentionDays": {
-            "$ref": "#/components/schemas/instance.retentionDays"
-          },
-          "storage": {
-            "$ref": "#/components/schemas/storage.create"
-          },
-          "version": {
-            "$ref": "#/components/schemas/instance.version"
-          }
-        },
-        "required": [
-          "backupSchedule",
-          "flavorId",
-          "name",
-          "storage",
-          "version",
-          "retentionDays",
-          "network"
-        ],
-        "type": "object"
-      },
-      "createUserRequestPayload": {
-        "properties": {
-          "default_database": {
-            "$ref": "#/components/schemas/user.database"
-          },
-          "roles": {
-            "description": "A list containing the user roles for the instance. A list with the valid user roles can be retrieved using the List Roles endpoint.",
-            "example": [
-              "##STACKIT_LoginManager##",
-              "##STACKIT_DatabaseManager##"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/user.role"
-            },
-            "type": "array",
-            "x-oapi-codegen-extra-tags": {
-              "validate": "required"
-            }
-          },
-          "username": {
-            "$ref": "#/components/schemas/user.name"
-          }
-        },
-        "required": [
-          "roles",
-          "username"
-        ],
-        "type": "object"
       },
       "database.collation": {
         "description": "The collation of the database. \nThis database collation should match the *collation_name* of one of\nthe collations given by the **Get database collation list** endpoint.\n",
@@ -1485,33 +1553,21 @@
           "kekKeyId": {
             "description": "The key identifier",
             "example": "b710a4d0-6694-4cd3-b55d-16446375174e",
-            "type": "string",
-            "x-oapi-codegen-extra-tags": {
-              "validate": "required,uuid_rfc4122"
-            }
+            "type": "string"
           },
           "kekKeyRingId": {
             "description": "The keyring identifier",
             "example": "48e3f816-3e38-44bb-bbff-22e05f0567de",
-            "type": "string",
-            "x-oapi-codegen-extra-tags": {
-              "validate": "required,uuid_rfc4122"
-            }
+            "type": "string"
           },
           "kekKeyVersion": {
             "description": "The key version",
             "example": "1",
-            "type": "string",
-            "x-oapi-codegen-extra-tags": {
-              "validate": "required"
-            }
+            "type": "string"
           },
           "serviceAccount": {
             "example": "example@compute.sa.stackit.cloud",
-            "type": "string",
-            "x-oapi-codegen-extra-tags": {
-              "validate": "required,email"
-            }
+            "type": "string"
           }
         },
         "required": [
@@ -1641,17 +1697,6 @@
         "example": true,
         "type": "boolean"
       },
-      "protectInstanceRequestPayload": {
-        "properties": {
-          "isDeletable": {
-            "$ref": "#/components/schemas/protect.isDeletable"
-          }
-        },
-        "required": [
-          "isDeletable"
-        ],
-        "type": "object"
-      },
       "replicas": {
         "description": "How many replicas the instance should have.",
         "enum": [
@@ -1660,39 +1705,6 @@
         ],
         "format": "int32",
         "type": "integer"
-      },
-      "restoreDatabaseFromBackupPayload": {
-        "description": "Request to restore a database.",
-        "properties": {
-          "database_name": {
-            "description": "The name of the database on the instance to be restore.",
-            "example": "customer_production_db",
-            "type": "string"
-          },
-          "source": {
-            "description": "The source of the restore.",
-            "discriminator": {
-              "mapping": {
-                "BACKUP": "#/components/schemas/source.backup",
-                "EXTERNAL_S3": "#/components/schemas/source.externalS3"
-              },
-              "propertyName": "type"
-            },
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/source.backup"
-              },
-              {
-                "$ref": "#/components/schemas/source.externalS3"
-              }
-            ]
-          }
-        },
-        "required": [
-          "database_name",
-          "source"
-        ],
-        "type": "object"
       },
       "s3file.info": {
         "properties": {
@@ -1818,109 +1830,6 @@
         },
         "type": "object"
       },
-      "triggerRestoreRequestPayload": {
-        "properties": {
-          "name": {
-            "$ref": "#/components/schemas/database.name"
-          },
-          "restoreDateTime": {
-            "$ref": "#/components/schemas/backup.restoreTime"
-          }
-        },
-        "required": [
-          "name",
-          "restoreDateTime"
-        ],
-        "type": "object"
-      },
-      "updateInstancePartiallyRequestPayload": {
-        "properties": {
-          "backupSchedule": {
-            "$ref": "#/components/schemas/backup.schedule.opt"
-          },
-          "flavorId": {
-            "$ref": "#/components/schemas/flavor.flavorId.opt"
-          },
-          "labels": {
-            "$ref": "#/components/schemas/labels"
-          },
-          "name": {
-            "$ref": "#/components/schemas/instance.name.opt"
-          },
-          "network": {
-            "description": "the network configuration of the instance.",
-            "properties": {
-              "acl": {
-                "$ref": "#/components/schemas/acl"
-              }
-            },
-            "type": "object",
-            "x-oapi-codegen-extra-tags": {
-              "validate": "omitempty"
-            }
-          },
-          "retentionDays": {
-            "$ref": "#/components/schemas/instance.retentionDays.opt"
-          },
-          "storage": {
-            "$ref": "#/components/schemas/storage.update"
-          },
-          "version": {
-            "$ref": "#/components/schemas/instance.version.opt"
-          }
-        },
-        "type": "object"
-      },
-      "updateInstanceRequestPayload": {
-        "properties": {
-          "backupSchedule": {
-            "$ref": "#/components/schemas/backup.schedule"
-          },
-          "flavorId": {
-            "$ref": "#/components/schemas/flavor.flavorId"
-          },
-          "labels": {
-            "$ref": "#/components/schemas/labels"
-          },
-          "name": {
-            "$ref": "#/components/schemas/instance.name"
-          },
-          "network": {
-            "description": "the network configuration of the instance.",
-            "properties": {
-              "acl": {
-                "$ref": "#/components/schemas/acl"
-              }
-            },
-            "required": [
-              "acl"
-            ],
-            "type": "object",
-            "x-oapi-codegen-extra-tags": {
-              "validate": "required"
-            }
-          },
-          "retentionDays": {
-            "$ref": "#/components/schemas/instance.retentionDays"
-          },
-          "storage": {
-            "$ref": "#/components/schemas/storage.update"
-          },
-          "version": {
-            "$ref": "#/components/schemas/instance.version"
-          }
-        },
-        "required": [
-          "backupSchedule",
-          "flavorId",
-          "name",
-          "storage",
-          "version",
-          "retentionDays",
-          "network"
-        ],
-        "type": "object"
-      },
       "user.database": {
         "description": "The default database for a user of the instance.",
         "example": "tempdb",
@@ -2031,7 +1940,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/flavors": {
       "get": {
         "description": "Get all available flavors for a project.",
-        "operationId": "getFlavorsRequest",
+        "operationId": "GetFlavors",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -2161,7 +2070,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/instances": {
       "get": {
         "description": "List all available instances for your project.",
-        "operationId": "listInstancesRequest",
+        "operationId": "ListInstances",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -2253,7 +2162,7 @@
       },
       "post": {
         "description": "Create a new instance of a sqlserver database instance.",
-        "operationId": "createInstanceRequest",
+        "operationId": "CreateInstance",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -2266,7 +2175,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/createInstanceRequestPayload"
+                "$ref": "#/components/schemas/CreateInstancePayload"
               }
             }
           },
@@ -2359,7 +2268,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/instances/{instanceId}": {
       "delete": {
         "description": "Delete an available sqlserver instance.",
-        "operationId": "deleteInstanceRequest",
+        "operationId": "DeleteInstance",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -2438,7 +2347,7 @@
       },
       "get": {
         "description": "Get information about a specific available instance",
-        "operationId": "getInstanceRequest",
+        "operationId": "GetInstance",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -2524,7 +2433,7 @@
       },
       "patch": {
         "description": "Update an available instance of a mssql database. No fields are required.\n\n**Please note that any changes applied via PUT or PATCH requests will initiate a reboot of the SQL Server Flex Instance.**\n",
-        "operationId": "updateInstancePartiallyRequest",
+        "operationId": "UpdateInstancePartially",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -2540,7 +2449,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/updateInstancePartiallyRequestPayload"
+                "$ref": "#/components/schemas/UpdateInstancePartiallyPayload"
               }
             }
           },
@@ -2624,7 +2533,7 @@
       },
       "put": {
         "description": "Updates an available instance of a sqlserver database\n\n**Please note that any changes applied via PUT or PATCH requests will initiate a reboot of the SQL Server Flex Instance.**\n",
-        "operationId": "updateInstanceRequest",
+        "operationId": "UpdateInstance",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -2640,7 +2549,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/updateInstanceRequestPayload"
+                "$ref": "#/components/schemas/UpdateInstancePayload"
               }
             }
           },
@@ -2726,7 +2635,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/instances/{instanceId}/backups": {
       "get": {
         "description": "List all backups which are available for a specific instance.",
-        "operationId": "listBackupsRequest",
+        "operationId": "ListBackups",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -2833,7 +2742,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/instances/{instanceId}/backups/databases/{databaseName}": {
       "post": {
         "description": "Trigger backup for a specific database",
-        "operationId": "triggerBackupRequest",
+        "operationId": "TriggerBackup",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -2937,7 +2846,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/instances/{instanceId}/backups/databases/{databaseName}/restores": {
       "post": {
         "description": "Trigger restore for a specific Database",
-        "operationId": "triggerRestoreRequest",
+        "operationId": "TriggerRestore",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -2956,7 +2865,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/triggerRestoreRequestPayload"
+                "$ref": "#/components/schemas/TriggerRestorePayload"
               }
             }
           },
@@ -3051,7 +2960,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/instances/{instanceId}/backups/{backupId}": {
       "get": {
         "description": "Get information about a specific backup for an instance.",
-        "operationId": "getBackupRequest",
+        "operationId": "GetBackup",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -3152,7 +3061,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/instances/{instanceId}/collations": {
       "get": {
         "description": "Returns a list of collations for an instance",
-        "operationId": "getCollationsRequest",
+        "operationId": "GetCollations",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -3250,7 +3159,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/instances/{instanceId}/compatibility": {
       "get": {
         "description": "Returns a list of compatibility levels for creating a new database",
-        "operationId": "listCompatibilitiesRequest",
+        "operationId": "ListCompatibilities",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -3348,7 +3257,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/instances/{instanceId}/databases": {
       "get": {
         "description": "List available databases for an instance.",
-        "operationId": "listDatabasesRequest",
+        "operationId": "ListDatabases",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -3443,7 +3352,7 @@
       },
       "post": {
         "description": "Create database for a user. Note: The name of a valid user must be provided in the 'options' map field using the key 'owner'",
-        "operationId": "createDatabaseRequest",
+        "operationId": "CreateDatabase",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -3459,7 +3368,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/createDatabaseRequestPayload"
+                "$ref": "#/components/schemas/CreateDatabasePayload"
               }
             }
           },
@@ -3552,7 +3461,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/instances/{instanceId}/databases/{databaseName}": {
       "delete": {
         "description": "Delete database for an instance.",
-        "operationId": "deleteDatabaseRequest",
+        "operationId": "DeleteDatabase",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -3634,7 +3543,7 @@
       },
       "get": {
         "description": "Get specific available database",
-        "operationId": "getDatabaseRequest",
+        "operationId": "GetDatabase",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -3735,7 +3644,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/instances/{instanceId}/protections": {
       "post": {
         "description": "Toggle the deletion protection for an instance.",
-        "operationId": "protectInstanceRequest",
+        "operationId": "ProtectInstance",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -3751,7 +3660,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/protectInstanceRequestPayload"
+                "$ref": "#/components/schemas/ProtectInstancePayload"
               }
             }
           },
@@ -3854,7 +3763,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/instances/{instanceId}/restore-jobs": {
       "get": {
         "description": "List all currently running restore jobs which are available for a specific instance",
-        "operationId": "listCurrentRunningRestoreJobs",
+        "operationId": "ListCurrentRunningRestoreJobs",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -3952,7 +3861,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/instances/{instanceId}/restores": {
       "post": {
         "description": "Triggers a new restore operation for the specified instance.\nThe request body defines the source \n(e.g., internal backup, external S3) and the target database.\n",
-        "operationId": "restoreDatabaseFromBackup",
+        "operationId": "RestoreDatabaseFromBackup",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -4003,7 +3912,7 @@
                 }
               },
               "schema": {
-                "$ref": "#/components/schemas/restoreDatabaseFromBackupPayload"
+                "$ref": "#/components/schemas/RestoreDatabaseFromBackupPayload"
               }
             }
           },
@@ -4089,7 +3998,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/instances/{instanceId}/roles": {
       "get": {
         "description": "List available roles for an instance that can be assigned to a user",
-        "operationId": "listRolesRequest",
+        "operationId": "ListRoles",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -4198,7 +4107,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/instances/{instanceId}/users": {
       "get": {
         "description": "List available users for an instance.",
-        "operationId": "listUsersRequest",
+        "operationId": "ListUsers",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -4293,7 +4202,7 @@
       },
       "post": {
         "description": "Create user for an instance.",
-        "operationId": "createUserRequest",
+        "operationId": "CreateUser",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -4309,7 +4218,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/createUserRequestPayload"
+                "$ref": "#/components/schemas/CreateUserPayload"
               }
             }
           },
@@ -4402,7 +4311,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/instances/{instanceId}/users/{userId}": {
       "delete": {
         "description": "Delete an user from a specific instance.",
-        "operationId": "deleteUserRequest",
+        "operationId": "DeleteUser",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -4484,7 +4393,7 @@
       },
       "get": {
         "description": "Get a specific available user for an instance.",
-        "operationId": "getUserRequest",
+        "operationId": "GetUser",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -4575,7 +4484,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/instances/{instanceId}/users/{userId}/reset": {
       "post": {
         "description": "Reset an user from an specific instance.",
-        "operationId": "resetUserRequest",
+        "operationId": "ResetUser",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -4676,7 +4585,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/storages/{flavorId}": {
       "get": {
         "description": "Get available storages for a specific flavor",
-        "operationId": "getStoragesRequest",
+        "operationId": "GetStorages",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -4764,7 +4673,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/versions": {
       "get": {
         "description": "Get the sqlserver available versions for the project.",
-        "operationId": "getVersionsRequest",
+        "operationId": "GetVersions",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -4864,14 +4773,10 @@
   ],
   "servers": [
     {
-      "url": "https://mssql-flex-service.api.{region}stackit.cloud",
+      "url": "https://mssql-flex-service.api.stackit.cloud",
       "variables": {
         "region": {
-          "default": "eu01.",
-          "enum": [
-            "eu01.",
-            "eu02."
-          ]
+          "default": "global"
         }
       }
     }

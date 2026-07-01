@@ -849,6 +849,61 @@
         }
       }
     },
+    "/v1/consumers/projects/{projectId}/subscriptions/{subscriptionId}/terminate": {
+      "post": {
+        "description": "Terminates a consumer subscription early.",
+        "operationId": "consumers-subscriptions-terminate",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "Terminates a consumer subscription early.",
+        "x-stackit-authorization": {
+          "actions": [
+            "marketplace.subscription.terminate"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.marketplace"
+            ]
+          }
+        }
+      }
+    },
     "/v1/vendors/organizations/{organizationId}/subscriptions": {
       "get": {
         "description": "List all subscriptions of an organization.",

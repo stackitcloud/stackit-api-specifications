@@ -1,0 +1,1278 @@
+{
+  "components": {
+    "parameters": {
+      "emailAddress": {
+        "description": "Unique identifier of a user or service account.",
+        "in": "path",
+        "name": "emailAddress",
+        "required": true,
+        "schema": {
+          "maxLength": 254,
+          "type": "string"
+        }
+      },
+      "force": {
+        "description": "If true, deletes the topic and all its active subscriptions (cascading delete). \nIf false (default), the operation returns a 409 conflict if active subscriptions exist.\n",
+        "in": "query",
+        "name": "force",
+        "schema": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "pageSize": {
+        "description": "Maximum number of items to return",
+        "in": "query",
+        "name": "pageSize",
+        "schema": {
+          "default": 10,
+          "format": "int32",
+          "maximum": 100,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "pageToken": {
+        "allowEmptyValue": true,
+        "description": "A token to retrieve the next page of results.",
+        "in": "query",
+        "name": "pageToken",
+        "schema": {
+          "maxLength": 1024,
+          "type": "string"
+        }
+      },
+      "projectId": {
+        "description": "The STACKIT portal project UUID the resource is located in.",
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "type": "string"
+        }
+      },
+      "query": {
+        "allowEmptyValue": true,
+        "description": "Supply a query string to filter the results.",
+        "in": "query",
+        "name": "query",
+        "schema": {
+          "maximum": 1024,
+          "type": "string"
+        }
+      },
+      "regionId": {
+        "description": "The STACKIT region name the resource is located in.",
+        "in": "path",
+        "name": "regionId",
+        "required": true,
+        "schema": {
+          "enum": [
+            "eu01"
+          ],
+          "type": "string"
+        }
+      },
+      "subscriptionId": {
+        "description": "The subscription UUID.",
+        "in": "path",
+        "name": "subscriptionId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "type": "string"
+        }
+      },
+      "topicId": {
+        "description": "The topic UUID.",
+        "in": "path",
+        "name": "topicId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "maxLength": 36,
+          "minLength": 36,
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "badRequest": {
+        "description": "Bad Request. The data provided by the client did not match expectations."
+      },
+      "conflict": {
+        "description": "Conflict. The resource has been modified by some other client. Please try again."
+      },
+      "forbidden": {
+        "description": "Forbidden. You are authenticated but do not have sufficient permissions to perform this action."
+      },
+      "internalServerError": {
+        "description": "Internal server error. The application experienced some unexpected situation."
+      },
+      "notFound": {
+        "description": "Not found. The resource has not been found."
+      },
+      "tooManyRequests": {
+        "description": "Too Many Requests. You have exceeded the rate limits."
+      },
+      "unauthorized": {
+        "description": "Unauthorized. You may have provided no or wrong credentials."
+      },
+      "unprocessable": {
+        "description": "Unprocessable Entity. The request cannot be executed."
+      }
+    },
+    "schemas": {
+      "create-subscriptionPayload": {
+        "properties": {
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 36,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9 -]*$",
+            "type": "string"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/subscriptionSettings"
+          }
+        },
+        "required": [
+          "displayName"
+        ]
+      },
+      "create-topicPayload": {
+        "properties": {
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 36,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9 -]*$",
+            "type": "string"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/topicSettings"
+          }
+        },
+        "required": [
+          "displayName"
+        ]
+      },
+      "listEmailAdressesResponse": {
+        "properties": {
+          "emailAddresses": {
+            "items": {
+              "description": "Unique identifier of a user or service account.",
+              "maxLength": 254,
+              "type": "string"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "emailAddresses"
+        ]
+      },
+      "listSubscriptionsResponse": {
+        "properties": {
+          "nextPageToken": {
+            "description": "A token to retrieve the next page of results.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "subscriptions": {
+            "items": {
+              "$ref": "#/components/schemas/subscriptionResponse"
+            },
+            "maxLength": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "subscriptions"
+        ]
+      },
+      "listTopicsResponse": {
+        "properties": {
+          "nextPageToken": {
+            "description": "A token to retrieve the next page of results.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "topics": {
+            "items": {
+              "$ref": "#/components/schemas/topicResponse"
+            },
+            "maxLength": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "topics"
+        ]
+      },
+      "subscriptionResponse": {
+        "properties": {
+          "createTime": {
+            "description": "The point in time the resource was created.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 36,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9 -]*$",
+            "type": "string"
+          },
+          "id": {
+            "description": "An auto generated unique id which identifies the resource.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/subscriptionSettings"
+          },
+          "state": {
+            "description": "The current state of the resource.",
+            "enum": [
+              "reconciling",
+              "active",
+              "deleting"
+            ],
+            "type": "string"
+          },
+          "topicId": {
+            "description": "The id of the topic to which the subscription belongs.",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "topicId",
+          "state",
+          "createTime"
+        ]
+      },
+      "subscriptionSettings": {
+        "description": "Configuration settings for the subscription.",
+        "properties": {
+          "ackDeadline": {
+            "default": "2m",
+            "description": "The maximum amount of time the system waits for a message acknowledgment. \nIf a message is not acknowledged within this window, it will be redelivered.\n\n**Format:**\nMust be a duration string consisting of a number (integer or decimal) followed by a unit ('s', 'm', or 'h').\n\n**Constraints:**\n- **Minimum:** \"1s\"\n- **Maximum:** \"168h\" (7 days)\n",
+            "example": "60s",
+            "pattern": "^[0-9]+(\\.[0-9]+)?(s|m|h)$",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "topicResponse": {
+        "properties": {
+          "createTime": {
+            "description": "The point in time the resource was created.",
+            "format": "date-time",
+            "maxLength": 128,
+            "type": "string"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 36,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9 -]*$",
+            "type": "string"
+          },
+          "id": {
+            "description": "An auto generated unique id which identifies the resource.",
+            "format": "uuid",
+            "maxLength": 36,
+            "minLength": 36,
+            "type": "string"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/topicSettings"
+          },
+          "state": {
+            "description": "The current state of the resource.",
+            "enum": [
+              "reconciling",
+              "active",
+              "deleting"
+            ],
+            "type": "string"
+          },
+          "uri": {
+            "description": "The URI for reaching the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "state",
+          "createTime"
+        ]
+      },
+      "topicSettings": {
+        "description": "Configuration settings for the topic.",
+        "properties": {
+          "acl": {
+            "default": [
+              "0.0.0.0/0"
+            ],
+            "description": "Whitelist of IPs in CIDR notation that can access the topic and its underlying subscriptions.",
+            "example": [
+              "192.168.1.0/24",
+              "192.168.2.0/24"
+            ],
+            "items": {
+              "example": "192.168.1.0/24",
+              "format": "cidr",
+              "type": "string"
+            },
+            "maxItems": 100,
+            "type": "array"
+          },
+          "retention": {
+            "default": "168h",
+            "description": "The maximum length of time a message is persisted in storage. \nMessages older than this duration are automatically discarded/deleted.\n\n**Format:**\nMust be a scalar duration: a number (integer or decimal) followed by a unit ('s', 'm', or 'h').\n\n**Constraints:**\n- **Minimum:** \"1s\"\n- **Maximum:** \"168h\" (7 days)\n",
+            "example": "24h",
+            "pattern": "^[0-9]+(\\.[0-9]+)?(s|m|h)$",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "update-subscriptionPayload": {
+        "properties": {
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 36,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9 -]*$",
+            "type": "string"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/subscriptionSettings"
+          }
+        }
+      },
+      "update-topicPayload": {
+        "properties": {
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 36,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9 -]*$",
+            "type": "string"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/topicSettings"
+          }
+        }
+      }
+    }
+  },
+  "info": {
+    "description": "This API provides endpoints for managing PubSubs.\n",
+    "title": "[ALPHA] STACKIT PubSub API",
+    "version": "1alpha.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1alpha/projects/{projectId}/regions/{regionId}/topics": {
+      "get": {
+        "description": "Returns a list of all topics within the PubSub project.",
+        "operationId": "list-topics",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pageToken"
+          },
+          {
+            "$ref": "#/components/parameters/pageSize"
+          },
+          {
+            "$ref": "#/components/parameters/query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/listTopicsResponse"
+                }
+              }
+            },
+            "description": "Successful response with all topics."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/tooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "pubsub.topic.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        }
+      ],
+      "post": {
+        "description": "Creates a new topic within the PubSub project.",
+        "operationId": "create-topic",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/create-topicPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/topicResponse"
+                }
+              }
+            },
+            "description": "New topic will be created."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "429": {
+            "$ref": "#/components/responses/tooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "pubsub.topic.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/regions/{regionId}/topics/{topicId}": {
+      "delete": {
+        "description": "Deletes the given topic.",
+        "operationId": "delete-topic",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/force"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Topic will be deleted."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "422": {
+            "$ref": "#/components/responses/unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/tooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "pubsub.topic.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns the details for the given topic.",
+        "operationId": "get-topic",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/topicResponse"
+                }
+              }
+            },
+            "description": "Topic details successfully retrieved."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/tooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "pubsub.topic.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/topicId"
+        }
+      ],
+      "patch": {
+        "description": "Will update the given topic.",
+        "operationId": "update-topic",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/update-topicPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Topic will be updated."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/tooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "pubsub.topic.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/regions/{regionId}/topics/{topicId}/publishers": {
+      "get": {
+        "description": "Returns a list of emailAddresses that are allowed to publish to the given topic.",
+        "operationId": "list-topic-publishers",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/listEmailAdressesResponse"
+                }
+              }
+            },
+            "description": "Successful response with a list of all emailAddresses that are allowed to publish to the given topic."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/tooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "pubsub.topic.publisher.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/topicId"
+        }
+      ]
+    },
+    "/v1alpha/projects/{projectId}/regions/{regionId}/topics/{topicId}/publishers/{emailAddress}": {
+      "delete": {
+        "description": "Revokes an emailAddress access to publish to the given topic.",
+        "operationId": "revoke-topic-publisher-access",
+        "responses": {
+          "202": {
+            "description": "Access to publish to the given topic will be revoked."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "422": {
+            "$ref": "#/components/responses/unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/tooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "pubsub.topic.publisher.remove"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/topicId"
+        },
+        {
+          "$ref": "#/components/parameters/emailAddress"
+        }
+      ],
+      "put": {
+        "description": "Grants an emailAddress access to publish to the given topic.",
+        "operationId": "grant-topic-publisher-access",
+        "responses": {
+          "202": {
+            "description": "Access to publish to the given topic will be granted."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "422": {
+            "$ref": "#/components/responses/unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/tooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "pubsub.topic.publisher.add"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/regions/{regionId}/topics/{topicId}/subscriptions": {
+      "get": {
+        "description": "Returns a list of all topic subscriptions.",
+        "operationId": "list-subscriptions",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pageToken"
+          },
+          {
+            "$ref": "#/components/parameters/pageSize"
+          },
+          {
+            "$ref": "#/components/parameters/query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/listSubscriptionsResponse"
+                }
+              }
+            },
+            "description": "Successful response with all subscriptions."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/tooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "pubsub.subscription.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/topicId"
+        }
+      ],
+      "post": {
+        "description": "Creates a new subscription for a topic within the PubSub project.",
+        "operationId": "create-subscription",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/create-subscriptionPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/subscriptionResponse"
+                }
+              }
+            },
+            "description": "Subscription will be created."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/tooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "pubsub.subscription.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/regions/{regionId}/topics/{topicId}/subscriptions/{subscriptionId}": {
+      "delete": {
+        "description": "Deletes the given subscription.",
+        "operationId": "delete-subscription",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/force"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Subscription will be deleted."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "429": {
+            "$ref": "#/components/responses/tooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "pubsub.subscription.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns the details for the given subscription.",
+        "operationId": "get-subscription",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/subscriptionResponse"
+                }
+              }
+            },
+            "description": "Subscription details successfully retrieved."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/tooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "pubsub.subscription.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/topicId"
+        },
+        {
+          "$ref": "#/components/parameters/subscriptionId"
+        }
+      ],
+      "patch": {
+        "description": "Will update the given subscription.",
+        "operationId": "update-subscription",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/update-subscriptionPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Subscription will be updated."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/tooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "pubsub.subscription.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/regions/{regionId}/topics/{topicId}/subscriptions/{subscriptionId}/subscribers": {
+      "get": {
+        "description": "Returns a list of emailAddresses that are allowed to pull from the given subscription.",
+        "operationId": "list-subscription-subscribers",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/listEmailAdressesResponse"
+                }
+              }
+            },
+            "description": "Successful response with a list of all emailAddresses that are allowed to pull from the given subscription."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/tooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "pubsub.subscription.subscriber.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/topicId"
+        },
+        {
+          "$ref": "#/components/parameters/subscriptionId"
+        }
+      ]
+    },
+    "/v1alpha/projects/{projectId}/regions/{regionId}/topics/{topicId}/subscriptions/{subscriptionId}/subscribers/{emailAddress}": {
+      "delete": {
+        "description": "Revokes an emailAddress access to pull from the given subscription.",
+        "operationId": "revoke-subscription-subscriber-access",
+        "responses": {
+          "202": {
+            "description": "Access to pull from the given subscription will be revoked."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "422": {
+            "$ref": "#/components/responses/unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/tooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "pubsub.subscription.subscriber.remove"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/topicId"
+        },
+        {
+          "$ref": "#/components/parameters/subscriptionId"
+        },
+        {
+          "$ref": "#/components/parameters/emailAddress"
+        }
+      ],
+      "put": {
+        "description": "Grants an emailAddress access to pull from the given subscription.",
+        "operationId": "grant-subscription-subscriber-access",
+        "responses": {
+          "202": {
+            "description": "Access to pull from the given Subscription will be granted."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "422": {
+            "$ref": "#/components/responses/unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/tooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "pubsub.subscription.subscriber.add"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://pubsub.api.{region}stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "eu01.",
+          "enum": [
+            "eu01."
+          ]
+        }
+      }
+    }
+  ]
+}

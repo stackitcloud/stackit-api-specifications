@@ -354,7 +354,22 @@
         ],
         "type": "object"
       },
-      "CloneResponse": {
+      "CloneInstancePayload": {
+        "properties": {
+          "instanceOverrides": {
+            "$ref": "#/components/schemas/clone.instanceOverrides"
+          },
+          "pointInTime": {
+            "$ref": "#/components/schemas/clone.pointInTime"
+          }
+        },
+        "required": [
+          "pointInTime",
+          "instanceOverrides"
+        ],
+        "type": "object"
+      },
+      "CloneInstanceResponse": {
         "properties": {
           "id": {
             "$ref": "#/components/schemas/instance.id"
@@ -362,6 +377,20 @@
         },
         "required": [
           "id"
+        ],
+        "type": "object"
+      },
+      "CreateDatabasePayload": {
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/database.name"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/database.owner"
+          }
+        },
+        "required": [
+          "name"
         ],
         "type": "object"
       },
@@ -376,6 +405,47 @@
         ],
         "type": "object"
       },
+      "CreateInstancePayload": {
+        "properties": {
+          "backupSchedule": {
+            "$ref": "#/components/schemas/backup.schedule"
+          },
+          "encryption": {
+            "$ref": "#/components/schemas/instance.encryption"
+          },
+          "flavorId": {
+            "$ref": "#/components/schemas/flavor.flavorId"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/instance.name"
+          },
+          "network": {
+            "$ref": "#/components/schemas/instance.network.create"
+          },
+          "retentionDays": {
+            "$ref": "#/components/schemas/retentionDays"
+          },
+          "storage": {
+            "$ref": "#/components/schemas/storage.create"
+          },
+          "version": {
+            "$ref": "#/components/schemas/instance.version"
+          }
+        },
+        "required": [
+          "network",
+          "backupSchedule",
+          "flavorId",
+          "name",
+          "retentionDays",
+          "storage",
+          "version"
+        ],
+        "type": "object"
+      },
       "CreateInstanceResponse": {
         "properties": {
           "id": {
@@ -384,6 +454,31 @@
         },
         "required": [
           "id"
+        ],
+        "type": "object"
+      },
+      "CreateUserPayload": {
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/user.name"
+          },
+          "roles": {
+            "description": "A list containing the user roles for the instance. Please refer to the List Roles endpoint for a list of all available Roles.",
+            "example": [
+              "exampleRoleString",
+              "secondeRoleString"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/user.role"
+            },
+            "type": "array",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,unique_user_role"
+            }
+          }
+        },
+        "required": [
+          "name"
         ],
         "type": "object"
       },
@@ -445,21 +540,6 @@
       "GetBackupResponse": {
         "$ref": "#/components/schemas/BackupData"
       },
-      "GetCollationsResponse": {
-        "properties": {
-          "collations": {
-            "description": "List of collations available for the instance.",
-            "items": {
-              "$ref": "#/components/schemas/database.collation"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "collations"
-        ],
-        "type": "object"
-      },
       "GetDatabaseResponse": {
         "properties": {
           "id": {
@@ -476,25 +556,6 @@
           "id",
           "name",
           "owner"
-        ],
-        "type": "object"
-      },
-      "GetFlavorsResponse": {
-        "properties": {
-          "flavors": {
-            "description": "List of flavors available for the project.",
-            "items": {
-              "$ref": "#/components/schemas/ListFlavors"
-            },
-            "type": "array"
-          },
-          "pagination": {
-            "$ref": "#/components/schemas/Pagination"
-          }
-        },
-        "required": [
-          "pagination",
-          "flavors"
         ],
         "type": "object"
       },
@@ -589,21 +650,6 @@
         ],
         "type": "object"
       },
-      "GetVersionsResponse": {
-        "properties": {
-          "versions": {
-            "description": "A list containing available postgres versions.",
-            "items": {
-              "$ref": "#/components/schemas/version"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "versions"
-        ],
-        "type": "object"
-      },
       "ListBackup": {
         "$ref": "#/components/schemas/BackupData"
       },
@@ -623,6 +669,21 @@
         "required": [
           "pagination",
           "backups"
+        ],
+        "type": "object"
+      },
+      "ListCollationsResponse": {
+        "properties": {
+          "collations": {
+            "description": "List of collations available for the instance.",
+            "items": {
+              "$ref": "#/components/schemas/database.collation"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "collations"
         ],
         "type": "object"
       },
@@ -701,6 +762,25 @@
           "minGB",
           "maxGB",
           "storageClasses"
+        ],
+        "type": "object"
+      },
+      "ListFlavorsResponse": {
+        "properties": {
+          "flavors": {
+            "description": "List of flavors available for the project.",
+            "items": {
+              "$ref": "#/components/schemas/ListFlavors"
+            },
+            "type": "array"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        },
+        "required": [
+          "pagination",
+          "flavors"
         ],
         "type": "object"
       },
@@ -810,6 +890,21 @@
         ],
         "type": "object"
       },
+      "ListVersionResponse": {
+        "properties": {
+          "versions": {
+            "description": "A list containing available postgres versions.",
+            "items": {
+              "$ref": "#/components/schemas/version"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "versions"
+        ],
+        "type": "object"
+      },
       "Pagination": {
         "properties": {
           "page": {
@@ -841,18 +936,65 @@
         ],
         "type": "object"
       },
-      "ProtectInstanceResponse": {
+      "PartialUpdateDatabasePayload": {
         "properties": {
-          "isDeletable": {
-            "$ref": "#/components/schemas/protect.isDeletable"
+          "name": {
+            "$ref": "#/components/schemas/database.name.opt"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/database.owner.opt"
           }
         },
-        "required": [
-          "isDeletable"
-        ],
         "type": "object"
       },
-      "ResetUserResponse": {
+      "PartialUpdateInstancePayload": {
+        "properties": {
+          "backupSchedule": {
+            "$ref": "#/components/schemas/backup.schedule.opt"
+          },
+          "flavorId": {
+            "$ref": "#/components/schemas/flavor.flavorId.opt"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/instance.name.opt"
+          },
+          "network": {
+            "$ref": "#/components/schemas/instance.network.opt"
+          },
+          "retentionDays": {
+            "$ref": "#/components/schemas/retentionDays.opt"
+          },
+          "storage": {
+            "$ref": "#/components/schemas/storage.update"
+          },
+          "version": {
+            "$ref": "#/components/schemas/instance.version.update.opt"
+          }
+        },
+        "type": "object"
+      },
+      "PartialUpdateUserPayload": {
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/user.name.opt"
+          },
+          "roles": {
+            "description": "A list containing the user roles for the instance. Please refer to the List Roles endpoint for a list of all available Roles.",
+            "items": {
+              "$ref": "#/components/schemas/user.role"
+            },
+            "type": "array",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,unique_user_role"
+            }
+          }
+        },
+        "type": "object"
+      },
+      "ResetUserPasswordResponse": {
         "properties": {
           "name": {
             "$ref": "#/components/schemas/user.name"
@@ -882,6 +1024,21 @@
         ],
         "type": "object"
       },
+      "UpdateDatabasePayload": {
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/database.name"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/database.owner"
+          }
+        },
+        "required": [
+          "name",
+          "owner"
+        ],
+        "type": "object"
+      },
       "UpdateDatabaseResponse": {
         "properties": {
           "database": {
@@ -890,6 +1047,87 @@
         },
         "required": [
           "database"
+        ],
+        "type": "object"
+      },
+      "UpdateInstancePayload": {
+        "properties": {
+          "backupSchedule": {
+            "$ref": "#/components/schemas/backup.schedule"
+          },
+          "flavorId": {
+            "$ref": "#/components/schemas/flavor.flavorId"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/instance.name"
+          },
+          "network": {
+            "$ref": "#/components/schemas/instance.network.update"
+          },
+          "retentionDays": {
+            "$ref": "#/components/schemas/retentionDays"
+          },
+          "storage": {
+            "$ref": "#/components/schemas/storage.update"
+          },
+          "version": {
+            "$ref": "#/components/schemas/instance.version.update"
+          }
+        },
+        "required": [
+          "backupSchedule",
+          "flavorId",
+          "name",
+          "retentionDays",
+          "storage",
+          "version",
+          "network"
+        ],
+        "type": "object"
+      },
+      "UpdateInstanceProtectionPayload": {
+        "properties": {
+          "isDeletable": {
+            "$ref": "#/components/schemas/protect.isDeletable"
+          }
+        },
+        "required": [
+          "isDeletable"
+        ],
+        "type": "object"
+      },
+      "UpdateInstanceProtectionResponse": {
+        "properties": {
+          "isDeletable": {
+            "$ref": "#/components/schemas/protect.isDeletable"
+          }
+        },
+        "required": [
+          "isDeletable"
+        ],
+        "type": "object"
+      },
+      "UpdateUserPayload": {
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/user.name"
+          },
+          "roles": {
+            "description": "A list containing the user roles for the instance. Please refer to the List Roles endpoint for a list of all available Roles.",
+            "items": {
+              "$ref": "#/components/schemas/user.role"
+            },
+            "type": "array",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,unique_user_role"
+            }
+          }
+        },
+        "required": [
+          "roles"
         ],
         "type": "object"
       },
@@ -1069,101 +1307,6 @@
         "example": 10,
         "format": "uint64",
         "type": "integer"
-      },
-      "cloneRequestPayload": {
-        "properties": {
-          "instanceOverrides": {
-            "$ref": "#/components/schemas/clone.instanceOverrides"
-          },
-          "pointInTime": {
-            "$ref": "#/components/schemas/clone.pointInTime"
-          }
-        },
-        "required": [
-          "pointInTime",
-          "instanceOverrides"
-        ],
-        "type": "object"
-      },
-      "createDatabaseRequestPayload": {
-        "properties": {
-          "name": {
-            "$ref": "#/components/schemas/database.name"
-          },
-          "owner": {
-            "$ref": "#/components/schemas/database.owner"
-          }
-        },
-        "required": [
-          "name"
-        ],
-        "type": "object"
-      },
-      "createInstanceRequestPayload": {
-        "properties": {
-          "backupSchedule": {
-            "$ref": "#/components/schemas/backup.schedule"
-          },
-          "encryption": {
-            "$ref": "#/components/schemas/instance.encryption"
-          },
-          "flavorId": {
-            "$ref": "#/components/schemas/flavor.flavorId"
-          },
-          "labels": {
-            "$ref": "#/components/schemas/labels"
-          },
-          "name": {
-            "$ref": "#/components/schemas/instance.name"
-          },
-          "network": {
-            "$ref": "#/components/schemas/instance.network.create"
-          },
-          "retentionDays": {
-            "$ref": "#/components/schemas/retentionDays"
-          },
-          "storage": {
-            "$ref": "#/components/schemas/storage.create"
-          },
-          "version": {
-            "$ref": "#/components/schemas/instance.version"
-          }
-        },
-        "required": [
-          "network",
-          "backupSchedule",
-          "flavorId",
-          "name",
-          "retentionDays",
-          "storage",
-          "version"
-        ],
-        "type": "object"
-      },
-      "createUserRequestPayload": {
-        "properties": {
-          "name": {
-            "$ref": "#/components/schemas/user.name"
-          },
-          "roles": {
-            "description": "A list containing the user roles for the instance. Please refer to the List Roles endpoint for a list of all available Roles.",
-            "example": [
-              "exampleRoleString",
-              "secondeRoleString"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/user.role"
-            },
-            "type": "array",
-            "x-oapi-codegen-extra-tags": {
-              "validate": "required,unique_user_role"
-            }
-          }
-        },
-        "required": [
-          "name"
-        ],
-        "type": "object"
       },
       "database.collation": {
         "description": "The collation of the database",
@@ -1555,17 +1698,6 @@
         "example": true,
         "type": "boolean"
       },
-      "protectInstanceRequestPayload": {
-        "properties": {
-          "isDeletable": {
-            "$ref": "#/components/schemas/protect.isDeletable"
-          }
-        },
-        "required": [
-          "isDeletable"
-        ],
-        "type": "object"
-      },
       "retentionDays": {
         "description": "How long backups are retained. The value can only be between 32 and 90 days.",
         "example": 35,
@@ -1670,138 +1802,6 @@
         "example": "2023-12-19T13:18:45.52Z",
         "type": "string"
       },
-      "updateDatabasePartiallyRequestPayload": {
-        "properties": {
-          "name": {
-            "$ref": "#/components/schemas/database.name.opt"
-          },
-          "owner": {
-            "$ref": "#/components/schemas/database.owner.opt"
-          }
-        },
-        "type": "object"
-      },
-      "updateDatabaseRequestPayload": {
-        "properties": {
-          "name": {
-            "$ref": "#/components/schemas/database.name"
-          },
-          "owner": {
-            "$ref": "#/components/schemas/database.owner"
-          }
-        },
-        "required": [
-          "name",
-          "owner"
-        ],
-        "type": "object"
-      },
-      "updateInstancePartiallyRequestPayload": {
-        "properties": {
-          "backupSchedule": {
-            "$ref": "#/components/schemas/backup.schedule.opt"
-          },
-          "flavorId": {
-            "$ref": "#/components/schemas/flavor.flavorId.opt"
-          },
-          "labels": {
-            "$ref": "#/components/schemas/labels"
-          },
-          "name": {
-            "$ref": "#/components/schemas/instance.name.opt"
-          },
-          "network": {
-            "$ref": "#/components/schemas/instance.network.opt"
-          },
-          "retentionDays": {
-            "$ref": "#/components/schemas/retentionDays.opt"
-          },
-          "storage": {
-            "$ref": "#/components/schemas/storage.update"
-          },
-          "version": {
-            "$ref": "#/components/schemas/instance.version.update.opt"
-          }
-        },
-        "type": "object"
-      },
-      "updateInstanceRequestPayload": {
-        "properties": {
-          "backupSchedule": {
-            "$ref": "#/components/schemas/backup.schedule"
-          },
-          "flavorId": {
-            "$ref": "#/components/schemas/flavor.flavorId"
-          },
-          "labels": {
-            "$ref": "#/components/schemas/labels"
-          },
-          "name": {
-            "$ref": "#/components/schemas/instance.name"
-          },
-          "network": {
-            "$ref": "#/components/schemas/instance.network.update"
-          },
-          "retentionDays": {
-            "$ref": "#/components/schemas/retentionDays"
-          },
-          "storage": {
-            "$ref": "#/components/schemas/storage.update"
-          },
-          "version": {
-            "$ref": "#/components/schemas/instance.version.update"
-          }
-        },
-        "required": [
-          "backupSchedule",
-          "flavorId",
-          "name",
-          "retentionDays",
-          "storage",
-          "version",
-          "network"
-        ],
-        "type": "object"
-      },
-      "updateUserPartiallyRequestPayload": {
-        "properties": {
-          "name": {
-            "$ref": "#/components/schemas/user.name.opt"
-          },
-          "roles": {
-            "description": "A list containing the user roles for the instance. Please refer to the List Roles endpoint for a list of all available Roles.",
-            "items": {
-              "$ref": "#/components/schemas/user.role"
-            },
-            "type": "array",
-            "x-oapi-codegen-extra-tags": {
-              "validate": "omitempty,unique_user_role"
-            }
-          }
-        },
-        "type": "object"
-      },
-      "updateUserRequestPayload": {
-        "properties": {
-          "name": {
-            "$ref": "#/components/schemas/user.name"
-          },
-          "roles": {
-            "description": "A list containing the user roles for the instance. Please refer to the List Roles endpoint for a list of all available Roles.",
-            "items": {
-              "$ref": "#/components/schemas/user.role"
-            },
-            "type": "array",
-            "x-oapi-codegen-extra-tags": {
-              "validate": "omitempty,unique_user_role"
-            }
-          }
-        },
-        "required": [
-          "roles"
-        ],
-        "type": "object"
-      },
       "user.id": {
         "description": "The ID of the user.",
         "example": 1,
@@ -1896,7 +1896,7 @@
     "/v3beta1/projects/{projectId}/regions/{region}/flavors": {
       "get": {
         "description": "Get all available flavors for a project.",
-        "operationId": "getFlavorsRequest",
+        "operationId": "ListFlavors",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -1919,7 +1919,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetFlavorsResponse"
+                  "$ref": "#/components/schemas/ListFlavorsResponse"
                 }
               }
             },
@@ -2045,7 +2045,7 @@
     "/v3beta1/projects/{projectId}/regions/{region}/instances": {
       "get": {
         "description": "List all available instances for your project.",
-        "operationId": "listInstancesRequest",
+        "operationId": "ListInstances",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -2177,7 +2177,7 @@
       },
       "post": {
         "description": "Create a new instance of a postgres database instance.",
-        "operationId": "createInstanceRequest",
+        "operationId": "CreateInstance",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -2190,7 +2190,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/createInstanceRequestPayload"
+                "$ref": "#/components/schemas/CreateInstancePayload"
               }
             }
           },
@@ -2328,7 +2328,7 @@
     "/v3beta1/projects/{projectId}/regions/{region}/instances/{instanceId}": {
       "delete": {
         "description": "Delete an available postgres instance.",
-        "operationId": "deleteInstanceRequest",
+        "operationId": "DeleteInstance",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -2462,7 +2462,7 @@
       },
       "get": {
         "description": "Get information about a specific available instance",
-        "operationId": "getInstanceRequest",
+        "operationId": "GetInstance",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -2588,7 +2588,7 @@
       },
       "patch": {
         "description": "Update an available instance of a postgres database. No fields are required.",
-        "operationId": "updateInstancePartiallyRequest",
+        "operationId": "PartialUpdateInstance",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -2604,7 +2604,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/updateInstancePartiallyRequestPayload"
+                "$ref": "#/components/schemas/PartialUpdateInstancePayload"
               }
             }
           },
@@ -2758,7 +2758,7 @@
       },
       "put": {
         "description": "Updates an available instance of a postgres database",
-        "operationId": "updateInstanceRequest",
+        "operationId": "UpdateInstance",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -2774,7 +2774,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/updateInstanceRequestPayload"
+                "$ref": "#/components/schemas/UpdateInstancePayload"
               }
             }
           },
@@ -2930,7 +2930,7 @@
     "/v3beta1/projects/{projectId}/regions/{region}/instances/{instanceId}/backups": {
       "get": {
         "description": "List all backups which are available for a specific instance.",
-        "operationId": "listBackupsRequest",
+        "operationId": "ListBackups",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -3082,7 +3082,7 @@
     "/v3beta1/projects/{projectId}/regions/{region}/instances/{instanceId}/backups/{backupId}": {
       "get": {
         "description": "Get information about a specific backup for an instance.",
-        "operationId": "getBackupRequest",
+        "operationId": "GetBackup",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -3228,7 +3228,7 @@
     "/v3beta1/projects/{projectId}/regions/{region}/instances/{instanceId}/clone": {
       "post": {
         "description": "Clone Instance",
-        "operationId": "cloneRequest",
+        "operationId": "CloneInstance",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -3244,7 +3244,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/cloneRequestPayload"
+                "$ref": "#/components/schemas/CloneInstancePayload"
               }
             }
           },
@@ -3255,7 +3255,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CloneResponse"
+                  "$ref": "#/components/schemas/CloneInstanceResponse"
                 }
               }
             },
@@ -3406,7 +3406,7 @@
     "/v3beta1/projects/{projectId}/regions/{region}/instances/{instanceId}/collations": {
       "get": {
         "description": "Get available collations for an instance",
-        "operationId": "getCollationsRequest",
+        "operationId": "ListCollations",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -3423,7 +3423,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetCollationsResponse"
+                  "$ref": "#/components/schemas/ListCollationsResponse"
                 }
               }
             },
@@ -3549,7 +3549,7 @@
     "/v3beta1/projects/{projectId}/regions/{region}/instances/{instanceId}/databases": {
       "get": {
         "description": "List available databases for an instance.",
-        "operationId": "listDatabasesRequest",
+        "operationId": "ListDatabases",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -3684,7 +3684,7 @@
       },
       "post": {
         "description": "Create database for a user. Note: The name of a valid user must be provided in the 'options' map field using the key 'owner'",
-        "operationId": "createDatabaseRequest",
+        "operationId": "CreateDatabase",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -3700,7 +3700,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/createDatabaseRequestPayload"
+                "$ref": "#/components/schemas/CreateDatabasePayload"
               }
             }
           },
@@ -3863,7 +3863,7 @@
     "/v3beta1/projects/{projectId}/regions/{region}/instances/{instanceId}/databases/{databaseId}": {
       "delete": {
         "description": "Delete database for an instance.",
-        "operationId": "deleteDatabaseRequest",
+        "operationId": "DeleteDatabase",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -4000,7 +4000,7 @@
       },
       "get": {
         "description": "Get information about a specific database in an instance.",
-        "operationId": "getDatabaseRequest",
+        "operationId": "GetDatabase",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -4129,7 +4129,7 @@
       },
       "patch": {
         "description": "Update a database partially in an instance.",
-        "operationId": "updateDatabasePartiallyRequest",
+        "operationId": "PartialUpdateDatabase",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -4148,7 +4148,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/updateDatabasePartiallyRequestPayload"
+                "$ref": "#/components/schemas/PartialUpdateDatabasePayload"
               }
             }
           },
@@ -4287,7 +4287,7 @@
       },
       "put": {
         "description": "Update a database in an instance.",
-        "operationId": "updateDatabaseRequest",
+        "operationId": "UpdateDatabase",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -4306,7 +4306,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/updateDatabaseRequestPayload"
+                "$ref": "#/components/schemas/UpdateDatabasePayload"
               }
             }
           },
@@ -4447,7 +4447,7 @@
     "/v3beta1/projects/{projectId}/regions/{region}/instances/{instanceId}/protections": {
       "post": {
         "description": "Toggle the deletion protection for an instance.",
-        "operationId": "protectInstanceRequest",
+        "operationId": "UpdateInstanceProtection",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -4463,7 +4463,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/protectInstanceRequestPayload"
+                "$ref": "#/components/schemas/UpdateInstanceProtectionPayload"
               }
             }
           },
@@ -4475,7 +4475,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProtectInstanceResponse"
+                  "$ref": "#/components/schemas/UpdateInstanceProtectionResponse"
                 }
               }
             },
@@ -4597,7 +4597,7 @@
             "description": "Unavailable Service: A required downstream service is currently unresponsive."
           }
         },
-        "summary": "Protect Instance",
+        "summary": "Toggle Instance Protection",
         "x-stackit-authorization": {
           "actions": [
             "postgres-flex.instance.protect"
@@ -4611,7 +4611,7 @@
     "/v3beta1/projects/{projectId}/regions/{region}/instances/{instanceId}/roles": {
       "get": {
         "description": "List available roles for an instance.",
-        "operationId": "listRolesRequest",
+        "operationId": "ListRoles",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -4739,7 +4739,7 @@
     "/v3beta1/projects/{projectId}/regions/{region}/instances/{instanceId}/users": {
       "get": {
         "description": "List available users for an instance.",
-        "operationId": "listUsersRequest",
+        "operationId": "ListUsers",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -4874,7 +4874,7 @@
       },
       "post": {
         "description": "Create user for an instance.",
-        "operationId": "createUserRequest",
+        "operationId": "CreateUser",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -4890,7 +4890,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/createUserRequestPayload"
+                "$ref": "#/components/schemas/CreateUserPayload"
               }
             }
           },
@@ -5053,7 +5053,7 @@
     "/v3beta1/projects/{projectId}/regions/{region}/instances/{instanceId}/users/{userId}": {
       "delete": {
         "description": "Delete an user from a specific instance.",
-        "operationId": "deleteUserRequest",
+        "operationId": "DeleteUser",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -5205,7 +5205,7 @@
       },
       "get": {
         "description": "Get a specific available user for an instance.",
-        "operationId": "getUserRequest",
+        "operationId": "GetUser",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -5334,7 +5334,7 @@
       },
       "patch": {
         "description": "Update an user partially for an instance.",
-        "operationId": "updateUserPartiallyRequest",
+        "operationId": "PartialUpdateUser",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -5353,7 +5353,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/updateUserPartiallyRequestPayload"
+                "$ref": "#/components/schemas/PartialUpdateUserPayload"
               }
             }
           },
@@ -5491,7 +5491,7 @@
       },
       "put": {
         "description": "Update user for an instance.",
-        "operationId": "updateUserRequest",
+        "operationId": "UpdateUser",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -5510,7 +5510,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/updateUserRequestPayload"
+                "$ref": "#/components/schemas/UpdateUserPayload"
               }
             }
           },
@@ -5651,7 +5651,7 @@
     "/v3beta1/projects/{projectId}/regions/{region}/instances/{instanceId}/users/{userId}/reset": {
       "post": {
         "description": "Reset an user from an specific instance.",
-        "operationId": "resetUserRequest",
+        "operationId": "ResetUserPassword",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -5671,7 +5671,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResetUserResponse"
+                  "$ref": "#/components/schemas/ResetUserPasswordResponse"
                 }
               }
             },
@@ -5807,7 +5807,7 @@
     "/v3beta1/projects/{projectId}/regions/{region}/versions": {
       "get": {
         "description": "Get available postgres versions for the project.",
-        "operationId": "getVersionsRequest",
+        "operationId": "ListVersions",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -5821,7 +5821,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetVersionsResponse"
+                  "$ref": "#/components/schemas/ListVersionResponse"
                 }
               }
             },

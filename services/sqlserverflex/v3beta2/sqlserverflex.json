@@ -428,21 +428,6 @@
         ],
         "type": "object"
       },
-      "GetCollationsResponse": {
-        "properties": {
-          "collations": {
-            "description": "List of collations available for the instance.",
-            "items": {
-              "$ref": "#/components/schemas/database.getcollation"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "collations"
-        ],
-        "type": "object"
-      },
       "GetDatabaseResponse": {
         "properties": {
           "collationName": {
@@ -550,21 +535,6 @@
         ],
         "type": "object"
       },
-      "GetStoragesResponse": {
-        "properties": {
-          "storageClasses": {
-            "$ref": "#/components/schemas/flavor.storageClasses"
-          },
-          "storageRange": {
-            "$ref": "#/components/schemas/flavor.storageRange"
-          }
-        },
-        "required": [
-          "storageClasses",
-          "storageRange"
-        ],
-        "type": "object"
-      },
       "GetUserResponse": {
         "properties": {
           "default_database": {
@@ -605,21 +575,6 @@
           "roles",
           "status",
           "username"
-        ],
-        "type": "object"
-      },
-      "GetVersionsResponse": {
-        "properties": {
-          "versions": {
-            "description": "A list containing available sqlserver versions.",
-            "items": {
-              "$ref": "#/components/schemas/version"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "versions"
         ],
         "type": "object"
       },
@@ -715,6 +670,21 @@
         "required": [
           "databaseName",
           "backups"
+        ],
+        "type": "object"
+      },
+      "ListCollationsResponse": {
+        "properties": {
+          "collations": {
+            "description": "List of collations available for the instance.",
+            "items": {
+              "$ref": "#/components/schemas/database.getcollation"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "collations"
         ],
         "type": "object"
       },
@@ -887,6 +857,21 @@
         ],
         "type": "object"
       },
+      "ListStoragesResponse": {
+        "properties": {
+          "storageClasses": {
+            "$ref": "#/components/schemas/flavor.storageClasses"
+          },
+          "storageRange": {
+            "$ref": "#/components/schemas/flavor.storageRange"
+          }
+        },
+        "required": [
+          "storageClasses",
+          "storageRange"
+        ],
+        "type": "object"
+      },
       "ListUser": {
         "properties": {
           "id": {
@@ -925,6 +910,21 @@
         ],
         "type": "object"
       },
+      "ListVersionsResponse": {
+        "properties": {
+          "versions": {
+            "description": "A list containing available sqlserver versions.",
+            "items": {
+              "$ref": "#/components/schemas/version"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "versions"
+        ],
+        "type": "object"
+      },
       "Pagination": {
         "properties": {
           "page": {
@@ -956,26 +956,39 @@
         ],
         "type": "object"
       },
-      "ProtectInstancePayload": {
+      "PartialUpdateInstancePayload": {
         "properties": {
-          "isDeletable": {
-            "$ref": "#/components/schemas/protect.isDeletable"
+          "backupSchedule": {
+            "$ref": "#/components/schemas/backup.schedule.opt"
+          },
+          "flavorId": {
+            "$ref": "#/components/schemas/flavor.flavorId.opt"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/instance.name.opt"
+          },
+          "network": {
+            "description": "the network configuration of the instance.",
+            "properties": {
+              "acl": {
+                "$ref": "#/components/schemas/acl"
+              }
+            },
+            "type": "object"
+          },
+          "retentionDays": {
+            "$ref": "#/components/schemas/instance.retentionDays.opt"
+          },
+          "storage": {
+            "$ref": "#/components/schemas/storage.update"
+          },
+          "version": {
+            "$ref": "#/components/schemas/instance.version.opt"
           }
         },
-        "required": [
-          "isDeletable"
-        ],
-        "type": "object"
-      },
-      "ProtectInstanceResponse": {
-        "properties": {
-          "isDeletable": {
-            "$ref": "#/components/schemas/protect.isDeletable"
-          }
-        },
-        "required": [
-          "isDeletable"
-        ],
         "type": "object"
       },
       "ResetUserResponse": {
@@ -1049,41 +1062,6 @@
         ],
         "type": "object"
       },
-      "UpdateInstancePartiallyPayload": {
-        "properties": {
-          "backupSchedule": {
-            "$ref": "#/components/schemas/backup.schedule.opt"
-          },
-          "flavorId": {
-            "$ref": "#/components/schemas/flavor.flavorId.opt"
-          },
-          "labels": {
-            "$ref": "#/components/schemas/labels"
-          },
-          "name": {
-            "$ref": "#/components/schemas/instance.name.opt"
-          },
-          "network": {
-            "description": "the network configuration of the instance.",
-            "properties": {
-              "acl": {
-                "$ref": "#/components/schemas/acl"
-              }
-            },
-            "type": "object"
-          },
-          "retentionDays": {
-            "$ref": "#/components/schemas/instance.retentionDays.opt"
-          },
-          "storage": {
-            "$ref": "#/components/schemas/storage.update"
-          },
-          "version": {
-            "$ref": "#/components/schemas/instance.version.opt"
-          }
-        },
-        "type": "object"
-      },
       "UpdateInstancePayload": {
         "properties": {
           "backupSchedule": {
@@ -1131,6 +1109,28 @@
         ],
         "type": "object"
       },
+      "UpdateInstanceProtectionPayload": {
+        "properties": {
+          "isDeletable": {
+            "$ref": "#/components/schemas/protect.isDeletable"
+          }
+        },
+        "required": [
+          "isDeletable"
+        ],
+        "type": "object"
+      },
+      "UpdateInstanceProtectionResponse": {
+        "properties": {
+          "isDeletable": {
+            "$ref": "#/components/schemas/protect.isDeletable"
+          }
+        },
+        "required": [
+          "isDeletable"
+        ],
+        "type": "object"
+      },
       "ValidationError": {
         "properties": {
           "code": {
@@ -1168,6 +1168,9 @@
         "type": "object"
       },
       "acl": {
+        "default": [
+          "193.148.160.0/19"
+        ],
         "description": "List of IPV4 cidr.",
         "example": [
           "198.51.100.0/24"
@@ -2433,7 +2436,7 @@
       },
       "patch": {
         "description": "Update an available instance of a mssql database. No fields are required.\n\n**Please note that any changes applied via PUT or PATCH requests will initiate a reboot of the SQL Server Flex Instance.**\n",
-        "operationId": "UpdateInstancePartially",
+        "operationId": "PartialUpdateInstance",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -2449,7 +2452,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateInstancePartiallyPayload"
+                "$ref": "#/components/schemas/PartialUpdateInstancePayload"
               }
             }
           },
@@ -3061,7 +3064,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/instances/{instanceId}/collations": {
       "get": {
         "description": "Returns a list of collations for an instance",
-        "operationId": "GetCollations",
+        "operationId": "ListCollations",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -3078,7 +3081,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetCollationsResponse"
+                  "$ref": "#/components/schemas/ListCollationsResponse"
                 }
               }
             },
@@ -3644,7 +3647,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/instances/{instanceId}/protections": {
       "post": {
         "description": "Toggle the deletion protection for an instance.",
-        "operationId": "ProtectInstance",
+        "operationId": "UpdateInstanceProtection",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -3660,7 +3663,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProtectInstancePayload"
+                "$ref": "#/components/schemas/UpdateInstanceProtectionPayload"
               }
             }
           },
@@ -3672,7 +3675,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProtectInstanceResponse"
+                  "$ref": "#/components/schemas/UpdateInstanceProtectionResponse"
                 }
               }
             },
@@ -4585,7 +4588,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/storages/{flavorId}": {
       "get": {
         "description": "Get available storages for a specific flavor",
-        "operationId": "GetStorages",
+        "operationId": "ListStorages",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -4602,7 +4605,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetStoragesResponse"
+                  "$ref": "#/components/schemas/ListStoragesResponse"
                 }
               }
             },
@@ -4673,7 +4676,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/versions": {
       "get": {
         "description": "Get the sqlserver available versions for the project.",
-        "operationId": "GetVersions",
+        "operationId": "ListVersions",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -4687,7 +4690,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetVersionsResponse"
+                  "$ref": "#/components/schemas/ListVersionsResponse"
                 }
               }
             },

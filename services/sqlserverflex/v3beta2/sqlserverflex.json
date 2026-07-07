@@ -455,25 +455,6 @@
         ],
         "type": "object"
       },
-      "GetFlavorsResponse": {
-        "properties": {
-          "flavors": {
-            "description": "List of flavors available for the project.",
-            "items": {
-              "$ref": "#/components/schemas/ListFlavors"
-            },
-            "type": "array"
-          },
-          "pagination": {
-            "$ref": "#/components/schemas/Pagination"
-          }
-        },
-        "required": [
-          "pagination",
-          "flavors"
-        ],
-        "type": "object"
-      },
       "GetInstanceResponse": {
         "properties": {
           "backupSchedule": {
@@ -797,6 +778,25 @@
           "minGB",
           "maxGB",
           "storageClasses"
+        ],
+        "type": "object"
+      },
+      "ListFlavorsResponse": {
+        "properties": {
+          "flavors": {
+            "description": "List of flavors available for the project.",
+            "items": {
+              "$ref": "#/components/schemas/ListFlavors"
+            },
+            "type": "array"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        },
+        "required": [
+          "pagination",
+          "flavors"
         ],
         "type": "object"
       },
@@ -1943,7 +1943,7 @@
     "/v3beta2/projects/{projectId}/regions/{region}/flavors": {
       "get": {
         "description": "Get all available flavors for a project.",
-        "operationId": "GetFlavors",
+        "operationId": "ListFlavors",
         "parameters": [
           {
             "$ref": "#/components/parameters/project"
@@ -1966,7 +1966,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetFlavorsResponse"
+                  "$ref": "#/components/schemas/ListFlavorsResponse"
                 }
               }
             },

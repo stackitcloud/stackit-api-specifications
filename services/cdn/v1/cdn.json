@@ -4,12 +4,18 @@
       "BucketBackend": {
         "properties": {
           "bucketUrl": {
+            "description": "The fully qualified URL of your cloud storage bucket (for example, `https://s3.eu-central-1.amazonaws.com/my-bucket`).",
             "type": "string"
           },
           "region": {
+            "description": "The cloud provider region where your storage bucket is located (for example, `us-west-1` for AWS or `eu01` for STACKIT).",
             "type": "string"
           },
           "type": {
+            "description": "Defines the type of content origin. For this schema, it must be set to `bucket`.",
+            "enum": [
+              "bucket"
+            ],
             "type": "string"
           }
         },
@@ -23,15 +29,21 @@
       "BucketBackendCreate": {
         "properties": {
           "bucketUrl": {
+            "description": "The fully qualified URL of your cloud storage bucket (for example, `https://s3.eu-central-1.amazonaws.com/my-bucket`).",
             "type": "string"
           },
           "credentials": {
             "$ref": "#/components/schemas/BucketCredentials"
           },
           "region": {
+            "description": "The cloud provider region where your storage bucket is located (for example, `us-west-1` for AWS or `eu01` for STACKIT).",
             "type": "string"
           },
           "type": {
+            "description": "Defines the type of content origin. For this schema, it must be set to `bucket`.",
+            "enum": [
+              "bucket"
+            ],
             "type": "string"
           }
         },
@@ -46,15 +58,21 @@
       "BucketBackendPatch": {
         "properties": {
           "bucketUrl": {
+            "description": "The fully qualified URL of your cloud storage bucket (for example, `https://s3.eu-central-1.amazonaws.com/my-bucket`).",
             "type": "string"
           },
           "credentials": {
             "$ref": "#/components/schemas/BucketCredentials"
           },
           "region": {
+            "description": "The cloud provider region where your storage bucket is located (for example, `us-west-1` for AWS or `eu01` for STACKIT).",
             "type": "string"
           },
           "type": {
+            "description": "Defines the type of content origin. For this schema, it must be set to `bucket`.",
+            "enum": [
+              "bucket"
+            ],
             "type": "string"
           }
         },
@@ -1091,6 +1109,10 @@
             "type": "string"
           },
           "type": {
+            "description": "Defines the type of content origin. For this schema, it must be set to `http`.",
+            "enum": [
+              "http"
+            ],
             "type": "string"
           }
         },
@@ -1129,6 +1151,10 @@
             "type": "string"
           },
           "type": {
+            "description": "Defines the type of content origin. For this schema, it must be set to `http`.",
+            "enum": [
+              "http"
+            ],
             "type": "string"
           }
         },
@@ -1161,11 +1187,15 @@
             "type": "object"
           },
           "originUrl": {
+            "description": "The origin of the content that should be made available through the CDN.\nNote that the path and query parameters are ignored. Ports are allowed. If no protocol is provided, `https` is assumed.\nSo `www.example.com:1234/somePath?q=123` is normalized to `https://www.example.com:1234`\n",
             "format": "uri",
             "type": "string"
           },
           "type": {
-            "description": "This property is required to determine the used backend type.",
+            "description": "Defines the type of content origin. For this schema, it must be set to `http`.",
+            "enum": [
+              "http"
+            ],
             "type": "string"
           }
         },
@@ -1215,9 +1245,14 @@
       "LokiLogSink": {
         "properties": {
           "pushUrl": {
+            "description": "The fully qualified URL where the CDN should push logs to your Loki instance (for example, `https://loki.example.com/loki/api/v1/push`).",
             "type": "string"
           },
           "type": {
+            "description": "Defines the type of the log sink.",
+            "enum": [
+              "loki"
+            ],
             "type": "string"
           }
         },
@@ -1233,9 +1268,14 @@
             "$ref": "#/components/schemas/LokiLogSinkCredentials"
           },
           "pushUrl": {
+            "description": "The fully qualified URL where the CDN should push logs to your Loki instance (for example, `https://loki.example.com/loki/api/v1/push`).",
             "type": "string"
           },
           "type": {
+            "description": "Defines the type of the log sink. For Grafana Loki, this must be set to `loki`.",
+            "enum": [
+              "loki"
+            ],
             "type": "string"
           }
         },
@@ -1247,12 +1287,15 @@
         "type": "object"
       },
       "LokiLogSinkCredentials": {
+        "description": "The authentication credentials required for the CDN to push logs to your Loki instance.",
         "properties": {
           "password": {
+            "description": "The password corresponding to your username.",
             "type": "string",
             "x-go-type": "secret.Secret"
           },
           "username": {
+            "description": "The username used to authenticate against your Loki instance.",
             "type": "string",
             "x-go-type": "secret.Secret"
           }
@@ -1269,9 +1312,14 @@
             "$ref": "#/components/schemas/LokiLogSinkCredentials"
           },
           "pushUrl": {
+            "description": "The fully qualified URL where the CDN should push logs to your Loki instance (for example, `https://loki.example.com/loki/api/v1/push`).",
             "type": "string"
           },
           "type": {
+            "description": "Defines the type of the log sink. For Grafana Loki, this must be set to `loki`.",
+            "enum": [
+              "loki"
+            ],
             "type": "string"
           }
         },
@@ -2082,7 +2130,7 @@
     "title": "STACKIT CDN API",
     "version": "1.0.0"
   },
-  "openapi": "3.0.3",
+  "openapi": "3.0.4",
   "paths": {
     "/v1/projects/{projectId}/distributions": {
       "get": {

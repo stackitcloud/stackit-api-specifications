@@ -1,121 +1,203 @@
 {
   "components": {
     "schemas": {
-      "CRSConfigQuota": {
-        "description": "CRS Config quota holds the limit and usage for Core Rule Set configuration resources",
+      "Behaviour": {
+        "properties": {
+          "action": {
+            "description": "The protective stance action. ACTION_DENY forces a 403 status response code.",
+            "enum": [
+              "ACTION_UNSPECIFIED",
+              "ACTION_DENY",
+              "ACTION_PASS",
+              "ACTION_ALLOW"
+            ],
+            "example": "ACTION_DENY",
+            "type": "string"
+          },
+          "log": {
+            "description": "Determines whether an entry should be generated in the security ledger upon a rule hit.",
+            "example": true,
+            "type": "boolean"
+          },
+          "logMsg": {
+            "description": "Custom notification message string mapped to underlying logdata contexts. Required if log is true.",
+            "example": "This is my rule and it does stuff",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CRGConfigQuota": {
+        "description": "CRG quotas holds the limit and usage for CRG resources",
         "properties": {
           "limit": {
-            "description": "The maximum number of Core Rule Set configurations in this project.",
+            "description": "The maximum number of custom rule groups in this project.",
             "format": "int32",
             "maximum": 1000000,
             "minimum": -1,
-            "title": "Max CRS configurations",
+            "title": "Max custom rule groups",
             "type": "integer"
           },
           "usage": {
-            "description": "The number of Core Rule Set configurations that are currently existing in this project.",
+            "description": "The number of custom rule groups that are currently existing in this project.",
             "format": "int32",
             "maximum": 1000000,
             "minimum": -1,
-            "title": "Used CRS configurations",
+            "title": "Used custom rule groups",
             "type": "integer"
           }
         },
         "type": "object"
       },
-      "CRSRule": {
-        "description": "Rule represents an individual security or validation rule.",
+      "CRGUsage": {
+        "description": "Tracking metrics for CRG resource utilization",
         "properties": {
-          "description": {
-            "description": "SQL Injection Attack Detected via libinjection",
-            "example": "ENABLED",
-            "type": "string"
+          "count": {
+            "description": "Number of WAF configurations actively using this rule group.",
+            "format": "int32",
+            "type": "integer"
           },
-          "mode": {
-            "description": "The current mode of the rule.",
-            "enum": [
-              "MODE_UNSPECIFIED",
-              "MODE_ENABLED",
-              "MODE_DISABLED",
-              "MODE_LOG_ONLY"
-            ],
-            "example": "MODE_ENABLED",
-            "pattern": "^(MODE_ENABLED|MODE_DISABLED|MODE_LOG_ONLY)$",
-            "title": "OWASP Core Rule Set",
-            "type": "string"
-          },
-          "severity": {
-            "description": "Impact level.",
-            "example": "CRITICAL",
-            "pattern": "^(CRITICAL|ERROR|WARNING|INFO)$",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "CRSRuleGroup": {
-        "description": "RuleGroup represents a collection of rules associated with a specific group.",
-        "properties": {
-          "description": {
-            "description": "A description of what this group covers.",
-            "example": "A description of what this group covers.",
-            "type": "string"
-          },
-          "groupName": {
-            "description": "The name for the rule group.",
-            "example": "SQL Injection Attack (SQLI)",
-            "pattern": "^[a-zA-Z\\(\\) ]+$",
-            "type": "string"
-          },
-          "rules": {
-            "additionalProperties": {
-              "$ref": "#/components/schemas/CRSRule"
+          "items": {
+            "description": "List of individual WAF configuration names that bind this rule group.",
+            "items": {
+              "type": "string"
             },
-            "type": "object"
+            "type": "array"
           }
         },
         "type": "object"
       },
-      "CreateCoreRuleSetPayload": {
-        "description": "CreateCoreRuleSetRequest creates a rule configuration.",
+      "Condition": {
         "properties": {
-          "active": {
-            "description": "To activate the OWASP core rule set, set this boolean to true.",
-            "example": true,
-            "title": "OWASP Core Rule Set",
-            "type": "boolean"
+          "operator": {
+            "$ref": "#/components/schemas/ConditionOperator"
           },
-          "name": {
-            "description": "Core rule set configuration name.",
-            "example": "my-core-rule-set-config",
-            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
+          "transformations": {
+            "description": "[HINT] Ordered processing adjustments applied to clean inputs before match checking.",
+            "example": [
+              "TRANSFORMATION_NONE",
+              "TRANSFORMATION_LOWERCASE"
+            ],
+            "items": {
+              "enum": [
+                "TRANSFORMATION_UNSPECIFIED",
+                "TRANSFORMATION_LENGTH",
+                "TRANSFORMATION_LOWERCASE",
+                "TRANSFORMATION_NONE",
+                "TRANSFORMATION_TRIM",
+                "TRANSFORMATION_UPPERCASE",
+                "TRANSFORMATION_UTF8_TO_UNICODE"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "variable": {
+            "$ref": "#/components/schemas/ConditionVariable"
+          }
+        },
+        "type": "object"
+      },
+      "ConditionOperator": {
+        "properties": {
+          "type": {
+            "description": "The operational evaluation type definition macro.",
+            "enum": [
+              "OPERATOR_UNSPECIFIED",
+              "OPERATOR_BEGINS_WITH",
+              "OPERATOR_CONTAINS",
+              "OPERATOR_ENDS_WITH",
+              "OPERATOR_EQ",
+              "OPERATOR_GE",
+              "OPERATOR_GT",
+              "OPERATOR_IP_MATCH",
+              "OPERATOR_LE",
+              "OPERATOR_LT",
+              "OPERATOR_RX",
+              "OPERATOR_STREQ",
+              "OPERATOR_STRMATCH",
+              "OPERATOR_VALIDATE_SCHEMA",
+              "OPERATOR_VALIDATE_URL_ENCODING",
+              "OPERATOR_VALIDATE_UTF8_ENCODING",
+              "OPERATOR_WITHIN"
+            ],
+            "example": "OPERATOR_BEGINS_WITH",
             "type": "string"
           },
-          "projectId": {
-            "description": "Project identifier",
-            "example": "2438ac3c-37eb-4902-adef-ed16b4431030",
-            "format": "uuid",
-            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
-            "readOnly": true,
-            "type": "string"
-          },
-          "region": {
-            "description": "Region",
-            "example": "eu01",
-            "format": "string",
-            "pattern": "^[a-z]{2,4}[0-9]{2}$",
-            "readOnly": true,
+          "value": {
+            "description": "The text or rule regex pattern arguments applied inside the operator execution loop.",
+            "example": "allowed objects",
             "type": "string"
           }
         },
         "type": "object"
       },
-      "CreateRulesPayload": {
-        "description": "CreateRulesRequest creates a rule configuration.",
+      "ConditionVariable": {
+        "properties": {
+          "type": {
+            "description": "The targeted validation engine variable macro.",
+            "enum": [
+              "VARIABLE_UNSPECIFIED",
+              "VARIABLE_ARGS_GET",
+              "VARIABLE_ARGS_POST",
+              "VARIABLE_FULL_REQUEST_LENGTH",
+              "VARIABLE_MATCHED_VAR",
+              "VARIABLE_QUERY_STRING",
+              "VARIABLE_REMOTE_ADDR",
+              "VARIABLE_REMOTE_PORT",
+              "VARIABLE_REQUEST_BASENAME",
+              "VARIABLE_REQUEST_BODY",
+              "VARIABLE_REQUEST_BODY_LENGTH",
+              "VARIABLE_REQUEST_COOKIES",
+              "VARIABLE_REQUEST_HEADERS",
+              "VARIABLE_REQUEST_HEADERS_NAMES",
+              "VARIABLE_REQUEST_METHOD",
+              "VARIABLE_REQUEST_PROTOCOL",
+              "VARIABLE_REQUEST_URI_RAW",
+              "VARIABLE_RESPONSE_BODY",
+              "VARIABLE_RESPONSE_CONTENT_LENGTH",
+              "VARIABLE_RESPONSE_HEADERS",
+              "VARIABLE_RESPONSE_HEADERS_NAMES",
+              "VARIABLE_RESPONSE_PROTOCOL",
+              "VARIABLE_RESPONSE_STATUS"
+            ],
+            "example": "VARIABLE_REQUEST_HEADERS",
+            "type": "string"
+          },
+          "value": {
+            "description": "Optional key element context for map variables (e.g., matching a 'Host' header key).",
+            "example": "Host",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CreateCustomRule": {
+        "properties": {
+          "behaviour": {
+            "$ref": "#/components/schemas/Behaviour"
+          },
+          "conditions": {
+            "description": "[HINT] Order matters! First condition match triggers execution.",
+            "items": {
+              "$ref": "#/components/schemas/Condition"
+            },
+            "type": "array"
+          },
+          "description": {
+            "description": "A clear description explaining the threat vector or criteria addressed by this rule.",
+            "example": "This is the motivation why this rule exists",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CreateCustomRuleGroupPayload": {
+        "description": "Request payload for creating a CRG.",
         "properties": {
           "name": {
-            "description": "Rule configuration name.",
-            "example": "my-rules-config",
+            "description": "Custom rule group name.",
+            "example": "my-custom-rule-group-config",
             "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
             "type": "string"
           },
@@ -136,20 +218,30 @@
             "type": "string"
           },
           "rules": {
-            "description": "Custom rules for WAF written in Seclang syntax.",
-            "example": "SecRule REQUEST_URI \"@streq /admin\" \"id:101,phase:2,t:lowercase,deny\"",
-            "type": "string"
+            "description": "The collection of custom rule group SecLang parameters forming this execution group.",
+            "items": {
+              "$ref": "#/components/schemas/CreateCustomRule"
+            },
+            "type": "array"
           }
         },
         "type": "object"
       },
-      "CreateRulesResponse": {
-        "description": "CreateRulesResponse returns rule configuration name and it's rules.",
+      "CreateManagedRuleSetPayload": {
+        "description": "CreateManagedRuleSetRequest creates a rule configuration.",
         "properties": {
           "name": {
-            "description": "Rule configuration name.",
-            "example": "my-rules-config",
+            "description": "Managed rule set configuration name.",
+            "example": "my-managed-rule-set-config",
             "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
+            "type": "string"
+          },
+          "projectId": {
+            "description": "Project identifier",
+            "example": "2438ac3c-37eb-4902-adef-ed16b4431030",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "readOnly": true,
             "type": "string"
           },
           "region": {
@@ -160,9 +252,15 @@
             "readOnly": true,
             "type": "string"
           },
-          "rules": {
-            "description": "Custom rules written in Seclang syntax.",
-            "example": "SecRule REQUEST_URI \"@streq /admin\" \"id:101,phase:2,t:lowercase,deny\"",
+          "type": {
+            "description": "Set the managed rule set type.",
+            "enum": [
+              "TYPE_UNSPECIFIED",
+              "TYPE_OWASP_CRS"
+            ],
+            "example": "TYPE_OWASP_CRS",
+            "pattern": "^(TYPE_OWASP_CRS)$",
+            "title": "MRS Type",
             "type": "string"
           }
         },
@@ -171,9 +269,9 @@
       "CreateWAFPayload": {
         "description": "CreateWAFRequest creates a WAF with rules.",
         "properties": {
-          "coreRuleSetName": {
-            "description": "Name of the core rule set configuration for that WAF.",
-            "example": "my-core-rule-set-config",
+          "customRuleGroupName": {
+            "description": "Name of the CRG configuration for that WAF.",
+            "example": "my-custom-rule-group-config",
             "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
             "type": "string"
           },
@@ -189,6 +287,12 @@
               "region": ""
             },
             "type": "object"
+          },
+          "managedRuleSetName": {
+            "description": "Name of the managed rule set configuration for that WAF.",
+            "example": "my-managed-rule-set-config",
+            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
+            "type": "string"
           },
           "name": {
             "description": "WAF name",
@@ -211,109 +315,151 @@
             "pattern": "^[a-z]{2,4}[0-9]{2}$",
             "readOnly": true,
             "type": "string"
-          },
-          "rulesConfigName": {
-            "description": "Name of the rule configuration for that WAF.",
-            "example": "my-rules-config",
-            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
-            "type": "string"
           }
         },
         "type": "object"
       },
-      "CreateWAFResponse": {
-        "description": "CreateWAFResponse returns name and custom rules.",
-        "properties": {
-          "coreRuleSetName": {
-            "description": "Name of the core rule set configuration for that WAF.",
-            "example": "my-core-rule-set-config",
-            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
-            "type": "string"
-          },
-          "labels": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "description": "Labels represent user-defined metadata as key-value pairs.\nLabel count should not exceed 64 per WAF.\n\n**Key Formatting Rules:**\nLength: 1-63 characters.\nCharacters: Must begin and end with [a-zA-Z0-9]. May contain dashes (-), underscores (_), dots (.), and alphanumerics in between.\nKeys starting with 'stackit-' are system-reserved; users MUST NOT manage them.\n\n**Value Formatting Rules:**\nLength: 0-63 characters (empty string explicitly allowed).\nCharacters (for non-empty values): Must begin and end with [a-zA-Z0-9]. May contain dashes (-), underscores (_), dots (.), and alphanumerics in between.\n",
-            "example": {
-              "cost.center": "billing.dept",
-              "environment": "prod",
-              "name": "my-app",
-              "region": ""
-            },
-            "type": "object"
-          },
-          "name": {
-            "description": "WAF name",
-            "example": "my-waf-config",
-            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
-            "type": "string"
-          },
-          "region": {
-            "description": "Region",
-            "example": "eu01",
-            "format": "string",
-            "pattern": "^[a-z]{2,4}[0-9]{2}$",
-            "readOnly": true,
-            "type": "string"
-          },
-          "rulesConfigName": {
-            "description": "Name of the rule configuration for that WAF.",
-            "example": "my-rules-config",
-            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
-            "type": "string"
-          }
-        },
+      "DeleteCustomRuleGroupResponse": {
+        "description": "DeleteCustomRuleGroupResponse returns has empty body if successful.",
         "type": "object"
       },
-      "CustomRulesQuota": {
-        "description": "Custom rules quotas holds the limit and usage for custom rules resources",
-        "properties": {
-          "limit": {
-            "description": "The maximum number of custom rules in this project.",
-            "format": "int32",
-            "maximum": 1000000,
-            "minimum": -1,
-            "title": "Max custom rules",
-            "type": "integer"
-          },
-          "usage": {
-            "description": "The number of custom rules that currently existing in this project.",
-            "format": "int32",
-            "maximum": 1000000,
-            "minimum": -1,
-            "title": "Used custom rules",
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "DeleteCoreRuleSetResponse": {
-        "description": "DeleteCoreRuleSetResponse returns has empty body if successful.",
-        "type": "object"
-      },
-      "DeleteRulesResponse": {
-        "description": "DeleteRulesResponse returns has empty body if successful.",
+      "DeleteManagedRuleSetResponse": {
+        "description": "DeleteManagedRuleSetResponse returns has empty body if successful.",
         "type": "object"
       },
       "DeleteWAFResponse": {
         "description": "DeleteWAFResponse returns has empty body if successful.",
         "type": "object"
       },
-      "GetCoreRuleSetResponse": {
-        "description": "GetCoreRuleSetResponse returns rule configuration name and it's rules.",
+      "GetBehaviour": {
         "properties": {
-          "active": {
-            "description": "Indicates if the OWASP core rule set is active.",
+          "action": {
+            "description": "The protective stance action. ACTION_DENY forces a 403 status response code.",
+            "enum": [
+              "ACTION_UNSPECIFIED",
+              "ACTION_DENY",
+              "ACTION_PASS",
+              "ACTION_ALLOW"
+            ],
+            "example": "ACTION_DENY",
+            "type": "string"
+          },
+          "log": {
+            "description": "Determines whether an entry should be generated in the security ledger upon a rule hit.",
             "example": true,
-            "title": "OWASP Core Rule Set",
             "type": "boolean"
           },
+          "logMsg": {
+            "description": "Custom notification message string mapped to underlying logdata contexts. Required if log is true.",
+            "example": "This is my rule and it does stuff",
+            "type": "string"
+          },
+          "severity": {
+            "description": "Severity classification metric used by internal analytics graphs.",
+            "enum": [
+              "SEVERITY_UNSPECIFIED",
+              "SEVERITY_EMERGENCY",
+              "SEVERITY_ALERT",
+              "SEVERITY_CRITICAL",
+              "SEVERITY_ERROR",
+              "SEVERITY_WARNING",
+              "SEVERITY_NOTICE",
+              "SEVERITY_INFO",
+              "SEVERITY_DEBUG"
+            ],
+            "example": "SEVERITY_CRITICAL",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GetCustomRule": {
+        "properties": {
+          "behaviour": {
+            "$ref": "#/components/schemas/GetBehaviour"
+          },
+          "conditions": {
+            "description": "[HINT] Order matters! First condition match triggers execution.",
+            "items": {
+              "$ref": "#/components/schemas/Condition"
+            },
+            "type": "array"
+          },
+          "description": {
+            "description": "A clear description explaining the threat vector or criteria addressed by this rule.",
+            "example": "This is the motivation why this rule exists",
+            "type": "string"
+          },
+          "id": {
+            "description": "Backend auto-allocated unique rule ID within the valid 1-99999 threshold.",
+            "example": 1,
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "GetCustomRuleGroupResponse": {
+        "description": "Response payload delivering the detailed CRG configuration name and it's rule content.",
+        "properties": {
+          "name": {
+            "description": "Custom rule group configuration name.",
+            "example": "my-rule-group-config",
+            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
+            "type": "string"
+          },
+          "rules": {
+            "description": "Enriched rules containing auto-generated IDs and computed severity values.",
+            "items": {
+              "$ref": "#/components/schemas/GetCustomRule"
+            },
+            "type": "array"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/CRGUsage"
+          }
+        },
+        "type": "object"
+      },
+      "GetLimitedManagedRuleSetResponse": {
+        "properties": {
+          "name": {
+            "description": "Managed rule set configuration name.",
+            "example": "my-managed-rule-set-config",
+            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
+            "type": "string"
+          },
+          "type": {
+            "description": "Get the managed rule set type.",
+            "enum": [
+              "TYPE_UNSPECIFIED",
+              "TYPE_OWASP_CRS"
+            ],
+            "example": "TYPE_OWASP_CRS",
+            "pattern": "^(TYPE_OWASP_CRS)$",
+            "title": "MRS Type",
+            "type": "string"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/MRSUsage"
+          },
+          "version": {
+            "description": "Managed rule set version.",
+            "example": "v4.14.0",
+            "pattern": "^v\\d+\\.\\d+\\.\\d+$",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GetManagedRuleSetResponse": {
+        "description": "GetManagedRuleSetResponse returns rule configuration name and it's rules.",
+        "properties": {
           "groups": {
             "additionalProperties": {
-              "$ref": "#/components/schemas/CRSRuleGroup"
+              "$ref": "#/components/schemas/MRSRuleGroup"
             },
-            "description": "Inventory of all available Core Rule Set groups and their current configuration. The key is the unique Group ID.",
+            "description": "Inventory of all available Managed Rule Set groups and their current configuration. The key is the unique Group ID.",
             "example": {
               "942": {
                 "description": "Detects common SQL injection attacks.",
@@ -330,48 +476,29 @@
             "type": "object"
           },
           "name": {
-            "description": "Core rule set configuration name.",
-            "example": "my-core-rule-set-config",
+            "description": "Managed rule set configuration name.",
+            "example": "my-managed-rule-set-config",
             "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
             "type": "string"
           },
-          "region": {
-            "description": "Region",
-            "example": "eu01",
-            "format": "string",
-            "pattern": "^[a-z]{2,4}[0-9]{2}$",
-            "readOnly": true,
+          "type": {
+            "description": "Get the managed rule set type.",
+            "enum": [
+              "TYPE_UNSPECIFIED",
+              "TYPE_OWASP_CRS"
+            ],
+            "example": "TYPE_OWASP_CRS",
+            "pattern": "^(TYPE_OWASP_CRS)$",
+            "title": "MRS Type",
             "type": "string"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/MRSUsage"
           },
           "version": {
-            "description": "Core rule set version.",
+            "description": "Managed rule set version.",
             "example": "v4.14.0",
             "pattern": "^v\\d+\\.\\d+\\.\\d+$",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "GetLimitedCoreRuleSetResponse": {
-        "properties": {
-          "active": {
-            "description": "Indicates if the OWASP core rule set is active.",
-            "example": true,
-            "title": "OWASP Core Rule Set",
-            "type": "boolean"
-          },
-          "name": {
-            "description": "Core rule set configuration name.",
-            "example": "my-core-rule-set-config",
-            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
-            "type": "string"
-          },
-          "region": {
-            "description": "Region",
-            "example": "eu01",
-            "format": "string",
-            "pattern": "^[a-z]{2,4}[0-9]{2}$",
-            "readOnly": true,
             "type": "string"
           }
         },
@@ -401,37 +528,12 @@
         },
         "type": "object"
       },
-      "GetRulesResponse": {
-        "description": "GetRulesResponse returns rule configuration name and it's rules.",
-        "properties": {
-          "name": {
-            "description": "Rule configuration name.",
-            "example": "my-rules-config",
-            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
-            "type": "string"
-          },
-          "region": {
-            "description": "Region",
-            "example": "eu01",
-            "format": "string",
-            "pattern": "^[a-z]{2,4}[0-9]{2}$",
-            "readOnly": true,
-            "type": "string"
-          },
-          "rules": {
-            "description": "Custom rules written in Seclang syntax.",
-            "example": "SecRule REQUEST_URI \"@streq /admin\" \"id:101,phase:2,t:lowercase,deny\"",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "GetWAFResponse": {
-        "description": "GetWAFResponse returns id, name and custom rules.",
+        "description": "GetWAFResponse returns detailed information about the WAF, which includes the identifying name, references to MRS/CRG and usage.",
         "properties": {
-          "coreRuleSetName": {
-            "description": "Name of the core rule set configuration for that WAF.",
-            "example": "my-core-rule-set-config",
+          "customRuleGroupName": {
+            "description": "Name of the CRG configuration for that WAF.",
+            "example": "my-custom-rule-group-config",
             "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
             "type": "string"
           },
@@ -448,25 +550,20 @@
             },
             "type": "object"
           },
+          "managedRuleSetName": {
+            "description": "Name of the managed rule set configuration for that WAF.",
+            "example": "my-managed-rule-set-config",
+            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
+            "type": "string"
+          },
           "name": {
             "description": "WAF name",
             "example": "my-waf-config",
             "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
             "type": "string"
           },
-          "region": {
-            "description": "Region",
-            "example": "eu01",
-            "format": "string",
-            "pattern": "^[a-z]{2,4}[0-9]{2}$",
-            "readOnly": true,
-            "type": "string"
-          },
-          "rulesConfigName": {
-            "description": "Name of the rule configuration for that WAF.",
-            "example": "my-rules-config",
-            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
-            "type": "string"
+          "usage": {
+            "$ref": "#/components/schemas/WAFUsage"
           }
         },
         "type": "object"
@@ -482,17 +579,17 @@
         },
         "type": "object"
       },
-      "ListCoreRuleSetResponse": {
-        "description": "ListCoreRuleSetResponse returns a list of rule configuration responses.",
+      "ListCustomRuleGroupResponse": {
+        "description": "ListCustomRuleGroupResponse returns a list of Custom Rule Group responses.",
         "properties": {
           "items": {
             "items": {
-              "$ref": "#/components/schemas/GetLimitedCoreRuleSetResponse"
+              "$ref": "#/components/schemas/GetCustomRuleGroupResponse"
             },
             "type": "array"
           },
           "nextPageId": {
-            "description": "Continue token from the ListCoreRuleSetResponse with Limit option",
+            "description": "Continue token from the ListCustomRuleGroupResponse with Limit option",
             "example": "eyJ2IjoibWV0YS5rOHMuaW8vdjEiLCJydiI6NTQ1Njk3ODA2LCJzdGFydCI6Im15LWFsYi1uZXdcdTAwMDAifQ",
             "format": "string",
             "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
@@ -501,17 +598,17 @@
         },
         "type": "object"
       },
-      "ListRulesResponse": {
-        "description": "ListRulesResponse returns a list of rule configuration responses.",
+      "ListManagedRuleSetResponse": {
+        "description": "ListManagedRuleSetResponse returns a list of rule configuration responses.",
         "properties": {
           "items": {
             "items": {
-              "$ref": "#/components/schemas/GetRulesResponse"
+              "$ref": "#/components/schemas/GetLimitedManagedRuleSetResponse"
             },
             "type": "array"
           },
           "nextPageId": {
-            "description": "Continue token from the ListRulesResponse with Limit option",
+            "description": "Continue token from the ListManagedRuleSetResponse with Limit option",
             "example": "eyJ2IjoibWV0YS5rOHMuaW8vdjEiLCJydiI6NTQ1Njk3ODA2LCJzdGFydCI6Im15LWFsYi1uZXdcdTAwMDAifQ",
             "format": "string",
             "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
@@ -539,7 +636,99 @@
         },
         "type": "object"
       },
-      "PatchCRSRule": {
+      "MRSConfigQuota": {
+        "description": "MRS Config quota holds the limit and usage for Managed Rule Set configuration resources",
+        "properties": {
+          "limit": {
+            "description": "The maximum number of Managed Rule Set configurations in this project.",
+            "format": "int32",
+            "maximum": 1000000,
+            "minimum": -1,
+            "title": "Max MRS configurations",
+            "type": "integer"
+          },
+          "usage": {
+            "description": "The number of Managed Rule Set configurations that are currently existing in this project.",
+            "format": "int32",
+            "maximum": 1000000,
+            "minimum": -1,
+            "title": "Used MRS configurations",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "MRSRule": {
+        "description": "Rule represents an individual security or validation rule.",
+        "properties": {
+          "description": {
+            "description": "SQL Injection Attack Detected via libinjection",
+            "example": "ENABLED",
+            "type": "string"
+          },
+          "mode": {
+            "description": "The current mode of the rule.",
+            "enum": [
+              "MODE_UNSPECIFIED",
+              "MODE_ENABLED",
+              "MODE_DISABLED",
+              "MODE_LOG_ONLY"
+            ],
+            "example": "MODE_ENABLED",
+            "pattern": "^(MODE_ENABLED|MODE_DISABLED|MODE_LOG_ONLY)$",
+            "title": "Mode",
+            "type": "string"
+          },
+          "severity": {
+            "description": "Impact level.",
+            "example": "CRITICAL",
+            "pattern": "^(CRITICAL|ERROR|WARNING|INFO)$",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "MRSRuleGroup": {
+        "description": "RuleGroup represents a collection of rules associated with a specific group.",
+        "properties": {
+          "description": {
+            "description": "A description of what this group covers.",
+            "example": "A description of what this group covers.",
+            "type": "string"
+          },
+          "groupName": {
+            "description": "The name for the rule group.",
+            "example": "SQL Injection Attack (SQLI)",
+            "pattern": "^[a-zA-Z\\(\\) ]+$",
+            "type": "string"
+          },
+          "rules": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/MRSRule"
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "MRSUsage": {
+        "properties": {
+          "count": {
+            "description": "Number of WAFs using this Managed Rule Set.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "items": {
+            "description": "List of WAFs that use this Managed Rule Set.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "PatchMRSRule": {
         "properties": {
           "mode": {
             "description": "The current mode of the rule.",
@@ -551,37 +740,31 @@
             ],
             "example": "MODE_LOG_ONLY",
             "pattern": "^(MODE_ENABLED|MODE_DISABLED|MODE_LOG_ONLY)$",
-            "title": "OWASP Core Rule Set",
+            "title": "Mode",
             "type": "string"
           }
         },
         "type": "object"
       },
-      "PatchCRSRuleGroup": {
+      "PatchMRSRuleGroup": {
         "properties": {
           "rules": {
             "additionalProperties": {
-              "$ref": "#/components/schemas/PatchCRSRule"
+              "$ref": "#/components/schemas/PatchMRSRule"
             },
             "type": "object"
           }
         },
         "type": "object"
       },
-      "PatchCoreRuleSetPayload": {
-        "description": "PatchCoreRuleSetRequest updates a rules configuration.",
+      "PatchManagedRuleSetPayload": {
+        "description": "PatchManagedRuleSetRequest updates a rules configuration.",
         "properties": {
-          "active": {
-            "description": "To activate the OWASP core rule set, set this boolean to true.",
-            "example": true,
-            "title": "OWASP Core Rule Set",
-            "type": "boolean"
-          },
           "groups": {
             "additionalProperties": {
-              "$ref": "#/components/schemas/PatchCRSRuleGroup"
+              "$ref": "#/components/schemas/PatchMRSRuleGroup"
             },
-            "description": "Map of Core Rule Set groups to be patched. The key is the Group ID (e.g., 942 for SQL Injection). Only provided rules within the group will be updated; others remain unchanged.",
+            "description": "Map of Managed Rule Set groups to be patched. The key is the Group ID (e.g., 942 for SQL Injection). Only provided rules within the group will be updated; others remain unchanged.",
             "example": {
               "942": {
                 "rules": {
@@ -594,8 +777,8 @@
             "type": "object"
           },
           "name": {
-            "description": "Core rule set configuration name.",
-            "example": "my-core-rule-set-config",
+            "description": "Managed rule set configuration name.",
+            "example": "my-managed-rule-set-config",
             "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
             "type": "string"
           },
@@ -621,11 +804,11 @@
       "Quotas": {
         "description": "Quotas holds the specific quota elements for different resources",
         "properties": {
-          "coreRuleSet": {
-            "$ref": "#/components/schemas/CRSConfigQuota"
+          "customRuleGroup": {
+            "$ref": "#/components/schemas/CRGConfigQuota"
           },
-          "customRules": {
-            "$ref": "#/components/schemas/CustomRulesQuota"
+          "managedRuleSet": {
+            "$ref": "#/components/schemas/MRSConfigQuota"
           },
           "webApplicationFirewall": {
             "$ref": "#/components/schemas/WAFConfigQuota"
@@ -655,146 +838,12 @@
         },
         "type": "object"
       },
-      "UpdateCoreRuleSetPayload": {
-        "description": "UpdateCoreRuleSetRequest updates a rules configuration, but only if it changed.\n DEPRECATED use PatchCoreRuleSet",
-        "properties": {
-          "active": {
-            "description": "To activate the OWASP core rule set, set this boolean to true.",
-            "example": true,
-            "title": "OWASP Core Rule Set",
-            "type": "boolean"
-          },
-          "groups": {
-            "additionalProperties": {
-              "$ref": "#/components/schemas/PatchCRSRuleGroup"
-            },
-            "description": "Map of Core Rule Set groups to be patched. The key is the Group ID (e.g., 942 for SQL Injection). Only provided rules within the group will be updated; others remain unchanged.",
-            "example": {
-              "942": {
-                "rules": {
-                  "942100": {
-                    "mode": "MODE_DISABLED"
-                  }
-                }
-              }
-            },
-            "type": "object"
-          },
-          "name": {
-            "description": "Core rule set configuration name.",
-            "example": "my-core-rule-set-config",
-            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
-            "type": "string"
-          },
-          "projectId": {
-            "description": "Project identifier",
-            "example": "2438ac3c-37eb-4902-adef-ed16b4431030",
-            "format": "uuid",
-            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
-            "readOnly": true,
-            "type": "string"
-          },
-          "region": {
-            "description": "Region",
-            "example": "eu01",
-            "format": "string",
-            "pattern": "^[a-z]{2,4}[0-9]{2}$",
-            "readOnly": true,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateCoreRuleSetResponse": {
-        "description": "DEPRECATED use PatchCoreRuleSet",
-        "properties": {
-          "active": {
-            "description": "Indicates if the OWASP core rule set is active.",
-            "example": true,
-            "title": "OWASP Core Rule Set",
-            "type": "boolean"
-          },
-          "name": {
-            "description": "Core rule set configuration name.",
-            "example": "my-core-rule-set-config",
-            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
-            "type": "string"
-          },
-          "region": {
-            "description": "Region",
-            "example": "eu01",
-            "format": "string",
-            "pattern": "^[a-z]{2,4}[0-9]{2}$",
-            "readOnly": true,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateRulesPayload": {
-        "description": "UpdateRulesRequest updates a rules configuration, but only if it changed.",
-        "properties": {
-          "name": {
-            "description": "Rule configuration name.",
-            "example": "my-rules-config",
-            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
-            "type": "string"
-          },
-          "projectId": {
-            "description": "Project identifier",
-            "example": "2438ac3c-37eb-4902-adef-ed16b4431030",
-            "format": "uuid",
-            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
-            "readOnly": true,
-            "type": "string"
-          },
-          "region": {
-            "description": "Region",
-            "example": "eu01",
-            "format": "string",
-            "pattern": "^[a-z]{2,4}[0-9]{2}$",
-            "readOnly": true,
-            "type": "string"
-          },
-          "rules": {
-            "description": "Custom rules for WAF written in Seclang syntax.",
-            "example": "SecRule REQUEST_URI \"@streq /admin\" \"id:101,phase:2,t:lowercase,deny\"",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateRulesResponse": {
-        "description": "UpdateRulesResponse returns rule configuration name and it's rules.",
-        "properties": {
-          "name": {
-            "description": "Rule configuration name.",
-            "example": "my-rules-config",
-            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
-            "type": "string"
-          },
-          "region": {
-            "description": "Region",
-            "example": "eu01",
-            "format": "string",
-            "pattern": "^[a-z]{2,4}[0-9]{2}$",
-            "readOnly": true,
-            "type": "string"
-          },
-          "rules": {
-            "description": "Custom rules written in Seclang syntax.",
-            "example": "SecRule REQUEST_URI \"@streq /admin\" \"id:101,phase:2,t:lowercase,deny\"",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "UpdateWAFPayload": {
         "description": "UpdateWAFRequest updates a WAF if rules changed.",
         "properties": {
-          "coreRuleSetName": {
-            "description": "Name of the core rule set configuration for that WAF.",
-            "example": "my-core-rule-set-config",
+          "customRuleGroupName": {
+            "description": "Name of the CRG configuration for that WAF.",
+            "example": "my-custom-rule-group-config",
             "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
             "type": "string"
           },
@@ -810,6 +859,12 @@
               "region": ""
             },
             "type": "object"
+          },
+          "managedRuleSetName": {
+            "description": "Name of the managed rule set configuration for that WAF.",
+            "example": "my-managed-rule-set-config",
+            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
+            "type": "string"
           },
           "name": {
             "description": "WAF name",
@@ -831,57 +886,6 @@
             "format": "string",
             "pattern": "^[a-z]{2,4}[0-9]{2}$",
             "readOnly": true,
-            "type": "string"
-          },
-          "rulesConfigName": {
-            "description": "Name of the rule configuration for that WAF.",
-            "example": "my-rules-config",
-            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateWAFResponse": {
-        "description": "UpdateWAFResponse returns name and custom rules.",
-        "properties": {
-          "coreRuleSetName": {
-            "description": "Name of the core rule set configuration for that WAF.",
-            "example": "my-core-rule-set-config",
-            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
-            "type": "string"
-          },
-          "labels": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "description": "Labels represent user-defined metadata as key-value pairs.\nLabel count should not exceed 64 per WAF.\n\n**Key Formatting Rules:**\nLength: 1-63 characters.\nCharacters: Must begin and end with [a-zA-Z0-9]. May contain dashes (-), underscores (_), dots (.), and alphanumerics in between.\nKeys starting with 'stackit-' are system-reserved; users MUST NOT manage them.\n\n**Value Formatting Rules:**\nLength: 0-63 characters (empty string explicitly allowed).\nCharacters (for non-empty values): Must begin and end with [a-zA-Z0-9]. May contain dashes (-), underscores (_), dots (.), and alphanumerics in between.\n",
-            "example": {
-              "cost.center": "billing.dept",
-              "environment": "prod",
-              "name": "my-app",
-              "region": ""
-            },
-            "type": "object"
-          },
-          "name": {
-            "description": "WAF name",
-            "example": "my-waf-config",
-            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
-            "type": "string"
-          },
-          "region": {
-            "description": "Region",
-            "example": "eu01",
-            "format": "string",
-            "pattern": "^[a-z]{2,4}[0-9]{2}$",
-            "readOnly": true,
-            "type": "string"
-          },
-          "rulesConfigName": {
-            "description": "Name of the rule configuration for that WAF.",
-            "example": "my-rules-config",
-            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?$",
             "type": "string"
           }
         },
@@ -908,20 +912,59 @@
           }
         },
         "type": "object"
+      },
+      "WAFUsage": {
+        "properties": {
+          "count": {
+            "description": "Number of listeners using this WAF configuration.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "items": {
+            "description": "List of Application Load Balancers with their associated listeners that use this WAF configuration.",
+            "items": {
+              "$ref": "#/components/schemas/WAFUsageItem"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "WAFUsageItem": {
+        "properties": {
+          "listenerNames": {
+            "description": "The list of listener names in this Load Balancer, that are using the WAF.",
+            "example": [
+              "https-443",
+              "api-8443",
+              "legacy-tls"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "loadBalancerName": {
+            "description": "The display name of the Load Balancer.",
+            "example": "my-alb",
+            "type": "string"
+          }
+        },
+        "type": "object"
       }
     }
   },
   "info": {
-    "description": "### DEPRECATED! Use v2alpha instead.\n\nGenerate a Web Application Firewall (WAF) to use with Application Load Balancers (ALB). The name of the WAF configuration is used in the listener of the ALB. This will activate the WAF for that ALB. An ALB with a WAF can have OWASP core rule set enabled and in addition can have custom rule configurations. To create a WAF one first needs to create all the configurations that are referenced in the WAF configuration. Currently this only consists of a rule configuration, which is written in Seclang. Once all configurations are created and referenced in the WAF configuration it can be used with an ALB. Currently updating a WAF configuration will not update an existing ALB until the Load Balancer VMs are restarted.",
+    "description": "Generate a Web Application Firewall (WAF) to use with Application Load Balancers (ALB). The name of the WAF configuration is used in the listener of the ALB. This will activate the WAF for that ALB. An ALB with a WAF can have Managed Rule Set (MRS) and in addition can have Custom Rule Group (CRG). To create a WAF one first needs to create all the configurations that are referenced in the WAF configuration. Currently this only consists of a rule configuration, which is written in Seclang. Once all configurations are created and referenced in the WAF configuration it can be used with an ALB. Currently updating a WAF configuration will not update an existing ALB until the Load Balancer VMs are restarted.",
     "title": "STACKIT Application Load Balancer Web Application Firewall API",
-    "version": "1alpha.0.0"
+    "version": "1beta.0.0"
   },
   "openapi": "3.0.3",
   "paths": {
-    "/v1alpha/projects/{projectId}/regions/{region}/core-rule-sets": {
+    "/v1beta/projects/{projectId}/regions/{region}/custom-rule-groups": {
       "get": {
-        "description": "List all existing core rule set (CRS) configurations that are stored in the project.",
-        "operationId": "ListCoreRuleSets",
+        "description": "List all existing Custom Rule Groups that are stored in the project.",
+        "operationId": "ListCustomRuleGroup",
         "parameters": [
           {
             "in": "path",
@@ -961,7 +1004,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListCoreRuleSetResponse"
+                  "$ref": "#/components/schemas/ListCustomRuleGroupResponse"
                 }
               }
             },
@@ -1000,10 +1043,10 @@
             "description": "Default error response"
           }
         },
-        "summary": "List of CRS configurations",
+        "summary": "List of CRG configurations",
         "x-stackit-authorization": {
           "actions": [
-            "alb.waf.mrs.list"
+            "alb.waf.crg.list"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",
@@ -1016,8 +1059,8 @@
         }
       },
       "post": {
-        "description": "With this endpoint a core rule set (CRS) configuration is created and stored in this project. Currently it is only possible to enable it. This rule configuration is supposed to be referenced by a WAF configuration. It can be referenced by any number of WAF configurations in the same project.",
-        "operationId": "CreateCoreRuleSet",
+        "description": "Creates a structured rule configuration using the abstract CRG. It can be referenced by any number of WAF configurations in the same project.",
+        "operationId": "CreateCustomRuleGroup",
         "parameters": [
           {
             "in": "path",
@@ -1040,7 +1083,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateCoreRuleSetPayload"
+                "$ref": "#/components/schemas/CreateCustomRuleGroupPayload"
               }
             }
           },
@@ -1051,7 +1094,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetCoreRuleSetResponse"
+                  "$ref": "#/components/schemas/GetCustomRuleGroupResponse"
                 }
               }
             },
@@ -1074,7 +1117,7 @@
             "description": "this project_id is not allowed to try this API"
           },
           "429": {
-            "description": "maximum number of Core Rule Sets is reached - please contact support to increase it"
+            "description": "maximum number of custom rule groups is reached - please contact support to increase it"
           },
           "500": {
             "description": "internal error - please retry again later or contact support if the issue persists"
@@ -1090,26 +1133,25 @@
             "description": "Default error response"
           }
         },
-        "summary": "Create a CRS configuration",
+        "summary": "Create a CRG configuration",
         "x-stackit-authorization": {
           "actions": [
-            "alb.waf.mrs.create"
+            "alb.waf.crg.create"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",
           "resource-type": "project",
-          "service-enablement": {
-            "services": [
-              "cloud.stackit.loadbalancer"
-            ]
-          }
+          "service-enablement": null,
+          "services": [
+            "cloud.stackit.loadbalancer"
+          ]
         }
       }
     },
-    "/v1alpha/projects/{projectId}/regions/{region}/core-rule-sets/{name}": {
+    "/v1beta/projects/{projectId}/regions/{region}/custom-rule-groups/{name}": {
       "delete": {
-        "description": "To delete a core rule set (CRS) configuration this endpoint is used, but it is only possible to delete it if no WAF configuration is referencing it.",
-        "operationId": "DeleteCoreRuleSet",
+        "description": "To delete a custom rule group configuration this endpoint is used, but it is only possible to delete it if no WAF configuration is referencing it.",
+        "operationId": "DeleteCustomRuleGroup",
         "parameters": [
           {
             "in": "path",
@@ -1141,14 +1183,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DeleteCoreRuleSetResponse"
+                  "$ref": "#/components/schemas/DeleteCustomRuleGroupResponse"
                 }
               }
             },
             "description": "OK"
           },
           "400": {
-            "description": "CRS is used by WAF"
+            "description": "CRG is used by WAF"
           },
           "401": {
             "content": {
@@ -1177,10 +1219,10 @@
             "description": "Default error response"
           }
         },
-        "summary": "Delete a CRS configuration",
+        "summary": "Delete a CRG configuration",
         "x-stackit-authorization": {
           "actions": [
-            "alb.waf.mrs.delete"
+            "alb.waf.crg.delete"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",
@@ -1193,8 +1235,8 @@
         }
       },
       "get": {
-        "description": "To retrieve an existing core rule set (CRS) configuration this endpoint can be used.",
-        "operationId": "GetCoreRuleSet",
+        "description": "Retrieves the specified SecLang custom rule configuration (CRG) structure.",
+        "operationId": "GetCustomRuleGroup",
         "parameters": [
           {
             "in": "path",
@@ -1226,7 +1268,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetCoreRuleSetResponse"
+                  "$ref": "#/components/schemas/GetCustomRuleGroupResponse"
                 }
               }
             },
@@ -1249,7 +1291,7 @@
             "description": "this project_id is not allowed to try this API"
           },
           "404": {
-            "description": "Core Rule Set configuration not found"
+            "description": "Rule configuration not found"
           },
           "500": {
             "description": "internal error - please retry again later or contact support if the issue persists"
@@ -1265,7 +1307,370 @@
             "description": "Default error response"
           }
         },
-        "summary": "Retrieve a CRS configuration",
+        "summary": "Retrieve a CRG configuration",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.waf.crg.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{region}/managed-rule-sets": {
+      "get": {
+        "description": "List all existing managed rule set (MRS) configurations that are stored in the project.",
+        "operationId": "ListManagedRuleSets",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "page_size specifies how many rule configurations should be returned on this page. Must be a positive number \u003c= 1000",
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "page_id is a page identifier returned by the previous response and is used to request the next page",
+            "in": "query",
+            "name": "pageId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListManagedRuleSetResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "description": "One or more fields are invalid."
+          },
+          "401": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "this project_id is not allowed to try this API"
+          },
+          "410": {
+            "description": "page_id is expired"
+          },
+          "500": {
+            "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "List of MRS configurations",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.waf.mrs.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
+      },
+      "post": {
+        "description": "With this endpoint a managed rule set (MRS) configuration is created and stored in this project. Currently it is only possible to enable it. This rule configuration is supposed to be referenced by a WAF configuration. It can be referenced by any number of WAF configurations in the same project.",
+        "operationId": "CreateManagedRuleSet",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateManagedRuleSetPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetManagedRuleSetResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "description": "One or more fields are invalid."
+          },
+          "401": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "this project_id is not allowed to try this API"
+          },
+          "429": {
+            "description": "maximum number of Managed Rule Sets is reached - please contact support to increase it"
+          },
+          "500": {
+            "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Create a MRS configuration",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.waf.mrs.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{region}/managed-rule-sets/{name}": {
+      "delete": {
+        "description": "To delete a managed rule set (MRS) configuration this endpoint is used, but it is only possible to delete it if no WAF configuration is referencing it.",
+        "operationId": "DeleteManagedRuleSet",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteManagedRuleSetResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "description": "MRS is used by WAF"
+          },
+          "401": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "this project_id is not allowed to try this API"
+          },
+          "500": {
+            "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Delete a MRS configuration",
+        "x-stackit-authorization": {
+          "actions": [
+            "alb.waf.mrs.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.loadbalancer"
+            ]
+          }
+        }
+      },
+      "get": {
+        "description": "To retrieve an existing managed rule set (MRS) configuration this endpoint can be used.",
+        "operationId": "GetManagedRuleSet",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetManagedRuleSetResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "description": "One or more fields are invalid."
+          },
+          "401": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "this project_id is not allowed to try this API"
+          },
+          "404": {
+            "description": "Managed Rule Set configuration not found"
+          },
+          "500": {
+            "description": "internal error - please retry again later or contact support if the issue persists"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Default error response"
+          }
+        },
+        "summary": "Retrieve a MRS configuration",
         "x-stackit-authorization": {
           "actions": [
             "alb.waf.mrs.get"
@@ -1282,7 +1687,7 @@
       },
       "patch": {
         "description": "Accepts the same structure as the GET response. Only fields provided with values will be updated.",
-        "operationId": "PatchCoreRuleSet",
+        "operationId": "PatchManagedRuleSet",
         "parameters": [
           {
             "in": "path",
@@ -1313,7 +1718,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PatchCoreRuleSetPayload"
+                "$ref": "#/components/schemas/PatchManagedRuleSetPayload"
               }
             }
           },
@@ -1324,7 +1729,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetCoreRuleSetResponse"
+                  "$ref": "#/components/schemas/GetManagedRuleSetResponse"
                 }
               }
             },
@@ -1363,7 +1768,7 @@
             "description": "Default error response"
           }
         },
-        "summary": "Granularly update a CRS configuration",
+        "summary": "Granularly update a MRS configuration",
         "x-stackit-authorization": {
           "actions": [
             "alb.waf.mrs.update"
@@ -1372,107 +1777,9 @@
           "resource-id-type": "dynamic",
           "resource-type": "project"
         }
-      },
-      "put": {
-        "description": "DEPRECATED: Use PatchCoreRuleSet",
-        "operationId": "UpdateCoreRuleSet",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "projectId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "region",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "name",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateCoreRuleSetPayload"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdateCoreRuleSetResponse"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "400": {
-            "description": "One or more fields are invalid."
-          },
-          "401": {
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "this project_id is not allowed to try this API"
-          },
-          "409": {
-            "description": "Conflict with current state"
-          },
-          "500": {
-            "description": "internal error - please retry again later or contact support if the issue persists"
-          },
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            },
-            "description": "Default error response"
-          }
-        },
-        "summary": "Update a CRS configuration",
-        "x-stackit-authorization": {
-          "actions": [
-            "alb.waf.mrs.update"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project",
-          "service-enablement": {
-            "services": [
-              "cloud.stackit.loadbalancer"
-            ]
-          }
-        }
       }
     },
-    "/v1alpha/projects/{projectId}/regions/{region}/quotas": {
+    "/v1beta/projects/{projectId}/regions/{region}/quotas": {
       "get": {
         "description": "Retrieves the configured WAF resource quotas for the project. Limit can be changed via service request.",
         "operationId": "GetQuota",
@@ -1551,468 +1858,7 @@
         }
       }
     },
-    "/v1alpha/projects/{projectId}/regions/{region}/rules": {
-      "get": {
-        "description": "List all existing rule configurations that are stored in the project.",
-        "operationId": "ListRules",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "projectId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "region",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "page_size specifies how many rule configurations should be returned on this page. Must be a positive number \u003c= 1000",
-            "in": "query",
-            "name": "pageSize",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "page_id is a page identifier returned by the previous response and is used to request the next page",
-            "in": "query",
-            "name": "pageId",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListRulesResponse"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "400": {
-            "description": "One or more fields are invalid."
-          },
-          "401": {
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "this project_id is not allowed to try this API"
-          },
-          "410": {
-            "description": "page_id is expired"
-          },
-          "500": {
-            "description": "internal error - please retry again later or contact support if the issue persists"
-          },
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            },
-            "description": "Default error response"
-          }
-        },
-        "summary": "List of rule configurations",
-        "x-stackit-authorization": {
-          "actions": [
-            "alb.waf.crg.list"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project",
-          "service-enablement": {
-            "services": [
-              "cloud.stackit.loadbalancer"
-            ]
-          }
-        }
-      },
-      "post": {
-        "description": "With this endpoint a rule configuration is created and stored in this project. The rules are written in Seclang. This rule configuration is supposed to be referenced by a WAF configuration. It can be referenced by any number of WAF configurations in the same project. There is a limit of 1 MB of data on these rules.",
-        "operationId": "CreateRules",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "projectId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "region",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateRulesPayload"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateRulesResponse"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "400": {
-            "description": "One or more fields are invalid."
-          },
-          "401": {
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "this project_id is not allowed to try this API"
-          },
-          "429": {
-            "description": "maximum number of Rules is reached - please contact support to increase it"
-          },
-          "500": {
-            "description": "internal error - please retry again later or contact support if the issue persists"
-          },
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            },
-            "description": "Default error response"
-          }
-        },
-        "summary": "Create a rule configuration",
-        "x-stackit-authorization": {
-          "actions": [
-            "alb.waf.crg.create"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project",
-          "service-enablement": {
-            "services": [
-              "cloud.stackit.loadbalancer"
-            ]
-          }
-        }
-      }
-    },
-    "/v1alpha/projects/{projectId}/regions/{region}/rules/{name}": {
-      "delete": {
-        "description": "To delete a rule configuration this endpoint is used, but it is only possible to delete it if no WAF configuration is referencing it.",
-        "operationId": "DeleteRules",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "projectId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "region",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "name",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DeleteRulesResponse"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "400": {
-            "description": "Rule is used by WAF"
-          },
-          "401": {
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "this project_id is not allowed to try this API"
-          },
-          "500": {
-            "description": "internal error - please retry again later or contact support if the issue persists"
-          },
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            },
-            "description": "Default error response"
-          }
-        },
-        "summary": "Delete a rule configuration",
-        "x-stackit-authorization": {
-          "actions": [
-            "alb.waf.crg.delete"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project",
-          "service-enablement": {
-            "services": [
-              "cloud.stackit.loadbalancer"
-            ]
-          }
-        }
-      },
-      "get": {
-        "description": "To retrieve an existing rule configuration this endpoint can be used.",
-        "operationId": "GetRules",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "projectId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "region",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "name",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetRulesResponse"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "400": {
-            "description": "One or more fields are invalid."
-          },
-          "401": {
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "this project_id is not allowed to try this API"
-          },
-          "404": {
-            "description": "Rule configuration not found"
-          },
-          "500": {
-            "description": "internal error - please retry again later or contact support if the issue persists"
-          },
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            },
-            "description": "Default error response"
-          }
-        },
-        "summary": "Retrieve a rule configuration",
-        "x-stackit-authorization": {
-          "actions": [
-            "alb.waf.crg.get"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project",
-          "service-enablement": {
-            "services": [
-              "cloud.stackit.loadbalancer"
-            ]
-          }
-        }
-      },
-      "put": {
-        "description": "This endpoint will update an existing rules configuration and also inturn update all WAF configurations that reference it. There is a limit of 1 MB of data on these rules.",
-        "operationId": "UpdateRules",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "projectId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "region",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "name",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateRulesPayload"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdateRulesResponse"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "400": {
-            "description": "One or more fields are invalid."
-          },
-          "401": {
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "this project_id is not allowed to try this API"
-          },
-          "409": {
-            "description": "Conflict with current state"
-          },
-          "500": {
-            "description": "internal error - please retry again later or contact support if the issue persists"
-          },
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            },
-            "description": "Default error response"
-          }
-        },
-        "summary": "Update a rule configuration",
-        "x-stackit-authorization": {
-          "actions": [
-            "alb.waf.crg.update"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project",
-          "service-enablement": {
-            "services": [
-              "cloud.stackit.loadbalancer"
-            ]
-          }
-        }
-      }
-    },
-    "/v1alpha/projects/{projectId}/regions/{region}/wafs": {
+    "/v1beta/projects/{projectId}/regions/{region}/wafs": {
       "get": {
         "description": "To list all WAF configurations stored in a project, use this endpoint.",
         "operationId": "ListWAF",
@@ -2110,7 +1956,7 @@
         }
       },
       "post": {
-        "description": "This endpoint will create and store a WAF configuration in a project. The name of this WAF configuration is supposed to be used in the listener of an Application Load Balancer, which will activate this configuration and in addition it is possible to enable the core rule set. This WAF configuration can be used by any number of Application Load Balancers in the same project. The configuration has a reference to a rule configuration. This rule configuration has to exist when trying to create a WAF configuration. Later other configuration references will be added to this object.",
+        "description": "This endpoint will create and store a WAF configuration in a project. The name of this WAF configuration is supposed to be used in the listener of an Application Load Balancer, which will activate this configuration and in addition it is possible to enable the managed rule set. This WAF configuration can be used by any number of Application Load Balancers in the same project. The configuration has a reference to a rule configuration. This rule configuration has to exist when trying to create a WAF configuration. Later other configuration references will be added to this object.",
         "operationId": "CreateWAF",
         "parameters": [
           {
@@ -2145,7 +1991,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateWAFResponse"
+                  "$ref": "#/components/schemas/GetWAFResponse"
                 }
               }
             },
@@ -2200,7 +2046,7 @@
         }
       }
     },
-    "/v1alpha/projects/{projectId}/regions/{region}/wafs/{name}": {
+    "/v1beta/projects/{projectId}/regions/{region}/wafs/{name}": {
       "delete": {
         "description": "This will delete the specified WAF configuration, but only if it is not used by any Application Load Balancer in the project.",
         "operationId": "DeleteWAF",
@@ -2418,7 +2264,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateWAFResponse"
+                  "$ref": "#/components/schemas/GetWAFResponse"
                 }
               }
             },

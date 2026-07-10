@@ -1,0 +1,2778 @@
+{
+  "components": {
+    "examples": {
+      "BadRequestExample": {
+        "summary": "Bad Request Example",
+        "value": {
+          "error": {
+            "code": 400,
+            "details": [
+              {
+                "@type": "ErrorInfo",
+                "domain": "example.stackitapis.api",
+                "metadata": {
+                  "additionalProp1": {
+                    "projectId": "eb62d5e5-fc29-4203-9fe7-fe809ae0aefc"
+                  }
+                },
+                "reason": "WORKER_POOL_EXHAUSTED"
+              },
+              {
+                "@type": "LocalizedMessage",
+                "locale": "en-US",
+                "message": "The worker pool is exhausted."
+              },
+              {
+                "@type": "Help",
+                "description": "Additional information on this error",
+                "url": "string"
+              }
+            ],
+            "message": "One or more fields failed validation.",
+            "status": "BAD_REQUEST"
+          }
+        }
+      },
+      "CreateVolumeRecoveryPointManagementExample": {
+        "summary": "Create Volume Snapshots",
+        "value": {
+          "description": "Creates daily recovery points for all volumes with specified label",
+          "input": {
+            "inheritVolumeLabels": true,
+            "kind": "VolumeRecoveryPointManagement",
+            "recoveryPointLabels": {
+              "exampleLabelKey1": "exampleLabelValue1",
+              "exampleLabelKey2": "exampleLabelValue2"
+            },
+            "snapshotRetentionPolicy": {
+              "kind": "count",
+              "value": 2
+            },
+            "volumeLabelSelector": "myLabelkey1=myLabelValue,myLabelKey2=myOtherLabelValue"
+          },
+          "name": "My Daily Volume Recovery Point Creation Automation",
+          "templateId": "62c5178a-87fb-437f-88c8-c6f26b3ee4f6",
+          "triggers": {
+            "schedule": {
+              "rrule": "DTSTART;TZID=Europe/Sofia:20200803T023000\nRRULE:FREQ=DAILY;INTERVAL=1"
+            }
+          }
+        }
+      },
+      "CreateVolumeRecoveryPointManagementResponseExample": {
+        "summary": "Create Volume Snapshots",
+        "value": {
+          "description": "Creates daily recovery points for all volumes with specified label",
+          "id": "1176bc47-c185-492c-8703-df8a8f8cb666",
+          "input": {
+            "inheritVolumeLabels": true,
+            "kind": "VolumeRecoveryPointManagement",
+            "recoveryPointLabels": {
+              "exampleLabelKey1": "exampleLabelValue1",
+              "exampleLabelKey2": "exampleLabelValue2"
+            },
+            "snapshotRetentionPolicy": {
+              "kind": "count",
+              "value": 2
+            },
+            "volumeLabelSelector": "myLabelkey1=myLabelValue,myLabelKey2=myOtherLabelValue"
+          },
+          "name": "My Daily Volume Recovery Point Creation Automation",
+          "output": {
+            "steps": [
+              {
+                "message": "Collected Volume IDs: 47caf122-7dcc-435a-8125-b616341b89b2",
+                "name": "Get Volumes IDs with Label",
+                "result": {
+                  "kind": "GetVolumeIDsResult",
+                  "volumeIDs": [
+                    "47caf122-7dcc-435a-8125-b616341b89b2"
+                  ]
+                },
+                "status": "SUCCESSFUL"
+              },
+              {
+                "message": "Created Volume Snapshots IDs: c6499420-2114-4979-80ca-f1f51024a8ec",
+                "name": "Create Snapshots for Volume IDs",
+                "result": {
+                  "createdSnapshotIDs": [
+                    "c6499420-2114-4979-80ca-f1f51024a8ec"
+                  ],
+                  "kind": "CreateSnapshotsResult"
+                },
+                "status": "SUCCESSFUL"
+              }
+            ]
+          },
+          "templateId": "62c5178a-87fb-437f-88c8-c6f26b3ee4f6",
+          "triggers": {
+            "schedule": {
+              "rrule": "DTSTART;TZID=Europe/Sofia:20200803T023000\nRRULE:FREQ=DAILY;INTERVAL=1"
+            }
+          }
+        }
+      },
+      "ForbiddenExample": {
+        "summary": "Forbidden Example",
+        "value": {
+          "error": {
+            "code": 403,
+            "details": [
+              {
+                "@type": "ErrorInfo",
+                "domain": "example.stackitapis.api",
+                "metadata": {
+                  "requiredRole": "automation-volumes.automation.reader"
+                },
+                "reason": "ACCESS_DENIED_REQUIRED_ROLE_MISSING"
+              },
+              {
+                "@type": "LocalizedMessage",
+                "locale": "en-US",
+                "message": "You do not have the \"automation-volumes.automation.reader\" role required to modify infrastructure configurations."
+              },
+              {
+                "@type": "Help",
+                "description": "How to manage permissions",
+                "url": "string"
+              }
+            ],
+            "message": "The caller does not have permission to execute the specified operation.",
+            "status": "FORBIDDEN"
+          }
+        }
+      },
+      "GetVolumeAutomationsResponseExample": {
+        "summary": "List Volume Automations",
+        "value": {
+          "items": [
+            {
+              "description": "Creates daily recovery points for all volumes with specified label",
+              "id": "1176bc47-c185-492c-8703-df8a8f8cb666",
+              "name": "My Daily Volume Recovery Point Creation Automation",
+              "templateId": "62c5178a-87fb-437f-88c8-c6f26b3ee4f6",
+              "triggers": {
+                "schedule": {
+                  "rrule": "DTSTART;TZID=Europe/Sofia:20200803T023000\nRRULE:FREQ=DAILY;INTERVAL=1"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "NotFoundExample": {
+        "summary": "Not Found Example",
+        "value": {
+          "error": {
+            "code": 404,
+            "details": [
+              {
+                "@type": "ErrorInfo",
+                "domain": "example.stackitapis.api",
+                "metadata": {
+                  "automationId": "97a5f6b2-0123-4567-89ab-cdef01234567"
+                },
+                "reason": "ACCESS_DENIED_REQUIRED_ROLE_MISSING"
+              },
+              {
+                "@type": "LocalizedMessage",
+                "locale": "en-US",
+                "message": "Automation with id 97a5f6b2-0123-4567-89ab-cdef01234567 does not exist"
+              },
+              {
+                "@type": "Help",
+                "description": "Troubleshooting resource resolution errors",
+                "url": "string"
+              }
+            ],
+            "message": "The requested resource could not be found.",
+            "status": "NOT_FOUND"
+          }
+        }
+      },
+      "PartialUpdateVolumeRecoveryPointManagementExample": {
+        "summary": "Update volume label selector and remove trigger - query param \"updatemask=input.volumeLabelSelector,triggers\"",
+        "value": {
+          "description": "Creates daily snapshots for all volumes with specified label",
+          "input": {
+            "kind": "VolumeRecoveryPointManagement",
+            "labelsForCreatedSnapshots": {
+              "key1": "value1",
+              "key2": "value2"
+            },
+            "snapshotRetentionPolicy": {
+              "kind": "count",
+              "value": 2
+            },
+            "volumeLabelSelector": "myLabelkey1=myLabelValue"
+          },
+          "name": "My Daily Volume Recovery Point Creation Automation"
+        }
+      },
+      "PartialUpdateVolumeRecoveryPointManagementResponseExample": {
+        "summary": "Update volume label selector and remove trigger response",
+        "value": {
+          "description": "Creates daily recovery points for all volumes with specified label",
+          "input": {
+            "kind": "VolumeRecoveryPointManagement",
+            "retentionDays": 7,
+            "snapshotRetentionPolicy": {
+              "kind": "count",
+              "value": 2
+            },
+            "volumeLabelSelector": "myLabelkey1=myLabelValue"
+          },
+          "name": "My Daily Volume Recovery Point Creation Automation",
+          "templateId": "62c5178a-87fb-437f-88c8-c6f26b3ee4f6"
+        }
+      },
+      "TemplateVolumeRecoveryPointManagementExample": {
+        "summary": "Volume Snapshot Creation",
+        "value": {
+          "createTime": "2026-06-22T21:16:00Z",
+          "description": "Automatically creates snapshots to serve as fast recovery points for all volumes matching your specified labels.",
+          "id": "62c5178a-87fb-437f-88c8-c6f26b3ee4f6",
+          "input": {
+            "kind": "VolumeRecoveryPointManagement"
+          },
+          "name": "Volume Recovery Point Management",
+          "output": {
+            "steps": [
+              {
+                "name": "Get Volumes IDs with Label",
+                "result": {
+                  "kind": "GetVolumeIDsResult",
+                  "volumeIDs": []
+                }
+              },
+              {
+                "name": "Create Snapshots for Volume IDs",
+                "result": {
+                  "createdSnapshotIDs": [],
+                  "kind": "CreateSnapshotsResult"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "UnauthorizedExample": {
+        "summary": "Unauthorized Example",
+        "value": {
+          "error": {
+            "code": 401,
+            "details": [
+              {
+                "@type": "ErrorInfo",
+                "domain": "example.stackitapis.api",
+                "metadata": {
+                  "expiredAt": "2026-07-09T13:00:00Z"
+                },
+                "reason": "AUTH_TOKEN_EXPIRED"
+              },
+              {
+                "@type": "LocalizedMessage",
+                "locale": "en-US",
+                "message": "Your authentication token has expired. Please log in again to generate a new token."
+              },
+              {
+                "@type": "Help",
+                "description": "Authentication documentation and token lifecycles",
+                "url": "string"
+              }
+            ],
+            "message": "The request lacks valid authentication credentials for the target resource.",
+            "status": "UNAUTHORIZED"
+          }
+        }
+      },
+      "VolumeAutomationExecutionCompletedExample": {
+        "summary": "Completed Execution",
+        "value": {
+          "automation": {
+            "config": {
+              "description": "Creates daily snapshots for all volumes with specified label",
+              "input": {
+                "inheritVolumeLabels": false,
+                "kind": "VolumeRecoveryPointManagement",
+                "recoveryPointLabels": {
+                  "key1": "value1",
+                  "key2": "value2"
+                },
+                "snapshotRetentionPolicy": {
+                  "kind": "count",
+                  "value": 2
+                },
+                "volumeLabelSelector": "myLabelkey1=myLabelValue,myLabelKey2=myOtherLabelValue"
+              },
+              "name": "My Daily Volume Snapshot Creation Automation",
+              "output": {
+                "steps": [
+                  {
+                    "name": "Get Volumes IDs with Label",
+                    "result": {
+                      "kind": "GetVolumeIDsResult",
+                      "volumeIDs": []
+                    }
+                  },
+                  {
+                    "name": "Create Snapshots for Volume IDs",
+                    "result": {
+                      "createdSnapshotIDs": [],
+                      "kind": "CreateSnapshotsResult"
+                    }
+                  }
+                ]
+              },
+              "templateId": "62c5178a-87fb-437f-88c8-c6f26b3ee4f6",
+              "triggers": {
+                "schedule": {
+                  "rrule": "DTSTART;TZID=Europe/Sofia:20200803T023000\nRRULE:FREQ=DAILY;INTERVAL=1"
+                }
+              }
+            },
+            "output": {
+              "steps": [
+                {
+                  "message": "Collected Volume IDs: 47caf122-7dcc-435a-8125-b616341b89b2",
+                  "name": "Get Volumes IDs with Label",
+                  "result": {
+                    "kind": "GetVolumeIDsResult",
+                    "volumeIDs": [
+                      "47caf122-7dcc-435a-8125-b616341b89b2"
+                    ]
+                  },
+                  "status": "SUCCESSFUL"
+                },
+                {
+                  "message": "Created Volume Snapshots IDs: c6499420-2114-4979-80ca-f1f51024a8ec",
+                  "name": "Create Snapshots for Volume IDs",
+                  "result": {
+                    "createdSnapshotIDs": [
+                      "c6499420-2114-4979-80ca-f1f51024a8ec"
+                    ],
+                    "kind": "CreateSnapshotsResult"
+                  },
+                  "status": "SUCCESSFUL"
+                }
+              ]
+            }
+          },
+          "createTime": "2025-07-21T17:32:28Z",
+          "endTime": "2025-07-21T21:40:28Z",
+          "id": "1263fd13-be86-4fe4-a2aa-ef5526c607cd",
+          "startTime": "2025-07-21T21:32:28Z",
+          "status": "COMPLETED"
+        }
+      },
+      "VolumeAutomationExecutionErrorExample": {
+        "summary": "Error Execution",
+        "value": {
+          "automation": {
+            "config": {
+              "description": "Creates daily snapshots for all volumes with specified label",
+              "input": {
+                "inheritVolumeLabels": false,
+                "kind": "VolumeRecoveryPointManagement",
+                "recoveryPointLabels": {
+                  "key1": "value1",
+                  "key2": "value2"
+                },
+                "snapshotRetentionPolicy": {
+                  "kind": "count",
+                  "value": 2
+                },
+                "volumeLabelSelector": "myLabelkey1=myLabelValue,myLabelKey2=myOtherLabelValue"
+              },
+              "name": "My Daily Volume Snapshot Creation Automation",
+              "output": {
+                "steps": [
+                  {
+                    "name": "Get Volumes IDs with Label",
+                    "result": {
+                      "kind": "GetVolumeIDsResult",
+                      "volumeIDs": []
+                    }
+                  },
+                  {
+                    "name": "Create Snapshots for Volume IDs",
+                    "result": {
+                      "createdSnapshotIDs": [],
+                      "kind": "CreateSnapshotsResult"
+                    }
+                  }
+                ]
+              },
+              "templateId": "62c5178a-87fb-437f-88c8-c6f26b3ee4f6",
+              "triggers": {
+                "schedule": {
+                  "rrule": "DTSTART;TZID=Europe/Sofia:20200803T023000\nRRULE:FREQ=DAILY;INTERVAL=1"
+                }
+              }
+            },
+            "output": {
+              "steps": [
+                {
+                  "message": "Collected Volume IDs: 47caf122-7dcc-435a-8125-b616341b89b2",
+                  "name": "Get Volumes IDs with Label",
+                  "result": {
+                    "kind": "GetVolumeIDsResult",
+                    "volumeIDs": [
+                      "47caf122-7dcc-435a-8125-b616341b89b2"
+                    ]
+                  },
+                  "status": "SUCCESSFUL"
+                },
+                {
+                  "message": "Failed to create Volume Snapshots",
+                  "name": "Create Snapshots for Volume IDs",
+                  "status": "FAILED"
+                }
+              ]
+            }
+          },
+          "createTime": "2025-07-21T17:32:28Z",
+          "endTime": "2025-07-21T21:40:28Z",
+          "id": "1263fd13-be86-4fe4-a2aa-ef5526c607cd",
+          "startTime": "2025-07-21T21:32:28Z",
+          "status": "ERROR"
+        }
+      },
+      "VolumeAutomationExecutionPendingExample": {
+        "summary": "Pending Execution",
+        "value": {
+          "automation": {
+            "config": {
+              "description": "Creates daily snapshots for all volumes with specified label",
+              "input": {
+                "inheritVolumeLabels": false,
+                "kind": "VolumeRecoveryPointManagement",
+                "recoveryPointLabels": {
+                  "key1": "value1",
+                  "key2": "value2"
+                },
+                "snapshotRetentionPolicy": {
+                  "kind": "count",
+                  "value": 2
+                },
+                "volumeLabelSelector": "myLabelkey1=myLabelValue,myLabelKey2=myOtherLabelValue"
+              },
+              "name": "My Daily Volume Snapshot Creation Automation",
+              "output": {
+                "steps": [
+                  {
+                    "name": "Get Volumes IDs with Label",
+                    "result": {
+                      "kind": "GetVolumeIDsResult",
+                      "volumeIDs": []
+                    }
+                  },
+                  {
+                    "name": "Create Snapshots for Volume IDs",
+                    "result": {
+                      "createdSnapshotIDs": [],
+                      "kind": "CreateSnapshotsResult"
+                    }
+                  }
+                ]
+              },
+              "templateId": "62c5178a-87fb-437f-88c8-c6f26b3ee4f6",
+              "triggers": {
+                "schedule": {
+                  "rrule": "DTSTART;TZID=Europe/Sofia:20200803T023000\nRRULE:FREQ=DAILY;INTERVAL=1"
+                }
+              }
+            },
+            "output": {
+              "steps": [
+                {
+                  "name": "Get Volumes IDs with Label",
+                  "result": {
+                    "kind": "GetVolumeIDsResult",
+                    "volumeIDs": []
+                  },
+                  "status": "PENDING"
+                },
+                {
+                  "name": "Create Snapshots for Volume IDs",
+                  "result": {
+                    "createdSnapshotIDs": [],
+                    "kind": "CreateSnapshotsResult"
+                  },
+                  "status": "PENDING"
+                }
+              ]
+            }
+          },
+          "createTime": "2025-07-21T17:32:28Z",
+          "id": "1263fd13-be86-4fe4-a2aa-ef5526c607cd",
+          "status": "PENDING"
+        }
+      },
+      "VolumeAutomationExecutionRunningExample": {
+        "summary": "Running Execution",
+        "value": {
+          "automation": {
+            "config": {
+              "description": "Creates daily snapshots for all volumes with specified label",
+              "input": {
+                "inheritVolumeLabels": false,
+                "kind": "VolumeRecoveryPointManagement",
+                "recoveryPointLabels": {
+                  "key1": "value1",
+                  "key2": "value2"
+                },
+                "snapshotRetentionPolicy": {
+                  "kind": "count",
+                  "value": 2
+                },
+                "volumeLabelSelector": "myLabelkey1=myLabelValue,myLabelKey2=myOtherLabelValue"
+              },
+              "name": "My Daily Volume Snapshot Creation Automation",
+              "output": {
+                "steps": [
+                  {
+                    "name": "Get Volumes IDs with Label",
+                    "result": {
+                      "kind": "GetVolumeIDsResult",
+                      "volumeIDs": []
+                    }
+                  },
+                  {
+                    "name": "Create Snapshots for Volume IDs",
+                    "result": {
+                      "createdSnapshotIDs": [],
+                      "kind": "CreateSnapshotsResult"
+                    }
+                  }
+                ]
+              },
+              "templateId": "62c5178a-87fb-437f-88c8-c6f26b3ee4f6",
+              "triggers": {
+                "schedule": {
+                  "rrule": "DTSTART;TZID=Europe/Sofia:20200803T023000\nRRULE:FREQ=DAILY;INTERVAL=1"
+                }
+              }
+            },
+            "output": {
+              "steps": [
+                {
+                  "message": "Collected Volume IDs: 47caf122-7dcc-435a-8125-b616341b89b2",
+                  "name": "Get Volumes IDs with Label",
+                  "result": {
+                    "kind": "GetVolumeIDsResult",
+                    "volumeIDs": [
+                      "47caf122-7dcc-435a-8125-b616341b89b2"
+                    ]
+                  },
+                  "status": "SUCCESSFUL"
+                },
+                {
+                  "name": "Create Snapshots for Volume IDs",
+                  "status": "RUNNING"
+                }
+              ]
+            }
+          },
+          "createTime": "2025-07-21T17:32:28Z",
+          "id": "1263fd13-be86-4fe4-a2aa-ef5526c607cd",
+          "startTime": "2025-07-21T21:32:28Z",
+          "status": "RUNNING"
+        }
+      }
+    },
+    "schemas": {
+      "AutomationScheduleTrigger": {
+        "properties": {
+          "rrule": {
+            "description": "An rrule (Recurrence Rule) is a standardized string format used in iCalendar (RFC 5545) to define repeating events, and you can generate one by using a dedicated library or by using online generator tools to specify parameters like frequency, interval, and end dates",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rrule"
+        ],
+        "type": "object"
+      },
+      "AutomationTriggers": {
+        "properties": {
+          "schedule": {
+            "$ref": "#/components/schemas/AutomationScheduleTrigger"
+          }
+        },
+        "type": "object"
+      },
+      "CreateSnapshotsResult": {
+        "properties": {
+          "createdSnapshotIDs": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "kind": {
+            "example": "CreateSnapshotsResult",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "type": "object"
+      },
+      "CreateVolumeAutomationPayload": {
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "input": {
+            "$ref": "#/components/schemas/VolumeAutomationInput"
+          },
+          "name": {
+            "type": "string"
+          },
+          "templateId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "triggers": {
+            "$ref": "#/components/schemas/AutomationTriggers"
+          }
+        },
+        "required": [
+          "templateId"
+        ]
+      },
+      "ErrorInfoDetail": {
+        "properties": {
+          "@type": {
+            "type": "string"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "@type",
+          "reason",
+          "domain"
+        ],
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorResponseContent"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "ErrorResponseContent": {
+        "properties": {
+          "code": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "details": {
+            "items": {
+              "$ref": "#/components/schemas/ErrorResponseContentDetails"
+            },
+            "type": "array"
+          },
+          "message": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "status",
+          "message"
+        ],
+        "type": "object"
+      },
+      "ErrorResponseContentDetails": {
+        "discriminator": {
+          "mapping": {
+            "ErrorInfo": "#/components/schemas/ErrorInfoDetail",
+            "Help": "#/components/schemas/HelpErrorDetail",
+            "LocalizedMessage": "#/components/schemas/LocalizedMessageErrorDetail"
+          },
+          "propertyName": "@type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ErrorInfoDetail"
+          },
+          {
+            "$ref": "#/components/schemas/LocalizedMessageErrorDetail"
+          },
+          {
+            "$ref": "#/components/schemas/HelpErrorDetail"
+          }
+        ],
+        "properties": {
+          "@type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "@type"
+        ],
+        "type": "object"
+      },
+      "EventCreateResponse": {
+        "properties": {
+          "id": {
+            "example": "72c5178a-87fb-437f-88c8-c6f26b3ee4f7",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "GenericInput": {
+        "additionalProperties": true,
+        "properties": {
+          "kind": {
+            "example": "Generic",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "type": "object"
+      },
+      "GetVolumeIDsResult": {
+        "properties": {
+          "kind": {
+            "example": "GetVolumeIDsResult",
+            "type": "string"
+          },
+          "volumeIDs": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "type": "object"
+      },
+      "GetVolumeTemplateResponse": {
+        "properties": {
+          "createTime": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "input": {
+            "$ref": "#/components/schemas/VolumeTemplateAutomationInput"
+          },
+          "name": {
+            "type": "string"
+          },
+          "output": {
+            "$ref": "#/components/schemas/VolumeOutput"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "createTime"
+        ]
+      },
+      "HelpErrorDetail": {
+        "properties": {
+          "@type": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "@type",
+          "description",
+          "url"
+        ],
+        "type": "object"
+      },
+      "ListAutomationsItem": {
+        "properties": {
+          "createTime": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "templateId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "triggers": {
+            "$ref": "#/components/schemas/AutomationTriggers"
+          },
+          "updateTime": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "createTime",
+          "updateTime"
+        ]
+      },
+      "ListAutomationsResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ListAutomationsItem"
+            },
+            "type": "array"
+          },
+          "nextPageToken": {
+            "description": "A token that can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "ListExecutionsItem": {
+        "properties": {
+          "createTime": {
+            "example": "2025-07-21T17:32:28Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "endTime": {
+            "example": "2025-07-21T20:32:28Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "example": "72c5178a-87fb-437f-88c8-c6f26b3ee4f7",
+            "format": "uuid",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PENDING",
+              "RUNNING",
+              "COMPLETED",
+              "FAILED",
+              "TERMINATED"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "createTime",
+          "status"
+        ],
+        "type": "object"
+      },
+      "ListExecutionsResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ListExecutionsItem"
+            },
+            "type": "array"
+          },
+          "nextPageToken": {
+            "description": "A token that can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "ListSchedulesResponse": {
+        "items": {
+          "$ref": "#/components/schemas/Schedule"
+        },
+        "type": "array"
+      },
+      "ListTemplatesResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Template"
+            },
+            "type": "array"
+          },
+          "nextPageToken": {
+            "description": "A token that can be sent as `pageToken` to retrieve the next page. If this field is omitted, there are no subsequent pages.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "LocalizedMessageErrorDetail": {
+        "properties": {
+          "@type": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "@type",
+          "locale",
+          "message"
+        ],
+        "type": "object"
+      },
+      "PartialUpdateVolumeAutomationPayload": {
+        "properties": {
+          "description": {
+            "example": "Automates daily backups to a specified volume",
+            "type": "string"
+          },
+          "input": {
+            "$ref": "#/components/schemas/VolumeAutomationInput"
+          },
+          "name": {
+            "example": "Daily Backup Automation",
+            "type": "string"
+          },
+          "triggers": {
+            "$ref": "#/components/schemas/AutomationTriggers"
+          }
+        }
+      },
+      "Schedule": {
+        "properties": {
+          "id": {
+            "example": 1234567890,
+            "type": "string"
+          },
+          "name": {
+            "example": "Daily Schedule",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ScheduleDetails": {
+        "properties": {
+          "id": {
+            "example": 1234567890,
+            "type": "string"
+          },
+          "name": {
+            "example": "Daily Schedule",
+            "type": "string"
+          },
+          "workflowConfig": {
+            "$ref": "#/components/schemas/WorkflowConfig"
+          }
+        },
+        "type": "object"
+      },
+      "SchedulePatchRequest": {
+        "properties": {
+          "name": {
+            "example": "Daily Schedule",
+            "type": "string"
+          },
+          "rrule": {
+            "example": "DTSTART;TZID=Europe/Sofia:20200803T023000 RRULE:FREQ=DAILY;INTERVAL=1",
+            "type": "string"
+          },
+          "workflowConfig": {
+            "$ref": "#/components/schemas/WorkflowConfig"
+          }
+        },
+        "type": "object"
+      },
+      "ScheduleRequest": {
+        "properties": {
+          "name": {
+            "example": "Daily Schedule",
+            "type": "string"
+          },
+          "rrule": {
+            "example": "DTSTART;TZID=Europe/Sofia:20200803T023000 RRULE:FREQ=DAILY;INTERVAL=1",
+            "type": "string"
+          },
+          "workflowConfig": {
+            "$ref": "#/components/schemas/WorkflowConfig"
+          }
+        },
+        "required": [
+          "name",
+          "rrule"
+        ],
+        "type": "object"
+      },
+      "SnapshotRetentionPolicy": {
+        "discriminator": {
+          "mapping": {
+            "count": "#/components/schemas/SnapshotRetentionPolicyCount",
+            "indefinitely": "#/components/schemas/SnapshotRetentionPolicyIndefinitely"
+          },
+          "propertyName": "kind"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/SnapshotRetentionPolicyCount"
+          },
+          {
+            "$ref": "#/components/schemas/SnapshotRetentionPolicyIndefinitely"
+          }
+        ],
+        "required": [
+          "kind"
+        ],
+        "type": "object"
+      },
+      "SnapshotRetentionPolicyCount": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "count"
+            ],
+            "example": "count",
+            "type": "string"
+          },
+          "value": {
+            "example": 5,
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "kind",
+          "value"
+        ],
+        "type": "object"
+      },
+      "SnapshotRetentionPolicyIndefinitely": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "indefinitely"
+            ],
+            "example": "indefinitely",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "type": "object"
+      },
+      "Template": {
+        "properties": {
+          "createTime": {
+            "example": "2026-07-09T09:01:07Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "example": "Automatically creates snapshots to serve as fast recovery points for all volumes matching your specified labels.",
+            "type": "string"
+          },
+          "id": {
+            "example": "62c5178a-87fb-437f-88c8-c6f26b3ee4f6",
+            "type": "string"
+          },
+          "name": {
+            "example": "Volume Recovery Point Management",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "createTime"
+        ],
+        "type": "object"
+      },
+      "VolumeAutomation": {
+        "properties": {
+          "createTime": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "example": "Automates daily backups to a specified volume",
+            "type": "string"
+          },
+          "id": {
+            "example": "72c5178a-87fb-437f-88c8-c6f26b3ee4f7",
+            "format": "uuid",
+            "type": "string"
+          },
+          "input": {
+            "$ref": "#/components/schemas/VolumeAutomationInput"
+          },
+          "name": {
+            "example": "Daily Backup Automation",
+            "type": "string"
+          },
+          "output": {
+            "$ref": "#/components/schemas/VolumeOutput"
+          },
+          "templateId": {
+            "example": "62c5178a-87fb-437f-88c8-c6f26b3ee4f6",
+            "format": "uuid",
+            "type": "string"
+          },
+          "triggers": {
+            "$ref": "#/components/schemas/AutomationTriggers"
+          },
+          "updateTime": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "createTime",
+          "updateTime"
+        ]
+      },
+      "VolumeAutomationInput": {
+        "discriminator": {
+          "mapping": {
+            "Generic": "#/components/schemas/GenericInput",
+            "VolumeRecoveryPointManagement": "#/components/schemas/VolumeRecoveryPointManagementInput"
+          },
+          "propertyName": "kind"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/VolumeRecoveryPointManagementInput"
+          },
+          {
+            "$ref": "#/components/schemas/GenericInput"
+          }
+        ],
+        "required": [
+          "kind"
+        ],
+        "type": "object"
+      },
+      "VolumeExecutionAutomation": {
+        "properties": {
+          "createTime": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "example": "Automates daily backups to a specified volume",
+            "type": "string"
+          },
+          "input": {
+            "$ref": "#/components/schemas/VolumeAutomationInput"
+          },
+          "name": {
+            "example": "Daily Backup Automation",
+            "type": "string"
+          },
+          "output": {
+            "$ref": "#/components/schemas/VolumeExecutionOutput"
+          },
+          "templateId": {
+            "example": "62c5178a-87fb-437f-88c8-c6f26b3ee4f6",
+            "format": "uuid",
+            "type": "string"
+          },
+          "triggers": {
+            "$ref": "#/components/schemas/AutomationTriggers"
+          },
+          "updateTime": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "createTime",
+          "updateTime"
+        ]
+      },
+      "VolumeExecutionDetails": {
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/VolumeAutomation"
+          },
+          "output": {
+            "$ref": "#/components/schemas/VolumeExecutionOutput"
+          }
+        },
+        "required": [
+          "config"
+        ],
+        "type": "object"
+      },
+      "VolumeExecutionOutput": {
+        "properties": {
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/VolumeExecutionOutputStep"
+            },
+            "type": "array"
+          }
+        }
+      },
+      "VolumeExecutionOutputStep": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/VolumeOutputStepResult"
+          },
+          "status": {
+            "enum": [
+              "PENDING",
+              "RUNNING",
+              "FAILED",
+              "SUCCESSFUL"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "status"
+        ]
+      },
+      "VolumeExecutionResponse": {
+        "properties": {
+          "automation": {
+            "$ref": "#/components/schemas/VolumeExecutionDetails"
+          },
+          "createTime": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "endTime": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PENDING",
+              "RUNNING",
+              "COMPLETED",
+              "FAILED",
+              "TERMINATED"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "createTime",
+          "status"
+        ],
+        "type": "object"
+      },
+      "VolumeOutput": {
+        "properties": {
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/VolumeOutputStep"
+            },
+            "type": "array"
+          }
+        }
+      },
+      "VolumeOutputStep": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/VolumeOutputStepResult"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "VolumeOutputStepResult": {
+        "discriminator": {
+          "mapping": {
+            "CreateSnapshotsResult": "#/components/schemas/CreateSnapshotsResult",
+            "GetVolumeIDsResult": "#/components/schemas/GetVolumeIDsResult"
+          },
+          "propertyName": "kind"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/GetVolumeIDsResult"
+          },
+          {
+            "$ref": "#/components/schemas/CreateSnapshotsResult"
+          }
+        ],
+        "required": [
+          "kind"
+        ],
+        "type": "object"
+      },
+      "VolumeRecoveryPointManagementInput": {
+        "properties": {
+          "inheritVolumeLabels": {
+            "default": false,
+            "type": "boolean"
+          },
+          "kind": {
+            "example": "VolumeRecoveryPointManagement",
+            "type": "string"
+          },
+          "recoveryPointLabels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "snapshotRetentionPolicy": {
+            "$ref": "#/components/schemas/SnapshotRetentionPolicy"
+          },
+          "volumeLabelSelector": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "snapshotRetentionPolicy"
+        ],
+        "type": "object"
+      },
+      "VolumeTemplateAutomationInput": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "VolumeRecoveryPointManagement"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "type": "object"
+      },
+      "WorkflowConfig": {
+        "additionalProperties": {},
+        "example": {
+          "backupProperties": {
+            "name": "daily-backup",
+            "retentionPeriod": "P7D",
+            "volumeIds": [
+              "vol-12345",
+              "vol-67890"
+            ]
+          },
+          "projectId": "your-project-id",
+          "serverId": "your-server-id"
+        },
+        "maxProperties": 10,
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "contact": {
+      "email": "support@stackit.de"
+    },
+    "description": "API endpoints for automation management .",
+    "termsOfService": "https://stackit.de/en/imprint",
+    "title": "STACKIT Automation Service API",
+    "version": "1beta.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1beta/projects/{projectId}/regions/{region}/services/volumes/automations": {
+      "get": {
+        "description": "Retrieves a list of volume automations.",
+        "operationId": "ListVolumeAutomations",
+        "parameters": [
+          {
+            "description": "project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "region",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "The maximum number of items to return. If unspecified or set to 0, at most 100 items will be returned. The maximum value is 100; values above 100 will be coerced to 100.",
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "default": 100,
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "A page token, received from a previous list call. Provide this to retrieve the subsequent page.",
+            "in": "query",
+            "name": "pageToken",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "GetVolumeAutomationsResponseExample": {
+                    "$ref": "#/components/examples/GetVolumeAutomationsResponseExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ListAutomationsResponse"
+                }
+              }
+            },
+            "description": "automations list"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "BadRequestExample": {
+                    "$ref": "#/components/examples/BadRequestExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "UnauthorizedExample": {
+                    "$ref": "#/components/examples/UnauthorizedExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "ForbiddenExample": {
+                    "$ref": "#/components/examples/ForbiddenExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "NotFoundExample": {
+                    "$ref": "#/components/examples/NotFoundExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "summary": "List volume automations",
+        "x-stackit-authorization": {
+          "actions": [
+            "automation-volumes.automation.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.automation"
+            ]
+          }
+        }
+      },
+      "post": {
+        "description": "Creates a new volume automation",
+        "operationId": "CreateVolumeAutomation",
+        "parameters": [
+          {
+            "description": "project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "region",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "CreateVolumeRecoveryPointManagementExample": {
+                  "$ref": "#/components/examples/CreateVolumeRecoveryPointManagementExample"
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/CreateVolumeAutomationPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "CreateVolumeRecoveryPointManagementResponseExample": {
+                    "$ref": "#/components/examples/CreateVolumeRecoveryPointManagementResponseExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/VolumeAutomation"
+                }
+              }
+            },
+            "description": "Automation created"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "BadRequestExample": {
+                    "$ref": "#/components/examples/BadRequestExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "UnauthorizedExample": {
+                    "$ref": "#/components/examples/UnauthorizedExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "ForbiddenExample": {
+                    "$ref": "#/components/examples/ForbiddenExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "NotFoundExample": {
+                    "$ref": "#/components/examples/NotFoundExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "summary": "Create volume automation",
+        "x-stackit-authorization": {
+          "actions": [
+            "automation-volumes.automation.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.automation"
+            ]
+          }
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{region}/services/volumes/automations/templates": {
+      "get": {
+        "description": "Lists all volume templates for the specified service",
+        "operationId": "ListVolumeTemplates",
+        "parameters": [
+          {
+            "description": "project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "region",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "description": "Name of the region.",
+              "example": "eu01",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The maximum number of items to return. If unspecified or set to 0, at most 100 items will be returned. The maximum value is 100; values above 100 will be coerced to 100.",
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "default": 100,
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "A page token, received from a previous list call. Provide this to retrieve the subsequent page.",
+            "in": "query",
+            "name": "pageToken",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListTemplatesResponse"
+                }
+              }
+            },
+            "description": "template list response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "BadRequestExample": {
+                    "$ref": "#/components/examples/BadRequestExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "UnauthorizedExample": {
+                    "$ref": "#/components/examples/UnauthorizedExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "ForbiddenExample": {
+                    "$ref": "#/components/examples/ForbiddenExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "NotFoundExample": {
+                    "$ref": "#/components/examples/NotFoundExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "summary": "List volume templates",
+        "x-stackit-authorization": {
+          "actions": [
+            "automation-volumes.automation.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.automation"
+            ]
+          }
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{region}/services/volumes/automations/templates/{templateId}": {
+      "get": {
+        "description": "Retrieve detailed information about a volume template",
+        "operationId": "GetVolumeTemplate",
+        "parameters": [
+          {
+            "description": "project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "region",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "description": "Name of the region.",
+              "example": "eu01",
+              "type": "string"
+            }
+          },
+          {
+            "description": "templateId Id",
+            "in": "path",
+            "name": "templateId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "createVolumeSnapshots": {
+                    "$ref": "#/components/examples/TemplateVolumeRecoveryPointManagementExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GetVolumeTemplateResponse"
+                }
+              }
+            },
+            "description": "template get response details"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "BadRequestExample": {
+                    "$ref": "#/components/examples/BadRequestExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "UnauthorizedExample": {
+                    "$ref": "#/components/examples/UnauthorizedExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "ForbiddenExample": {
+                    "$ref": "#/components/examples/ForbiddenExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "NotFoundExample": {
+                    "$ref": "#/components/examples/NotFoundExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "summary": "Get volume template",
+        "x-stackit-authorization": {
+          "actions": [
+            "automation-volumes.automation.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.automation"
+            ]
+          }
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{region}/services/volumes/automations/{automationId}": {
+      "delete": {
+        "description": "Deletes a specific volume automation.",
+        "operationId": "DeleteVolumeAutomation",
+        "parameters": [
+          {
+            "description": "project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "region",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "automation Id",
+            "in": "path",
+            "name": "automationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "automation deleted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "BadRequestExample": {
+                    "$ref": "#/components/examples/BadRequestExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "UnauthorizedExample": {
+                    "$ref": "#/components/examples/UnauthorizedExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "ForbiddenExample": {
+                    "$ref": "#/components/examples/ForbiddenExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "NotFoundExample": {
+                    "$ref": "#/components/examples/NotFoundExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete volume automation",
+        "x-stackit-authorization": {
+          "actions": [
+            "automation-volumes.automation.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.automation"
+            ]
+          }
+        }
+      },
+      "get": {
+        "description": "Retrieves a specific volume automation.",
+        "operationId": "GetVolumeAutomation",
+        "parameters": [
+          {
+            "description": "project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "region",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "automation Id",
+            "in": "path",
+            "name": "automationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "CreateVolumeRecoveryPointManagementResponseExample": {
+                    "$ref": "#/components/examples/CreateVolumeRecoveryPointManagementResponseExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/VolumeAutomation"
+                }
+              }
+            },
+            "description": "automation details"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "BadRequestExample": {
+                    "$ref": "#/components/examples/BadRequestExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "UnauthorizedExample": {
+                    "$ref": "#/components/examples/UnauthorizedExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "ForbiddenExample": {
+                    "$ref": "#/components/examples/ForbiddenExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "NotFoundExample": {
+                    "$ref": "#/components/examples/NotFoundExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "summary": "Get volume automation",
+        "x-stackit-authorization": {
+          "actions": [
+            "automation-volumes.automation.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.automation"
+            ]
+          }
+        }
+      },
+      "patch": {
+        "description": "Partially updates a specific volume automation. Specify the fields to update in the `updateMask` query parameter.",
+        "operationId": "PartialUpdateVolumeAutomation",
+        "parameters": [
+          {
+            "description": "project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "region",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "automation Id",
+            "in": "path",
+            "name": "automationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "A comma-separated list of fully qualified names of fields to be updated. Example: \"name,triggers.schedule.rrule\"",
+            "in": "query",
+            "name": "updateMask",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "PartialUpdateVolumeRecoveryPointManagementExample": {
+                  "$ref": "#/components/examples/PartialUpdateVolumeRecoveryPointManagementExample"
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/PartialUpdateVolumeAutomationPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "CreateCreateVolumeSnapshotsAutomationResponseExample": {
+                    "$ref": "#/components/examples/PartialUpdateVolumeRecoveryPointManagementResponseExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/VolumeAutomation"
+                }
+              }
+            },
+            "description": "automation updated"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "BadRequestExample": {
+                    "$ref": "#/components/examples/BadRequestExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "UnauthorizedExample": {
+                    "$ref": "#/components/examples/UnauthorizedExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "ForbiddenExample": {
+                    "$ref": "#/components/examples/ForbiddenExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "NotFoundExample": {
+                    "$ref": "#/components/examples/NotFoundExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "summary": "Patch volume automation",
+        "x-stackit-authorization": {
+          "actions": [
+            "automation-volumes.automation.edit"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.automation"
+            ]
+          }
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{region}/services/volumes/automations/{automationId}/executions": {
+      "get": {
+        "description": "Get a list of all executions for a specific volume automation.",
+        "operationId": "ListVolumeExecutions",
+        "parameters": [
+          {
+            "description": "project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "region",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "automation Id",
+            "in": "path",
+            "name": "automationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "The maximum number of items to return. If unspecified or set to 0, at most 100 items will be returned. The maximum value is 100; values above 100 will be coerced to 100.",
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "default": 100,
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "A page token, received from a previous list call. Provide this to retrieve the subsequent page.",
+            "in": "query",
+            "name": "pageToken",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListExecutionsResponse"
+                }
+              }
+            },
+            "description": "automations list"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "BadRequestExample": {
+                    "$ref": "#/components/examples/BadRequestExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "UnauthorizedExample": {
+                    "$ref": "#/components/examples/UnauthorizedExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "ForbiddenExample": {
+                    "$ref": "#/components/examples/ForbiddenExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "NotFoundExample": {
+                    "$ref": "#/components/examples/NotFoundExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "summary": "List volume automation executions",
+        "x-stackit-authorization": {
+          "actions": [
+            "automation-volumes.execution.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.automation"
+            ]
+          }
+        }
+      },
+      "post": {
+        "description": "Creates a new execution for a specific volume automation",
+        "operationId": "CreateVolumeExecution",
+        "parameters": [
+          {
+            "description": "project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "region",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "automation Id",
+            "in": "path",
+            "name": "automationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "AutomationExecutionPendingExample": {
+                    "$ref": "#/components/examples/VolumeAutomationExecutionPendingExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/VolumeExecutionResponse"
+                }
+              }
+            },
+            "description": "Automation created"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "BadRequestExample": {
+                    "$ref": "#/components/examples/BadRequestExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "UnauthorizedExample": {
+                    "$ref": "#/components/examples/UnauthorizedExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "ForbiddenExample": {
+                    "$ref": "#/components/examples/ForbiddenExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "NotFoundExample": {
+                    "$ref": "#/components/examples/NotFoundExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "summary": "Create volume automation executions",
+        "x-stackit-authorization": {
+          "actions": [
+            "automation-volumes.execution.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.automation"
+            ]
+          }
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{region}/services/volumes/automations/{automationId}/executions/{executionId}": {
+      "get": {
+        "description": "Get details for a specific volume automation execution",
+        "operationId": "GetVolumeExecution",
+        "parameters": [
+          {
+            "description": "project Id",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "region",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "automation Id",
+            "in": "path",
+            "name": "automationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "execution Id",
+            "in": "path",
+            "name": "executionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "AutomationExecutionCompletedExample": {
+                    "$ref": "#/components/examples/VolumeAutomationExecutionCompletedExample"
+                  },
+                  "AutomationExecutionErrorExample": {
+                    "$ref": "#/components/examples/VolumeAutomationExecutionErrorExample"
+                  },
+                  "AutomationExecutionRunningExample": {
+                    "$ref": "#/components/examples/VolumeAutomationExecutionRunningExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/VolumeExecutionResponse"
+                }
+              }
+            },
+            "description": "automations list"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "BadRequestExample": {
+                    "$ref": "#/components/examples/BadRequestExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "UnauthorizedExample": {
+                    "$ref": "#/components/examples/UnauthorizedExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "ForbiddenExample": {
+                    "$ref": "#/components/examples/ForbiddenExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "NotFoundExample": {
+                    "$ref": "#/components/examples/NotFoundExample"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "summary": "Get volume automation execution details",
+        "x-stackit-authorization": {
+          "actions": [
+            "automation-volumes.execution.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.automation"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://automation-service.api.stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "global"
+        }
+      }
+    }
+  ]
+}

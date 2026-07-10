@@ -912,7 +912,7 @@
     }
   },
   "info": {
-    "description": "### DEPRECATED! Use v2alpha instead.\n\nGenerate a Web Application Firewall (WAF) to use with Application Load Balancers (ALB). The name of the WAF configuration is used in the listener of the ALB. This will activate the WAF for that ALB. An ALB with a WAF can have OWASP core rule set enabled and in addition can have custom rule configurations. To create a WAF one first needs to create all the configurations that are referenced in the WAF configuration. Currently this only consists of a rule configuration, which is written in Seclang. Once all configurations are created and referenced in the WAF configuration it can be used with an ALB. Currently updating a WAF configuration will not update an existing ALB until the Load Balancer VMs are restarted.",
+    "description": "### DEPRECATED! Use v1beta instead.\n\nGenerate a Web Application Firewall (WAF) to use with Application Load Balancers (ALB). The name of the WAF configuration is used in the listener of the ALB. This will activate the WAF for that ALB. An ALB with a WAF can have OWASP core rule set enabled and in addition can have custom rule configurations. To create a WAF one first needs to create all the configurations that are referenced in the WAF configuration. Currently this only consists of a rule configuration, which is written in Seclang. Once all configurations are created and referenced in the WAF configuration it can be used with an ALB. Currently updating a WAF configuration will not update an existing ALB until the Load Balancer VMs are restarted.",
     "title": "STACKIT Application Load Balancer Web Application Firewall API",
     "version": "1alpha.0.0"
   },
@@ -920,6 +920,7 @@
   "paths": {
     "/v1alpha/projects/{projectId}/regions/{region}/core-rule-sets": {
       "get": {
+        "deprecated": true,
         "description": "List all existing core rule set (CRS) configurations that are stored in the project.",
         "operationId": "ListCoreRuleSets",
         "parameters": [
@@ -1016,6 +1017,7 @@
         }
       },
       "post": {
+        "deprecated": true,
         "description": "With this endpoint a core rule set (CRS) configuration is created and stored in this project. Currently it is only possible to enable it. This rule configuration is supposed to be referenced by a WAF configuration. It can be referenced by any number of WAF configurations in the same project.",
         "operationId": "CreateCoreRuleSet",
         "parameters": [
@@ -1108,6 +1110,7 @@
     },
     "/v1alpha/projects/{projectId}/regions/{region}/core-rule-sets/{name}": {
       "delete": {
+        "deprecated": true,
         "description": "To delete a core rule set (CRS) configuration this endpoint is used, but it is only possible to delete it if no WAF configuration is referencing it.",
         "operationId": "DeleteCoreRuleSet",
         "parameters": [
@@ -1193,6 +1196,7 @@
         }
       },
       "get": {
+        "deprecated": true,
         "description": "To retrieve an existing core rule set (CRS) configuration this endpoint can be used.",
         "operationId": "GetCoreRuleSet",
         "parameters": [
@@ -1281,6 +1285,7 @@
         }
       },
       "patch": {
+        "deprecated": true,
         "description": "Accepts the same structure as the GET response. Only fields provided with values will be updated.",
         "operationId": "PatchCoreRuleSet",
         "parameters": [
@@ -1374,6 +1379,7 @@
         }
       },
       "put": {
+        "deprecated": true,
         "description": "DEPRECATED: Use PatchCoreRuleSet",
         "operationId": "UpdateCoreRuleSet",
         "parameters": [
@@ -1474,6 +1480,7 @@
     },
     "/v1alpha/projects/{projectId}/regions/{region}/quotas": {
       "get": {
+        "deprecated": true,
         "description": "Retrieves the configured WAF resource quotas for the project. Limit can be changed via service request.",
         "operationId": "GetQuota",
         "parameters": [
@@ -1553,6 +1560,7 @@
     },
     "/v1alpha/projects/{projectId}/regions/{region}/rules": {
       "get": {
+        "deprecated": true,
         "description": "List all existing rule configurations that are stored in the project.",
         "operationId": "ListRules",
         "parameters": [
@@ -1649,6 +1657,7 @@
         }
       },
       "post": {
+        "deprecated": true,
         "description": "With this endpoint a rule configuration is created and stored in this project. The rules are written in Seclang. This rule configuration is supposed to be referenced by a WAF configuration. It can be referenced by any number of WAF configurations in the same project. There is a limit of 1 MB of data on these rules.",
         "operationId": "CreateRules",
         "parameters": [
@@ -1741,6 +1750,7 @@
     },
     "/v1alpha/projects/{projectId}/regions/{region}/rules/{name}": {
       "delete": {
+        "deprecated": true,
         "description": "To delete a rule configuration this endpoint is used, but it is only possible to delete it if no WAF configuration is referencing it.",
         "operationId": "DeleteRules",
         "parameters": [
@@ -1826,6 +1836,7 @@
         }
       },
       "get": {
+        "deprecated": true,
         "description": "To retrieve an existing rule configuration this endpoint can be used.",
         "operationId": "GetRules",
         "parameters": [
@@ -1914,6 +1925,7 @@
         }
       },
       "put": {
+        "deprecated": true,
         "description": "This endpoint will update an existing rules configuration and also inturn update all WAF configurations that reference it. There is a limit of 1 MB of data on these rules.",
         "operationId": "UpdateRules",
         "parameters": [
@@ -2014,6 +2026,7 @@
     },
     "/v1alpha/projects/{projectId}/regions/{region}/wafs": {
       "get": {
+        "deprecated": true,
         "description": "To list all WAF configurations stored in a project, use this endpoint.",
         "operationId": "ListWAF",
         "parameters": [
@@ -2110,6 +2123,7 @@
         }
       },
       "post": {
+        "deprecated": true,
         "description": "This endpoint will create and store a WAF configuration in a project. The name of this WAF configuration is supposed to be used in the listener of an Application Load Balancer, which will activate this configuration and in addition it is possible to enable the core rule set. This WAF configuration can be used by any number of Application Load Balancers in the same project. The configuration has a reference to a rule configuration. This rule configuration has to exist when trying to create a WAF configuration. Later other configuration references will be added to this object.",
         "operationId": "CreateWAF",
         "parameters": [
@@ -2202,6 +2216,7 @@
     },
     "/v1alpha/projects/{projectId}/regions/{region}/wafs/{name}": {
       "delete": {
+        "deprecated": true,
         "description": "This will delete the specified WAF configuration, but only if it is not used by any Application Load Balancer in the project.",
         "operationId": "DeleteWAF",
         "parameters": [
@@ -2287,6 +2302,7 @@
         }
       },
       "get": {
+        "deprecated": true,
         "description": "This endpoint will return the specified WAF configuration.",
         "operationId": "GetWAF",
         "parameters": [
@@ -2375,6 +2391,7 @@
         }
       },
       "put": {
+        "deprecated": true,
         "description": "The update endpoint will update a stored WAF configuration in project and not yet but later will also update the Load Balancers that reference it.",
         "operationId": "UpdateWAF",
         "parameters": [

@@ -26,6 +26,18 @@
           "planId"
         ]
       },
+      "acl": {
+        "description": "The ACL config for the instances API and all edgecluster proxies.",
+        "properties": {
+          "ipAllowList": {
+            "items": {
+              "$ref": "#/components/schemas/ipAllowListEntry"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "badRequest": {
         "properties": {
           "code": {
@@ -41,6 +53,9 @@
       },
       "instance": {
         "properties": {
+          "acl": {
+            "$ref": "#/components/schemas/acl"
+          },
           "created": {
             "description": "The date and time the creation of the instance was triggered.",
             "format": "date-time",
@@ -105,6 +120,42 @@
         "required": [
           "instances"
         ]
+      },
+      "ipAllowListEntry": {
+        "properties": {
+          "createdAt": {
+            "description": "ISO-8601 timestamp of when the entry was created.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "description": {
+            "description": "Some description of the entry.",
+            "maxLength": 256,
+            "type": "string"
+          },
+          "ipRange": {
+            "description": "The IP CIDR range for the ACL entry.",
+            "example": "192.168.1.0/24",
+            "type": "string"
+          },
+          "updatedAt": {
+            "description": "ISO-8601 timestamp of when the entry was last updated.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "uuid": {
+            "description": "The unique identifier for the ipAllowListEntry entry. This value is immutable, used to identify entries for updates, and cannot be changed after creation.",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ipRange",
+          "uuid"
+        ],
+        "type": "object"
       },
       "kubeconfig": {
         "properties": {

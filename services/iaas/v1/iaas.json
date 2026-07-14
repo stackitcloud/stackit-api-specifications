@@ -421,6 +421,20 @@
         },
         "description": "The object was not found."
       },
+      "RequestEntityTooLarge": {
+        "content": {
+          "application/json": {
+            "example": {
+              "code": 413,
+              "msg": "Request Entity Too Large"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "The request entity is too large."
+      },
       "ServerOrPublicIPNotFound": {
         "content": {
           "application/json": {
@@ -1732,6 +1746,13 @@
               }
             ],
             "description": "The list of volumes attached to the server."
+          },
+          "vtpm": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ServerVTPM"
+              }
+            ]
           }
         },
         "required": [
@@ -3523,7 +3544,7 @@
         "type": "object"
       },
       "Resource": {
-        "description": "Object that represents a resource type.\nPossible values: `BACKUP`, `IMAGE`, `NETWORK`, `NETWORKAREA`, `NIC`, `PROJECT`, `ROUTE`, `SERVER`, `SERVICEACCOUNT`, `SNAPSHOT`, `VIRTUALIP`, `VOLUME`.",
+        "description": "Object that represents a resource type.\nPossible values: `BACKUP`, `IMAGE`, `NETWORK`, `NETWORKAREA`, `NIC`, `PROJECT`, `ROUTE`, `SERVER`, `SERVICEACCOUNT`, `SNAPSHOT`, `VIRTUALIP`, `VOLUME`, `VPC`, `VPCNETWORKRANGE`.",
         "example": "SERVER",
         "type": "string"
       },
@@ -3902,6 +3923,13 @@
               }
             ],
             "description": "The list of volumes attached to the server."
+          },
+          "vtpm": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ServerVTPM"
+              }
+            ]
           }
         },
         "required": [
@@ -4078,6 +4106,21 @@
         "example": "IyEvYmluL2Jhc2gKL2Jpbi9zdQplY2hvICJJIGFtIGluIHlvdSEiCg==",
         "format": "byte",
         "type": "string"
+      },
+      "ServerVTPM": {
+        "description": "Configuration for the Virtual Trusted Platform Module (vTPM).",
+        "properties": {
+          "enabled": {
+            "default": false,
+            "description": "Defines whether the server instance has the Virtual Trusted Platform Module (vTPM) enabled.",
+            "example": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "type": "object"
       },
       "ServiceAccountMail": {
         "description": "Object that represents an e-mail address of a service account.",
@@ -4954,7 +4997,7 @@
         "type": "string"
       },
       "VolumeStatus": {
-        "description": "The status of a volume object.\nPossible values: `ATTACHED`, `ATTACHING`, `AVAILABLE`, `AWAITING-TRANSFER`, `BACKING-UP`, `CREATING`, `DELETED`, `DELETING`, `DETACHING`, `DOWNLOADING`, `ERROR`, `ERROR_BACKING-UP`, `ERROR_DELETING`, `ERROR_RESIZING`, `ERROR_RESTORING-BACKUP`, `MAINTENANCE`, `RESERVED`, `RESIZING`, `RESTORING-BACKUP`, `RETYPING`, `UPLOADING`.",
+        "description": "The status of a volume object.\nPossible values: `ATTACHED`, `ATTACHING`, `AVAILABLE`, `AWAITING-TRANSFER`, `BACKING-UP`, `CREATING`, `DELETED`, `DELETING`, `DETACHING`, `DOWNLOADING`, `ERROR`, `ERROR_BACKING-UP`, `ERROR_DELETING`, `ERROR_RESIZING`, `ERROR_RESTORING-BACKUP`, `ERROR_KMS-ENCRYPTION-PARAMS`, `MAINTENANCE`, `RESERVED`, `RESIZING`, `RESTORING-BACKUP`, `RETYPING`, `UPLOADING`.",
         "example": "ATTACHED",
         "type": "string"
       },
@@ -6476,6 +6519,9 @@
           "404": {
             "$ref": "#/components/responses/NotFound"
           },
+          "413": {
+            "$ref": "#/components/responses/RequestEntityTooLarge"
+          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
@@ -6805,6 +6851,9 @@
           "404": {
             "$ref": "#/components/responses/NotFound"
           },
+          "413": {
+            "$ref": "#/components/responses/RequestEntityTooLarge"
+          },
           "429": {
             "$ref": "#/components/responses/TooManyRequests"
           },
@@ -6960,98 +7009,6 @@
         "x-stackit-authorization": {
           "actions": [
             "iaas.image.update"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project"
-        }
-      }
-    },
-    "/v1/projects/{projectId}/images/{imageId}/publish": {
-      "delete": {
-        "deprecated": true,
-        "description": "Update the scope property of an existing Image inside a project to local.",
-        "operationId": "UpdateImageScopeLocal",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Image"
-                }
-              }
-            },
-            "description": "Response to update image-scope to local. Provide the updated image object."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "summary": "Update Image Scope to Local.",
-        "x-stackit-authorization": {
-          "actions": [
-            "iaas.image.publish.delete"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project"
-        }
-      },
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/v1ProjectID"
-        },
-        {
-          "$ref": "#/components/parameters/v1ImageID"
-        }
-      ],
-      "put": {
-        "deprecated": true,
-        "description": "Update the scope property of an existing Image inside a project to public.",
-        "operationId": "UpdateImageScopePublic",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Image"
-                }
-              }
-            },
-            "description": "Response to update image-scope to public. Provide the updated image object."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "summary": "Update Image Scope to Public.",
-        "x-stackit-authorization": {
-          "actions": [
-            "iaas.image.publish.create"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",
@@ -10644,6 +10601,12 @@
           "404": {
             "$ref": "#/components/responses/NotFound"
           },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/RequestEntityTooLarge"
+          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
@@ -11061,6 +11024,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
+          },
+          "413": {
+            "$ref": "#/components/responses/RequestEntityTooLarge"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"

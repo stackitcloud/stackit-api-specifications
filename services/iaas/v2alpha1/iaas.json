@@ -1,6 +1,14 @@
 {
   "components": {
     "parameters": {
+      "v1FieldFilter": {
+        "description": "Filter resources by fields. A subset of expr-lang is supported. See https://expr-lang.org/docs/language-definition for usage details.",
+        "in": "query",
+        "name": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
       "v1LabelSelector": {
         "description": "Filter resources by labels.",
         "in": "query",
@@ -22,6 +30,15 @@
         "description": "The identifier (ID) of a STACKIT Network.",
         "in": "path",
         "name": "networkId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v1NetworkRangeID": {
+        "description": "The identifier (ID) of a STACKIT Network Range.",
+        "in": "path",
+        "name": "networkRangeId",
         "required": true,
         "schema": {
           "$ref": "#/components/schemas/UUID"
@@ -58,6 +75,15 @@
         "description": "The identifier (ID) of a STACKIT Route.",
         "in": "path",
         "name": "routeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v1VPCID": {
+        "description": "The unique identifier (ID) of the target STACKIT VPC in the request path.",
+        "in": "path",
+        "name": "vpcId",
         "required": true,
         "schema": {
           "$ref": "#/components/schemas/UUID"
@@ -135,6 +161,20 @@
           }
         },
         "description": "A conflict has occurred."
+      },
+      "FailedDependency": {
+        "content": {
+          "application/json": {
+            "example": {
+              "code": 424,
+              "msg": "region not enabled"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "The region of the vpc is not enabled."
       },
       "Forbidden": {
         "content": {
@@ -256,7 +296,7 @@
         "type": "object"
       },
       "AddRoutingTableToAreaPayload": {
-        "description": "An object representing a routing table.",
+        "description": "An object representing a routing table. Filterable Fields: `dynamicRoutes`, `systemRoutes`.",
         "properties": {
           "createdAt": {
             "allOf": [
@@ -309,6 +349,170 @@
         ],
         "type": "object"
       },
+      "AddVPCRoutingTablePayload": {
+        "description": "An object representing a VPC routing table. Filterable Fields: `createdAt`, `dynamicRoutes`, `name`, `systemRoutes`, `updatedAt`.",
+        "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "expr": "createdAt"
+            }
+          },
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "dynamicRoutes": {
+            "$ref": "#/components/schemas/DynamicRoutes"
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GenericName"
+              }
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "expr": "name"
+            }
+          },
+          "systemRoutes": {
+            "$ref": "#/components/schemas/SystemRoutes"
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "expr": "updatedAt"
+            }
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "AddVPCStaticRoutePayload": {
+        "description": "Object represents a network route.",
+        "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "destination": {
+            "discriminator": {
+              "mapping": {
+                "cidrv4": "#/components/schemas/DestinationCIDRv4",
+                "cidrv6": "#/components/schemas/DestinationCIDRv6"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DestinationCIDRv4"
+              },
+              {
+                "$ref": "#/components/schemas/DestinationCIDRv6"
+              }
+            ],
+            "properties": {
+              "type": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "type": "object"
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "nexthop": {
+            "discriminator": {
+              "mapping": {
+                "blackhole": "#/components/schemas/NexthopBlackhole",
+                "internet": "#/components/schemas/NexthopInternet",
+                "ipv4": "#/components/schemas/NexthopIPv4",
+                "ipv6": "#/components/schemas/NexthopIPv6"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/NexthopIPv4"
+              },
+              {
+                "$ref": "#/components/schemas/NexthopIPv6"
+              },
+              {
+                "$ref": "#/components/schemas/NexthopInternet"
+              },
+              {
+                "$ref": "#/components/schemas/NexthopBlackhole"
+              }
+            ],
+            "properties": {
+              "type": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "type": "object"
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "destination",
+          "nexthop"
+        ],
+        "type": "object"
+      },
+      "CIDR": {
+        "description": "Classless Inter-Domain Routing (CIDR).",
+        "example": "192.168.0.0/24",
+        "pattern": "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\/(3[0-2]|2[0-9]|1[0-9]|[0-9]))$|^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))(\\/((1(1[0-9]|2[0-8]))|([0-9][0-9])|([0-9])))?$",
+        "type": "string"
+      },
       "CIDRv4": {
         "description": "IPv4 Classless Inter-Domain Routing (CIDR).",
         "example": "192.168.0.0/24",
@@ -351,6 +555,9 @@
             "x-oapi-codegen-extra-tags": {
               "validate": "required"
             }
+          },
+          "vpcNetworkRangeId": {
+            "$ref": "#/components/schemas/UUID"
           }
         },
         "required": [
@@ -373,6 +580,9 @@
             "x-oapi-codegen-extra-tags": {
               "validate": "required"
             }
+          },
+          "vpcNetworkRangeId": {
+            "$ref": "#/components/schemas/UUID"
           }
         },
         "required": [
@@ -403,6 +613,9 @@
           },
           "prefix": {
             "$ref": "#/components/schemas/CIDRv6"
+          },
+          "vpcNetworkRangeId": {
+            "$ref": "#/components/schemas/UUID"
           }
         },
         "required": [
@@ -422,6 +635,9 @@
             "maximum": 128,
             "minimum": 56,
             "type": "integer"
+          },
+          "vpcNetworkRangeId": {
+            "$ref": "#/components/schemas/UUID"
           }
         },
         "required": [
@@ -457,11 +673,68 @@
           },
           "routingTableId": {
             "$ref": "#/components/schemas/UUID"
+          },
+          "vpcId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "description": "The identifier (ID) of a STACKIT VPC."
           }
         },
         "required": [
           "name"
         ],
+        "type": "object"
+      },
+      "CreateVPCNetworkRangePayload": {
+        "description": "The request body of a VPC network range.",
+        "discriminator": {
+          "mapping": {
+            "ipv4": "#/components/schemas/NetworkRangeIPv4Request"
+          },
+          "propertyName": "ipVersion"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/NetworkRangeIPv4Request"
+          }
+        ]
+      },
+      "CreateVPCPayload": {
+        "description": "Object that represents a create VPC request.",
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "CreateVPCRegionPayload": {
+        "description": "The basic properties of a regional VPC.",
+        "properties": {
+          "ipv4": {
+            "$ref": "#/components/schemas/RegionalVPCIPv4"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourceState"
+              }
+            ],
+            "readOnly": true
+          }
+        },
         "type": "object"
       },
       "CreatedAt": {
@@ -641,6 +914,14 @@
               }
             ],
             "readOnly": true
+          },
+          "vpcId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "description": "The identifier (ID) of a STACKIT VPC."
           }
         },
         "required": [
@@ -689,6 +970,9 @@
               }
             ],
             "readOnly": true
+          },
+          "vpcNetworkRangeId": {
+            "$ref": "#/components/schemas/UUID"
           }
         },
         "required": [
@@ -713,6 +997,9 @@
               "$ref": "#/components/schemas/CIDRv6"
             },
             "type": "array"
+          },
+          "vpcNetworkRangeId": {
+            "$ref": "#/components/schemas/UUID"
           }
         },
         "required": [
@@ -738,6 +1025,114 @@
           "items"
         ],
         "type": "object"
+      },
+      "NetworkRangeDefaultPrefixLengthIPv4": {
+        "description": "The default prefix length for network ranges in the VPC.",
+        "example": 25,
+        "format": "int64",
+        "maximum": 29,
+        "minimum": 24,
+        "type": "integer"
+      },
+      "NetworkRangeIPv4Request": {
+        "description": "Contains the IPv4 properties of a VPC network range request. Filterable Fields: `defaultPrefixLen`, `maxPrefixLen`, `minPrefixLen`, `nameservers`, `prefix`.",
+        "properties": {
+          "defaultPrefixLen": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NetworkRangeDefaultPrefixLengthIPv4"
+              }
+            ],
+            "default": 25,
+            "x-oapi-codegen-extra-tags": {
+              "expr": "defaultPrefixLen"
+            }
+          },
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "ipVersion": {
+            "enum": [
+              "ipv4"
+            ],
+            "example": "ipv4",
+            "type": "string"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "maxPrefixLen": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NetworkRangeMaxPrefixLengthIPv4"
+              }
+            ],
+            "default": 29,
+            "x-oapi-codegen-extra-tags": {
+              "expr": "maxPrefixLen"
+            }
+          },
+          "minPrefixLen": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NetworkRangeMinPrefixLengthIPv4"
+              }
+            ],
+            "default": 24,
+            "x-oapi-codegen-extra-tags": {
+              "expr": "minPrefixLen"
+            }
+          },
+          "nameservers": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NameserversIPv4"
+              }
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "expr": "nameservers"
+            }
+          },
+          "prefix": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CIDR"
+              }
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "expr": "prefix"
+            }
+          }
+        },
+        "required": [
+          "ipVersion",
+          "prefix"
+        ],
+        "type": "object"
+      },
+      "NetworkRangeMaxPrefixLengthIPv4": {
+        "description": "The maximal prefix length for network ranges in the VPC.",
+        "example": 29,
+        "format": "int64",
+        "maximum": 29,
+        "minimum": 24,
+        "type": "integer"
+      },
+      "NetworkRangeMinPrefixLengthIPv4": {
+        "description": "The minimal prefix length for network ranges in the VPC.",
+        "example": 24,
+        "format": "int64",
+        "maximum": 29,
+        "minimum": 8,
+        "type": "integer"
+      },
+      "NetworkRangePrefixLengthIPv6": {
+        "description": "The ipv6 prefix lengths for subnets or network ranges in the VPC.",
+        "example": 64,
+        "format": "int64",
+        "maximum": 128,
+        "minimum": 0,
+        "type": "integer"
       },
       "NexthopBlackhole": {
         "description": "Object that represents a blackhole route.",
@@ -830,6 +1225,88 @@
             "$ref": "#/components/schemas/UUID"
           }
         },
+        "type": "object"
+      },
+      "PartialUpdateVPCPayload": {
+        "description": "Object that represents a update VPC request.",
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          }
+        },
+        "type": "object"
+      },
+      "RegionalVPC": {
+        "description": "The basic properties of a regional VPC.",
+        "properties": {
+          "ipv4": {
+            "$ref": "#/components/schemas/RegionalVPCIPv4"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourceState"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "type": "object"
+      },
+      "RegionalVPCIPv4": {
+        "description": "The regional IPv4 config of a VPC.",
+        "properties": {
+          "defaultNameservers": {
+            "items": {
+              "$ref": "#/components/schemas/IPv4"
+            },
+            "maxItems": 3,
+            "type": "array"
+          }
+        },
+        "required": [
+          "defaultNameservers"
+        ],
+        "type": "object"
+      },
+      "RegionalVPCList": {
+        "description": "Regional VPC list response.",
+        "properties": {
+          "regions": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/RegionalVPC"
+            },
+            "example": {
+              "eu01": {
+                "ipv4": {
+                  "defaultNameservers": [
+                    "10.1.1.10"
+                  ]
+                },
+                "status": "CREATED"
+              },
+              "eu02": {
+                "ipv4": {
+                  "defaultNameservers": [
+                    "10.1.2.10"
+                  ]
+                },
+                "status": "CREATED"
+              }
+            },
+            "maxProperties": 100,
+            "type": "object"
+          }
+        },
+        "required": [
+          "regions"
+        ],
         "type": "object"
       },
       "ResourceState": {
@@ -959,7 +1436,7 @@
         "type": "boolean"
       },
       "RoutingTable": {
-        "description": "An object representing a routing table.",
+        "description": "An object representing a routing table. Filterable Fields: `dynamicRoutes`, `systemRoutes`.",
         "properties": {
           "createdAt": {
             "allOf": [
@@ -1107,11 +1584,421 @@
         "description": "The update config setting for a routing table which allows installation of automatic system routes for connectivity between projects in the same SNA.",
         "type": "boolean"
       },
+      "UpdateVPCNetworkRangePayload": {
+        "description": "Object that represents the request body for a VPC network range update.",
+        "discriminator": {
+          "mapping": {
+            "ipv4": "#/components/schemas/v1UpdateVPCNetworkRangeIPv4"
+          },
+          "propertyName": "ipVersion"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/v1UpdateVPCNetworkRangeIPv4"
+          }
+        ],
+        "type": "object"
+      },
+      "UpdateVPCRegionPayload": {
+        "description": "The basic properties of a regional VPC.",
+        "properties": {
+          "ipv4": {
+            "$ref": "#/components/schemas/RegionalVPCIPv4"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourceState"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "type": "object"
+      },
+      "UpdateVPCRoutingTablePayload": {
+        "description": "Object that represents the request body for a routing table update.",
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "dynamicRoutes": {
+            "$ref": "#/components/schemas/UpdateDynamicRoutes"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "systemRoutes": {
+            "$ref": "#/components/schemas/UpdateSystemRoutes"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateVPCStaticRoutePayload": {
+        "description": "Object that represents the request body for a route update.",
+        "properties": {
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          }
+        },
+        "type": "object"
+      },
       "UpdatedAt": {
         "description": "Date-time when resource was last updated.",
         "example": "2017-07-21T17:32:28Z",
         "format": "date-time",
         "type": "string"
+      },
+      "VPC": {
+        "description": "Object that represents a VPC. Filterable Fields: `name`.",
+        "properties": {
+          "createdAt": {
+            "$ref": "#/components/schemas/CreatedAt"
+          },
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "id": {
+            "$ref": "#/components/schemas/UUID"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GenericName"
+              }
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "expr": "name"
+            }
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/UUID"
+          },
+          "updatedAt": {
+            "$ref": "#/components/schemas/UpdatedAt"
+          }
+        },
+        "required": [
+          "id",
+          "projectId",
+          "createdAt",
+          "updatedAt",
+          "name",
+          "description",
+          "labels"
+        ],
+        "type": "object"
+      },
+      "VPCBaseNetworkRange": {
+        "description": "Contains the common properties of a VPC network range.",
+        "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ResourceState"
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "type": "object"
+      },
+      "VPCList": {
+        "description": "VPC list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/v1VPCList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "VPCNetworkRange": {
+        "description": "A VPC network range.",
+        "discriminator": {
+          "mapping": {
+            "ipv4": "#/components/schemas/VPCNetworkRangeIPv4",
+            "ipv6": "#/components/schemas/VPCNetworkRangeIPv6"
+          },
+          "propertyName": "ipVersion"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/VPCNetworkRangeIPv4"
+          },
+          {
+            "$ref": "#/components/schemas/VPCNetworkRangeIPv6"
+          }
+        ]
+      },
+      "VPCNetworkRangeIPv4": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VPCBaseNetworkRange"
+          },
+          {
+            "properties": {
+              "defaultPrefixLen": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/NetworkRangeDefaultPrefixLengthIPv4"
+                  }
+                ],
+                "default": 25,
+                "x-oapi-codegen-extra-tags": {
+                  "expr": "defaultPrefixLen"
+                }
+              },
+              "ipVersion": {
+                "enum": [
+                  "ipv4"
+                ],
+                "example": "ipv4",
+                "type": "string"
+              },
+              "maxPrefixLen": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/NetworkRangeMaxPrefixLengthIPv4"
+                  }
+                ],
+                "default": 29,
+                "x-oapi-codegen-extra-tags": {
+                  "expr": "maxPrefixLen"
+                }
+              },
+              "minPrefixLen": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/NetworkRangeMinPrefixLengthIPv4"
+                  }
+                ],
+                "default": 24,
+                "x-oapi-codegen-extra-tags": {
+                  "expr": "minPrefixLen"
+                }
+              },
+              "nameservers": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/NameserversIPv4"
+                  }
+                ],
+                "x-oapi-codegen-extra-tags": {
+                  "expr": "nameservers"
+                }
+              },
+              "prefix": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CIDR"
+                  }
+                ],
+                "x-oapi-codegen-extra-tags": {
+                  "expr": "prefix"
+                }
+              }
+            },
+            "required": [
+              "ipVersion",
+              "prefix"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "Contains the IPv4 properties of a VPC network range."
+      },
+      "VPCNetworkRangeIPv6": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VPCBaseNetworkRange"
+          },
+          {
+            "properties": {
+              "defaultPrefixLen": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/NetworkRangePrefixLengthIPv6"
+                  }
+                ],
+                "x-oapi-codegen-extra-tags": {
+                  "expr": "defaultPrefixLen"
+                }
+              },
+              "ipVersion": {
+                "enum": [
+                  "ipv6"
+                ],
+                "example": "ipv6",
+                "type": "string"
+              },
+              "maxPrefixLen": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/NetworkRangePrefixLengthIPv6"
+                  }
+                ],
+                "x-oapi-codegen-extra-tags": {
+                  "expr": "maxPrefixLen"
+                }
+              },
+              "minPrefixLen": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/NetworkRangePrefixLengthIPv6"
+                  }
+                ],
+                "x-oapi-codegen-extra-tags": {
+                  "expr": "minPrefixLen"
+                }
+              },
+              "nameservers": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/NameserversIPv6"
+                  }
+                ],
+                "x-oapi-codegen-extra-tags": {
+                  "expr": "nameservers"
+                }
+              },
+              "prefix": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CIDRv6"
+                  }
+                ],
+                "x-oapi-codegen-extra-tags": {
+                  "expr": "prefix"
+                }
+              }
+            },
+            "required": [
+              "ipVersion",
+              "prefix"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "Contains the IPv6 properties of a VPC network range."
+      },
+      "VPCNetworkRangeList": {
+        "description": "VPC Network Range list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/v3NetworkRangeList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "VPCRoutingTable": {
+        "description": "An object representing a VPC routing table. Filterable Fields: `createdAt`, `dynamicRoutes`, `name`, `systemRoutes`, `updatedAt`.",
+        "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "expr": "createdAt"
+            }
+          },
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "dynamicRoutes": {
+            "$ref": "#/components/schemas/DynamicRoutes"
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "name": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GenericName"
+              }
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "expr": "name"
+            }
+          },
+          "systemRoutes": {
+            "$ref": "#/components/schemas/SystemRoutes"
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "expr": "updatedAt"
+            }
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "VPCRoutingTableList": {
+        "description": "VPC Routing table response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/v3RoutingTableList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
       },
       "errorMessage": {
         "description": "An error message.",
@@ -1122,6 +2009,63 @@
         "description": "Name of the region.",
         "example": "eu01",
         "type": "string"
+      },
+      "v1UpdateVPCNetworkRangeIPv4": {
+        "description": "Contains the IPv4 properties of a VPC network range update.",
+        "properties": {
+          "defaultPrefixLen": {
+            "$ref": "#/components/schemas/NetworkRangeDefaultPrefixLengthIPv4"
+          },
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "ipVersion": {
+            "description": "The IP version of the network range being updated.",
+            "enum": [
+              "ipv4"
+            ],
+            "type": "string"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "maxPrefixLen": {
+            "$ref": "#/components/schemas/NetworkRangeMaxPrefixLengthIPv4"
+          },
+          "minPrefixLen": {
+            "$ref": "#/components/schemas/NetworkRangeMinPrefixLengthIPv4"
+          },
+          "nameservers": {
+            "$ref": "#/components/schemas/NameserversIPv4"
+          }
+        },
+        "required": [
+          "ipVersion"
+        ],
+        "type": "object"
+      },
+      "v1VPCList": {
+        "description": "A list of VPCs.",
+        "items": {
+          "$ref": "#/components/schemas/VPC"
+        },
+        "type": "array"
+      },
+      "v3NetworkRangeList": {
+        "description": "A list of VPC network ranges.",
+        "items": {
+          "$ref": "#/components/schemas/VPCNetworkRange"
+        },
+        "maxItems": 64,
+        "minItems": 1,
+        "type": "array"
+      },
+      "v3RoutingTableList": {
+        "description": "A list of VPC routing tables.",
+        "items": {
+          "$ref": "#/components/schemas/VPCRoutingTable"
+        },
+        "type": "array"
       }
     }
   },
@@ -1947,6 +2891,1336 @@
         "x-stackit-authorization": {
           "actions": [
             "iaas.network.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v2alpha1/projects/{projectId}/vpcs": {
+      "get": {
+        "description": "List all visible VPCs of this project. To list shared VPCs from other projects of the organization use the `List all shared VPCs` endpoint.",
+        "operationId": "ListVPCs",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          },
+          {
+            "$ref": "#/components/parameters/v1FieldFilter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VPCList"
+                }
+              }
+            },
+            "description": "Get a list of all VPCs."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List project VPCs.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        }
+      ],
+      "post": {
+        "description": "Create a new VPC in a project.",
+        "operationId": "CreateVPC",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVPCPayload"
+              }
+            }
+          },
+          "description": "Request a VPC creation.",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VPC"
+                }
+              }
+            },
+            "description": "VPC has been successfully created."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create a new VPC.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v2alpha1/projects/{projectId}/vpcs/{vpcId}": {
+      "delete": {
+        "description": "Delete an existing VPC in a project.",
+        "operationId": "DeleteVPC",
+        "responses": {
+          "204": {
+            "description": "VPC has been deleted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete a VPC.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get details about a VPC in a project.",
+        "operationId": "GetVPC",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VPC"
+                }
+              }
+            },
+            "description": "Show VPC details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get details about a VPC.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1VPCID"
+        }
+      ],
+      "patch": {
+        "description": "Update the settings of a VPC.",
+        "operationId": "PartialUpdateVPC",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartialUpdateVPCPayload"
+              }
+            }
+          },
+          "description": "Request to update a VPC.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VPC"
+                }
+              }
+            },
+            "description": "VPC has been updated."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update VPC settings.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v2alpha1/projects/{projectId}/vpcs/{vpcId}/regions": {
+      "get": {
+        "description": "Get a list of all configured regions in a VPC.",
+        "operationId": "ListVPCRegions",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegionalVPCList"
+                }
+              }
+            },
+            "description": "List all configured VPC regions."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all configured regions in a VPC.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.region.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1VPCID"
+        }
+      ]
+    },
+    "/v2alpha1/projects/{projectId}/vpcs/{vpcId}/regions/{region}": {
+      "delete": {
+        "description": "Delete the current configuration of a region for a VPC.",
+        "operationId": "DeleteVPCRegion",
+        "responses": {
+          "202": {
+            "description": "Delete request for the regional VPC has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete the regional configuration of a VPC.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.region.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get the current configuration of a region for a VPC.",
+        "operationId": "GetVPCRegion",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegionalVPC"
+                }
+              }
+            },
+            "description": "Show the regional VPC configuration."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get the regional configuration of a VPC.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.region.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1VPCID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        }
+      ],
+      "patch": {
+        "description": "Update the current configuration of a region for a VPC.\n\n**Example:** Update nameservers.\n\n**Request Body:**\n```json\n{\n  \"ipv4\": {\n    \"defaultNameservers\": [\n      \"10.1.2.10\",\n      \"10.1.2.11\"\n    ],\n  }\n}\n```\n\n**Result:**\n* `ipv4.defaultNameservers`: **Updated** as a new value was provided.",
+        "operationId": "UpdateVPCRegion",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVPCRegionPayload"
+              }
+            }
+          },
+          "description": "Request an update of the regional VPC configuration.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegionalVPC"
+                }
+              }
+            },
+            "description": "Regional VPC configuration has been updated."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update the regional configuration of a VPC.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.region.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "put": {
+        "description": "Create the configuration of a region for a VPC.",
+        "operationId": "CreateVPCRegion",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVPCRegionPayload"
+              }
+            }
+          },
+          "description": "Request to add a new regional VPC configuration.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegionalVPC"
+                }
+              }
+            },
+            "description": "Configure VPC in a new region was accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create the regional configuration of a VPC.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.region.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v2alpha1/projects/{projectId}/vpcs/{vpcId}/regions/{region}/network-ranges": {
+      "get": {
+        "description": "Get a list of all network ranges in a VPC for this region.",
+        "operationId": "ListVPCNetworkRanges",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          },
+          {
+            "$ref": "#/components/parameters/v1FieldFilter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VPCNetworkRangeList"
+                }
+              }
+            },
+            "description": "List all network ranges."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all regional network ranges in a VPC.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.network-range.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1VPCID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        }
+      ],
+      "post": {
+        "description": "Create a new network range in an existing VPC for this region.",
+        "operationId": "CreateVPCNetworkRange",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVPCNetworkRangePayload"
+              }
+            }
+          },
+          "description": "Request to add an additional network range to a VPC.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VPCNetworkRange"
+                }
+              }
+            },
+            "description": "Create request for a network range has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create new regional network ranges in a VPC.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.network-range.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v2alpha1/projects/{projectId}/vpcs/{vpcId}/regions/{region}/network-ranges/{networkRangeId}": {
+      "delete": {
+        "description": "Delete a network range of a VPC for this region, if the network range is not used anymore.",
+        "operationId": "DeleteVPCNetworkRange",
+        "responses": {
+          "202": {
+            "description": "Delete request for network range has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete a regional network range.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.network-range.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get details about a network range in a VPC for this region.",
+        "operationId": "GetVPCNetworkRange",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VPCNetworkRange"
+                }
+              }
+            },
+            "description": "Show network range details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get details about a regional network range.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.network-range.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1VPCID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkRangeID"
+        }
+      ],
+      "patch": {
+        "description": "Update a network range of a VPC for this region.",
+        "operationId": "UpdateVPCNetworkRange",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVPCNetworkRangePayload"
+              }
+            }
+          },
+          "description": "Request an update of a network range.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VPCNetworkRange"
+                }
+              }
+            },
+            "description": "Network Range has been updated."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update a regional network range.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.network-range.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v2alpha1/projects/{projectId}/vpcs/{vpcId}/regions/{region}/routing-tables": {
+      "get": {
+        "description": "Get a list of all routing tables in a VPC for this region.",
+        "operationId": "ListVPCRoutingTables",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          },
+          {
+            "$ref": "#/components/parameters/v1FieldFilter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VPCRoutingTableList"
+                }
+              }
+            },
+            "description": "List all routing tables."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all regional routing tables in a VPC.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.routing-table.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1VPCID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        }
+      ],
+      "post": {
+        "description": "Create a new routing table in an existing VPC for this region.",
+        "operationId": "AddVPCRoutingTable",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddVPCRoutingTablePayload"
+              }
+            }
+          },
+          "description": "Request an addition of a routing table to a VPC.",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VPCRoutingTable"
+                }
+              }
+            },
+            "description": "Adding routing table was successful."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create a new regional routing table in a VPC.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.routing-table.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v2alpha1/projects/{projectId}/vpcs/{vpcId}/regions/{region}/routing-tables/{routingTableId}": {
+      "delete": {
+        "description": "Delete a routing table of a VPC for this region.",
+        "operationId": "DeleteVPCRoutingTable",
+        "responses": {
+          "204": {
+            "description": "Routingtable has been deleted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete a regional routing table.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.routing-table.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get details about a routing table of a VPC for this region.",
+        "operationId": "GetVPCRoutingTable",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VPCRoutingTable"
+                }
+              }
+            },
+            "description": "Show routing table details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get details about a regional routing table.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.routing-table.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1VPCID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        },
+        {
+          "$ref": "#/components/parameters/v2RoutingTableID"
+        }
+      ],
+      "patch": {
+        "description": "Update a routing table of a VPC for this region.",
+        "operationId": "UpdateVPCRoutingTable",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVPCRoutingTablePayload"
+              }
+            }
+          },
+          "description": "Request an update of a routing table.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VPCRoutingTable"
+                }
+              }
+            },
+            "description": "Update request for routing table successful."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update a regional routing table.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.routing-table.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v2alpha1/projects/{projectId}/vpcs/{vpcId}/regions/{region}/routing-tables/{routingTableId}/static-routes": {
+      "get": {
+        "description": "Get a list of all static routes of a VPC for this region.",
+        "operationId": "ListVPCStaticRoutes",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RouteListResponse"
+                }
+              }
+            },
+            "description": "List all static routes."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all regional static routes in a VPC.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.routing-table.static-route.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1VPCID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        },
+        {
+          "$ref": "#/components/parameters/v2RoutingTableID"
+        }
+      ],
+      "post": {
+        "description": "Create a new static route in the VPC for this region.",
+        "operationId": "AddVPCStaticRoute",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddVPCStaticRoutePayload"
+              }
+            }
+          },
+          "description": "Request to add a static route to a VPC.",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Route"
+                }
+              }
+            },
+            "description": "Adding static route was successful."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create new regional static route.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.routing-table.static-route.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v2alpha1/projects/{projectId}/vpcs/{vpcId}/regions/{region}/routing-tables/{routingTableId}/static-routes/{routeId}": {
+      "delete": {
+        "description": "Delete a static route of a VPC for this region.",
+        "operationId": "DeleteVPCStaticRoute",
+        "responses": {
+          "204": {
+            "description": "Delete request for the static route has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete a regional static route.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.routing-table.static-route.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get details about a static route of a VPC for this region.",
+        "operationId": "GetVPCStaticRoute",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Route"
+                }
+              }
+            },
+            "description": "Show static route details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get details about a regional static route.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.routing-table.static-route.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1VPCID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        },
+        {
+          "$ref": "#/components/parameters/v2RoutingTableID"
+        },
+        {
+          "$ref": "#/components/parameters/v1RouteID"
+        }
+      ],
+      "patch": {
+        "description": "Update a static route of a VPC for this region.",
+        "operationId": "UpdateVPCStaticRoute",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVPCStaticRoutePayload"
+              }
+            }
+          },
+          "description": "Request an update of a static route.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Route"
+                }
+              }
+            },
+            "description": "Update request for static route successful."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "424": {
+            "$ref": "#/components/responses/FailedDependency"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update a regional static route.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.routing-table.static-route.update"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

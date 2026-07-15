@@ -456,6 +456,9 @@
           "labels": {
             "$ref": "#/components/schemas/Label"
           },
+          "networkArea": {
+            "$ref": "#/components/schemas/NetworkConfig"
+          },
           "planId": {
             "description": "The service plan identifier.",
             "example": "p1000",
@@ -501,6 +504,9 @@
           },
           "labels": {
             "$ref": "#/components/schemas/Label"
+          },
+          "networkArea": {
+            "$ref": "#/components/schemas/NetworkConfig"
           },
           "planId": {
             "description": "The service plan identifier.",
@@ -640,6 +646,23 @@
         "maxLength": 63,
         "pattern": "^([a-zA-Z0-9]([a-zA-Z0-9._-]*[a-zA-Z0-9])?)?$",
         "type": "string"
+      },
+      "NetworkConfig": {
+        "properties": {
+          "predefinedNetworkPrefix": {
+            "description": "The IPv4 network prefix (CIDR notation) allocated for the VPN gateway. Must have a prefix length of /28 or larger.\nOnce the gateway is created, is not possible to change this attribute.\n",
+            "example": "10.0.0.0/28",
+            "items": {
+              "$ref": "#/components/schemas/IPv4CIDR"
+            }
+          },
+          "routingTableId": {
+            "description": "Custom routing table ID for the VPN gateway",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "type": "object"
       },
       "PeeringConfig": {
         "description": "The peering object defines the point-to-point IP configuration for the Tunnel Interface. \nThese addresses serve as next-hop identifiers and are used for BGP peering sessions and can be used in Static Route-Based connectivity.\n",
@@ -1091,6 +1114,9 @@
           },
           "labels": {
             "$ref": "#/components/schemas/Label"
+          },
+          "networkArea": {
+            "$ref": "#/components/schemas/NetworkConfig"
           },
           "planId": {
             "description": "The service plan identifier.",

@@ -51,6 +51,25 @@
         },
         "description": "Not Found"
       },
+      "TooManyRequests": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/APIErrorResponse"
+            }
+          }
+        },
+        "description": "Too Many Requests. Another request is currently mutating the same gateway; clients should\nretry after the duration indicated by the Retry-After header (in seconds).\n",
+        "headers": {
+          "Retry-After": {
+            "description": "Number of seconds to wait before retrying.",
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        }
+      },
       "Unauthorized": {
         "content": {
           "application/json": {
@@ -109,10 +128,11 @@
             "type": "object"
           },
           "reason": {
-            "description": "The reason why the error occurs.",
+            "description": "The reason why the error occurs. RESOURCE_IN_USE is returned when a referenced resource\ncannot be deleted; the 'metadata.references' field then lists the referencing resources\n(e.g. connection IDs and displayNames pointing at a BGPFilter on DELETE).\n",
             "enum": [
               "INVALID_FIELD",
-              "INVALID_PATH_PARAMETER"
+              "INVALID_PATH_PARAMETER",
+              "RESOURCE_IN_USE"
             ],
             "type": "string"
           }
@@ -138,6 +158,163 @@
         "description": "Object that represents an availability zone.",
         "example": "eu01-1",
         "type": "string"
+      },
+      "BGPFilter": {
+        "description": "A named BGP route filter. Internally a BGPFilter holds an ordered set of rules (managed via the\nnested /rules sub-resource); a route is evaluated against each rule in 'sequence' order and the\nfirst match decides the outcome. An implicit DENY is applied after the last rule, so a route that\nmatches no PERMIT rule is dropped. Attaching an empty filter to a tunnel therefore denies every\nroute. Resource limits: the maximum number of filters per gateway equals the gateway plan's\nmaxConnections value; the maximum number of rules per filter is 10.\n",
+        "properties": {
+          "displayName": {
+            "description": "A user-friendly name for the filter. Display only — not enforced unique across a gateway.",
+            "example": "inbound-primary-tunnel",
+            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$",
+            "type": "string"
+          },
+          "id": {
+            "description": "The server-generated UUID of the filter.",
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName"
+        ],
+        "type": "object"
+      },
+      "BGPFilterList": {
+        "description": "Response wrapper for listing BGP filters.",
+        "properties": {
+          "bgpFilters": {
+            "items": {
+              "$ref": "#/components/schemas/BGPFilter"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "bgpFilters"
+        ],
+        "type": "object"
+      },
+      "BGPFilterRule": {
+        "description": "A single rule within a BGPFilter. All non-empty fields within the 'match' block are AND-combined.\nRules within a filter are evaluated in 'sequence' order; the first matching rule decides the\noutcome (logical OR across rules). An implicit DENY follows the last rule.\n",
+        "properties": {
+          "action": {
+            "description": "The action to take if the route matches all criteria. Case-sensitive.",
+            "enum": [
+              "PERMIT",
+              "DENY"
+            ],
+            "example": "PERMIT",
+            "type": "string"
+          },
+          "id": {
+            "description": "The server-generated UUID of the specific rule.",
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "match": {
+            "description": "Optional matching criteria. If omitted entirely, the rule acts as match-all. All non-empty\nfields in this block must match (logical AND).\n",
+            "properties": {
+              "asPathContainsAny": {
+                "description": "Matches if the AS-PATH contains any one of the listed ASNs (logical OR within the list).\nTreated as an unordered set; ordering is not preserved by the storage layer. When\ncombined with firstASN, both conditions must hold (logical AND, consistent with the\nrest of the match block). If firstASN is also listed here, its presence as the first\nhop is sufficient to satisfy this list; no duplicate hop is required.\n",
+                "items": {
+                  "$ref": "#/components/schemas/PrivateASN"
+                },
+                "maxItems": 10,
+                "type": "array"
+              },
+              "communities": {
+                "description": "Matches if the route carries any one of these BGP standard communities (logical OR\nwithin the list). Format is 'asn:value' per RFC 1997 (both halves must fit in a uint32,\ni.e. 0..4294967295). Extended, large and well-known communities are not supported.\n",
+                "items": {
+                  "example": "65000:100",
+                  "pattern": "^[0-9]{1,10}:[0-9]{1,10}$",
+                  "type": "string"
+                },
+                "maxItems": 20,
+                "type": "array"
+              },
+              "firstASN": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrivateASN"
+                  }
+                ],
+                "description": "Matches if the first ASN (immediate neighbor) in the AS-PATH equals this ASN. Combines\nwith asPathContainsAny using logical AND: when both are set, the first ASN must equal\nfirstASN AND the path must additionally contain at least one ASN from asPathContainsAny.\n"
+              },
+              "maxPrefixLength": {
+                "description": "Maximum subnet mask length for matched prefixes. May be set together with 'prefixes'\n(narrows matches to subnets at most this long) or alone (matches any IPv4 route with\na mask length \u003c= this value, equivalent to implicit 'prefixes: [0.0.0.0/0]').\n",
+                "maximum": 32,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "minPrefixLength": {
+                "description": "Minimum subnet mask length for matched prefixes. May be set together with 'prefixes'\n(narrows matches to subnets at least this long) or alone (matches any IPv4 route with\na mask length \u003e= this value, equivalent to implicit 'prefixes: [0.0.0.0/0]'). If both\nminPrefixLength and maxPrefixLength are set, minPrefixLength must be \u003c= maxPrefixLength.\n",
+                "maximum": 32,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "peer": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/IPv4"
+                  }
+                ],
+                "description": "Matches the exact IPv4 address of the BGP neighbor that advertised the route. Useful\nwhen the same filter is attached to multiple tunnels with different neighbor IPs\n(allows per-peer rules in a shared filter). When a filter is attached to a single\ntunnel, this field is effectively a no-op because the route-map is already\nneighbor-scoped.\n"
+              },
+              "prefixes": {
+                "description": "List of IPv4 networks to match. A route's prefix matches if it equals one of these\n(subject to minPrefixLength/maxPrefixLength refinement). If omitted, an implicit\n0.0.0.0/0 base is used when minPrefixLength or maxPrefixLength is set; if all three\nare omitted, prefix matching is not performed at all. Each entry must parse as a valid\nIPv4 CIDR; the network portion is normalised (10.0.0.5/24 → 10.0.0.0/24).\n",
+                "items": {
+                  "$ref": "#/components/schemas/IPv4CIDR"
+                },
+                "maxItems": 20,
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "sequence": {
+            "description": "The evaluation order of the rule. Lower numbers are evaluated first. Must be unique within a\nfilter. On POST, this field is optional: when omitted the server auto-assigns max(existing)+10\n(the first rule starts at 10). On PUT this field is required — sending a partial update without\n'sequence' returns 400.\n",
+            "example": 10,
+            "format": "int32",
+            "maximum": 65535,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "set": {
+            "description": "Optional BGP attributes to apply when 'action' is PERMIT. Ignored for DENY rules.",
+            "properties": {
+              "localPreference": {
+                "description": "BGP LOCAL_PREF to set on the route. Higher values are preferred during best-path\nselection. Default BGP LOCAL_PREF is 100; any value here overrides.\n",
+                "example": 200,
+                "format": "int32",
+                "maximum": 65535,
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "type": "object"
+      },
+      "BGPFilterRuleList": {
+        "description": "Response wrapper for listing rules within a BGP filter.",
+        "properties": {
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/BGPFilterRule"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "rules"
+        ],
+        "type": "object"
       },
       "BGPGatewayConfig": {
         "description": "BGP configuration effects all connections. (only for routingMode=BGP_ROUTE_BASED)",
@@ -267,6 +444,12 @@
       },
       "BGPTunnelConfig": {
         "properties": {
+          "inboundFilterId": {
+            "description": "UUID of the BGPFilter to apply to incoming routes from this tunnel's BGP neighbor. The\nfilter must exist in the same gateway. Multiple tunnels may reference the same BGPFilter;\nin that case the rules' 'match.peer' field can be used to scope behavior per neighbor.\nOutbound filtering is not yet supported; use gateway.bgp.overrideAdvertisedRoutes to\ncontrol what is advertised.\n",
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
+          },
           "remoteAsn": {
             "$ref": "#/components/schemas/PrivateASN"
           }
@@ -373,6 +556,133 @@
         },
         "type": "object"
       },
+      "CreateGatewayBGPFilterPayload": {
+        "description": "A named BGP route filter. Internally a BGPFilter holds an ordered set of rules (managed via the\nnested /rules sub-resource); a route is evaluated against each rule in 'sequence' order and the\nfirst match decides the outcome. An implicit DENY is applied after the last rule, so a route that\nmatches no PERMIT rule is dropped. Attaching an empty filter to a tunnel therefore denies every\nroute. Resource limits: the maximum number of filters per gateway equals the gateway plan's\nmaxConnections value; the maximum number of rules per filter is 10.\n",
+        "properties": {
+          "displayName": {
+            "description": "A user-friendly name for the filter. Display only — not enforced unique across a gateway.",
+            "example": "inbound-primary-tunnel",
+            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$",
+            "type": "string"
+          },
+          "id": {
+            "description": "The server-generated UUID of the filter.",
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName"
+        ],
+        "type": "object"
+      },
+      "CreateGatewayBGPFilterRulePayload": {
+        "description": "A single rule within a BGPFilter. All non-empty fields within the 'match' block are AND-combined.\nRules within a filter are evaluated in 'sequence' order; the first matching rule decides the\noutcome (logical OR across rules). An implicit DENY follows the last rule.\n",
+        "properties": {
+          "action": {
+            "description": "The action to take if the route matches all criteria. Case-sensitive.",
+            "enum": [
+              "PERMIT",
+              "DENY"
+            ],
+            "example": "PERMIT",
+            "type": "string"
+          },
+          "id": {
+            "description": "The server-generated UUID of the specific rule.",
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "match": {
+            "description": "Optional matching criteria. If omitted entirely, the rule acts as match-all. All non-empty\nfields in this block must match (logical AND).\n",
+            "properties": {
+              "asPathContainsAny": {
+                "description": "Matches if the AS-PATH contains any one of the listed ASNs (logical OR within the list).\nTreated as an unordered set; ordering is not preserved by the storage layer. When\ncombined with firstASN, both conditions must hold (logical AND, consistent with the\nrest of the match block). If firstASN is also listed here, its presence as the first\nhop is sufficient to satisfy this list; no duplicate hop is required.\n",
+                "items": {
+                  "$ref": "#/components/schemas/PrivateASN"
+                },
+                "maxItems": 10,
+                "type": "array"
+              },
+              "communities": {
+                "description": "Matches if the route carries any one of these BGP standard communities (logical OR\nwithin the list). Format is 'asn:value' per RFC 1997 (both halves must fit in a uint32,\ni.e. 0..4294967295). Extended, large and well-known communities are not supported.\n",
+                "items": {
+                  "example": "65000:100",
+                  "pattern": "^[0-9]{1,10}:[0-9]{1,10}$",
+                  "type": "string"
+                },
+                "maxItems": 20,
+                "type": "array"
+              },
+              "firstASN": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrivateASN"
+                  }
+                ],
+                "description": "Matches if the first ASN (immediate neighbor) in the AS-PATH equals this ASN. Combines\nwith asPathContainsAny using logical AND: when both are set, the first ASN must equal\nfirstASN AND the path must additionally contain at least one ASN from asPathContainsAny.\n"
+              },
+              "maxPrefixLength": {
+                "description": "Maximum subnet mask length for matched prefixes. May be set together with 'prefixes'\n(narrows matches to subnets at most this long) or alone (matches any IPv4 route with\na mask length \u003c= this value, equivalent to implicit 'prefixes: [0.0.0.0/0]').\n",
+                "maximum": 32,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "minPrefixLength": {
+                "description": "Minimum subnet mask length for matched prefixes. May be set together with 'prefixes'\n(narrows matches to subnets at least this long) or alone (matches any IPv4 route with\na mask length \u003e= this value, equivalent to implicit 'prefixes: [0.0.0.0/0]'). If both\nminPrefixLength and maxPrefixLength are set, minPrefixLength must be \u003c= maxPrefixLength.\n",
+                "maximum": 32,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "peer": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/IPv4"
+                  }
+                ],
+                "description": "Matches the exact IPv4 address of the BGP neighbor that advertised the route. Useful\nwhen the same filter is attached to multiple tunnels with different neighbor IPs\n(allows per-peer rules in a shared filter). When a filter is attached to a single\ntunnel, this field is effectively a no-op because the route-map is already\nneighbor-scoped.\n"
+              },
+              "prefixes": {
+                "description": "List of IPv4 networks to match. A route's prefix matches if it equals one of these\n(subject to minPrefixLength/maxPrefixLength refinement). If omitted, an implicit\n0.0.0.0/0 base is used when minPrefixLength or maxPrefixLength is set; if all three\nare omitted, prefix matching is not performed at all. Each entry must parse as a valid\nIPv4 CIDR; the network portion is normalised (10.0.0.5/24 → 10.0.0.0/24).\n",
+                "items": {
+                  "$ref": "#/components/schemas/IPv4CIDR"
+                },
+                "maxItems": 20,
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "sequence": {
+            "description": "The evaluation order of the rule. Lower numbers are evaluated first. Must be unique within a\nfilter. On POST, this field is optional: when omitted the server auto-assigns max(existing)+10\n(the first rule starts at 10). On PUT this field is required — sending a partial update without\n'sequence' returns 400.\n",
+            "example": 10,
+            "format": "int32",
+            "maximum": 65535,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "set": {
+            "description": "Optional BGP attributes to apply when 'action' is PERMIT. Ignored for DENY rules.",
+            "properties": {
+              "localPreference": {
+                "description": "BGP LOCAL_PREF to set on the route. Higher values are preferred during best-path\nselection. Default BGP LOCAL_PREF is 100; any value here overrides.\n",
+                "example": 200,
+                "format": "int32",
+                "maximum": 65535,
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "type": "object"
+      },
       "CreateGatewayConnectionPayload": {
         "properties": {
           "displayName": {
@@ -456,6 +766,9 @@
           "labels": {
             "$ref": "#/components/schemas/Label"
           },
+          "networkConfig": {
+            "$ref": "#/components/schemas/NetworkConfig"
+          },
           "planId": {
             "description": "The service plan identifier.",
             "example": "p1000",
@@ -501,6 +814,9 @@
           },
           "labels": {
             "$ref": "#/components/schemas/Label"
+          },
+          "networkConfig": {
+            "$ref": "#/components/schemas/NetworkConfig"
           },
           "planId": {
             "description": "The service plan identifier.",
@@ -640,6 +956,23 @@
         "maxLength": 63,
         "pattern": "^([a-zA-Z0-9]([a-zA-Z0-9._-]*[a-zA-Z0-9])?)?$",
         "type": "string"
+      },
+      "NetworkConfig": {
+        "properties": {
+          "predefinedNetworkPrefix": {
+            "description": "The IPv4 network prefix (CIDR notation) allocated for the VPN gateway. Must have a prefix length of /28 or larger.\nOnce the gateway is created, is not possible to change this attribute.\n",
+            "example": "10.0.0.0/28",
+            "items": {
+              "$ref": "#/components/schemas/IPv4CIDR"
+            }
+          },
+          "routingTableId": {
+            "description": "Custom routing table ID for the VPN gateway",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "type": "object"
       },
       "PeeringConfig": {
         "description": "The peering object defines the point-to-point IP configuration for the Tunnel Interface. \nThese addresses serve as next-hop identifiers and are used for BGP peering sessions and can be used in Static Route-Based connectivity.\n",
@@ -1009,6 +1342,133 @@
         },
         "type": "object"
       },
+      "UpdateGatewayBGPFilterPayload": {
+        "description": "A named BGP route filter. Internally a BGPFilter holds an ordered set of rules (managed via the\nnested /rules sub-resource); a route is evaluated against each rule in 'sequence' order and the\nfirst match decides the outcome. An implicit DENY is applied after the last rule, so a route that\nmatches no PERMIT rule is dropped. Attaching an empty filter to a tunnel therefore denies every\nroute. Resource limits: the maximum number of filters per gateway equals the gateway plan's\nmaxConnections value; the maximum number of rules per filter is 10.\n",
+        "properties": {
+          "displayName": {
+            "description": "A user-friendly name for the filter. Display only — not enforced unique across a gateway.",
+            "example": "inbound-primary-tunnel",
+            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$",
+            "type": "string"
+          },
+          "id": {
+            "description": "The server-generated UUID of the filter.",
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName"
+        ],
+        "type": "object"
+      },
+      "UpdateGatewayBGPFilterRulePayload": {
+        "description": "A single rule within a BGPFilter. All non-empty fields within the 'match' block are AND-combined.\nRules within a filter are evaluated in 'sequence' order; the first matching rule decides the\noutcome (logical OR across rules). An implicit DENY follows the last rule.\n",
+        "properties": {
+          "action": {
+            "description": "The action to take if the route matches all criteria. Case-sensitive.",
+            "enum": [
+              "PERMIT",
+              "DENY"
+            ],
+            "example": "PERMIT",
+            "type": "string"
+          },
+          "id": {
+            "description": "The server-generated UUID of the specific rule.",
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "match": {
+            "description": "Optional matching criteria. If omitted entirely, the rule acts as match-all. All non-empty\nfields in this block must match (logical AND).\n",
+            "properties": {
+              "asPathContainsAny": {
+                "description": "Matches if the AS-PATH contains any one of the listed ASNs (logical OR within the list).\nTreated as an unordered set; ordering is not preserved by the storage layer. When\ncombined with firstASN, both conditions must hold (logical AND, consistent with the\nrest of the match block). If firstASN is also listed here, its presence as the first\nhop is sufficient to satisfy this list; no duplicate hop is required.\n",
+                "items": {
+                  "$ref": "#/components/schemas/PrivateASN"
+                },
+                "maxItems": 10,
+                "type": "array"
+              },
+              "communities": {
+                "description": "Matches if the route carries any one of these BGP standard communities (logical OR\nwithin the list). Format is 'asn:value' per RFC 1997 (both halves must fit in a uint32,\ni.e. 0..4294967295). Extended, large and well-known communities are not supported.\n",
+                "items": {
+                  "example": "65000:100",
+                  "pattern": "^[0-9]{1,10}:[0-9]{1,10}$",
+                  "type": "string"
+                },
+                "maxItems": 20,
+                "type": "array"
+              },
+              "firstASN": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrivateASN"
+                  }
+                ],
+                "description": "Matches if the first ASN (immediate neighbor) in the AS-PATH equals this ASN. Combines\nwith asPathContainsAny using logical AND: when both are set, the first ASN must equal\nfirstASN AND the path must additionally contain at least one ASN from asPathContainsAny.\n"
+              },
+              "maxPrefixLength": {
+                "description": "Maximum subnet mask length for matched prefixes. May be set together with 'prefixes'\n(narrows matches to subnets at most this long) or alone (matches any IPv4 route with\na mask length \u003c= this value, equivalent to implicit 'prefixes: [0.0.0.0/0]').\n",
+                "maximum": 32,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "minPrefixLength": {
+                "description": "Minimum subnet mask length for matched prefixes. May be set together with 'prefixes'\n(narrows matches to subnets at least this long) or alone (matches any IPv4 route with\na mask length \u003e= this value, equivalent to implicit 'prefixes: [0.0.0.0/0]'). If both\nminPrefixLength and maxPrefixLength are set, minPrefixLength must be \u003c= maxPrefixLength.\n",
+                "maximum": 32,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "peer": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/IPv4"
+                  }
+                ],
+                "description": "Matches the exact IPv4 address of the BGP neighbor that advertised the route. Useful\nwhen the same filter is attached to multiple tunnels with different neighbor IPs\n(allows per-peer rules in a shared filter). When a filter is attached to a single\ntunnel, this field is effectively a no-op because the route-map is already\nneighbor-scoped.\n"
+              },
+              "prefixes": {
+                "description": "List of IPv4 networks to match. A route's prefix matches if it equals one of these\n(subject to minPrefixLength/maxPrefixLength refinement). If omitted, an implicit\n0.0.0.0/0 base is used when minPrefixLength or maxPrefixLength is set; if all three\nare omitted, prefix matching is not performed at all. Each entry must parse as a valid\nIPv4 CIDR; the network portion is normalised (10.0.0.5/24 → 10.0.0.0/24).\n",
+                "items": {
+                  "$ref": "#/components/schemas/IPv4CIDR"
+                },
+                "maxItems": 20,
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "sequence": {
+            "description": "The evaluation order of the rule. Lower numbers are evaluated first. Must be unique within a\nfilter. On POST, this field is optional: when omitted the server auto-assigns max(existing)+10\n(the first rule starts at 10). On PUT this field is required — sending a partial update without\n'sequence' returns 400.\n",
+            "example": 10,
+            "format": "int32",
+            "maximum": 65535,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "set": {
+            "description": "Optional BGP attributes to apply when 'action' is PERMIT. Ignored for DENY rules.",
+            "properties": {
+              "localPreference": {
+                "description": "BGP LOCAL_PREF to set on the route. Higher values are preferred during best-path\nselection. Default BGP LOCAL_PREF is 100; any value here overrides.\n",
+                "example": 200,
+                "format": "int32",
+                "maximum": 65535,
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "type": "object"
+      },
       "UpdateGatewayConnectionPayload": {
         "properties": {
           "displayName": {
@@ -1091,6 +1551,9 @@
           },
           "labels": {
             "$ref": "#/components/schemas/Label"
+          },
+          "networkConfig": {
+            "$ref": "#/components/schemas/NetworkConfig"
           },
           "planId": {
             "description": "The service plan identifier.",
@@ -1478,6 +1941,835 @@
         "x-stackit-authorization": {
           "actions": [
             "vpn.gateway.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/gateways/{gatewayId}/bgp-filters": {
+      "get": {
+        "operationId": "ListGatewayBGPFilters",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BGPFilterList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List BGP filters for a gateway.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.bgpfilter.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Creates the filter metadata. Rules are managed via the nested /rules sub-resource.\nNOTE: an empty filter attached to a tunnel denies all incoming routes (implicit DENY).\n",
+        "operationId": "CreateGatewayBGPFilter",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGatewayBGPFilterPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BGPFilter"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Create a new empty BGP filter.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.bgpfilter.add"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/gateways/{gatewayId}/bgp-filters/{filterId}": {
+      "delete": {
+        "description": "Fails with 409 Conflict if the filter is referenced by any connection's tunnel.bgp.inboundFilterId.\nThe error response body's details[] contains one entry per referencing connection with metadata\n{ connectionId, displayName, tunnel: 'tunnel1'|'tunnel2' } and reason RESOURCE_IN_USE so the caller\ncan detach them first.\n",
+        "operationId": "DeleteGatewayBGPFilter",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "filterId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete a BGP filter.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.bgpfilter.remove"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "operationId": "GetGatewayBGPFilter",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "filterId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BGPFilter"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get BGP filter metadata.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.bgpfilter.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "put": {
+        "description": "Rules are managed via the nested /rules sub-resource and are not modified by this endpoint.",
+        "operationId": "UpdateGatewayBGPFilter",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "filterId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateGatewayBGPFilterPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BGPFilter"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update BGP filter metadata (name, description).",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.bgpfilter.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/gateways/{gatewayId}/bgp-filters/{filterId}/rules": {
+      "get": {
+        "operationId": "ListGatewayBGPFilterRules",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "filterId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BGPFilterRuleList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all rules inside a specific BGP filter.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.bgpfilter.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "operationId": "CreateGatewayBGPFilterRule",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "filterId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGatewayBGPFilterRulePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BGPFilterRule"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Add a new rule to a BGP filter.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.bgpfilter.add"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{region}/gateways/{gatewayId}/bgp-filters/{filterId}/rules/{ruleId}": {
+      "delete": {
+        "operationId": "DeleteGatewayBGPFilterRule",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "filterId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "ruleId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete a specific rule.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.bgpfilter.remove"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "operationId": "GetGatewayBGPFilterRule",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "filterId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "ruleId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BGPFilterRule"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get a specific rule from a BGP filter.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.bgpfilter.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "put": {
+        "operationId": "UpdateGatewayBGPFilterRule",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          {
+            "in": "path",
+            "name": "gatewayId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "filterId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "ruleId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateGatewayBGPFilterRulePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BGPFilterRule"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update a specific rule.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpn.bgpfilter.update"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

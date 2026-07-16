@@ -1,0 +1,1811 @@
+{
+  "components": {
+    "parameters": {
+      "backupId": {
+        "description": "Backup id",
+        "in": "path",
+        "name": "backupId",
+        "required": true,
+        "schema": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "instanceId": {
+        "description": "Instance id",
+        "in": "path",
+        "name": "instanceId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "projectId": {
+        "description": "Project id on which user has permissions",
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Bad Request"
+      },
+      "NotFound": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Not Found"
+      },
+      "ServerError": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Internal Server Error"
+      },
+      "Unauthorized": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Unauthorized"
+      }
+    },
+    "schemas": {
+      "Backup": {
+        "deprecated": true,
+        "properties": {
+          "downloadable": {
+            "type": "boolean"
+          },
+          "finished_at": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "size": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "triggered_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "finished_at"
+        ],
+        "type": "object"
+      },
+      "CreateBackupResponse": {
+        "items": {
+          "$ref": "#/components/schemas/CreateBackupResponseItem"
+        },
+        "type": "array"
+      },
+      "CreateBackupResponseItem": {
+        "properties": {
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "message"
+        ],
+        "type": "object"
+      },
+      "CreateCredentialsPayload": {
+        "properties": {
+          "parameters": {
+            "$ref": "#/components/schemas/CredentialsParameters"
+          }
+        },
+        "type": "object"
+      },
+      "CreateInstancePayload": {
+        "properties": {
+          "instanceName": {
+            "type": "string"
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/InstanceParameters"
+          },
+          "planId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "planId",
+          "instanceName"
+        ],
+        "type": "object"
+      },
+      "CreateInstanceResponse": {
+        "properties": {
+          "instanceId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "instanceId"
+        ],
+        "type": "object"
+      },
+      "Credentials": {
+        "properties": {
+          "host": {
+            "type": "string"
+          },
+          "hosts": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "load_balanced_host": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "port": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "uri": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "host",
+          "username",
+          "password"
+        ],
+        "type": "object"
+      },
+      "CredentialsListItem": {
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "CredentialsParameters": {
+        "type": "object"
+      },
+      "CredentialsResponse": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "raw": {
+            "$ref": "#/components/schemas/RawCredentials"
+          },
+          "uri": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "uri"
+        ],
+        "type": "object"
+      },
+      "Error": {
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error",
+          "description"
+        ],
+        "type": "object"
+      },
+      "GetMetricsResponse": {
+        "properties": {
+          "cpuIdleTime": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "cpuLoadPercent": {
+            "type": "number"
+          },
+          "cpuSystemTime": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "cpuUserTime": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "diskEphemeralTotal": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "diskEphemeralUsed": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "diskPersistentTotal": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "diskPersistentUsed": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "load1": {
+            "type": "number"
+          },
+          "load15": {
+            "type": "number"
+          },
+          "load5": {
+            "type": "number"
+          },
+          "memoryTotal": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "memoryUsed": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "parachuteDiskEphemeralActivated": {
+            "type": "boolean"
+          },
+          "parachuteDiskEphemeralTotal": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "parachuteDiskEphemeralUsed": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "parachuteDiskEphemeralUsedPercent": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "parachuteDiskEphemeralUsedThreshold": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "parachuteDiskPersistentActivated": {
+            "type": "boolean"
+          },
+          "parachuteDiskPersistentTotal": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "parachuteDiskPersistentUsed": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "parachuteDiskPersistentUsedPercent": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "parachuteDiskPersistentUsedThreshold": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "load1",
+          "load5",
+          "load15",
+          "memoryTotal",
+          "memoryUsed",
+          "diskPersistentTotal",
+          "diskPersistentUsed",
+          "parachuteDiskPersistentTotal",
+          "parachuteDiskPersistentUsed",
+          "parachuteDiskPersistentUsedPercent",
+          "parachuteDiskPersistentUsedThreshold",
+          "parachuteDiskPersistentActivated",
+          "diskEphemeralTotal",
+          "diskEphemeralUsed",
+          "parachuteDiskEphemeralTotal",
+          "parachuteDiskEphemeralUsed",
+          "parachuteDiskEphemeralUsedPercent",
+          "parachuteDiskEphemeralUsedThreshold",
+          "parachuteDiskEphemeralActivated",
+          "cpuLoadPercent"
+        ],
+        "type": "object"
+      },
+      "Instance": {
+        "properties": {
+          "cfGuid": {
+            "type": "string"
+          },
+          "cfOrganizationGuid": {
+            "type": "string"
+          },
+          "cfSpaceGuid": {
+            "type": "string"
+          },
+          "dashboardUrl": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": "string"
+          },
+          "instanceId": {
+            "type": "string"
+          },
+          "lastOperation": {
+            "$ref": "#/components/schemas/InstanceLastOperation"
+          },
+          "name": {
+            "type": "string"
+          },
+          "offeringName": {
+            "deprecated": true,
+            "type": "string"
+          },
+          "offeringVersion": {
+            "type": "string"
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/Object"
+          },
+          "planId": {
+            "type": "string"
+          },
+          "planName": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "failed",
+              "stopped",
+              "creating",
+              "deleting",
+              "updating"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "planId",
+          "planName",
+          "offeringName",
+          "offeringVersion",
+          "dashboardUrl",
+          "cfGuid",
+          "cfSpaceGuid",
+          "cfOrganizationGuid",
+          "imageUrl",
+          "parameters",
+          "lastOperation"
+        ],
+        "type": "object"
+      },
+      "InstanceLastOperation": {
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "in progress",
+              "succeeded",
+              "failed"
+            ],
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "create",
+              "update",
+              "delete"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "state",
+          "type",
+          "description"
+        ],
+        "type": "object"
+      },
+      "InstanceParameters": {
+        "properties": {
+          "down-after-milliseconds": {
+            "default": 10000,
+            "description": "The unit is milliseconds.",
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "enable_monitoring": {
+            "default": false,
+            "type": "boolean"
+          },
+          "failover-timeout": {
+            "default": 30000,
+            "description": "The unit is milliseconds.",
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "graphite": {
+            "description": "If you want to monitor your service with Graphite, you can set the custom parameter graphite. It expects the host and port where the Graphite metrics should be sent to.",
+            "example": "yourspace.your-graphite-endpoint.com:12345",
+            "type": "string"
+          },
+          "lazyfree-lazy-eviction": {
+            "default": "no",
+            "enum": [
+              "yes",
+              "no"
+            ],
+            "type": "string"
+          },
+          "lazyfree-lazy-expire": {
+            "default": "no",
+            "enum": [
+              "yes",
+              "no"
+            ],
+            "type": "string"
+          },
+          "lua-time-limit": {
+            "default": 5000,
+            "format": "int32",
+            "type": "integer"
+          },
+          "max_disk_threshold": {
+            "default": 80,
+            "description": "This component monitors ephemeral and persistent disk usage. If one of these disk usages reaches the default configured threshold of 80%, the a9s Parachute stops all processes on that node.",
+            "example": 90,
+            "format": "int32",
+            "type": "integer"
+          },
+          "maxclients": {
+            "default": 10000,
+            "format": "int32",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "maxmemory-policy": {
+            "default": "volatile-lru",
+            "enum": [
+              "volatile-lru",
+              "allkeys-lru",
+              "volatile-random",
+              "allkeys-random",
+              "volatile-ttl",
+              "noeviction"
+            ],
+            "type": "string"
+          },
+          "maxmemory-samples": {
+            "default": 5,
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "metrics_frequency": {
+            "default": 10,
+            "description": "Frequency of metrics being emitted in seconds",
+            "format": "int32",
+            "type": "integer"
+          },
+          "metrics_prefix": {
+            "description": "Depending on your graphite provider, you might need to prefix the metrics with a certain value, like an API key for example.",
+            "example": "my-prefix",
+            "type": "string"
+          },
+          "min-replicas-to-write": {
+            "default": 1,
+            "description": "The amount of connected replicas that are required for the primary to accept write operations. It can be set to 0 to disable it.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "min_replicas_max_lag": {
+            "default": 10,
+            "description": "The unit is seconds.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "monitoring_instance_id": {
+            "type": "string"
+          },
+          "notify-keyspace-events": {
+            "default": "",
+            "description": "The allowed value must include the following characters only: [K,E,g,$,l,s,h,z,x,e,A,t]",
+            "type": "string"
+          },
+          "repl-backlog-size": {
+            "default": "1mb",
+            "description": "Set the replication backlog size for the cluster.",
+            "type": "string"
+          },
+          "sgw_acl": {
+            "description": "Comma separated list of IP networks in CIDR notation which are allowed to access this instance.",
+            "example": "0.0.0.0/0",
+            "type": "string"
+          },
+          "snapshot": {
+            "description": "This setting must follow the original Redis configuration for RDB.",
+            "example": "['save 900 1','save 300 10']",
+            "type": "string"
+          },
+          "syslog": {
+            "example": [
+              "logs4.your-syslog-endpoint.com:54321"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "InstanceSchema": {
+        "properties": {
+          "create": {
+            "$ref": "#/components/schemas/Schema"
+          },
+          "update": {
+            "$ref": "#/components/schemas/Schema"
+          }
+        },
+        "required": [
+          "create",
+          "update"
+        ],
+        "type": "object"
+      },
+      "ListBackupsResponse": {
+        "items": {
+          "$ref": "#/components/schemas/Backup"
+        },
+        "type": "array"
+      },
+      "ListCredentialsResponse": {
+        "properties": {
+          "credentialsList": {
+            "items": {
+              "$ref": "#/components/schemas/CredentialsListItem"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "credentialsList"
+        ],
+        "type": "object"
+      },
+      "ListInstancesResponse": {
+        "properties": {
+          "instances": {
+            "items": {
+              "$ref": "#/components/schemas/Instance"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "instances"
+        ],
+        "type": "object"
+      },
+      "ListOfferingsResponse": {
+        "properties": {
+          "offerings": {
+            "items": {
+              "$ref": "#/components/schemas/Offering"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "offerings"
+        ],
+        "type": "object"
+      },
+      "ListRestoresResponse": {
+        "properties": {
+          "instanceRestores": {
+            "items": {
+              "$ref": "#/components/schemas/Restore"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "instanceRestores"
+        ],
+        "type": "object"
+      },
+      "Object": {
+        "type": "object"
+      },
+      "Offering": {
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "documentationUrl": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": "string"
+          },
+          "latest": {
+            "type": "boolean"
+          },
+          "lifecycle": {
+            "example": "deprecated",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "plans": {
+            "items": {
+              "$ref": "#/components/schemas/Plan"
+            },
+            "type": "array"
+          },
+          "quotaCount": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "schema": {
+            "$ref": "#/components/schemas/InstanceSchema"
+          },
+          "version": {
+            "example": "11",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "version",
+          "latest",
+          "description",
+          "documentationUrl",
+          "quotaCount",
+          "imageUrl",
+          "plans"
+        ],
+        "type": "object"
+      },
+      "PartialUpdateInstancePayload": {
+        "properties": {
+          "instanceName": {
+            "type": "string"
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/InstanceParameters"
+          },
+          "planId": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Plan": {
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "free": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "skuName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "skuName",
+          "description",
+          "free"
+        ],
+        "type": "object"
+      },
+      "RawCredentials": {
+        "properties": {
+          "credentials": {
+            "$ref": "#/components/schemas/Credentials"
+          }
+        },
+        "required": [
+          "credentials"
+        ],
+        "type": "object"
+      },
+      "Restore": {
+        "properties": {
+          "backup_id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "finished_at": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "triggered_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "backup_id",
+          "status",
+          "finished_at"
+        ],
+        "type": "object"
+      },
+      "Schema": {
+        "properties": {
+          "parameters": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "parameters"
+        ],
+        "type": "object"
+      },
+      "TriggerRestoreResponse": {
+        "properties": {
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "UpdateBackupsConfigPayload": {
+        "properties": {
+          "encryption_key": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateBackupsConfigResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "contact": {
+      "url": "https://docs.stackit.cloud/stackit/en/support-area-72063304.html"
+    },
+    "description": "The STACKIT Key Value Store API provides endpoints to list service offerings, manage service instances and service credentials within STACKIT portal projects.",
+    "termsOfService": "https://www.stackit.de/en/general-terms-and-conditions/terms-of-use/",
+    "title": "STACKIT Key Value Store API",
+    "version": "1.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1/projects/{projectId}/instances": {
+      "get": {
+        "description": "Get a list of available instances",
+        "operationId": "ListInstances",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListInstancesResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "get service instances list",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.instance.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Provision a service instance.",
+        "operationId": "CreateInstance",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInstancePayload"
+              }
+            }
+          },
+          "description": "Parameters for the requested service instance provision",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateInstanceResponse"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Conflict"
+          }
+        },
+        "summary": "provision",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.instance.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}": {
+      "delete": {
+        "description": "Deprovision a service instance.",
+        "operationId": "DeleteInstance",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Id of instance being deleted",
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Instance deletion is started"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "delete service instance",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.instance.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "get a service instance",
+        "operationId": "GetInstance",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/instanceId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Instance"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "410": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "get a service instance",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "patch": {
+        "description": "Update a service instance. This could be a sgw acl update or a plan upgrade.",
+        "operationId": "PartialUpdateInstance",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "id of the instance being updated",
+            "in": "path",
+            "name": "instanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartialUpdateInstancePayload"
+              }
+            }
+          },
+          "description": "Parameters for the requested update operation on service instance - sgw acl update, plan upgrade\n",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Instance update is started"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "update a service instance",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/backups": {
+      "get": {
+        "operationId": "ListBackups",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListBackupsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "get latest backup information for provided instanceId",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.proxy.read"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "operationId": "CreateBackup",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateBackupResponse"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "create a backup",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.proxy.write"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/backups-config": {
+      "patch": {
+        "description": "Update the configuration for backups for your instance.",
+        "operationId": "UpdateBackupsConfig",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBackupsConfigPayload"
+              }
+            }
+          },
+          "description": "Parameters for the requested backup configuration update",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateBackupsConfigResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "backups configuration update",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.proxy.write"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/backups/{backupId}/download": {
+      "get": {
+        "operationId": "DownloadBackup",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/backupId"
+          },
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "download backup",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.proxy.read"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/backups/{backupId}/restore": {
+      "post": {
+        "operationId": "TriggerRestore",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "$ref": "#/components/parameters/projectId"
+          },
+          {
+            "$ref": "#/components/parameters/backupId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TriggerRestoreResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "trigger a restore",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.proxy.write"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/credentials": {
+      "get": {
+        "description": "get list all credentials ids for instance",
+        "operationId": "ListCredentials",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/instanceId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListCredentialsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "get list of credentials ids",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.credential.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "description": "Create new service credentials",
+        "operationId": "CreateCredentials",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/instanceId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCredentialsPayload"
+              }
+            }
+          },
+          "description": "Parameters for requested credentials"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CredentialsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "summary": "create new credentials",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.credential.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/credentials/{credentialsId}": {
+      "delete": {
+        "description": "Delete a service credentials.",
+        "operationId": "DeleteCredentials",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "description": "Id of the credentials being deleted",
+            "in": "path",
+            "name": "credentialsId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "delete credentials by id",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.credential.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "get a service credentials by credentials id",
+        "operationId": "GetCredentials",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "description": "Credentials id of credentials to fetch",
+            "in": "path",
+            "name": "credentialsId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CredentialsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "get credentials by id",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.credential.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/metrics": {
+      "get": {
+        "operationId": "GetMetrics",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMetricsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "get latest metrics for cpu load, memory and disk usage",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.proxy.read"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/recreate": {
+      "patch": {
+        "operationId": "TriggerRecreate",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateInstanceResponse"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "trigger a recreate",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.proxy.write"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/restart": {
+      "patch": {
+        "operationId": "TriggerRestart",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateInstanceResponse"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "trigger a restart",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.proxy.write"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/instances/{instanceId}/restores": {
+      "get": {
+        "operationId": "ListRestores",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/instanceId"
+          },
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListRestoresResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "get latest restore information for provided instanceId",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.proxy.read"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/offerings": {
+      "get": {
+        "description": "Get the service offerings that the service broker offers.",
+        "operationId": "ListOfferings",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListOfferingsResponse"
+                }
+              }
+            },
+            "description": "Service plans response"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "summary": "get the service offerings",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.offerings.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://valkey.api.{region}stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "eu01.",
+          "enum": [
+            "eu01."
+          ]
+        }
+      }
+    }
+  ]
+}

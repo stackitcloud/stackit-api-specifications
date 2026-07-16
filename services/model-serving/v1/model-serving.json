@@ -1,6 +1,14 @@
 {
   "components": {
     "parameters": {
+      "labelSelector": {
+        "description": "Filter token resource by labels",
+        "in": "query",
+        "name": "label_selector",
+        "schema": {
+          "type": "string"
+        }
+      },
       "modelId": {
         "description": "model id",
         "example": "550e8400-e29b-41d4-a716-446655440000",
@@ -235,6 +243,9 @@
             "pattern": "^[0-9a-zA-Z\\s.:\\/\\-]+$",
             "type": "string"
           },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
           "name": {
             "example": "my-token",
             "maxLength": 200,
@@ -401,6 +412,33 @@
         ],
         "type": "object"
       },
+      "LabelPatch": {
+        "additionalProperties": {
+          "nullable": true,
+          "pattern": "^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])*$",
+          "type": "string"
+        },
+        "description": "Object that represents the labels of an object. Regex for keys: `^(?=.{1,63}$)([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$`. Regex for values: `^(?=.{0,63}$)(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])*$`. Providing a `null` value for a key will remove that key. Send empty object {} to remove all labels. The `stackit` prefix is reserved and cannot be used for Keys.",
+        "example": {
+          "foo": "bar"
+        },
+        "format": "json",
+        "maxProperties": 64,
+        "type": "object"
+      },
+      "Labels": {
+        "additionalProperties": {
+          "pattern": "^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])*$",
+          "type": "string"
+        },
+        "description": "Object that represents the labels of an object. Regex for keys: `^(?=.{1,63}$)([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$`. Regex for values: `^(?=.{0,63}$)(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])*$`. Providing a `null` value for a key will remove that key. Send empty object {} to remove all labels. The `stackit` prefix is reserved and cannot be used for Keys.",
+        "example": {
+          "foo": "bar"
+        },
+        "format": "json",
+        "maxProperties": 64,
+        "type": "object"
+      },
       "ListModelsResponse": {
         "properties": {
           "message": {
@@ -533,6 +571,9 @@
             "pattern": "^[0-9a-zA-Z\\s.:\\/\\-]+$",
             "type": "string"
           },
+          "labels": {
+            "$ref": "#/components/schemas/LabelPatch"
+          },
           "name": {
             "example": "my-token",
             "maxLength": 200,
@@ -574,6 +615,9 @@
           "id": {
             "format": "uuid",
             "type": "string"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
           },
           "name": {
             "example": "my-token",
@@ -627,6 +671,9 @@
           "id": {
             "format": "uuid",
             "type": "string"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
           },
           "name": {
             "example": "my-token",
@@ -694,6 +741,11 @@
       "get": {
         "description": "auth tokens for shared model in non dedicated instances",
         "operationId": "ListTokens",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/labelSelector"
+          }
+        ],
         "responses": {
           "200": {
             "content": {

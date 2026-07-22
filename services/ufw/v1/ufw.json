@@ -174,6 +174,16 @@
         },
         "style": "form"
       },
+      "ruleId": {
+        "description": "The STACKIT security rule UUID.",
+        "in": "path",
+        "name": "ruleId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
       "securityGroupId": {
         "description": "The UUID of the group.",
         "in": "query",
@@ -514,6 +524,16 @@
         },
         "type": "object"
       },
+      "SecurityRuleSuccessfullyCreatedResponse": {
+        "properties": {
+          "refId": {
+            "description": "Represents the uuid of the created rule",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "SecurityRulesResponse": {
         "properties": {
           "errors": {
@@ -661,6 +681,45 @@
         "required": [
           "cidrs"
         ]
+      },
+      "v1-update-rule-by-uuidPayload": {
+        "description": "The request body for updating a security rule.",
+        "properties": {
+          "direction": {
+            "description": "The direction of the traffic, typically \"ingress\" or \"egress\".",
+            "example": "ingress",
+            "type": "string"
+          },
+          "etherType": {
+            "description": "Specifies the bound of the rule.",
+            "example": "IPv4",
+            "type": "string"
+          },
+          "portRange": {
+            "description": "The Port range to which the rule applies.",
+            "example": "8080-8090",
+            "type": "string"
+          },
+          "protocol": {
+            "description": "The network protocol (e.g., \"TCP\", \"UDP\", \"ICMP\").",
+            "example": "TCP",
+            "type": "string"
+          },
+          "securityGroupId": {
+            "description": "The ID of the Group.",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "string"
+          },
+          "sourceIP": {
+            "description": "The IP (CIDR) to which the rule applies.",
+            "example": "0.0.0.0/0",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sourceIP"
+        ],
+        "type": "object"
       }
     }
   },
@@ -1485,6 +1544,321 @@
         "x-stackit-authorization": {
           "actions": [
             "ufw.instance.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{regionId}/rules/{ruleId}": {
+      "delete": {
+        "description": "Returns success",
+        "operationId": "v1-delete-rule-by-uuid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          },
+          {
+            "$ref": "#/components/parameters/regionId"
+          },
+          {
+            "$ref": "#/components/parameters/ruleId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityRuleResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden access. You are not allowed to delete rules from this project."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Project not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Delete rule for a project",
+        "x-stackit-authorization": {
+          "actions": [
+            "ufw.instance.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Returns the specific rule",
+        "operationId": "v1-get-rule-by-uuid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          },
+          {
+            "$ref": "#/components/parameters/regionId"
+          },
+          {
+            "$ref": "#/components/parameters/ruleId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RuleResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden access. You are not allowed to get rule from this project."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Rule not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get rules for a project",
+        "x-stackit-authorization": {
+          "actions": [
+            "ufw.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "put": {
+        "description": "Returns the updated rule for a specific project",
+        "operationId": "v1-update-rule-by-uuid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          },
+          {
+            "$ref": "#/components/parameters/regionId"
+          },
+          {
+            "$ref": "#/components/parameters/ruleId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/v1-update-rule-by-uuidPayload"
+              }
+            }
+          },
+          "description": "Request an Rule update."
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityRuleSuccessfullyCreatedResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden access. You are not allowed to update rules from this project."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Rule not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service is not available."
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Update rule for a project",
+        "x-stackit-authorization": {
+          "actions": [
+            "ufw.instance.update"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

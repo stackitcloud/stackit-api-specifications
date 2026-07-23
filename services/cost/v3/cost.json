@@ -115,6 +115,11 @@
             "format": "int32",
             "type": "integer"
           },
+          "totalQuantityDecimal": {
+            "description": "Total quantity in decimal format, returned as string to preserve precision.\nNOTE: This field will be removed in future versions and `totalQuantity` will become a decimal.\n",
+            "example": "321.1",
+            "type": "string"
+          },
           "unitLabel": {
             "description": "Label for unit",
             "example": "Giga Hours",
@@ -125,6 +130,7 @@
         },
         "required": [
           "totalQuantity",
+          "totalQuantityDecimal",
           "totalCharge",
           "totalDiscount",
           "unitLabel",
@@ -315,6 +321,11 @@
             "format": "int32",
             "type": "integer"
           },
+          "quantityDecimal": {
+            "description": "Quantity in decimal format, returned as string to preserve precision.\nNOTE: This field will be removed in future versions and `totalQuantity` will become a decimal.\n",
+            "example": "123.3",
+            "type": "string"
+          },
           "timePeriod": {
             "description": "Time period according to desired granularity",
             "format": "date",
@@ -337,7 +348,8 @@
           "timePeriod",
           "charge",
           "discount",
-          "quantity"
+          "quantity",
+          "quantityDecimal"
         ],
         "title": "Costs",
         "type": "object"
@@ -520,13 +532,13 @@
               "text/csv": {
                 "examples": {
                   "Project Costs with detailed service costs": {
-                    "value": "customerAccountId,projectId,projectName,sku,serviceName,serviceCategoryName,start,end,charge,discount,quantity,unitLabel\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku 2,service 2,bar,2022-02-28,2022-02-28,234.56789012,345.67890123,1,hour\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku name,service name,foo,2022-02-28,2022-02-28,234.56789012,345.67890123,1,giga\n"
+                    "value": "customerAccountId,projectId,projectName,sku,serviceName,serviceCategoryName,start,end,charge,discount,quantity,quantityDecimal,unitLabel\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku 2,service 2,bar,2022-02-28,2022-02-28,234.56789012,345.67890123,1,1.1,hour\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku name,service name,foo,2022-02-28,2022-02-28,234.56789012,345.67890123,1,1.1,giga\n"
                   },
                   "Project costs with report data": {
-                    "value": "customerAccountId,projectId,projectName,start,end,charge,discount,quantity\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,2022-02-28,2022-02-28,469.13578024,691.35780246,2\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,2022-03-01,2022-03-01,469.13578024,691.35780246,2\n"
+                    "value": "customerAccountId,projectId,projectName,start,end,charge,discount,quantity,quantityDecimal\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,2022-02-28,2022-02-28,469.13578024,691.35780246,2,2.1\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,2022-03-01,2022-03-01,469.13578024,691.35780246,2,2.1\n"
                   },
                   "Project costs with summarized services": {
-                    "value": "customerAccountId,projectId,projectName,sku,serviceName,serviceCategoryName,totalCharge,totalDiscount,totalQuantity,unitLabel\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku 2,service 2,bar,703.70367036,1037.03670369,3,hour\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku name,service name,foo,703.70367036,1037.03670369,3,giga\n"
+                    "value": "customerAccountId,projectId,projectName,sku,serviceName,serviceCategoryName,totalCharge,totalDiscount,totalQuantity,totalQuantityDecimal,unitLabel\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku 2,service 2,bar,703.70367036,1037.03670369,3,3.1,hour\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku name,service name,foo,703.70367036,1037.03670369,3,3.1,giga\n"
                   },
                   "Summarized Project Costs": {
                     "value": "customerAccountId,projectId,projectName,totalCharge,totalDiscount\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,1407.4073407199998,2074.07340738\n"
@@ -537,7 +549,16 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "Last-Modified": {
+                "description": "The UTC date/time when the costs were last updated.",
+                "schema": {
+                  "format": "date-time",
+                  "type": "string"
+                }
+              }
+            }
           },
           "400": {
             "content": {
@@ -660,13 +681,13 @@
               "text/csv": {
                 "examples": {
                   "Project Costs with detailed service costs": {
-                    "value": "customerAccountId,projectId,projectName,sku,serviceName,serviceCategoryName,start,end,charge,discount,quantity,unitLabel\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku 2,service 2,bar,2022-02-28,2022-02-28,234.56789012,345.67890123,1,hour\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku name,service name,foo,2022-02-28,2022-02-28,234.56789012,345.67890123,1,giga\n"
+                    "value": "customerAccountId,projectId,projectName,sku,serviceName,serviceCategoryName,start,end,charge,discount,quantity,quantityDecimal,unitLabel\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku 2,service 2,bar,2022-02-28,2022-02-28,234.56789012,345.67890123,1,1.1,hour\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku name,service name,foo,2022-02-28,2022-02-28,234.56789012,345.67890123,1,1.1,giga\n"
                   },
                   "Project costs with report data": {
-                    "value": "customerAccountId,projectId,projectName,start,end,charge,discount,quantity\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,2022-02-28,2022-02-28,469.13578024,691.35780246,2\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,2022-03-01,2022-03-01,469.13578024,691.35780246,2\n"
+                    "value": "customerAccountId,projectId,projectName,start,end,charge,discount,quantity,quantityDecimal\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,2022-02-28,2022-02-28,469.13578024,691.35780246,2,2.1\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,2022-03-01,2022-03-01,469.13578024,691.35780246,2,2.1\n"
                   },
                   "Project costs with summarized services": {
-                    "value": "customerAccountId,projectId,projectName,sku,serviceName,serviceCategoryName,totalCharge,totalDiscount,totalQuantity,unitLabel\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku 2,service 2,bar,703.70367036,1037.03670369,3,hour\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku name,service name,foo,703.70367036,1037.03670369,3,giga\n"
+                    "value": "customerAccountId,projectId,projectName,sku,serviceName,serviceCategoryName,totalCharge,totalDiscount,totalQuantity,totalQuantityDecimal,unitLabel\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku 2,service 2,bar,703.70367036,1037.03670369,3,3.1,hour\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku name,service name,foo,703.70367036,1037.03670369,3,3.1,giga\n"
                   },
                   "Summarized Project Costs": {
                     "value": "customerAccountId,projectId,projectName,totalCharge,totalDiscount\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,1407.4073407199998,2074.07340738\n"
@@ -677,7 +698,16 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "Last-Modified": {
+                "description": "The UTC date/time when the costs were last updated.",
+                "schema": {
+                  "format": "date-time",
+                  "type": "string"
+                }
+              }
+            }
           },
           "400": {
             "content": {
@@ -797,13 +827,13 @@
               "text/csv": {
                 "examples": {
                   "Project Costs with detailed service costs": {
-                    "value": "customerAccountId,projectId,projectName,sku,serviceName,serviceCategoryName,start,end,charge,discount,quantity,unitLabel\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku 2,service 2,bar,2022-02-28,2022-02-28,234.56789012,345.67890123,1,hour\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku name,service name,foo,2022-02-28,2022-02-28,234.56789012,345.67890123,1,giga\n"
+                    "value": "customerAccountId,projectId,projectName,sku,serviceName,serviceCategoryName,start,end,charge,discount,quantity,quantityDecimal,unitLabel\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku 2,service 2,bar,2022-02-28,2022-02-28,234.56789012,345.67890123,1,1.1,hour\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku name,service name,foo,2022-02-28,2022-02-28,234.56789012,345.67890123,1,1.1,giga\n"
                   },
                   "Project costs with report data": {
-                    "value": "customerAccountId,projectId,projectName,start,end,charge,discount,quantity\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,2022-02-28,2022-02-28,469.13578024,691.35780246,2\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,2022-03-01,2022-03-01,469.13578024,691.35780246,2\n"
+                    "value": "customerAccountId,projectId,projectName,start,end,charge,discount,quantity,quantityDecimal\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,2022-02-28,2022-02-28,469.13578024,691.35780246,2,2.1\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,2022-03-01,2022-03-01,469.13578024,691.35780246,2,2.1\n"
                   },
                   "Project costs with summarized services": {
-                    "value": "customerAccountId,projectId,projectName,sku,serviceName,serviceCategoryName,totalCharge,totalDiscount,totalQuantity,unitLabel\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku 2,service 2,bar,703.70367036,1037.03670369,3,hour\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku name,service name,foo,703.70367036,1037.03670369,3,giga\n"
+                    "value": "customerAccountId,projectId,projectName,sku,serviceName,serviceCategoryName,totalCharge,totalDiscount,totalQuantity,totalQuantityDecimal,unitLabel\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku 2,service 2,bar,703.70367036,1037.03670369,3,3.1,hour\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,sku name,service name,foo,703.70367036,1037.03670369,3,3.1,giga\n"
                   },
                   "Summarized Project Costs": {
                     "value": "customerAccountId,projectId,projectName,totalCharge,totalDiscount\n9caede67-72ce-4ce1-be58-90b6d1216540,491c5413-f561-44a5-adae-941fcd2d7a8a,testProject,1407.4073407199998,2074.07340738\n"
@@ -814,7 +844,16 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "Last-Modified": {
+                "description": "The UTC date/time when the costs were last updated.",
+                "schema": {
+                  "format": "date-time",
+                  "type": "string"
+                }
+              }
+            }
           },
           "400": {
             "content": {

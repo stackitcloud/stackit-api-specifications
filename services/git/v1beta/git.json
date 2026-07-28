@@ -427,6 +427,11 @@
             },
             "type": "array"
           },
+          "admin_login": {
+            "default": false,
+            "description": "Enable or disable Admin Idp",
+            "type": "boolean"
+          },
           "consumed_disk": {
             "description": "How many bytes of disk space is consumed. Read Only.",
             "type": "string"
@@ -453,6 +458,9 @@
             "format": "uuid",
             "maxLength": 36,
             "type": "string"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
           },
           "name": {
             "description": "A user chosen name to distinguish multiple STACKIT Git instances.",
@@ -494,7 +502,8 @@
           "consumed_object_storage",
           "flavor",
           "acl",
-          "feature_toggle"
+          "feature_toggle",
+          "admin_login"
         ]
       },
       "InternalServerErrorResponse": {
@@ -541,18 +550,32 @@
         ]
       },
       "ListUsers": {
-        "description": "A list of STACKIT Git instance Users.",
+        "description": "A paginated list of STACKIT Git instance Users.",
         "properties": {
+          "itemsCount": {
+            "description": "Number of users returned in this page.",
+            "type": "integer"
+          },
+          "offset": {
+            "description": "Zero-based index of the first item in this page.",
+            "type": "integer"
+          },
+          "totalPages": {
+            "description": "Total number of pages available based on the fixed page size of 50.",
+            "type": "integer"
+          },
           "users": {
             "items": {
               "$ref": "#/components/schemas/User"
             },
-            "maxItems": 50,
             "type": "array"
           }
         },
         "required": [
-          "users"
+          "users",
+          "itemsCount",
+          "offset",
+          "totalPages"
         ]
       },
       "NotFoundErrorResponse": {
@@ -621,8 +644,15 @@
             ],
             "nullable": true
           },
+          "admin_login": {
+            "description": "Enable Admin IdP",
+            "type": "boolean"
+          },
           "feature_toggle": {
             "$ref": "#/components/schemas/FeatureToggle"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
           }
         },
         "type": "object"
@@ -653,29 +683,6 @@
           "op",
           "path"
         ],
-        "type": "object"
-      },
-      "PatchUserPayload": {
-        "description": "Properties to patch a Instance User. All fields are optional.",
-        "properties": {
-          "email": {
-            "description": "A user chosen email to distinguish multiple STACKIT Git instance Users.",
-            "format": "email",
-            "maxLength": 254,
-            "type": "string"
-          },
-          "name": {
-            "description": "Name of the user.",
-            "maxLength": 32,
-            "type": "string"
-          },
-          "password": {
-            "description": "A user password to allow user/pass instance login.",
-            "format": "password",
-            "maxLength": 64,
-            "type": "string"
-          }
-        },
         "type": "object"
       },
       "Pipelines": {
@@ -736,7 +743,7 @@
             "type": "string"
           },
           "description": {
-            "description": "Human-friendly description of the runtime and it's capabilities.",
+            "description": "Human-friendly description of the runtime and its capabilities.",
             "example": "A runner capable of building Docker images and runner Docker containers.",
             "type": "string"
           },
@@ -817,6 +824,29 @@
         ],
         "type": "object"
       },
+      "UpdateUserPayload": {
+        "description": "Properties to update a Instance User. All fields are optional.",
+        "properties": {
+          "email": {
+            "description": "A user chosen email to distinguish multiple STACKIT Git instance Users.",
+            "format": "email",
+            "maxLength": 254,
+            "type": "string"
+          },
+          "name": {
+            "description": "Name of the user.",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "password": {
+            "description": "A user password to allow user/pass instance login.",
+            "format": "password",
+            "maxLength": 64,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "User": {
         "description": "Describes a STACKIT Git instance User.",
         "properties": {
@@ -847,6 +877,20 @@
           "email",
           "name"
         ],
+        "type": "object"
+      },
+      "labels": {
+        "additionalProperties": {
+          "maxLength": 63,
+          "pattern": "^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])*$",
+          "type": "string"
+        },
+        "description": "Object that represents the labels of an object. Regex for keys: `^(?=.{1,63}$)([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$`. Regex for values: `^(?=.{0,63}$)(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])*$`. The `stackit-` prefix is reserved and cannot be used for Keys.",
+        "example": {
+          "my-stage": "qa",
+          "responsible": "team-red"
+        },
+        "maxProperties": 64,
         "type": "object"
       }
     }
@@ -1805,8 +1849,20 @@
     },
     "/v1beta/projects/{projectId}/instances/{instanceId}/users": {
       "get": {
-        "description": "Lists all STACKIT Git Users within an instances.\n",
+        "description": "Lists STACKIT Git Users within an instance. Supports pagination via the\noptional `page` query parameter. Each page returns up to 50 users.\n",
         "operationId": "GetUsers",
+        "parameters": [
+          {
+            "description": "Page number for pagination (1-indexed). Each page contains up to 50 users.",
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -2041,8 +2097,8 @@
         }
       ],
       "patch": {
-        "description": "Patches the Instance User.\n",
-        "operationId": "PatchUser",
+        "description": "Updates the Instance User.\n",
+        "operationId": "UpdateUser",
         "requestBody": {
           "content": {
             "application/json": {
@@ -2052,7 +2108,7 @@
                 "password": "my-new-password"
               },
               "schema": {
-                "$ref": "#/components/schemas/PatchUserPayload"
+                "$ref": "#/components/schemas/UpdateUserPayload"
               }
             }
           },
@@ -2099,7 +2155,7 @@
             "description": "Internal server error."
           }
         },
-        "summary": "Patch Instance User.",
+        "summary": "Update Instance User.",
         "x-stackit-authorization": {
           "actions": [
             "git.instance.update"

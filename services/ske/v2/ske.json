@@ -54,6 +54,21 @@
         ],
         "type": "string"
       },
+      "ApplicationLoadBalancer": {
+        "example": {
+          "enabled": true
+        },
+        "properties": {
+          "enabled": {
+            "description": "Enables the application load balancer extension.\n⚠️ Note: This feature is in private preview. Enabling application load balancer extension is only possible for enabled accounts. Otherwise the request will be rejected.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "type": "object"
+      },
       "Audit": {
         "example": {
           "enabled": true
@@ -80,6 +95,22 @@
         },
         "type": "object"
       },
+      "CNI": {
+        "description": "CNI to use for the cluster. Only one type of CNI can be used. The type of CNI is immutable after creation. Defaults to calico",
+        "example": {
+          "calico": "{}"
+        },
+        "properties": {
+          "calico": {
+            "description": "configuration options for the Calico CNI",
+            "type": "object",
+            "x-stackit-sdk": {
+              "schema-name": "CalicoConfig"
+            }
+          }
+        },
+        "type": "object"
+      },
       "CRI": {
         "example": {
           "name": "containerd"
@@ -93,6 +124,10 @@
             "type": "string"
           }
         },
+        "type": "object"
+      },
+      "CalicoConfig": {
+        "description": "configuration options for the Calico CNI",
         "type": "object"
       },
       "Cluster": {
@@ -115,6 +150,9 @@
                 "allowedCidrs",
                 "allowedCidrs"
               ],
+              "enabled": true
+            },
+            "applicationLoadBalancer": {
               "enabled": true
             },
             "dns": {
@@ -150,6 +188,9 @@
           "kubernetes": {
             "version": "version"
           },
+          "labels": {
+            "environment": "prod"
+          },
           "maintenance": {
             "autoUpdate": {
               "kubernetesVersion": true,
@@ -162,6 +203,9 @@
           },
           "name": "name",
           "network": {
+            "cni": {
+              "calico": "{}"
+            },
             "controlPlane": {
               "accessScope": "PUBLIC"
             },
@@ -463,6 +507,17 @@
           "kubernetes": {
             "$ref": "#/components/schemas/Kubernetes"
           },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Labels are key-value pairs. Keys may contain domain prefix separated by a slash(/) and must begin with an alphanumerical character. Values may be empty and if not empty, they must begin and end with an alphanumerical character. Keys can be between 1-314 characters long, whereas values can be 0-63 characters long.",
+            "example": {
+              "environment": "prod"
+            },
+            "title": "User-specified labels on the Cluster object",
+            "type": "object"
+          },
           "maintenance": {
             "$ref": "#/components/schemas/Maintenance"
           },
@@ -687,6 +742,17 @@
           "kubernetes": {
             "$ref": "#/components/schemas/Kubernetes"
           },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Labels are key-value pairs. Keys may contain domain prefix separated by a slash(/) and must begin with an alphanumerical character. Values may be empty and if not empty, they must begin and end with an alphanumerical character. Keys can be between 1-314 characters long, whereas values can be 0-63 characters long.",
+            "example": {
+              "environment": "prod"
+            },
+            "title": "User-specified labels on the Cluster object",
+            "type": "object"
+          },
           "maintenance": {
             "$ref": "#/components/schemas/Maintenance"
           },
@@ -768,7 +834,7 @@
           "zones": {
             "description": "Array of domain filters for ExternalDNS, e.g., *.runs.onstackit.cloud.",
             "items": {
-              "pattern": "^(([a-z0-9]|[a-z0-9][a-z0-9\\\\-]*[a-z0-9])\\\\.)*([a-z0-9]|[a-z0-9][a-z0-9\\\\-]*[a-z0-9])\\\\.?$",
+              "pattern": "^(([a-z0-9]|[a-z0-9][a-z0-9\\-]*[a-z0-9])\\.)*([a-z0-9]|[a-z0-9][a-z0-9\\-]*[a-z0-9])\\.?$",
               "type": "string"
             },
             "maxItems": 20,
@@ -879,6 +945,9 @@
             ],
             "enabled": true
           },
+          "applicationLoadBalancer": {
+            "enabled": true
+          },
           "dns": {
             "enabled": true,
             "gatewayApi": true,
@@ -898,6 +967,9 @@
         "properties": {
           "acl": {
             "$ref": "#/components/schemas/ACL"
+          },
+          "applicationLoadBalancer": {
+            "$ref": "#/components/schemas/ApplicationLoadBalancer"
           },
           "dns": {
             "$ref": "#/components/schemas/DNS"
@@ -951,13 +1023,13 @@
         "properties": {
           "end": {
             "format": "crontab",
-            "pattern": "(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\\\\d+(ns|us|µs|ms|s|m|h))+)|((((\\\\d+,)+\\\\d+|(\\\\d+(\\\\/|-)\\\\d+)|\\\\d+|\\\\*) ?){5,7})",
+            "pattern": "(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\\d+(ns|us|µs|ms|s|m|h))+)|((((\\d+,)+\\d+|(\\d+(\\/|-)\\d+)|\\d+|\\*) ?){5,7})",
             "title": "End time of cluster hibernation, in crontab syntax; this is the time the cluster will be woken up",
             "type": "string"
           },
           "start": {
             "format": "crontab",
-            "pattern": "(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\\\\d+(ns|us|µs|ms|s|m|h))+)|((((\\\\d+,)+\\\\d+|(\\\\d+(\\\\/|-)\\\\d+)|\\\\d+|\\\\*) ?){5,7})",
+            "pattern": "(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\\d+(ns|us|µs|ms|s|m|h))+)|((((\\d+,)+\\d+|(\\d+(\\/|-)\\d+)|\\d+|\\*) ?){5,7})",
             "title": "Start time of cluster hibernation, in crontab syntax",
             "type": "string"
           },
@@ -1120,6 +1192,9 @@
                   ],
                   "enabled": true
                 },
+                "applicationLoadBalancer": {
+                  "enabled": true
+                },
                 "dns": {
                   "enabled": true,
                   "gatewayApi": true,
@@ -1153,6 +1228,9 @@
               "kubernetes": {
                 "version": "version"
               },
+              "labels": {
+                "environment": "prod"
+              },
               "maintenance": {
                 "autoUpdate": {
                   "kubernetesVersion": true,
@@ -1165,6 +1243,9 @@
               },
               "name": "name",
               "network": {
+                "cni": {
+                  "calico": "{}"
+                },
                 "controlPlane": {
                   "accessScope": "PUBLIC"
                 },
@@ -1471,6 +1552,9 @@
                   ],
                   "enabled": true
                 },
+                "applicationLoadBalancer": {
+                  "enabled": true
+                },
                 "dns": {
                   "enabled": true,
                   "gatewayApi": true,
@@ -1504,6 +1588,9 @@
               "kubernetes": {
                 "version": "version"
               },
+              "labels": {
+                "environment": "prod"
+              },
               "maintenance": {
                 "autoUpdate": {
                   "kubernetesVersion": true,
@@ -1516,6 +1603,9 @@
               },
               "name": "name",
               "network": {
+                "cni": {
+                  "calico": "{}"
+                },
                 "controlPlane": {
                   "accessScope": "PUBLIC"
                 },
@@ -1923,7 +2013,7 @@
             "type": "string"
           },
           "version": {
-            "pattern": "^\\d+\\.\\d+\\.\\d+$",
+            "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$",
             "title": "Image version",
             "type": "string"
           }
@@ -2008,12 +2098,18 @@
       },
       "Network": {
         "example": {
+          "cni": {
+            "calico": "{}"
+          },
           "controlPlane": {
             "accessScope": "PUBLIC"
           },
           "id": "id"
         },
         "properties": {
+          "cni": {
+            "$ref": "#/components/schemas/CNI"
+          },
           "controlPlane": {
             "$ref": "#/components/schemas/v2ControlPlaneNetwork"
           },

@@ -39,7 +39,11 @@
             "$ref": "#/components/schemas/Network"
           },
           "registry": {
-            "$ref": "#/components/schemas/ApplicationRegistry"
+            "description": "Image registry configuration for the application.",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationRegistry"
+            },
+            "type": "array"
           },
           "runtimeStatus": {
             "$ref": "#/components/schemas/RuntimeStatus"
@@ -53,6 +57,10 @@
               "$ref": "#/components/schemas/ApplicationSecret"
             },
             "type": "array"
+          },
+          "stopped": {
+            "description": "Indicates if the application resources are stopped.",
+            "type": "boolean"
           }
         },
         "required": [
@@ -64,6 +72,30 @@
         "type": "object"
       },
       "ApplicationRegistry": {
+        "properties": {
+          "credentials": {
+            "$ref": "#/components/schemas/ApplicationRegistryCredentialsAuth"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ApplicationRegistryAuthType"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "ApplicationRegistry defines the credentials to authenticate to a registry",
+        "type": "object"
+      },
+      "ApplicationRegistryAuthType": {
+        "default": "AUTH_TYPE_NONE",
+        "enum": [
+          "AUTH_TYPE_NONE",
+          "AUTH_TYPE_CREDENTIALS"
+        ],
+        "title": "- AUTH_TYPE_NONE: Used as none required.\n - AUTH_TYPE_CREDENTIALS: Credentials authentication type",
+        "type": "string"
+      },
+      "ApplicationRegistryCredentialsAuth": {
         "properties": {
           "password": {
             "description": "Password to authenticate to the registry.\nOmit or set to null to indicate deletion in updates.",
@@ -82,7 +114,6 @@
           "url",
           "user"
         ],
-        "title": "ApplicationRegistry defines the credentials to authenticate to a registry",
         "type": "object"
       },
       "ApplicationSecret": {
@@ -139,6 +170,10 @@
           },
           "status": {
             "$ref": "#/components/schemas/CurrentStatus"
+          },
+          "stopped": {
+            "description": "Indicates if the application resources are stopped.",
+            "type": "boolean"
           },
           "url": {
             "description": "Application's published URL.",
@@ -251,7 +286,11 @@
             "$ref": "#/components/schemas/Network"
           },
           "registry": {
-            "$ref": "#/components/schemas/ApplicationRegistry"
+            "description": "Image registry configuration for the application.",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationRegistry"
+            },
+            "type": "array"
           },
           "runtimeStatus": {
             "$ref": "#/components/schemas/RuntimeStatus"
@@ -265,6 +304,10 @@
               "$ref": "#/components/schemas/ApplicationSecret"
             },
             "type": "array"
+          },
+          "stopped": {
+            "description": "Indicates if the application resources are stopped.",
+            "type": "boolean"
           }
         },
         "required": [
@@ -666,7 +709,11 @@
             "$ref": "#/components/schemas/Network"
           },
           "registry": {
-            "$ref": "#/components/schemas/ApplicationRegistry"
+            "description": "Image registry configuration for the application.",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationRegistry"
+            },
+            "type": "array"
           },
           "runtimeStatus": {
             "$ref": "#/components/schemas/RuntimeStatus"
@@ -680,6 +727,10 @@
               "$ref": "#/components/schemas/ApplicationSecret"
             },
             "type": "array"
+          },
+          "stopped": {
+            "description": "Indicates if the application resources are stopped.",
+            "type": "boolean"
           }
         },
         "required": [

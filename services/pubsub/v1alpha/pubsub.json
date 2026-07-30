@@ -1,16 +1,6 @@
 {
   "components": {
     "parameters": {
-      "emailAddress": {
-        "description": "Unique identifier of a user or service account.",
-        "in": "path",
-        "name": "emailAddress",
-        "required": true,
-        "schema": {
-          "maxLength": 254,
-          "type": "string"
-        }
-      },
       "force": {
         "description": "If true, deletes the topic and all its active subscriptions (cascading delete). \nIf false (default), the operation returns a 409 conflict if active subscriptions exist.\n",
         "in": "query",
@@ -142,6 +132,9 @@
             "pattern": "^[a-zA-Z0-9 -]*$",
             "type": "string"
           },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
+          },
           "settings": {
             "$ref": "#/components/schemas/subscriptionSettings"
           }
@@ -164,6 +157,9 @@
             "pattern": "^[a-zA-Z0-9 -]*$",
             "type": "string"
           },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
+          },
           "settings": {
             "$ref": "#/components/schemas/topicSettings"
           }
@@ -172,7 +168,50 @@
           "displayName"
         ]
       },
-      "listEmailAdressesResponse": {
+      "grant-subscription-subscriber-accessPayload": {
+        "properties": {
+          "emailAddress": {
+            "description": "A single RFC 5322 compliant email address.",
+            "example": "jane.doe@example.com",
+            "format": "email",
+            "maxLength": 254,
+            "type": "string"
+          }
+        },
+        "required": [
+          "emailAddress"
+        ]
+      },
+      "grant-topic-publisher-accessPayload": {
+        "properties": {
+          "emailAddress": {
+            "description": "A single RFC 5322 compliant email address.",
+            "example": "jane.doe@example.com",
+            "format": "email",
+            "maxLength": 254,
+            "type": "string"
+          }
+        },
+        "required": [
+          "emailAddress"
+        ]
+      },
+      "labels": {
+        "additionalProperties": {
+          "maxLength": 63,
+          "nullable": true,
+          "type": "string"
+        },
+        "description": "Labels are key-value pairs used to group and organize subsets of resources.\n\n**Key constraints:**\n- May contain an optional domain prefix separated by a slash (`/`).\n- The domain prefix must be less than or equal to 250 characters and a valid DNS subdomain containing only lowercase alphanumerics (`[a-z0-9]`) and dashes (`-`), separated by dots (`.`).\n- The name part (excluding the domain prefix) must be between 1 and 63 characters long.\n- The name part must begin and end with an alphanumeric character (`[a-z0-9A-Z]`).\n- The name part may contain dashes (`-`), underscores (`_`), dots (`.`), and alphanumerics in between.\n- Keys starting with the prefix `stackit-` or having a domain prefix of `stackit.cloud` (including its subdomains, e.g., `*.stackit.cloud/`) are reserved for system use.\n\n**Value constraints:**\n- Must be less than or equal to 63 characters long (can be empty).\n- Must begin and end with an alphanumeric character (`[a-z0-9A-Z]`) if not empty.\n- May contain dashes (`-`), underscores (`_`), dots (`.`), and alphanumerics in between.\n\n**Count constraint:**\n- A maximum of 64 labels can be applied per resource. Restricted labels are excluded from this count.\n",
+        "example": {
+          "empty-value-label": "",
+          "environment": "production",
+          "project": "PubSub"
+        },
+        "maxProperties": 64,
+        "type": "object"
+      },
+      "listEmailAddressesResponse": {
         "properties": {
           "emailAddresses": {
             "items": {
@@ -250,6 +289,9 @@
             "format": "uuid",
             "type": "string"
           },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
+          },
           "settings": {
             "$ref": "#/components/schemas/subscriptionSettings"
           },
@@ -316,6 +358,9 @@
             "minLength": 36,
             "type": "string"
           },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
+          },
           "settings": {
             "$ref": "#/components/schemas/topicSettings"
           },
@@ -361,15 +406,59 @@
             "maxItems": 100,
             "type": "array"
           },
+          "metrics": {
+            "default": false,
+            "description": "Enables or disables metrics collection for the topic.",
+            "type": "boolean"
+          },
           "retention": {
             "default": "168h",
             "description": "The maximum length of time a message is persisted in storage. \nMessages older than this duration are automatically discarded/deleted.\n\n**Format:**\nMust be a scalar duration: a number (integer or decimal) followed by a unit ('s', 'm', or 'h').\n\n**Constraints:**\n- **Minimum:** \"1s\"\n- **Maximum:** \"168h\" (7 days)\n",
             "example": "24h",
             "pattern": "^[0-9]+(\\.[0-9]+)?(s|m|h)$",
             "type": "string"
+          },
+          "serviceLogs": {
+            "default": false,
+            "description": "Enables or disables sending of service logs for the topic.",
+            "type": "boolean"
           }
         },
         "type": "object"
+      },
+      "update-publisher-accessPayload": {
+        "properties": {
+          "emailAddresses": {
+            "description": "A list of valid subscriber email addresses.",
+            "items": {
+              "description": "A single RFC 5322 compliant email address.",
+              "example": "jane.doe@example.com",
+              "format": "email",
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "emailAddresses"
+        ]
+      },
+      "update-subscription-subscriber-accessPayload": {
+        "properties": {
+          "emailAddresses": {
+            "description": "A list of valid subscriber email addresses.",
+            "items": {
+              "description": "A single RFC 5322 compliant email address.",
+              "example": "jane.doe@example.com",
+              "format": "email",
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "emailAddresses"
+        ]
       },
       "update-subscriptionPayload": {
         "properties": {
@@ -384,6 +473,9 @@
             "minLength": 1,
             "pattern": "^[a-zA-Z0-9 -]*$",
             "type": "string"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
           },
           "settings": {
             "$ref": "#/components/schemas/subscriptionSettings"
@@ -403,6 +495,9 @@
             "minLength": 1,
             "pattern": "^[a-zA-Z0-9 -]*$",
             "type": "string"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/labels"
           },
           "settings": {
             "$ref": "#/components/schemas/topicSettings"
@@ -686,6 +781,44 @@
       }
     },
     "/v1alpha/projects/{projectId}/regions/{regionId}/topics/{topicId}/publishers": {
+      "delete": {
+        "description": "Revokes all email-addresses access to publish to the given topic.",
+        "operationId": "revoke-topic-publisher-access",
+        "responses": {
+          "202": {
+            "description": "Access to publish to the given topic will be revoked."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "422": {
+            "$ref": "#/components/responses/unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/tooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "pubsub.topic.publisher.remove"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
       "get": {
         "description": "Returns a list of emailAddresses that are allowed to publish to the given topic.",
         "operationId": "list-topic-publishers",
@@ -694,7 +827,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/listEmailAdressesResponse"
+                  "$ref": "#/components/schemas/listEmailAddressesResponse"
                 }
               }
             },
@@ -738,64 +871,20 @@
         {
           "$ref": "#/components/parameters/topicId"
         }
-      ]
-    },
-    "/v1alpha/projects/{projectId}/regions/{regionId}/topics/{topicId}/publishers/{emailAddress}": {
-      "delete": {
-        "description": "Revokes an emailAddress access to publish to the given topic.",
-        "operationId": "revoke-topic-publisher-access",
-        "responses": {
-          "202": {
-            "description": "Access to publish to the given topic will be revoked."
-          },
-          "400": {
-            "$ref": "#/components/responses/badRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/notFound"
-          },
-          "422": {
-            "$ref": "#/components/responses/unprocessable"
-          },
-          "429": {
-            "$ref": "#/components/responses/tooManyRequests"
-          },
-          "500": {
-            "$ref": "#/components/responses/internalServerError"
-          }
-        },
-        "x-stackit-authorization": {
-          "actions": [
-            "pubsub.topic.publisher.remove"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project"
-        }
-      },
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/projectId"
-        },
-        {
-          "$ref": "#/components/parameters/regionId"
-        },
-        {
-          "$ref": "#/components/parameters/topicId"
-        },
-        {
-          "$ref": "#/components/parameters/emailAddress"
-        }
       ],
-      "put": {
+      "patch": {
         "description": "Grants an emailAddress access to publish to the given topic.",
         "operationId": "grant-topic-publisher-access",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/grant-topic-publisher-accessPayload"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "202": {
             "description": "Access to publish to the given topic will be granted."
@@ -825,6 +914,54 @@
         "x-stackit-authorization": {
           "actions": [
             "pubsub.topic.publisher.add"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "put": {
+        "description": "Updates the access list of email-addresses to publish to the given topic.",
+        "operationId": "update-publisher-access",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/update-publisher-accessPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Access to publish to the given topic will be granted."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "422": {
+            "$ref": "#/components/responses/unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/tooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "pubsub.topic.publisher.update"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",
@@ -1109,6 +1246,44 @@
       }
     },
     "/v1alpha/projects/{projectId}/regions/{regionId}/topics/{topicId}/subscriptions/{subscriptionId}/subscribers": {
+      "delete": {
+        "description": "Revokes all email-addresses access to pull from the given subscription.",
+        "operationId": "revoke-subscription-subscriber-access",
+        "responses": {
+          "202": {
+            "description": "Access to pull from the given subscription will be revoked."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "422": {
+            "$ref": "#/components/responses/unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/tooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "pubsub.subscription.subscriber.remove"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
       "get": {
         "description": "Returns a list of emailAddresses that are allowed to pull from the given subscription.",
         "operationId": "list-subscription-subscribers",
@@ -1117,7 +1292,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/listEmailAdressesResponse"
+                  "$ref": "#/components/schemas/listEmailAddressesResponse"
                 }
               }
             },
@@ -1164,15 +1339,23 @@
         {
           "$ref": "#/components/parameters/subscriptionId"
         }
-      ]
-    },
-    "/v1alpha/projects/{projectId}/regions/{regionId}/topics/{topicId}/subscriptions/{subscriptionId}/subscribers/{emailAddress}": {
-      "delete": {
-        "description": "Revokes an emailAddress access to pull from the given subscription.",
-        "operationId": "revoke-subscription-subscriber-access",
+      ],
+      "patch": {
+        "description": "Grants an emailAddress access to pull from the given subscription.",
+        "operationId": "grant-subscription-subscriber-access",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/grant-subscription-subscriber-accessPayload"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "202": {
-            "description": "Access to pull from the given subscription will be revoked."
+            "description": "Access to pull from the given subscription will be granted."
           },
           "400": {
             "$ref": "#/components/responses/badRequest"
@@ -1198,33 +1381,26 @@
         },
         "x-stackit-authorization": {
           "actions": [
-            "pubsub.subscription.subscriber.remove"
+            "pubsub.subscription.subscriber.add"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",
           "resource-type": "project"
         }
       },
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/projectId"
-        },
-        {
-          "$ref": "#/components/parameters/regionId"
-        },
-        {
-          "$ref": "#/components/parameters/topicId"
-        },
-        {
-          "$ref": "#/components/parameters/subscriptionId"
-        },
-        {
-          "$ref": "#/components/parameters/emailAddress"
-        }
-      ],
       "put": {
-        "description": "Grants an emailAddress access to pull from the given subscription.",
-        "operationId": "grant-subscription-subscriber-access",
+        "description": "Updates the access list of emailAddresses to pull from the given subscription.",
+        "operationId": "update-subscription-subscriber-access",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/update-subscription-subscriber-accessPayload"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "202": {
             "description": "Access to pull from the given Subscription will be granted."
@@ -1253,7 +1429,7 @@
         },
         "x-stackit-authorization": {
           "actions": [
-            "pubsub.subscription.subscriber.add"
+            "pubsub.subscription.subscriber.update"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

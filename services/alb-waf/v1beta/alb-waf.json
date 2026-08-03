@@ -1,18 +1,20 @@
 {
   "components": {
     "schemas": {
+      "Action": {
+        "description": "The protective stance action. ACTION_DENY forces a 403 status response code.",
+        "enum": [
+          "ACTION_DENY",
+          "ACTION_PASS",
+          "ACTION_ALLOW"
+        ],
+        "example": "ACTION_DENY",
+        "type": "string"
+      },
       "Behaviour": {
         "properties": {
           "action": {
-            "description": "The protective stance action. ACTION_DENY forces a 403 status response code.",
-            "enum": [
-              "ACTION_UNSPECIFIED",
-              "ACTION_DENY",
-              "ACTION_PASS",
-              "ACTION_ALLOW"
-            ],
-            "example": "ACTION_DENY",
-            "type": "string"
+            "$ref": "#/components/schemas/Action"
           },
           "log": {
             "description": "Determines whether an entry should be generated in the security ledger upon a rule hit.",
@@ -82,16 +84,7 @@
               "TRANSFORMATION_LOWERCASE"
             ],
             "items": {
-              "enum": [
-                "TRANSFORMATION_UNSPECIFIED",
-                "TRANSFORMATION_LENGTH",
-                "TRANSFORMATION_LOWERCASE",
-                "TRANSFORMATION_NONE",
-                "TRANSFORMATION_TRIM",
-                "TRANSFORMATION_UPPERCASE",
-                "TRANSFORMATION_UTF8_TO_UNICODE"
-              ],
-              "type": "string"
+              "$ref": "#/components/schemas/Transformation"
             },
             "type": "array"
           },
@@ -108,28 +101,7 @@
       "ConditionOperator": {
         "properties": {
           "type": {
-            "description": "The operational evaluation type definition macro.",
-            "enum": [
-              "OPERATOR_UNSPECIFIED",
-              "OPERATOR_BEGINS_WITH",
-              "OPERATOR_CONTAINS",
-              "OPERATOR_ENDS_WITH",
-              "OPERATOR_EQ",
-              "OPERATOR_GE",
-              "OPERATOR_GT",
-              "OPERATOR_IP_MATCH",
-              "OPERATOR_LE",
-              "OPERATOR_LT",
-              "OPERATOR_RX",
-              "OPERATOR_STREQ",
-              "OPERATOR_STRMATCH",
-              "OPERATOR_VALIDATE_SCHEMA",
-              "OPERATOR_VALIDATE_URL_ENCODING",
-              "OPERATOR_VALIDATE_UTF8_ENCODING",
-              "OPERATOR_WITHIN"
-            ],
-            "example": "OPERATOR_BEGINS_WITH",
-            "type": "string"
+            "$ref": "#/components/schemas/Operator"
           },
           "value": {
             "description": "The text or rule regex pattern arguments applied inside the operator execution loop.",
@@ -145,34 +117,7 @@
       "ConditionVariable": {
         "properties": {
           "type": {
-            "description": "The targeted validation engine variable macro.",
-            "enum": [
-              "VARIABLE_UNSPECIFIED",
-              "VARIABLE_ARGS_GET",
-              "VARIABLE_ARGS_POST",
-              "VARIABLE_FULL_REQUEST_LENGTH",
-              "VARIABLE_MATCHED_VAR",
-              "VARIABLE_QUERY_STRING",
-              "VARIABLE_REMOTE_ADDR",
-              "VARIABLE_REMOTE_PORT",
-              "VARIABLE_REQUEST_BASENAME",
-              "VARIABLE_REQUEST_BODY",
-              "VARIABLE_REQUEST_BODY_LENGTH",
-              "VARIABLE_REQUEST_COOKIES",
-              "VARIABLE_REQUEST_HEADERS",
-              "VARIABLE_REQUEST_HEADERS_NAMES",
-              "VARIABLE_REQUEST_METHOD",
-              "VARIABLE_REQUEST_PROTOCOL",
-              "VARIABLE_REQUEST_URI_RAW",
-              "VARIABLE_RESPONSE_BODY",
-              "VARIABLE_RESPONSE_CONTENT_LENGTH",
-              "VARIABLE_RESPONSE_HEADERS",
-              "VARIABLE_RESPONSE_HEADERS_NAMES",
-              "VARIABLE_RESPONSE_PROTOCOL",
-              "VARIABLE_RESPONSE_STATUS"
-            ],
-            "example": "VARIABLE_REQUEST_HEADERS",
-            "type": "string"
+            "$ref": "#/components/schemas/Variable"
           },
           "value": {
             "description": "Optional key element context for map variables (e.g., matching a 'Host' header key).",
@@ -274,15 +219,7 @@
             "type": "string"
           },
           "type": {
-            "description": "Set the managed rule set type.",
-            "enum": [
-              "TYPE_UNSPECIFIED",
-              "TYPE_OWASP_CRS"
-            ],
-            "example": "TYPE_OWASP_CRS",
-            "pattern": "^(TYPE_OWASP_CRS)$",
-            "title": "MRS Type",
-            "type": "string"
+            "$ref": "#/components/schemas/Type"
           }
         },
         "required": [
@@ -362,15 +299,7 @@
       "GetBehaviour": {
         "properties": {
           "action": {
-            "description": "The protective stance action. ACTION_DENY forces a 403 status response code.",
-            "enum": [
-              "ACTION_UNSPECIFIED",
-              "ACTION_DENY",
-              "ACTION_PASS",
-              "ACTION_ALLOW"
-            ],
-            "example": "ACTION_DENY",
-            "type": "string"
+            "$ref": "#/components/schemas/Action"
           },
           "log": {
             "description": "Determines whether an entry should be generated in the security ledger upon a rule hit.",
@@ -383,20 +312,7 @@
             "type": "string"
           },
           "severity": {
-            "description": "Severity classification metric used by internal analytics graphs.",
-            "enum": [
-              "SEVERITY_UNSPECIFIED",
-              "SEVERITY_EMERGENCY",
-              "SEVERITY_ALERT",
-              "SEVERITY_CRITICAL",
-              "SEVERITY_ERROR",
-              "SEVERITY_WARNING",
-              "SEVERITY_NOTICE",
-              "SEVERITY_INFO",
-              "SEVERITY_DEBUG"
-            ],
-            "example": "SEVERITY_CRITICAL",
-            "type": "string"
+            "$ref": "#/components/schemas/Severity"
           }
         },
         "type": "object"
@@ -458,15 +374,7 @@
             "type": "string"
           },
           "type": {
-            "description": "Get the managed rule set type.",
-            "enum": [
-              "TYPE_UNSPECIFIED",
-              "TYPE_OWASP_CRS"
-            ],
-            "example": "TYPE_OWASP_CRS",
-            "pattern": "^(TYPE_OWASP_CRS)$",
-            "title": "MRS Type",
-            "type": "string"
+            "$ref": "#/components/schemas/Type"
           },
           "usage": {
             "$ref": "#/components/schemas/MRSUsage"
@@ -510,15 +418,7 @@
             "type": "string"
           },
           "type": {
-            "description": "Get the managed rule set type.",
-            "enum": [
-              "TYPE_UNSPECIFIED",
-              "TYPE_OWASP_CRS"
-            ],
-            "example": "TYPE_OWASP_CRS",
-            "pattern": "^(TYPE_OWASP_CRS)$",
-            "title": "MRS Type",
-            "type": "string"
+            "$ref": "#/components/schemas/Type"
           },
           "usage": {
             "$ref": "#/components/schemas/MRSUsage"
@@ -695,17 +595,7 @@
             "type": "string"
           },
           "mode": {
-            "description": "The current mode of the rule.",
-            "enum": [
-              "MODE_UNSPECIFIED",
-              "MODE_ENABLED",
-              "MODE_DISABLED",
-              "MODE_LOG_ONLY"
-            ],
-            "example": "MODE_ENABLED",
-            "pattern": "^(MODE_ENABLED|MODE_DISABLED|MODE_LOG_ONLY)$",
-            "title": "Mode",
-            "type": "string"
+            "$ref": "#/components/schemas/Mode"
           },
           "severity": {
             "description": "Impact level.",
@@ -756,20 +646,45 @@
         },
         "type": "object"
       },
+      "Mode": {
+        "description": "The current mode of the rule.",
+        "enum": [
+          "MODE_ENABLED",
+          "MODE_DISABLED",
+          "MODE_LOG_ONLY"
+        ],
+        "example": "MODE_ENABLED",
+        "pattern": "^(MODE_ENABLED|MODE_DISABLED|MODE_LOG_ONLY)$",
+        "title": "Mode",
+        "type": "string"
+      },
+      "Operator": {
+        "description": "The operational evaluation type definition macro.",
+        "enum": [
+          "OPERATOR_BEGINS_WITH",
+          "OPERATOR_CONTAINS",
+          "OPERATOR_ENDS_WITH",
+          "OPERATOR_EQ",
+          "OPERATOR_GE",
+          "OPERATOR_GT",
+          "OPERATOR_IP_MATCH",
+          "OPERATOR_LE",
+          "OPERATOR_LT",
+          "OPERATOR_RX",
+          "OPERATOR_STREQ",
+          "OPERATOR_STRMATCH",
+          "OPERATOR_VALIDATE_SCHEMA",
+          "OPERATOR_VALIDATE_URL_ENCODING",
+          "OPERATOR_VALIDATE_UTF8_ENCODING",
+          "OPERATOR_WITHIN"
+        ],
+        "example": "OPERATOR_BEGINS_WITH",
+        "type": "string"
+      },
       "PatchMRSRule": {
         "properties": {
           "mode": {
-            "description": "The current mode of the rule.",
-            "enum": [
-              "MODE_UNSPECIFIED",
-              "MODE_ENABLED",
-              "MODE_DISABLED",
-              "MODE_LOG_ONLY"
-            ],
-            "example": "MODE_LOG_ONLY",
-            "pattern": "^(MODE_ENABLED|MODE_DISABLED|MODE_LOG_ONLY)$",
-            "title": "Mode",
-            "type": "string"
+            "$ref": "#/components/schemas/Mode"
           }
         },
         "type": "object"
@@ -845,6 +760,21 @@
         },
         "type": "object"
       },
+      "Severity": {
+        "description": "Severity classification metric used by internal analytics graphs.",
+        "enum": [
+          "SEVERITY_EMERGENCY",
+          "SEVERITY_ALERT",
+          "SEVERITY_CRITICAL",
+          "SEVERITY_ERROR",
+          "SEVERITY_WARNING",
+          "SEVERITY_NOTICE",
+          "SEVERITY_INFO",
+          "SEVERITY_DEBUG"
+        ],
+        "example": "SEVERITY_CRITICAL",
+        "type": "string"
+      },
       "Status": {
         "description": "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
         "properties": {
@@ -866,6 +796,27 @@
           }
         },
         "type": "object"
+      },
+      "Transformation": {
+        "enum": [
+          "TRANSFORMATION_LENGTH",
+          "TRANSFORMATION_LOWERCASE",
+          "TRANSFORMATION_NONE",
+          "TRANSFORMATION_TRIM",
+          "TRANSFORMATION_UPPERCASE",
+          "TRANSFORMATION_UTF8_TO_UNICODE"
+        ],
+        "type": "string"
+      },
+      "Type": {
+        "description": "Set the managed rule set type.",
+        "enum": [
+          "TYPE_OWASP_CRS"
+        ],
+        "example": "TYPE_OWASP_CRS",
+        "pattern": "^(TYPE_OWASP_CRS)$",
+        "title": "MRS Type",
+        "type": "string"
       },
       "UpdateCustomRuleGroupPayload": {
         "description": "Request payload for updating an existing CRG. Replaces the rules array atomically.",
@@ -964,6 +915,35 @@
         ],
         "type": "object"
       },
+      "Variable": {
+        "description": "The targeted validation engine variable macro.",
+        "enum": [
+          "VARIABLE_ARGS_GET",
+          "VARIABLE_ARGS_POST",
+          "VARIABLE_FULL_REQUEST_LENGTH",
+          "VARIABLE_MATCHED_VAR",
+          "VARIABLE_QUERY_STRING",
+          "VARIABLE_REMOTE_ADDR",
+          "VARIABLE_REMOTE_PORT",
+          "VARIABLE_REQUEST_BASENAME",
+          "VARIABLE_REQUEST_BODY",
+          "VARIABLE_REQUEST_BODY_LENGTH",
+          "VARIABLE_REQUEST_COOKIES",
+          "VARIABLE_REQUEST_HEADERS",
+          "VARIABLE_REQUEST_HEADERS_NAMES",
+          "VARIABLE_REQUEST_METHOD",
+          "VARIABLE_REQUEST_PROTOCOL",
+          "VARIABLE_REQUEST_URI_RAW",
+          "VARIABLE_RESPONSE_BODY",
+          "VARIABLE_RESPONSE_CONTENT_LENGTH",
+          "VARIABLE_RESPONSE_HEADERS",
+          "VARIABLE_RESPONSE_HEADERS_NAMES",
+          "VARIABLE_RESPONSE_PROTOCOL",
+          "VARIABLE_RESPONSE_STATUS"
+        ],
+        "example": "VARIABLE_REQUEST_HEADERS",
+        "type": "string"
+      },
       "WAFConfigQuota": {
         "description": "WAF Config quota holds the limit and usage for Web Application Firewall configuration resources",
         "properties": {
@@ -1028,7 +1008,7 @@
     }
   },
   "info": {
-    "description": "Generate a Web Application Firewall (WAF) to use with Application Load Balancers (ALB). The name of the WAF configuration is used in the listener of the ALB. This will activate the WAF for that ALB. An ALB with a WAF can have Managed Rule Set (MRS) and in addition can have Custom Rule Group (CRG). To create a WAF one first needs to create all the configurations that are referenced in the WAF configuration. Currently this only consists of a rule configuration, which is written in Seclang. Once all configurations are created and referenced in the WAF configuration it can be used with an ALB. Currently updating a WAF configuration will not update an existing ALB until the Load Balancer VMs are restarted.",
+    "description": "### DEPRECATED! Use v1 instead.\n\nGenerate a Web Application Firewall (WAF) to use with Application Load Balancers (ALB). The name of the WAF configuration is used in the listener of the ALB. This will activate the WAF for that ALB. An ALB with a WAF can have Managed Rule Set (MRS) and in addition can have Custom Rule Group (CRG). To create a WAF one first needs to create all the configurations that are referenced in the WAF configuration. Currently this only consists of a rule configuration, which is written in Seclang. Once all configurations are created and referenced in the WAF configuration it can be used with an ALB. Currently updating a WAF configuration will not update an existing ALB until the Load Balancer VMs are restarted.",
     "title": "STACKIT Application Load Balancer Web Application Firewall API",
     "version": "1beta.0.0"
   },
@@ -1036,6 +1016,7 @@
   "paths": {
     "/v1beta/projects/{projectId}/regions/{region}/custom-rule-groups": {
       "get": {
+        "deprecated": true,
         "description": "List all existing Custom Rule Groups that are stored in the project.",
         "operationId": "ListCustomRuleGroup",
         "parameters": [
@@ -1132,6 +1113,7 @@
         }
       },
       "post": {
+        "deprecated": true,
         "description": "Creates a structured rule configuration using the abstract CRG. It can be referenced by any number of WAF configurations in the same project.",
         "operationId": "CreateCustomRuleGroup",
         "parameters": [
@@ -1223,6 +1205,7 @@
     },
     "/v1beta/projects/{projectId}/regions/{region}/custom-rule-groups/{name}": {
       "delete": {
+        "deprecated": true,
         "description": "To delete a custom rule group configuration this endpoint is used, but it is only possible to delete it if no WAF configuration is referencing it.",
         "operationId": "DeleteCustomRuleGroup",
         "parameters": [
@@ -1308,6 +1291,7 @@
         }
       },
       "get": {
+        "deprecated": true,
         "description": "Retrieves the specified SecLang custom rule configuration (CRG) structure.",
         "operationId": "GetCustomRuleGroup",
         "parameters": [
@@ -1396,6 +1380,7 @@
         }
       },
       "put": {
+        "deprecated": true,
         "description": "Replaces the rules array of an existing CRG. The CRG name is immutable and used as the resource key. Send the complete desired rule set; per-rule partial merge is not supported.",
         "operationId": "UpdateCustomRuleGroup",
         "parameters": [
@@ -1492,6 +1477,7 @@
     },
     "/v1beta/projects/{projectId}/regions/{region}/managed-rule-sets": {
       "get": {
+        "deprecated": true,
         "description": "List all existing managed rule set (MRS) configurations that are stored in the project.",
         "operationId": "ListManagedRuleSets",
         "parameters": [
@@ -1588,6 +1574,7 @@
         }
       },
       "post": {
+        "deprecated": true,
         "description": "With this endpoint a managed rule set (MRS) configuration is created and stored in this project. Currently it is only possible to enable it. This rule configuration is supposed to be referenced by a WAF configuration. It can be referenced by any number of WAF configurations in the same project.",
         "operationId": "CreateManagedRuleSet",
         "parameters": [
@@ -1680,6 +1667,7 @@
     },
     "/v1beta/projects/{projectId}/regions/{region}/managed-rule-sets/{name}": {
       "delete": {
+        "deprecated": true,
         "description": "To delete a managed rule set (MRS) configuration this endpoint is used, but it is only possible to delete it if no WAF configuration is referencing it.",
         "operationId": "DeleteManagedRuleSet",
         "parameters": [
@@ -1765,6 +1753,7 @@
         }
       },
       "get": {
+        "deprecated": true,
         "description": "To retrieve an existing managed rule set (MRS) configuration this endpoint can be used.",
         "operationId": "GetManagedRuleSet",
         "parameters": [
@@ -1853,6 +1842,7 @@
         }
       },
       "patch": {
+        "deprecated": true,
         "description": "Accepts the same structure as the GET response. Only fields provided with values will be updated.",
         "operationId": "PatchManagedRuleSet",
         "parameters": [
@@ -1948,6 +1938,7 @@
     },
     "/v1beta/projects/{projectId}/regions/{region}/quotas": {
       "get": {
+        "deprecated": true,
         "description": "Retrieves the configured WAF resource quotas for the project. Limit can be changed via service request.",
         "operationId": "GetQuota",
         "parameters": [
@@ -2027,6 +2018,7 @@
     },
     "/v1beta/projects/{projectId}/regions/{region}/wafs": {
       "get": {
+        "deprecated": true,
         "description": "To list all WAF configurations stored in a project, use this endpoint.",
         "operationId": "ListWAF",
         "parameters": [
@@ -2123,6 +2115,7 @@
         }
       },
       "post": {
+        "deprecated": true,
         "description": "This endpoint will create and store a WAF configuration in a project. The name of this WAF configuration is supposed to be used in the listener of an Application Load Balancer, which will activate this configuration and in addition it is possible to enable the managed rule set. This WAF configuration can be used by any number of Application Load Balancers in the same project. The configuration has a reference to a rule configuration. This rule configuration has to exist when trying to create a WAF configuration. Later other configuration references will be added to this object.",
         "operationId": "CreateWAF",
         "parameters": [
@@ -2215,6 +2208,7 @@
     },
     "/v1beta/projects/{projectId}/regions/{region}/wafs/{name}": {
       "delete": {
+        "deprecated": true,
         "description": "This will delete the specified WAF configuration, but only if it is not used by any Application Load Balancer in the project.",
         "operationId": "DeleteWAF",
         "parameters": [
@@ -2300,6 +2294,7 @@
         }
       },
       "get": {
+        "deprecated": true,
         "description": "This endpoint will return the specified WAF configuration.",
         "operationId": "GetWAF",
         "parameters": [
@@ -2388,6 +2383,7 @@
         }
       },
       "put": {
+        "deprecated": true,
         "description": "The update endpoint will update a stored WAF configuration in project and not yet but later will also update the Load Balancers that reference it.",
         "operationId": "UpdateWAF",
         "parameters": [

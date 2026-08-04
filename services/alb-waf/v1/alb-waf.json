@@ -22,7 +22,7 @@
             "type": "boolean"
           },
           "logMsg": {
-            "description": "Custom notification message string mapped to underlying logdata contexts. Required if log is true.",
+            "description": "Custom notification message string mapped to underlying logdata contexts.",
             "example": "This is my rule and it does stuff",
             "type": "string"
           }
@@ -307,7 +307,7 @@
             "type": "boolean"
           },
           "logMsg": {
-            "description": "Custom notification message string mapped to underlying logdata contexts. Required if log is true.",
+            "description": "Custom notification message string mapped to underlying logdata contexts.",
             "example": "This is my rule and it does stuff",
             "type": "string"
           },
@@ -318,7 +318,6 @@
         "required": [
           "action",
           "log",
-          "logMsg",
           "severity"
         ],
         "type": "object"
@@ -349,7 +348,8 @@
         },
         "required": [
           "id",
-          "description"
+          "behavior",
+          "conditions"
         ],
         "type": "object"
       },
@@ -374,7 +374,8 @@
           }
         },
         "required": [
-          "name"
+          "name",
+          "rules"
         ],
         "type": "object"
       },
@@ -477,6 +478,9 @@
             "type": "string"
           }
         },
+        "required": [
+          "quotas"
+        ],
         "type": "object"
       },
       "GetWAFResponse": {
@@ -518,9 +522,7 @@
           }
         },
         "required": [
-          "name",
-          "managedRuleSetName",
-          "customRuleGroupName"
+          "name"
         ],
         "type": "object"
       },
@@ -735,6 +737,9 @@
             "type": "object"
           }
         },
+        "required": [
+          "rules"
+        ],
         "type": "object"
       },
       "PatchManagedRuleSetPayload": {
@@ -780,6 +785,9 @@
             "type": "string"
           }
         },
+        "required": [
+          "groups"
+        ],
         "type": "object"
       },
       "Quotas": {
@@ -795,6 +803,11 @@
             "$ref": "#/components/schemas/WAFConfigQuota"
           }
         },
+        "required": [
+          "webApplicationFirewall",
+          "managedRuleSet",
+          "customRuleGroup"
+        ],
         "type": "object"
       },
       "Severity": {

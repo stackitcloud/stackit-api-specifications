@@ -1,0 +1,1584 @@
+{
+  "components": {
+    "parameters": {
+      "force": {
+        "description": "If true, deletes all child resources. If false, the resource remains in a 'deletion state' while child resources exist.",
+        "in": "query",
+        "name": "force",
+        "schema": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "functionId": {
+        "description": "The STACKIT Functions functionId",
+        "in": "path",
+        "name": "functionId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "maxLines": {
+        "description": "Maximum line output count",
+        "in": "query",
+        "name": "maxLines",
+        "schema": {
+          "default": 100,
+          "format": "int32",
+          "maximum": 10000,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "page": {
+        "description": "A page to retrieve the next page of results.",
+        "in": "query",
+        "name": "page",
+        "schema": {
+          "maxLength": 1024,
+          "type": "string"
+        }
+      },
+      "projectId": {
+        "description": "The STACKIT portal project UUID the resource is located in.",
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "pullSecretId": {
+        "description": "The identifier of the OCI registry pull secret configuration",
+        "in": "path",
+        "name": "pullSecretId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "revisionId": {
+        "description": "The identifier of the revision",
+        "in": "path",
+        "name": "revisionId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "badRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Bad Request. The data provided by the client did not match expectations."
+      },
+      "conflict": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Conflict. The resource has been modified by some other client. Please try again."
+      },
+      "error": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "The returned error response object"
+      },
+      "internalServerError": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Internal server error. The function experienced some unexpected situation."
+      },
+      "methodNotAllowed": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "The method is not allowed for the requested resource."
+      },
+      "notFound": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Not found. The resource has not been found."
+      },
+      "unauthorized": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "message": {
+                  "example": "Unauthorized",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "description": "Unauthorized. You may have provided no or wrong credentials."
+      }
+    },
+    "schemas": {
+      "CreateFunctionPayload": {
+        "description": "Represents a STACKIT Functions function.",
+        "properties": {
+          "created_at": {
+            "description": "Time the function was created.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "current_revision": {
+            "description": "The ID of the currently-deployed revision associated with this function.",
+            "type": "string"
+          },
+          "id": {
+            "description": "Unique identifier for the function.",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "name": {
+            "description": "User-defined name of the function.",
+            "type": "string"
+          },
+          "state": {
+            "description": "Status of this function's latest revision.",
+            "enum": [
+              "CREATING",
+              "ACTIVE",
+              "FAILED"
+            ],
+            "type": "string"
+          },
+          "state_error": {
+            "description": "Error message related to this function's status.",
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "Time the function was last updated.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "url": {
+            "description": "URLs that resolve to the function.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "CreatePullSecretPayload": {
+        "properties": {
+          "address": {
+            "description": "The OCI registry address.",
+            "type": "string"
+          },
+          "id": {
+            "description": "Unique identifier for the OCI registry pull secret.",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "name": {
+            "description": "Unique name for the OCI registry pull secret.",
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "password": {
+            "description": "The password for the OCI registry pull-secret.",
+            "type": "string"
+          },
+          "username": {
+            "description": "The username for the OCI registry pull-secret.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "address",
+          "username",
+          "password"
+        ],
+        "type": "object"
+      },
+      "Error": {
+        "properties": {
+          "code": {
+            "description": "The status code of the response",
+            "type": "integer"
+          },
+          "details": {
+            "$ref": "#/components/schemas/ErrorDetails"
+          },
+          "message": {
+            "description": "The error message of the response",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ErrorDetails": {
+        "items": {
+          "oneOf": [
+            {
+              "$ref": "#/components/schemas/Help"
+            },
+            {
+              "$ref": "#/components/schemas/ErrorInfo"
+            }
+          ]
+        },
+        "type": "array"
+      },
+      "ErrorInfo": {
+        "properties": {
+          "@type": {
+            "description": "The error type category",
+            "type": "string"
+          },
+          "domain": {
+            "description": "The logic grouping to which reason belongs",
+            "type": "string"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/Metadata"
+          },
+          "reason": {
+            "description": "A short description of why the error occurred",
+            "format": "[A-Z][A-Z0-9_]+[A-Z0-9]",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Function": {
+        "description": "Represents a STACKIT Functions function.",
+        "properties": {
+          "created_at": {
+            "description": "Time the function was created.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "current_revision": {
+            "description": "The ID of the currently-deployed revision associated with this function.",
+            "type": "string"
+          },
+          "id": {
+            "description": "Unique identifier for the function.",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "name": {
+            "description": "User-defined name of the function.",
+            "type": "string"
+          },
+          "state": {
+            "description": "Status of this function's latest revision.",
+            "enum": [
+              "CREATING",
+              "ACTIVE",
+              "FAILED"
+            ],
+            "type": "string"
+          },
+          "state_error": {
+            "description": "Error message related to this function's status.",
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "Time the function was last updated.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "url": {
+            "description": "URLs that resolve to the function.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "Help": {
+        "properties": {
+          "@type": {
+            "description": "The rpc type of Help object",
+            "type": "string"
+          },
+          "links": {
+            "description": "A reference to further information related to the same topic",
+            "items": {
+              "$ref": "#/components/schemas/HelpMessage"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "HelpMessage": {
+        "properties": {
+          "description": {
+            "description": "Describes what the link offers",
+            "type": "string"
+          },
+          "url": {
+            "description": "The URL of the link",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ListFunctions": {
+        "properties": {
+          "functions": {
+            "description": "List of functions.",
+            "items": {
+              "$ref": "#/components/schemas/Function"
+            },
+            "type": "array"
+          },
+          "next_page_token": {
+            "description": "Token for the next page of results.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ListPullSecrets": {
+        "properties": {
+          "next_page_token": {
+            "description": "Token for the next page of results.",
+            "type": "string"
+          },
+          "pull_secrets": {
+            "description": "List of oci registries pull secrets associated with the project.",
+            "items": {
+              "$ref": "#/components/schemas/PullSecret"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ListRevisions": {
+        "properties": {
+          "maxItems": {
+            "description": "Maximum number of items",
+            "format": "int64",
+            "type": "integer"
+          },
+          "next_page_token": {
+            "description": "Token for the next page of results.",
+            "type": "string"
+          },
+          "revisionList": {
+            "description": "List of revisions.",
+            "items": {
+              "$ref": "#/components/schemas/Revision"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "Metadata": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "description": "Error metadata returned to the client",
+        "type": "object"
+      },
+      "PullSecret": {
+        "properties": {
+          "address": {
+            "description": "The OCI registry address.",
+            "type": "string"
+          },
+          "id": {
+            "description": "Unique identifier for the OCI registry pull secret.",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "name": {
+            "description": "Unique name for the OCI registry pull secret.",
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "password": {
+            "description": "The password for the OCI registry pull-secret.",
+            "type": "string"
+          },
+          "username": {
+            "description": "The username for the OCI registry pull-secret.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "address",
+          "username",
+          "password"
+        ],
+        "type": "object"
+      },
+      "ResourceLimits": {
+        "description": "Resource utilization limitations",
+        "properties": {
+          "concurrency": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "plan": {
+            "maxLength": 4,
+            "minLength": 2,
+            "type": "string"
+          }
+        },
+        "required": [
+          "plan",
+          "concurrency"
+        ],
+        "type": "object"
+      },
+      "Revision": {
+        "description": "The function revision",
+        "properties": {
+          "created_at": {
+            "description": "Time the function was created.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "digest": {
+            "description": "A hashed fingerprint of the revision artifact.",
+            "type": "string"
+          },
+          "function_id": {
+            "description": "The ID of the function associated with this revision.",
+            "type": "string"
+          },
+          "id": {
+            "description": "The revision identifier.",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "limits": {
+            "$ref": "#/components/schemas/ResourceLimits"
+          },
+          "message": {
+            "description": "Revision message",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of the the revision. Must be unique within the function.",
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "oci_pull_secret_id": {
+            "description": "OCI Registry pull secret to use for pulling the revision's image.",
+            "type": "string"
+          },
+          "oci_reference": {
+            "description": "OCI reference for the revision.",
+            "pattern": "(:[vV]?\\d+\\.\\d+\\.\\d+(@sha256:[a-fA-F0-9]{64})?)$|((:latest)?@sha256:[a-fA-F0-9]{64})$",
+            "type": "string"
+          },
+          "state": {
+            "description": "Status of this revision.",
+            "enum": [
+              "CANCELLED",
+              "CREATING",
+              "ACTIVE",
+              "FAILED"
+            ],
+            "type": "string"
+          },
+          "state_error": {
+            "description": "Error message related to this revision.",
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "Time the function was last updated.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "variables": {
+            "description": "Variable values for this revision. Each variable must reference a variable definition on the function.",
+            "items": {
+              "$ref": "#/components/schemas/RevisionVariable"
+            },
+            "maxItems": 100,
+            "type": "array"
+          },
+          "version": {
+            "description": "The version number of the revision.",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "oci_reference",
+          "limits"
+        ],
+        "type": "object"
+      },
+      "RevisionVariable": {
+        "description": "Represents a variable value for a specific revision.",
+        "properties": {
+          "name": {
+            "description": "Name of the variable (must match a variable definition on the function).",
+            "maxLength": 255,
+            "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
+            "type": "string"
+          },
+          "value": {
+            "description": "The value of the variable. Only present for normal variables. Secrets will have a vault reference instead.",
+            "nullable": true,
+            "type": "string"
+          },
+          "vault_reference": {
+            "description": "Reference to the vault secret. Only present for secret variables.",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "UpdateFunctionPayload": {
+        "description": "Represents a STACKIT Functions function.",
+        "properties": {
+          "created_at": {
+            "description": "Time the function was created.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "current_revision": {
+            "description": "The ID of the currently-deployed revision associated with this function.",
+            "type": "string"
+          },
+          "id": {
+            "description": "Unique identifier for the function.",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "name": {
+            "description": "User-defined name of the function.",
+            "type": "string"
+          },
+          "state": {
+            "description": "Status of this function's latest revision.",
+            "enum": [
+              "CREATING",
+              "ACTIVE",
+              "FAILED"
+            ],
+            "type": "string"
+          },
+          "state_error": {
+            "description": "Error message related to this function's status.",
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "Time the function was last updated.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "url": {
+            "description": "URLs that resolve to the function.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "UpdatePullSecretPayload": {
+        "properties": {
+          "address": {
+            "description": "The OCI registry address.",
+            "type": "string"
+          },
+          "id": {
+            "description": "Unique identifier for the OCI registry pull secret.",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "name": {
+            "description": "Unique name for the OCI registry pull secret.",
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "password": {
+            "description": "The password for the OCI registry pull-secret.",
+            "type": "string"
+          },
+          "username": {
+            "description": "The username for the OCI registry pull-secret.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "address",
+          "username",
+          "password"
+        ],
+        "type": "object"
+      },
+      "UpdateRevisionPayload": {
+        "description": "The function revision",
+        "properties": {
+          "created_at": {
+            "description": "Time the function was created.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "digest": {
+            "description": "A hashed fingerprint of the revision artifact.",
+            "type": "string"
+          },
+          "function_id": {
+            "description": "The ID of the function associated with this revision.",
+            "type": "string"
+          },
+          "id": {
+            "description": "The revision identifier.",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "limits": {
+            "$ref": "#/components/schemas/ResourceLimits"
+          },
+          "message": {
+            "description": "Revision message",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of the the revision. Must be unique within the function.",
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "oci_pull_secret_id": {
+            "description": "OCI Registry pull secret to use for pulling the revision's image.",
+            "type": "string"
+          },
+          "oci_reference": {
+            "description": "OCI reference for the revision.",
+            "pattern": "(:[vV]?\\d+\\.\\d+\\.\\d+(@sha256:[a-fA-F0-9]{64})?)$|((:latest)?@sha256:[a-fA-F0-9]{64})$",
+            "type": "string"
+          },
+          "state": {
+            "description": "Status of this revision.",
+            "enum": [
+              "CANCELLED",
+              "CREATING",
+              "ACTIVE",
+              "FAILED"
+            ],
+            "type": "string"
+          },
+          "state_error": {
+            "description": "Error message related to this revision.",
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "Time the function was last updated.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "variables": {
+            "description": "Variable values for this revision. Each variable must reference a variable definition on the function.",
+            "items": {
+              "$ref": "#/components/schemas/RevisionVariable"
+            },
+            "maxItems": 100,
+            "type": "array"
+          },
+          "version": {
+            "description": "The version number of the revision.",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "oci_reference",
+          "limits"
+        ],
+        "type": "object"
+      },
+      "createFunctionRevisionPayload": {
+        "description": "The function revision",
+        "properties": {
+          "created_at": {
+            "description": "Time the function was created.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "digest": {
+            "description": "A hashed fingerprint of the revision artifact.",
+            "type": "string"
+          },
+          "function_id": {
+            "description": "The ID of the function associated with this revision.",
+            "type": "string"
+          },
+          "id": {
+            "description": "The revision identifier.",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "limits": {
+            "$ref": "#/components/schemas/ResourceLimits"
+          },
+          "message": {
+            "description": "Revision message",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of the the revision. Must be unique within the function.",
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "oci_pull_secret_id": {
+            "description": "OCI Registry pull secret to use for pulling the revision's image.",
+            "type": "string"
+          },
+          "oci_reference": {
+            "description": "OCI reference for the revision.",
+            "pattern": "(:[vV]?\\d+\\.\\d+\\.\\d+(@sha256:[a-fA-F0-9]{64})?)$|((:latest)?@sha256:[a-fA-F0-9]{64})$",
+            "type": "string"
+          },
+          "state": {
+            "description": "Status of this revision.",
+            "enum": [
+              "CANCELLED",
+              "CREATING",
+              "ACTIVE",
+              "FAILED"
+            ],
+            "type": "string"
+          },
+          "state_error": {
+            "description": "Error message related to this revision.",
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "Time the function was last updated.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "variables": {
+            "description": "Variable values for this revision. Each variable must reference a variable definition on the function.",
+            "items": {
+              "$ref": "#/components/schemas/RevisionVariable"
+            },
+            "maxItems": 100,
+            "type": "array"
+          },
+          "version": {
+            "description": "The version number of the revision.",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "oci_reference",
+          "limits"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "This API provides endpoints for managing STACKIT Functions.\n",
+    "title": "STACKIT Functions Core API",
+    "version": "1alpha"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1alpha/projects/{projectId}/functions": {
+      "get": {
+        "description": "Lists all functions.",
+        "operationId": "ListFunctions",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListFunctions"
+                }
+              }
+            },
+            "description": "List of functions."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/error"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "functions.function.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.functions"
+            ]
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        }
+      ],
+      "post": {
+        "description": "Creates a new function.",
+        "operationId": "CreateFunction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFunctionPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Function"
+                }
+              }
+            },
+            "description": "Function created successfully."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/error"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "functions.function.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.functions"
+            ]
+          }
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/functions/{functionId}": {
+      "delete": {
+        "description": "Deletes a specific function.",
+        "operationId": "DeleteFunction",
+        "responses": {
+          "204": {
+            "description": "Function deleted successfully."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/error"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "functions.function.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.functions"
+            ]
+          }
+        }
+      },
+      "get": {
+        "description": "Retrieves details of a specific function.",
+        "operationId": "GetFunction",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Function"
+                }
+              }
+            },
+            "description": "Function details retrieved successfully."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/error"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "functions.function.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.functions"
+            ]
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/functionId"
+        }
+      ],
+      "put": {
+        "description": "Updates a specific function.",
+        "operationId": "UpdateFunction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFunctionPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Function"
+                }
+              }
+            },
+            "description": "Function updated successfully."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/error"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "functions.function.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.functions"
+            ]
+          }
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/functions/{functionId}/revisions": {
+      "get": {
+        "description": "Lists all revisions.",
+        "operationId": "ListRevisions",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListRevisions"
+                }
+              }
+            },
+            "description": "List of revisions."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/error"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "functions.revision.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.functions"
+            ]
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/functionId"
+        }
+      ],
+      "post": {
+        "description": "Create a new function revision",
+        "operationId": "createFunctionRevision",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createFunctionRevisionPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Revision"
+                }
+              }
+            },
+            "description": "Function revision created successfully."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/error"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "functions.revision.create"
+          ],
+          "method-name": "CreateRevision",
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.functions"
+            ]
+          },
+          "x-stackit-sdk": null
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/functions/{functionId}/revisions/{revisionId}": {
+      "delete": {
+        "description": "Deletes a specific revision.",
+        "operationId": "DeleteRevision",
+        "responses": {
+          "204": {
+            "description": "Revision deleted successfully."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/error"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "functions.revision.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.functions"
+            ]
+          }
+        }
+      },
+      "get": {
+        "description": "Retrieves a specific revision.",
+        "operationId": "getRevision",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Revision"
+                }
+              }
+            },
+            "description": "Revision details retrieved successfully."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/error"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "functions.revision.get"
+          ],
+          "method-name": "GetRevision",
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.functions"
+            ]
+          },
+          "x-stackit-sdk": null
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/functionId"
+        },
+        {
+          "$ref": "#/components/parameters/revisionId"
+        }
+      ],
+      "put": {
+        "description": "Updates a specific revision.",
+        "operationId": "UpdateRevision",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRevisionPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Revision"
+                }
+              }
+            },
+            "description": "Revision updated successfully."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/error"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "functions.revision.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.functions"
+            ]
+          }
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/pull-secrets": {
+      "get": {
+        "description": "Returns all the current OCI image registry pull secret configurations for a project.",
+        "operationId": "ListPullSecrets",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListPullSecrets"
+                }
+              }
+            },
+            "description": "OCI registry pull secret configurations."
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/error"
+          }
+        },
+        "summary": "List OCI image registry pull secret definitions",
+        "x-stackit-authorization": {
+          "actions": [
+            "functions.registry.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.functions"
+            ]
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        }
+      ],
+      "post": {
+        "description": "Create a new OCI image registry pull secret configuration.",
+        "operationId": "CreatePullSecret",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePullSecretPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PullSecret"
+                }
+              }
+            },
+            "description": "OCI registry pull secret configuration set successfully"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/error"
+          }
+        },
+        "summary": "Create OCI image registry pull secret definition",
+        "x-stackit-authorization": {
+          "actions": [
+            "functions.registry.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.functions"
+            ]
+          }
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/pull-secrets/{pullSecretId}": {
+      "delete": {
+        "description": "Removes the OCI image pull secret registry configuration.",
+        "operationId": "DeletePullSecret",
+        "responses": {
+          "204": {
+            "description": "OCI registry pull secret configuration removed successfully"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/error"
+          }
+        },
+        "summary": "Remove OCI image registry pull secret definition",
+        "x-stackit-authorization": {
+          "actions": [
+            "functions.registry.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.functions"
+            ]
+          }
+        }
+      },
+      "get": {
+        "description": "Returns the current OCI image registry pull secret configuration.",
+        "operationId": "GetPullSecret",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PullSecret"
+                }
+              }
+            },
+            "description": "OCI registry pull secret configuration"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/error"
+          }
+        },
+        "summary": "Get OCI image registry pull secret definition",
+        "x-stackit-authorization": {
+          "actions": [
+            "functions.registry.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.functions"
+            ]
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/pullSecretId"
+        }
+      ],
+      "put": {
+        "description": "Updates the OCI image registry pull secret configuration.",
+        "operationId": "UpdatePullSecret",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePullSecretPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PullSecret"
+                }
+              }
+            },
+            "description": "OCI registry pull secret configuration updated successfully"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/error"
+          }
+        },
+        "summary": "Update OCI image registry pull secret definition",
+        "x-stackit-authorization": {
+          "actions": [
+            "functions.registry.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.functions"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://functions.api.{region}stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "eu01.",
+          "enum": [
+            "eu01."
+          ]
+        }
+      }
+    }
+  ]
+}

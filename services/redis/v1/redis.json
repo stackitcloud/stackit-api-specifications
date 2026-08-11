@@ -104,12 +104,6 @@
         ],
         "type": "object"
       },
-      "CreateBackupResponse": {
-        "items": {
-          "$ref": "#/components/schemas/CreateBackupResponseItem"
-        },
-        "type": "array"
-      },
       "CreateBackupResponseItem": {
         "properties": {
           "id": {
@@ -620,18 +614,10 @@
         "type": "object"
       },
       "ListBackupsResponse": {
-        "properties": {
-          "instanceBackups": {
-            "items": {
-              "$ref": "#/components/schemas/Backup"
-            },
-            "type": "array"
-          }
+        "items": {
+          "$ref": "#/components/schemas/Backup"
         },
-        "required": [
-          "instanceBackups"
-        ],
-        "type": "object"
+        "type": "array"
       },
       "ListCredentialsResponse": {
         "properties": {
@@ -1194,15 +1180,15 @@
           }
         ],
         "responses": {
-          "201": {
+          "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateBackupResponse"
+                  "$ref": "#/components/schemas/CreateBackupResponseItem"
                 }
               }
             },
-            "description": "Created"
+            "description": "OK"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"

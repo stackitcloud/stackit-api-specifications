@@ -51,10 +51,10 @@
           "type": "string"
         }
       },
-      "pullSecretId": {
+      "pullCredentialId": {
         "description": "The identifier of the OCI registry pull secret configuration",
         "in": "path",
-        "name": "pullSecretId",
+        "name": "pullCredentialId",
         "required": true,
         "schema": {
           "format": "uuid",
@@ -232,11 +232,11 @@
             "type": "string"
           },
           "password": {
-            "description": "The password for the OCI registry pull-secret.",
+            "description": "The password for the OCI registry pull-credentials.",
             "type": "string"
           },
           "username": {
-            "description": "The username for the OCI registry pull-secret.",
+            "description": "The username for the OCI registry pull-credentials.",
             "type": "string"
           }
         },
@@ -251,6 +251,7 @@
         "properties": {
           "code": {
             "description": "The status code of the response",
+            "format": "int32",
             "type": "integer"
           },
           "details": {
@@ -406,7 +407,7 @@
             "description": "Token for the next page of results.",
             "type": "string"
           },
-          "pull_secrets": {
+          "pull_credentials": {
             "description": "List of oci registries pull secrets associated with the project.",
             "items": {
               "$ref": "#/components/schemas/PullSecret"
@@ -467,11 +468,11 @@
             "type": "string"
           },
           "password": {
-            "description": "The password for the OCI registry pull-secret.",
+            "description": "The password for the OCI registry pull-credentials.",
             "type": "string"
           },
           "username": {
-            "description": "The username for the OCI registry pull-secret.",
+            "description": "The username for the OCI registry pull-credentials.",
             "type": "string"
           }
         },
@@ -540,7 +541,7 @@
             "minLength": 1,
             "type": "string"
           },
-          "oci_pull_secret_id": {
+          "oci_pull_credential_id": {
             "description": "OCI Registry pull secret to use for pulling the revision's image.",
             "type": "string"
           },
@@ -694,11 +695,11 @@
             "type": "string"
           },
           "password": {
-            "description": "The password for the OCI registry pull-secret.",
+            "description": "The password for the OCI registry pull-credentials.",
             "type": "string"
           },
           "username": {
-            "description": "The username for the OCI registry pull-secret.",
+            "description": "The username for the OCI registry pull-credentials.",
             "type": "string"
           }
         },
@@ -748,7 +749,7 @@
             "minLength": 1,
             "type": "string"
           },
-          "oci_pull_secret_id": {
+          "oci_pull_credential_id": {
             "description": "OCI Registry pull secret to use for pulling the revision's image.",
             "type": "string"
           },
@@ -835,7 +836,7 @@
             "minLength": 1,
             "type": "string"
           },
-          "oci_pull_secret_id": {
+          "oci_pull_credential_id": {
             "description": "OCI Registry pull secret to use for pulling the revision's image.",
             "type": "string"
           },
@@ -1342,9 +1343,9 @@
         }
       }
     },
-    "/v1alpha/projects/{projectId}/pull-secrets": {
+    "/v1alpha/projects/{projectId}/pull-credentials": {
       "get": {
-        "description": "Returns all the current OCI image registry pull secret configurations for a project.",
+        "description": "Returns all the current OCI image registry pull credential configurations for a project.",
         "operationId": "ListPullSecrets",
         "responses": {
           "200": {
@@ -1367,7 +1368,7 @@
             "$ref": "#/components/responses/error"
           }
         },
-        "summary": "List OCI image registry pull secret definitions",
+        "summary": "List OCI image registry pull credential definitions",
         "x-stackit-authorization": {
           "actions": [
             "functions.registry.list"
@@ -1388,7 +1389,7 @@
         }
       ],
       "post": {
-        "description": "Create a new OCI image registry pull secret configuration.",
+        "description": "Create a new OCI image registry pull credential configuration.",
         "operationId": "CreatePullSecret",
         "requestBody": {
           "content": {
@@ -1421,7 +1422,7 @@
             "$ref": "#/components/responses/error"
           }
         },
-        "summary": "Create OCI image registry pull secret definition",
+        "summary": "Create OCI image registry pull credential definition",
         "x-stackit-authorization": {
           "actions": [
             "functions.registry.create"
@@ -1437,7 +1438,7 @@
         }
       }
     },
-    "/v1alpha/projects/{projectId}/pull-secrets/{pullSecretId}": {
+    "/v1alpha/projects/{projectId}/pull-credentials/{pullCredentialId}": {
       "delete": {
         "description": "Removes the OCI image pull secret registry configuration.",
         "operationId": "DeletePullSecret",
@@ -1455,7 +1456,7 @@
             "$ref": "#/components/responses/error"
           }
         },
-        "summary": "Remove OCI image registry pull secret definition",
+        "summary": "Remove OCI image registry pull credential definition",
         "x-stackit-authorization": {
           "actions": [
             "functions.registry.delete"
@@ -1471,7 +1472,7 @@
         }
       },
       "get": {
-        "description": "Returns the current OCI image registry pull secret configuration.",
+        "description": "Returns the current OCI image registry pull credential configuration.",
         "operationId": "GetPullSecret",
         "responses": {
           "200": {
@@ -1494,7 +1495,7 @@
             "$ref": "#/components/responses/error"
           }
         },
-        "summary": "Get OCI image registry pull secret definition",
+        "summary": "Get OCI image registry pull credential definition",
         "x-stackit-authorization": {
           "actions": [
             "functions.registry.get"
@@ -1514,11 +1515,11 @@
           "$ref": "#/components/parameters/projectId"
         },
         {
-          "$ref": "#/components/parameters/pullSecretId"
+          "$ref": "#/components/parameters/pullCredentialId"
         }
       ],
       "put": {
-        "description": "Updates the OCI image registry pull secret configuration.",
+        "description": "Updates the OCI image registry pull credential configuration.",
         "operationId": "UpdatePullSecret",
         "requestBody": {
           "content": {
@@ -1551,7 +1552,7 @@
             "$ref": "#/components/responses/error"
           }
         },
-        "summary": "Update OCI image registry pull secret definition",
+        "summary": "Update OCI image registry pull credential definition",
         "x-stackit-authorization": {
           "actions": [
             "functions.registry.update"

@@ -744,7 +744,7 @@
             "type": "string"
           },
           "labels": {
-            "$ref": "#/components/schemas/Labels"
+            "$ref": "#/components/schemas/UpdateLabels"
           },
           "name": {
             "description": "New name for the resource container matching the regex `^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$`.",
@@ -758,7 +758,7 @@
       "PartialUpdateOrganizationPayload": {
         "properties": {
           "labels": {
-            "$ref": "#/components/schemas/Labels"
+            "$ref": "#/components/schemas/UpdateLabels"
           },
           "name": {
             "description": "The new name of the organization matching the regex `^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$`.",
@@ -778,7 +778,7 @@
             "type": "string"
           },
           "labels": {
-            "$ref": "#/components/schemas/Labels"
+            "$ref": "#/components/schemas/UpdateLabels"
           },
           "name": {
             "description": "New name for the resource container matching the regex `^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$`.",
@@ -839,6 +839,15 @@
           "creationTime"
         ],
         "title": "ProjectResponse",
+        "type": "object"
+      },
+      "UpdateLabels": {
+        "additionalProperties": {
+          "nullable": true,
+          "type": "string"
+        },
+        "description": "Key-value string pairs attached to an existing resource container. Certain labels may be enforced via organizational policies.\n\nSetting an individual label's value to `null` removes/deletes that label from the resource.\n\n* **Key:** Must match the regex `[A-ZÄÜÖa-zäüöß0-9_-]{1,64}`\n* **Value:** Must match the regex `^$|[A-ZÄÜÖa-zäüöß0-9_-]{1,64}`, or be `null` to delete the label\n\n\u003e Note: Additional naming restrictions may apply depending on your specific organization.*",
+        "title": "Labels",
         "type": "object"
       }
     }

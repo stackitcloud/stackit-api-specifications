@@ -30,6 +30,16 @@
             "description": "Human-readable display name.",
             "type": "string"
           },
+          "environmentId": {
+            "description": "Application environment ID.",
+            "readOnly": true,
+            "type": "string"
+          },
+          "environmentName": {
+            "description": "Application human-readable display name.",
+            "readOnly": true,
+            "type": "string"
+          },
           "id": {
             "description": "Application identifier, for example: 00000000-0000-0000-0000-000000000000.",
             "readOnly": true,
@@ -148,6 +158,10 @@
           },
           "displayName": {
             "description": "Application's human-readable name.",
+            "type": "string"
+          },
+          "environmentId": {
+            "description": "Environment's identifier.",
             "type": "string"
           },
           "environmentName": {
@@ -277,6 +291,16 @@
             "description": "Human-readable display name.",
             "type": "string"
           },
+          "environmentId": {
+            "description": "Application environment ID.",
+            "readOnly": true,
+            "type": "string"
+          },
+          "environmentName": {
+            "description": "Application human-readable display name.",
+            "readOnly": true,
+            "type": "string"
+          },
           "id": {
             "description": "Application identifier, for example: 00000000-0000-0000-0000-000000000000.",
             "readOnly": true,
@@ -318,15 +342,45 @@
         ],
         "type": "object"
       },
+      "CreateEnvironmentPayload": {
+        "description": "Environment describes an isolated container scope within a project.",
+        "properties": {
+          "createdAt": {
+            "description": "Creation date in RFC3339 format.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "default": {
+            "description": "Is the default environmet.",
+            "readOnly": true,
+            "type": "boolean"
+          },
+          "displayName": {
+            "description": "Human-readable display name.",
+            "type": "string"
+          },
+          "id": {
+            "description": "Environment identifier, for example: default.",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName"
+        ],
+        "type": "object"
+      },
       "CurrentStatus": {
         "default": "CURRENT_STATUS_UNSPECIFIED",
-        "description": " - CURRENT_STATUS_UNSPECIFIED: Used as zero value.\n - CURRENT_STATUS_PROGRESSING: Applications replicas are being created.\n - CURRENT_STATUS_RUNNING: Application is ready and has the desired replicas running.\n - CURRENT_STATUS_FAILED: Application is not available and has some error.\n - CURRENT_STATUS_IDLE: Application is ready but is scaled to 0 replicas.",
+        "description": " - CURRENT_STATUS_UNSPECIFIED: Used as zero value.\n - CURRENT_STATUS_PROGRESSING: Applications replicas are being created.\n - CURRENT_STATUS_RUNNING: Application is ready and has the desired replicas running.\n - CURRENT_STATUS_FAILED: Application is not available and has some error.\n - CURRENT_STATUS_IDLE: Application is ready but is scaled to 0 replicas.\n - CURRENT_STATUS_NONE: Application is stopped.",
         "enum": [
           "CURRENT_STATUS_UNSPECIFIED",
           "CURRENT_STATUS_PROGRESSING",
           "CURRENT_STATUS_RUNNING",
           "CURRENT_STATUS_FAILED",
-          "CURRENT_STATUS_IDLE"
+          "CURRENT_STATUS_IDLE",
+          "CURRENT_STATUS_NONE"
         ],
         "type": "string"
       },
@@ -422,6 +476,63 @@
         ],
         "type": "string"
       },
+      "Environment": {
+        "description": "Environment describes an isolated container scope within a project.",
+        "properties": {
+          "createdAt": {
+            "description": "Creation date in RFC3339 format.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "default": {
+            "description": "Is the default environmet.",
+            "readOnly": true,
+            "type": "boolean"
+          },
+          "displayName": {
+            "description": "Human-readable display name.",
+            "type": "string"
+          },
+          "id": {
+            "description": "Environment identifier, for example: default.",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName"
+        ],
+        "type": "object"
+      },
+      "EnvironmentSummary": {
+        "description": "Environment summary.",
+        "properties": {
+          "applicationsNumber": {
+            "description": "Amount of applications in the environment.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "createdAt": {
+            "description": "Creation date in RFC3339 format.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "default": {
+            "description": "Is the default environmet.",
+            "type": "boolean"
+          },
+          "displayName": {
+            "description": "Human-readable display name.",
+            "type": "string"
+          },
+          "id": {
+            "description": "Environment identifier, for example: default.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "Event": {
         "description": "Event defines an event line.",
         "properties": {
@@ -516,6 +627,19 @@
             "description": "Applications under the requested parent.",
             "items": {
               "$ref": "#/components/schemas/ApplicationSummary"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ListEnvironmentsResponse": {
+        "description": "ListEnvironmentsResponse contains environments and pagination metadata.",
+        "properties": {
+          "items": {
+            "description": "Environments under the requested parent.",
+            "items": {
+              "$ref": "#/components/schemas/EnvironmentSummary"
             },
             "type": "array"
           }
@@ -687,7 +811,7 @@
         "type": "object"
       },
       "UpdateApplicationPayload": {
-        "description": "Application describes a deployable multi-container workload instance.",
+        "description": "ApplicationPatch describes application patch fields.",
         "properties": {
           "containers": {
             "description": "Containers to deploy for the application.",
@@ -695,15 +819,6 @@
               "$ref": "#/components/schemas/Container"
             },
             "type": "array"
-          },
-          "displayName": {
-            "description": "Human-readable display name.",
-            "type": "string"
-          },
-          "id": {
-            "description": "Application identifier, for example: 00000000-0000-0000-0000-000000000000.",
-            "readOnly": true,
-            "type": "string"
           },
           "network": {
             "$ref": "#/components/schemas/Network"
@@ -714,9 +829,6 @@
               "$ref": "#/components/schemas/ApplicationRegistry"
             },
             "type": "array"
-          },
-          "runtimeStatus": {
-            "$ref": "#/components/schemas/RuntimeStatus"
           },
           "scaling": {
             "$ref": "#/components/schemas/Scaling"
@@ -733,12 +845,6 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "containers",
-          "displayName",
-          "scaling",
-          "network"
-        ],
         "type": "object"
       }
     }
@@ -751,6 +857,308 @@
   },
   "openapi": "3.0.3",
   "paths": {
+    "/v1alpha/projects/{projectId}/applications": {
+      "get": {
+        "operationId": "ListProjectApplications",
+        "parameters": [
+          {
+            "description": "Project to list the applications in.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListApplicationsResponse"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request. Invalid payload supplied."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Lists applications within a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.application.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/environments": {
+      "get": {
+        "operationId": "ListEnvironments",
+        "parameters": [
+          {
+            "description": "Parent project resource name to list under.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListEnvironmentsResponse"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request. Invalid payload supplied."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Lists environments within a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.environment.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "operationId": "CreateEnvironment",
+        "parameters": [
+          {
+            "description": "Parent project resource name to create under",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEnvironmentPayload"
+              }
+            }
+          },
+          "description": "Environment to create.",
+          "required": true,
+          "x-originalParamName": "environment"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Environment"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request. Invalid payload supplied."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict. Environment already exists."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Creates a new environment within a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.environment.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1alpha/projects/{projectId}/environments/{environmentId}": {
+      "get": {
+        "operationId": "GetEnvironment",
+        "parameters": [
+          {
+            "description": "Parent project resource name to fetch under.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Environment identifier, for example: default.",
+            "in": "path",
+            "name": "environmentId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Environment"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found. Environment not found."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Retrieves an environment by resource name.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.environment.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
     "/v1alpha/projects/{projectId}/environments/{environmentId}/applications": {
       "get": {
         "operationId": "ListApplications",
@@ -818,7 +1226,7 @@
             "description": "Request failed. Check the request and retry operation."
           }
         },
-        "summary": "Lists applications within a environment.",
+        "summary": "Lists applications within an environment.",
         "x-stackit-authorization": {
           "actions": [
             "sca.application.list"
@@ -1478,7 +1886,6 @@
             "description": "Request failed. Check the request and retry operation."
           }
         },
-        "summary": "Get overview of the environment.",
         "x-stackit-authorization": {
           "actions": [
             "sca.project.overview"

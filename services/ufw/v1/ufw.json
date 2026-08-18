@@ -65,15 +65,6 @@
           "type": "integer"
         }
       },
-      "offset": {
-        "description": "The offset for the rule in the instance it is associated with.",
-        "in": "query",
-        "name": "offset",
-        "schema": {
-          "format": "int32",
-          "type": "integer"
-        }
-      },
       "organizationId": {
         "description": "The STACKIT portal organization UUID the key ring is part of.",
         "in": "path",
@@ -589,100 +580,6 @@
         "type": "object"
       },
       "UpdateRulePayload": {
-        "description": "The request body for creating a new security rule.",
-        "properties": {
-          "description": {
-            "description": "A description for the rule.",
-            "example": "Allow HTTP traffic",
-            "type": "string"
-          },
-          "direction": {
-            "description": "The direction of the traffic, typically \"ingress\" or \"egress\".",
-            "example": "ingress",
-            "type": "string"
-          },
-          "etherType": {
-            "description": "Specifies the bound of the rule.",
-            "example": "IPv4",
-            "type": "string"
-          },
-          "instanceId": {
-            "description": "The ID of the product, similar to a project ID.",
-            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "type": "string"
-          },
-          "offset": {
-            "description": "Position in the list.",
-            "example": "1",
-            "format": "int32",
-            "type": "integer"
-          },
-          "portRange": {
-            "description": "The Port range to which the rule applies.",
-            "example": "8080-8090",
-            "type": "string"
-          },
-          "product": {
-            "description": "The source service (e.g., Load Balancer, Redis).",
-            "example": "Load Balancer",
-            "type": "string"
-          },
-          "protocol": {
-            "description": "The network protocol (e.g., \"TCP\", \"UDP\", \"ICMP\").",
-            "example": "TCP",
-            "type": "string"
-          },
-          "securityGroupId": {
-            "description": "The ID of the Group.",
-            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "type": "string"
-          },
-          "sourceIP": {
-            "description": "The IP (CIDR) to which the rule applies.",
-            "example": "0.0.0.0/0",
-            "type": "string"
-          },
-          "type": {
-            "description": "The type of the rule (e.g., \"ACL\", \"PublicIP\", \"SecurityRule\").",
-            "example": "ACL",
-            "type": "string"
-          }
-        },
-        "required": [
-          "product",
-          "instanceId",
-          "type",
-          "sourceIP"
-        ],
-        "type": "object"
-      },
-      "VersionResponse": {
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "version": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "updateUfwRequest": {
-        "properties": {
-          "cidrs": {
-            "description": "The list of CIDRs currently set on the instance.",
-            "items": {
-              "type": "string"
-            },
-            "maxItems": 128,
-            "type": "array"
-          }
-        },
-        "required": [
-          "cidrs"
-        ]
-      },
-      "v1-update-rule-by-uuidPayload": {
         "description": "The request body for updating a security rule.",
         "properties": {
           "direction": {
@@ -720,6 +617,32 @@
           "sourceIP"
         ],
         "type": "object"
+      },
+      "UpdateUfwRequest": {
+        "properties": {
+          "cidrs": {
+            "description": "The list of CIDRs currently set on the instance.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 128,
+            "type": "array"
+          }
+        },
+        "required": [
+          "cidrs"
+        ]
+      },
+      "VersionResponse": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "type": "object"
       }
     }
   },
@@ -733,7 +656,7 @@
     "/v1/folders/{folderId}/children": {
       "get": {
         "description": "Returns a list of containers for a specific folder",
-        "operationId": "v1-get-folder-resources",
+        "operationId": "ListFolderContainers",
         "parameters": [
           {
             "$ref": "#/components/parameters/folderId"
@@ -836,7 +759,7 @@
     "/v1/folders/{folderId}/regions/{regionId}/rules/export": {
       "get": {
         "description": "Returns a CSV file containing the rules for a specific folder",
-        "operationId": "v1-export-folder-rules",
+        "operationId": "ExportFolderRules",
         "parameters": [
           {
             "$ref": "#/components/parameters/folderId"
@@ -931,7 +854,7 @@
     "/v1/organizations/{organizationId}/children": {
       "get": {
         "description": "Returns a list of containers for a specific organization",
-        "operationId": "v1-get-organization-resources",
+        "operationId": "ListOrganizationContainers",
         "parameters": [
           {
             "$ref": "#/components/parameters/organizationId"
@@ -1034,7 +957,7 @@
     "/v1/organizations/{organizationId}/regions/{regionId}/rules/export": {
       "get": {
         "description": "Returns a CSV file containing the rules for a specific organization",
-        "operationId": "v1-export-organization-rules",
+        "operationId": "ExportOrganizationRules",
         "parameters": [
           {
             "$ref": "#/components/parameters/organizationId"
@@ -1127,112 +1050,6 @@
       }
     },
     "/v1/projects/{projectId}/regions/{regionId}/rules": {
-      "delete": {
-        "description": "Returns success",
-        "operationId": "DeleteRule",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/projectId"
-          },
-          {
-            "$ref": "#/components/parameters/regionId"
-          },
-          {
-            "$ref": "#/components/parameters/product"
-          },
-          {
-            "$ref": "#/components/parameters/instanceIdQuery"
-          },
-          {
-            "$ref": "#/components/parameters/type"
-          },
-          {
-            "$ref": "#/components/parameters/sourceIP"
-          },
-          {
-            "$ref": "#/components/parameters/offset"
-          },
-          {
-            "$ref": "#/components/parameters/securityGroupId"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SecurityRuleResponse"
-                }
-              }
-            },
-            "description": "Successful response"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Bad request"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Forbidden access. You are not allowed to get rules from this project."
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Project not found."
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Service is not available."
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "summary": "Delete rule for a project",
-        "x-stackit-authorization": {
-          "actions": [
-            "ufw.instance.delete"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project"
-        }
-      },
       "get": {
         "description": "Returns a list of rules for a specific project",
         "operationId": "ListRules",
@@ -1457,110 +1274,12 @@
           "resource-id-type": "dynamic",
           "resource-type": "project"
         }
-      },
-      "put": {
-        "description": "Returns the updated rule for a specific project",
-        "operationId": "UpdateRule",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/projectId"
-          },
-          {
-            "$ref": "#/components/parameters/regionId"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateRulePayload"
-              }
-            }
-          },
-          "description": "Request an Rule update."
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SecurityRuleResponse"
-                }
-              }
-            },
-            "description": "Successful response"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Bad request"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Forbidden access. You are not allowed to get rules from this project."
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Project not found."
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Service is not available."
-          }
-        },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "summary": "Update rule for a project",
-        "x-stackit-authorization": {
-          "actions": [
-            "ufw.instance.update"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project"
-        }
       }
     },
     "/v1/projects/{projectId}/regions/{regionId}/rules/export": {
       "get": {
         "description": "Returns a CSV file containing the rules for a specific project",
-        "operationId": "v1-export-rules",
+        "operationId": "ExportRules",
         "parameters": [
           {
             "$ref": "#/components/parameters/projectId"
@@ -1649,7 +1368,7 @@
     "/v1/projects/{projectId}/regions/{regionId}/rules/{ruleId}": {
       "delete": {
         "description": "Returns success",
-        "operationId": "v1-delete-rule-by-uuid",
+        "operationId": "DeleteRule",
         "parameters": [
           {
             "$ref": "#/components/parameters/projectId"
@@ -1750,7 +1469,7 @@
       },
       "get": {
         "description": "Returns the specific rule",
-        "operationId": "v1-get-rule-by-uuid",
+        "operationId": "GetRule",
         "parameters": [
           {
             "$ref": "#/components/parameters/projectId"
@@ -1851,7 +1570,7 @@
       },
       "put": {
         "description": "Returns the updated rule for a specific project",
-        "operationId": "v1-update-rule-by-uuid",
+        "operationId": "UpdateRule",
         "parameters": [
           {
             "$ref": "#/components/parameters/projectId"
@@ -1867,7 +1586,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/v1-update-rule-by-uuidPayload"
+                "$ref": "#/components/schemas/UpdateRulePayload"
               }
             }
           },

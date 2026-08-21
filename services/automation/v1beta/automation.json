@@ -745,19 +745,6 @@
           "id"
         ]
       },
-      "GenericInput": {
-        "additionalProperties": true,
-        "properties": {
-          "kind": {
-            "example": "Generic",
-            "type": "string"
-          }
-        },
-        "required": [
-          "kind"
-        ],
-        "type": "object"
-      },
       "GetVolumeIDsResult": {
         "properties": {
           "kind": {
@@ -1188,7 +1175,6 @@
       "VolumeAutomationInput": {
         "discriminator": {
           "mapping": {
-            "Generic": "#/components/schemas/GenericInput",
             "VolumeRecoveryPointManagement": "#/components/schemas/VolumeRecoveryPointManagementInput"
           },
           "propertyName": "kind"
@@ -1196,9 +1182,6 @@
         "oneOf": [
           {
             "$ref": "#/components/schemas/VolumeRecoveryPointManagementInput"
-          },
-          {
-            "$ref": "#/components/schemas/GenericInput"
           }
         ],
         "required": [
@@ -2242,7 +2225,6 @@
             "description": "A comma-separated list of fully qualified names of fields to be updated. Example: \"name,triggers.schedule.rrule\"",
             "in": "query",
             "name": "updateMask",
-            "required": true,
             "schema": {
               "type": "string"
             }

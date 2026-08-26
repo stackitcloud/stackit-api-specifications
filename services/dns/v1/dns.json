@@ -67,6 +67,20 @@
         },
         "type": "object"
       },
+      "CreateMoveCodePayload": {
+        "description": "options for generating a move code.",
+        "properties": {
+          "ttl": {
+            "description": "TTL is the duration for which the move code is valid, represented as seconds. Min: 1, Max: 2592000 (30 days).",
+            "example": 86400,
+            "format": "int32",
+            "maximum": 2592000,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
       "CreateRecordSetPayload": {
         "description": "RRSetPost for rr set info.",
         "properties": {
@@ -1173,6 +1187,11 @@
             "type": "string"
           },
           "state": {
+            "enum": [
+              "CREATING",
+              "CREATE_SUCCEEDED",
+              "ERROR"
+            ],
             "type": "string"
           }
         },
@@ -1192,9 +1211,6 @@
       "zone.ObservabilityExtension": {
         "properties": {
           "observabilityInstanceId": {
-            "type": "string"
-          },
-          "state": {
             "type": "string"
           }
         },
@@ -3068,6 +3084,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMoveCodePayload"
+              }
+            }
+          },
+          "description": "information about the movecode"
+        },
         "responses": {
           "200": {
             "content": {

@@ -633,15 +633,22 @@
         "type": "object"
       },
       "LoadbalancerOptionAccessControl": {
-        "description": "Use this option to limit the IP ranges that can use the Application Load Balancer.",
+        "description": "Use this option to limit the IP ranges that can use the Application Load Balancer.\n Only one of `allowed_source_ranges` or `ip_block_list_name` may be set at the same time.",
         "properties": {
           "allowedSourceRanges": {
-            "description": "Application Load Balancer is accessible only from an IP address in this range",
+            "description": "Application Load Balancer is accessible only from an IP address in this range. Mutually exclusive with `ipBlockListName`.",
             "items": {
               "type": "string"
             },
             "title": "Application Load Balancer source ranges",
             "type": "array"
+          },
+          "ipBlockListName": {
+            "description": "Reference to an IP block list by name. Traffic originating from any IP in the referenced list is denied access to the Application Load Balancer. See \"IP Lists API\" for how to manage IP block lists. Mutually exclusive with `allowedSourceRanges`.",
+            "example": "my-block-list",
+            "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,49}[0-9a-z])?$",
+            "title": "IP block list reference",
+            "type": "string"
           }
         },
         "type": "object"

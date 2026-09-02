@@ -134,6 +134,19 @@
         ],
         "type": "object"
       },
+      "ASN": {
+        "description": "Number of an Autonomous System. Both 16Bit and 32Bit ranges are supported, excluding values reserved by:\n  * RFC 7607 (0)\n  * RFC 6793 (23456, AS_TRANS)\n  * RFC 7300 (65535 and 4294967295, the \"Last ASNs\")\n",
+        "format": "int64",
+        "maximum": 4294967294,
+        "minimum": 1,
+        "not": {
+          "enum": [
+            23456,
+            65535
+          ]
+        },
+        "type": "integer"
+      },
       "AvailabilityZone": {
         "description": "Object that represents an availability zone.",
         "example": "eu01-1",
@@ -268,7 +281,7 @@
       "BGPTunnelConfig": {
         "properties": {
           "remoteAsn": {
-            "$ref": "#/components/schemas/PrivateASN"
+            "$ref": "#/components/schemas/ASN"
           }
         },
         "required": [

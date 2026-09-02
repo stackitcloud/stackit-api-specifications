@@ -154,6 +154,19 @@
         ],
         "type": "object"
       },
+      "ASN": {
+        "description": "Number of an Autonomous System. Both 16Bit and 32Bit ranges are supported, excluding values reserved by:\n  * RFC 7607 (0)\n  * RFC 6793 (23456, AS_TRANS)\n  * RFC 7300 (65535 and 4294967295, the \"Last ASNs\")\n",
+        "format": "int64",
+        "maximum": 4294967294,
+        "minimum": 1,
+        "not": {
+          "enum": [
+            23456,
+            65535
+          ]
+        },
+        "type": "integer"
+      },
       "AvailabilityZone": {
         "description": "Object that represents an availability zone.",
         "example": "eu01-1",
@@ -219,7 +232,7 @@
               "asPathContainsAny": {
                 "description": "Matches if the AS-PATH contains any one of the listed ASNs (logical OR within the list).\nTreated as an unordered set; ordering is not preserved by the storage layer. When\ncombined with firstASN, both conditions must hold (logical AND, consistent with the\nrest of the match block). If firstASN is also listed here, its presence as the first\nhop is sufficient to satisfy this list; no duplicate hop is required.\n",
                 "items": {
-                  "$ref": "#/components/schemas/PrivateASN"
+                  "$ref": "#/components/schemas/ASN"
                 },
                 "maxItems": 10,
                 "type": "array"
@@ -237,7 +250,7 @@
               "firstASN": {
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/PrivateASN"
+                    "$ref": "#/components/schemas/ASN"
                   }
                 ],
                 "description": "Matches if the first ASN (immediate neighbor) in the AS-PATH equals this ASN. Combines\nwith asPathContainsAny using logical AND: when both are set, the first ASN must equal\nfirstASN AND the path must additionally contain at least one ASN from asPathContainsAny.\n"
@@ -451,7 +464,7 @@
             "type": "string"
           },
           "remoteAsn": {
-            "$ref": "#/components/schemas/PrivateASN"
+            "$ref": "#/components/schemas/ASN"
           }
         },
         "required": [
@@ -601,7 +614,7 @@
               "asPathContainsAny": {
                 "description": "Matches if the AS-PATH contains any one of the listed ASNs (logical OR within the list).\nTreated as an unordered set; ordering is not preserved by the storage layer. When\ncombined with firstASN, both conditions must hold (logical AND, consistent with the\nrest of the match block). If firstASN is also listed here, its presence as the first\nhop is sufficient to satisfy this list; no duplicate hop is required.\n",
                 "items": {
-                  "$ref": "#/components/schemas/PrivateASN"
+                  "$ref": "#/components/schemas/ASN"
                 },
                 "maxItems": 10,
                 "type": "array"
@@ -619,7 +632,7 @@
               "firstASN": {
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/PrivateASN"
+                    "$ref": "#/components/schemas/ASN"
                   }
                 ],
                 "description": "Matches if the first ASN (immediate neighbor) in the AS-PATH equals this ASN. Combines\nwith asPathContainsAny using logical AND: when both are set, the first ASN must equal\nfirstASN AND the path must additionally contain at least one ASN from asPathContainsAny.\n"
@@ -1389,7 +1402,7 @@
               "asPathContainsAny": {
                 "description": "Matches if the AS-PATH contains any one of the listed ASNs (logical OR within the list).\nTreated as an unordered set; ordering is not preserved by the storage layer. When\ncombined with firstASN, both conditions must hold (logical AND, consistent with the\nrest of the match block). If firstASN is also listed here, its presence as the first\nhop is sufficient to satisfy this list; no duplicate hop is required.\n",
                 "items": {
-                  "$ref": "#/components/schemas/PrivateASN"
+                  "$ref": "#/components/schemas/ASN"
                 },
                 "maxItems": 10,
                 "type": "array"
@@ -1407,7 +1420,7 @@
               "firstASN": {
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/PrivateASN"
+                    "$ref": "#/components/schemas/ASN"
                   }
                 ],
                 "description": "Matches if the first ASN (immediate neighbor) in the AS-PATH equals this ASN. Combines\nwith asPathContainsAny using logical AND: when both are set, the first ASN must equal\nfirstASN AND the path must additionally contain at least one ASN from asPathContainsAny.\n"

@@ -183,10 +183,10 @@
         "type": "object"
       },
       "UploadIPListPayload": {
-        "description": "UploadIPListRequest is the request payload for creating/replacing IP List.",
+        "description": "Request payload for creating or replacing an IP list.\n\n**Limits \u0026 Restrictions:**\n- **Project Quota:** Maximum of 3 IP lists allowed per project.\n- **Payload Size:** The entire HTTP request body JSON payload is restricted to a maximum size of 2 MB. This limit applies to the full JSON structure, including all fields (`name`, `projectId`, `region`, `fileContent`) and all `labels` keys and values.\n- **Rate Limit:** 1 request per minute.",
         "properties": {
           "fileContent": {
-            "description": "Raw upload payload. Base64-encoded over JSON. Newline-separated `.txt` list of IPv4 CIDR entries, or CSV with a `cidr` column (any other columns are ignored). Whole request JSON payload restricted to 2 MB.",
+            "description": "Raw upload payload. Base64-encoded over JSON. Newline-separated `.txt` list of IPv4 CIDR entries, or CSV with `cidr,labels` columns (any other columns are ignored).",
             "format": "byte",
             "type": "string"
           },
@@ -513,7 +513,7 @@
         }
       },
       "put": {
-        "description": "UploadIPList creates the IP list or replaces its content. Raw upload\n is in `file_content`. Rate limit is 1/min.",
+        "description": "UploadIPList creates the IP list or replaces its content. Raw upload\n is in `file_content`.",
         "operationId": "UploadIPList",
         "parameters": [
           {

@@ -633,10 +633,10 @@
         "type": "object"
       },
       "LoadbalancerOptionAccessControl": {
-        "description": "Use this option to limit the IP ranges that can use the Application Load Balancer.\n Only one of `allowed_source_ranges` or `ip_block_list_name` may be set at the same time.",
+        "description": "Use this option to limit the IP ranges that can use the Application Load Balancer.\n `allowed_source_ranges` and `ip_block_list_name` may be set together. When both are set,\n `allowed_source_ranges` is evaluated first, then `ip_block_list_name` is evaluated.",
         "properties": {
           "allowedSourceRanges": {
-            "description": "Application Load Balancer is accessible only from an IP address in this range. Mutually exclusive with `ipBlockListName`.",
+            "description": "Application Load Balancer is accessible only from an IP address in this range. May be combined with `ipBlockListName`; `allowedSourceRanges` is evaluated first, then `ipBlockListName`.",
             "items": {
               "type": "string"
             },
@@ -644,7 +644,7 @@
             "type": "array"
           },
           "ipBlockListName": {
-            "description": "Reference to an IP block list by name. Traffic originating from any IP in the referenced list is denied access to the Application Load Balancer. See \"IP Lists API\" for how to manage IP block lists. Mutually exclusive with `allowedSourceRanges`.",
+            "description": "Reference to an IP block list by name. Traffic originating from any IP in the referenced list is denied access to the Application Load Balancer. See \"IP Lists API\" for how to manage IP block lists. May be combined with `allowedSourceRanges`; `allowedSourceRanges` is evaluated first, then `ipBlockListName`.",
             "example": "my-block-list",
             "pattern": "^[0-9a-z](?:(?:[0-9a-z]|-){0,49}[0-9a-z])?$",
             "title": "IP block list reference",

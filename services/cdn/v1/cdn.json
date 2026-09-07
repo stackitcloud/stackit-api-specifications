@@ -98,6 +98,90 @@
         ],
         "type": "object"
       },
+      "CacheConfig": {
+        "description": "Groups the cache options that influence how the CDN builds its cache key.\n\n**Cache cardinality warning:** enabling query-string vary produces one cache entry per unique\nquery-string combination (**unbounded** when `queryStringVaryParameters` is empty). Each entry in\n`cacheKeyHeaders` multiplies the number of cache variants by the number of distinct values\nobserved for that header. Use these settings sparingly.\n\n`queryStringVaryParameters` is stored independently of `queryStringVaryEnabled` so that this feature\ncan be toggled on and off without losing the configured allowlist.\nOnly `queryStringVaryEnabled` gates whether the parameter allowlist actually varies the cache.\n\n**Optimizer interaction:** when the Optimizer is enabled, the CDN automatically enables\nquery-string vary for image responses regardless of this setting.\n",
+        "properties": {
+          "cacheKeyHeaders": {
+            "description": "HTTP request header names whose values participate in the cache key. Each entry multiplies\nthe number of cache variants by the number of distinct values observed for that header.\n",
+            "items": {
+              "pattern": "^[!#$%\u0026'*+.^_`|~0-9A-Za-z-]+$",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "queryStringVaryEnabled": {
+            "description": "When true, the CDN varies its cache by the request query string. If\n`queryStringVaryParameters` is empty, every unique query-string combination produces its\nown cache entry; if non-empty, only the listed parameters influence the cache key.\n",
+            "type": "boolean"
+          },
+          "queryStringVaryParameters": {
+            "description": "Allowlist of query-string parameter names that participate in the cache key when\n`queryStringVaryEnabled` is true. Ignored while `queryStringVaryEnabled` is false, but\nstill stored so it can be re-activated without losing the list.\n",
+            "items": {
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "queryStringVaryEnabled",
+          "queryStringVaryParameters",
+          "cacheKeyHeaders"
+        ],
+        "type": "object"
+      },
+      "CacheConfigCreate": {
+        "description": "Groups the cache options that influence how the CDN builds its cache key on distribution creation.\n\n**Cache cardinality warning:** enabling query-string vary produces one cache entry per unique\nquery-string combination (**unbounded** when `queryStringVaryParameters` is empty). Each entry in\n`cacheKeyHeaders` multiplies the number of cache variants by the number of distinct values\nobserved for that header. Use these settings sparingly.\n\n`queryStringVaryParameters` is stored independently of `queryStringVaryEnabled` so that this feature\ncan be toggled on and off without losing the configured allowlist.\nOnly `queryStringVaryEnabled` gates whether the parameter allowlist actually varies the cache.\n\n**Optimizer interaction:** when the Optimizer is enabled, the CDN automatically enables\nquery-string vary for image responses regardless of this setting.\n",
+        "properties": {
+          "cacheKeyHeaders": {
+            "description": "HTTP request header names whose values participate in the cache key. Each entry multiplies\nthe number of cache variants by the number of distinct values observed for that header.\n",
+            "items": {
+              "pattern": "^[!#$%\u0026'*+.^_`|~0-9A-Za-z-]+$",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "queryStringVaryEnabled": {
+            "default": false,
+            "description": "When true, the CDN varies its cache by the request query string. If\n`queryStringVaryParameters` is empty, every unique query-string combination produces its\nown cache entry; if non-empty, only the listed parameters influence the cache key.\n",
+            "type": "boolean"
+          },
+          "queryStringVaryParameters": {
+            "description": "Allowlist of query-string parameter names that participate in the cache key when\n`queryStringVaryEnabled` is true. Ignored while `queryStringVaryEnabled` is false, but\nstill stored so it can be re-activated without losing the list.\n",
+            "items": {
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "CacheConfigPatch": {
+        "description": "PATCH variant of `CacheConfig`. Follows the standard PATCH conventions for this API:\n\n- Field omitted from the request: current value is left unchanged.\n- Array field sent as `[]`: current list is cleared.\n- `queryStringVaryEnabled` is a plain boolean (non-nullable); omit it to leave unchanged.\n\n`queryStringVaryParameters` is stored independently of `queryStringVaryEnabled`. Sending a\nnon-empty `queryStringVaryParameters` together with `queryStringVaryEnabled=false` is\naccepted: the list is persisted for later re-activation but does not affect the cache while\nthe flag is false.\n",
+        "properties": {
+          "cacheKeyHeaders": {
+            "description": "HTTP request header names that participate in the cache key. Omit to leave unchanged;\nsend `[]` to clear.\n",
+            "items": {
+              "pattern": "^[!#$%\u0026'*+.^_`|~0-9A-Za-z-]+$",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "queryStringVaryEnabled": {
+            "description": "When true, the CDN varies its cache by the request query string. Omit to leave unchanged.\n",
+            "type": "boolean"
+          },
+          "queryStringVaryParameters": {
+            "description": "Allowlist of query-string parameter names. Omit to leave unchanged; send `[]` to clear.\n",
+            "items": {
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "Config": {
         "properties": {
           "backend": {
@@ -133,6 +217,9 @@
             "type": "array",
             "uniqueItems": true
           },
+          "cacheConfig": {
+            "$ref": "#/components/schemas/CacheConfig"
+          },
           "defaultCacheDuration": {
             "description": "Sets the default cache duration for the distribution.\nThe default cache duration is applied when a 'Cache-Control' header is not presented in the origin's response.\nWe use ISO8601 duration format for cache duration (e.g. P1DT2H30M)\n",
             "nullable": true,
@@ -153,13 +240,17 @@
           "logSink": {
             "discriminator": {
               "mapping": {
-                "loki": "#/components/schemas/LokiLogSink"
+                "loki": "#/components/schemas/LokiLogSink",
+                "otlp": "#/components/schemas/OtlpLogSink"
               },
               "propertyName": "type"
             },
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LokiLogSink"
+              },
+              {
+                "$ref": "#/components/schemas/OtlpLogSink"
               }
             ]
           },
@@ -204,7 +295,8 @@
           "waf",
           "tls",
           "forwardHostHeader",
-          "stripResponseCookies"
+          "stripResponseCookies",
+          "cacheConfig"
         ],
         "type": "object"
       },
@@ -243,6 +335,9 @@
             "type": "array",
             "uniqueItems": true
           },
+          "cacheConfig": {
+            "$ref": "#/components/schemas/CacheConfigPatch"
+          },
           "defaultCacheDuration": {
             "description": "Sets the default cache duration for the distribution.\nThe default cache duration is applied when a 'Cache-Control' header is not presented in the origin's response.\nWe use ISO8601 duration format for cache duration (e.g. P1DT2H30M)\n",
             "nullable": true,
@@ -264,7 +359,8 @@
           "logSink": {
             "discriminator": {
               "mapping": {
-                "loki": "#/components/schemas/LokiLogSinkPatch"
+                "loki": "#/components/schemas/LokiLogSinkPatch",
+                "otlp": "#/components/schemas/OtlpLogSinkPatch"
               },
               "propertyName": "type"
             },
@@ -272,6 +368,9 @@
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LokiLogSinkPatch"
+              },
+              {
+                "$ref": "#/components/schemas/OtlpLogSinkPatch"
               }
             ]
           },
@@ -346,6 +445,9 @@
             "type": "array",
             "uniqueItems": true
           },
+          "cacheConfig": {
+            "$ref": "#/components/schemas/CacheConfigCreate"
+          },
           "defaultCacheDuration": {
             "description": "Sets the default cache duration for the distribution.\nThe default cache duration is applied when a 'Cache-Control' header is not presented in the origin's response.\nWe use ISO8601 duration format for cache duration (e.g. P1DT2H30M)\n",
             "type": "string",
@@ -369,13 +471,17 @@
           "logSink": {
             "discriminator": {
               "mapping": {
-                "loki": "#/components/schemas/LokiLogSinkCreate"
+                "loki": "#/components/schemas/LokiLogSinkCreate",
+                "otlp": "#/components/schemas/OtlpLogSinkCreate"
               },
               "propertyName": "type"
             },
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LokiLogSinkCreate"
+              },
+              {
+                "$ref": "#/components/schemas/OtlpLogSinkCreate"
               }
             ]
           },
@@ -1399,6 +1505,153 @@
             "type": "boolean"
           }
         },
+        "type": "object"
+      },
+      "OtlpLogSink": {
+        "properties": {
+          "pushUrl": {
+            "description": "The fully qualified URL where the CDN should push logs to your OTLP endpoint (for example, `https://otlp.example.com/otlp/v1/logs`).",
+            "type": "string"
+          },
+          "type": {
+            "description": "Defines the type of the log sink.",
+            "enum": [
+              "otlp"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "pushUrl"
+        ],
+        "type": "object"
+      },
+      "OtlpLogSinkBasicCredentials": {
+        "description": "Basic authentication credentials for OTLP.",
+        "properties": {
+          "password": {
+            "description": "The password corresponding to your username.",
+            "type": "string",
+            "x-go-type": "secret.Secret"
+          },
+          "type": {
+            "description": "Defines basic authentication.",
+            "enum": [
+              "basic"
+            ],
+            "type": "string"
+          },
+          "username": {
+            "description": "The username used to authenticate against your OTLP endpoint.",
+            "type": "string",
+            "x-go-type": "secret.Secret"
+          }
+        },
+        "required": [
+          "type",
+          "username",
+          "password"
+        ],
+        "type": "object"
+      },
+      "OtlpLogSinkBearerCredentials": {
+        "description": "Bearer token authentication credentials for OTLP.",
+        "properties": {
+          "token": {
+            "description": "The bearer token used to authenticate against your OTLP endpoint.",
+            "type": "string",
+            "x-go-type": "secret.Secret"
+          },
+          "type": {
+            "description": "Defines bearer token authentication.",
+            "enum": [
+              "bearer"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "token"
+        ],
+        "type": "object"
+      },
+      "OtlpLogSinkCreate": {
+        "properties": {
+          "credentials": {
+            "description": "The authentication credentials required for the CDN to push logs to your OTLP endpoint.",
+            "discriminator": {
+              "mapping": {
+                "basic": "#/components/schemas/OtlpLogSinkBasicCredentials",
+                "bearer": "#/components/schemas/OtlpLogSinkBearerCredentials"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/OtlpLogSinkBearerCredentials"
+              },
+              {
+                "$ref": "#/components/schemas/OtlpLogSinkBasicCredentials"
+              }
+            ],
+            "type": "object"
+          },
+          "pushUrl": {
+            "description": "The fully qualified URL where the CDN should push logs to your OTLP endpoint (for example, `https://otlp.example.com/otlp/v1/logs`).",
+            "type": "string"
+          },
+          "type": {
+            "description": "Defines the type of the log sink.",
+            "enum": [
+              "otlp"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "pushUrl",
+          "credentials"
+        ],
+        "type": "object"
+      },
+      "OtlpLogSinkPatch": {
+        "properties": {
+          "credentials": {
+            "description": "The authentication credentials required for the CDN to push logs to your OTLP endpoint.",
+            "discriminator": {
+              "mapping": {
+                "basic": "#/components/schemas/OtlpLogSinkBasicCredentials",
+                "bearer": "#/components/schemas/OtlpLogSinkBearerCredentials"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/OtlpLogSinkBearerCredentials"
+              },
+              {
+                "$ref": "#/components/schemas/OtlpLogSinkBasicCredentials"
+              }
+            ]
+          },
+          "pushUrl": {
+            "description": "The fully qualified URL where the CDN should push logs to your OTLP endpoint (for example, `https://otlp.example.com/otlp/v1/logs`).",
+            "type": "string"
+          },
+          "type": {
+            "description": "Defines the type of the log sink.",
+            "enum": [
+              "otlp"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
         "type": "object"
       },
       "PatchDistributionPayload": {
@@ -2469,7 +2722,7 @@
             "application/json": {
               "examples": {
                 "full HTTP distribution": {
-                  "description": "Creates a minimal distribution which is served in `EU` and `ASIA`.\nThe upstream host for this example is `httpbin.org`.\nThis enables some features in the initial request like\n- waf\n- geofencing\n- geoblocking\n- originRequestHeaders\n- labels\n- traffic limiting\n",
+                  "description": "Creates a minimal distribution which is served in `EU` and `ASIA`.\nThe upstream host for this example is `httpbin.org`.\nThis enables some features in the initial request like\n- waf\n- geofencing\n- geoblocking\n- originRequestHeaders\n- labels\n- traffic limiting\n- logSink\n",
                   "value": {
                     "backend": {
                       "geofencing": {
@@ -2491,6 +2744,14 @@
                     "labels": {
                       "environment": "production",
                       "team": "web-development"
+                    },
+                    "logSink": {
+                      "credentials": {
+                        "token": "someBearerToken",
+                        "type": "bearer"
+                      },
+                      "pushUrl": "https://otlp.example.com/v1/logs",
+                      "type": "otlp"
                     },
                     "monthlyLimitBytes": 123000000,
                     "regions": [
@@ -2564,6 +2825,10 @@
                           "labels": {
                             "environment": "production",
                             "team": "web-development"
+                          },
+                          "logSink": {
+                            "pushUrl": "https://otlp.example.com/v1/logs",
+                            "type": "otlp"
                           },
                           "regions": [
                             "EU",

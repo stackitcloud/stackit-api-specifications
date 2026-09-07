@@ -80,50 +80,6 @@
       }
     },
     "schemas": {
-      "ContainerSearchResult": {
-        "properties": {
-          "containerId": {
-            "description": "Globally unique user-friendly identifier.",
-            "example": "my-container-N7jXQY1",
-            "type": "string"
-          },
-          "containerType": {
-            "description": "Resource container type.",
-            "enum": [
-              "PROJECT",
-              "FOLDER"
-            ],
-            "type": "string"
-          },
-          "id": {
-            "description": "Globally unique identifier.",
-            "example": "4d8c80b4-ded9-44cf-81ac-4fc5a2f7fc87",
-            "format": "uuid",
-            "type": "string"
-          },
-          "lifecycleState": {
-            "$ref": "#/components/schemas/LifecycleState"
-          },
-          "name": {
-            "description": "Resource container name.",
-            "example": "My Container",
-            "type": "string"
-          },
-          "organizationId": {
-            "description": "Id of the organization the container is in.",
-            "example": "9d8c89b4-aed9-44cf-81dc-4fc5a2f7fc32",
-            "format": "uuid",
-            "type": "string"
-          }
-        },
-        "required": [
-          "containerId",
-          "id",
-          "name",
-          "containerType"
-        ],
-        "type": "object"
-      },
       "CreateFolderPayload": {
         "properties": {
           "containerParentId": {
@@ -866,7 +822,7 @@
   "paths": {
     "/v2/folders": {
       "get": {
-        "description": "Returns all folders and their metadata that: \n- Are children of the specific containerParentId\n- Match the given containerIds\n- User is member of \u003cbr /\u003e\n\nFilter:\n- Either containerParentId OR containerIds OR member must be passed\n- If containerId and containerParentId are given, both are used for filtering - containers must point to the same parent\n- If member and containerParentId are given, both are used for filtering\n- If member is given, containers must not point to the same container parent\n",
+        "description": "Returns all folders and their metadata that: \n- Are children of the specific containerParentId\n- Match the given containerIds\n- User is member of \u003cbr /\u003e\n\nFilter:\n- Either containerParentId OR containerIds OR member must be passed\n- If containerId and containerParentId are given, both are used for filtering - containers must point to the same parent\n- If member and containerParentId are given, both are used for filtering\n- If member is given, containers must not point to the same container parent\n\nAuthorization \u0026 Permissions:\n- When filtering by member: resource-manager.folder.direct.get is evaluated on target folders for the member; if caller differs from target member, system-level resource-manager.folder.get is required.\n- When filtering by containerParentId: resource-manager.folder.list is evaluated on the parent container.\n- When filtering by containerIds: resource-manager.folder.get is evaluated on the parent container of requested folders.\n",
         "operationId": "ListFolders",
         "parameters": [
           {
@@ -962,12 +918,14 @@
         "x-stackit-authorization": {
           "disabled": true,
           "implicit-actions": [
-            "resource-manager.folder.list"
+            "resource-manager.folder.direct.get",
+            "resource-manager.folder.list",
+            "resource-manager.folder.get"
           ]
         }
       },
       "post": {
-        "description": "Create a new folder.",
+        "description": "Creates a new folder within a parent organization or folder.\n\nAuthorization \u0026 Permissions:\n- Evaluated on Target Parent Container: resource-manager.folder.create (required permission on the target parent organization or folder to create a folder).",
         "operationId": "CreateFolder",
         "requestBody": {
           "content": {
@@ -1046,7 +1004,7 @@
     },
     "/v2/folders/{containerId}": {
       "delete": {
-        "description": "Delete a folder and its metadata.\n- Folder must not be parent of any other container\n- A force flag may be set, deleting all underlying folders recursively - if no project is attached!",
+        "description": "Delete a folder and its metadata.\n- Folder must not contain active child containers unless force deletion is enabled without attached projects.\n\nAuthorization \u0026 Permissions:\n- Evaluated on Target Folder: resource-manager.folder.delete (required permission on the target folder to delete it).",
         "operationId": "DeleteFolder",
         "parameters": [
           {
@@ -1096,16 +1054,14 @@
         },
         "summary": "Delete Folder",
         "x-stackit-authorization": {
-          "actions": [
+          "disabled": true,
+          "implicit-actions": [
             "resource-manager.folder.delete"
-          ],
-          "resource-id": "containerId",
-          "resource-id-type": "dynamic",
-          "resource-type": "folder"
+          ]
         }
       },
       "get": {
-        "description": "Returns all metadata for a specific folder.",
+        "description": "Returns metadata for a specific folder.\n\nAuthorization \u0026 Permissions:\n- Evaluated on Target Folder: resource-manager.folder.get (required primary permission to retrieve folder details).\n- Evaluated on Parent Containers: resource-manager.organization.get and resource-manager.folder.get implicitly to resolve parent hierarchy details.",
         "operationId": "GetFolderDetails",
         "parameters": [
           {
@@ -1161,12 +1117,11 @@
         },
         "summary": "Get Folder Details",
         "x-stackit-authorization": {
-          "actions": [
+          "disabled": true,
+          "implicit-actions": [
+            "resource-manager.organization.get",
             "resource-manager.folder.get"
-          ],
-          "resource-id": "containerId",
-          "resource-id-type": "dynamic",
-          "resource-type": "folder"
+          ]
         }
       },
       "parameters": [
@@ -1181,7 +1136,7 @@
         }
       ],
       "patch": {
-        "description": "Update the folder and its metadata.\n- Update folder name\n- Update folder labels\n- Update folder parent (folder or organization)",
+        "description": "Update the folder and its metadata (name, labels, parent container).\n\nAuthorization \u0026 Permissions:\n- Evaluated on Target Folder: resource-manager.folder.edit (required permission on the target folder to modify its details, labels, or parent).",
         "operationId": "PartialUpdateFolder",
         "requestBody": {
           "content": {
@@ -1251,18 +1206,16 @@
         },
         "summary": "Update Folder",
         "x-stackit-authorization": {
-          "actions": [
+          "disabled": true,
+          "implicit-actions": [
             "resource-manager.folder.edit"
-          ],
-          "resource-id": "containerId",
-          "resource-id-type": "dynamic",
-          "resource-type": "folder"
+          ]
         }
       }
     },
     "/v2/folders/{containerId}/labels": {
       "delete": {
-        "description": "Deletes all folder labels by given keys.\n- Specific labels may be deleted by key(s)\n- If no key is specified, all labels will be deleted!",
+        "description": "Deletes folder labels by specified keys, or removes all labels if no key is provided.\n\nAuthorization \u0026 Permissions:\n- Evaluated on Target Folder: resource-manager.folder.edit (required permission on the target folder to delete its labels).",
         "operationId": "DeleteFolderLabels",
         "parameters": [
           {
@@ -1299,12 +1252,10 @@
         },
         "summary": "Delete Folder Labels",
         "x-stackit-authorization": {
-          "actions": [
+          "disabled": true,
+          "implicit-actions": [
             "resource-manager.folder.edit"
-          ],
-          "resource-id": "containerId",
-          "resource-id-type": "dynamic",
-          "resource-type": "folder"
+          ]
         }
       },
       "parameters": [
@@ -1321,7 +1272,7 @@
     },
     "/v2/organizations": {
       "get": {
-        "description": "Returns all organizations and their metadata.\n- If no containerIds are specified, all organizations are returned, if permitted\n- ContainerIds may be set to filter\n- Member may be set to filter\n- If member and containerIds are given, both are used for filtering\n",
+        "description": "Returns all organizations and their metadata accessible to the caller.\n- Filterable by containerIds or member.\n\nAuthorization \u0026 Permissions:\n- Evaluated on Target Organizations: resource-manager.organization.list and/or (depending if containerIDs was used in the request) resource-manager.organization.get to filter and list accessible organizations.",
         "operationId": "ListOrganizations",
         "parameters": [
           {
@@ -1390,18 +1341,19 @@
             "description": "Forbidden"
           }
         },
-        "summary": "Get All Organizations",
+        "summary": "Get all organizations of member",
         "x-stackit-authorization": {
           "disabled": true,
           "implicit-actions": [
-            "resource-manager.organization.get"
+            "resource-manager.organization.get",
+            "resource-manager.organization.list"
           ]
         }
       }
     },
     "/v2/organizations/{containerId}/labels": {
       "delete": {
-        "description": "Deletes all organization labels by given keys.\n- Specific labels may be deleted by key(s)\n- If no key is specified, all labels will be deleted!",
+        "description": "Deletes organization labels by specified keys, or removes all labels if no key is provided.\n\nAuthorization \u0026 Permissions:\n- Evaluated on Target Organization: resource-manager.organization.edit (required permission on the organization to delete labels).",
         "operationId": "DeleteOrganizationLabels",
         "parameters": [
           {
@@ -1438,12 +1390,10 @@
         },
         "summary": "Delete Organization Labels",
         "x-stackit-authorization": {
-          "actions": [
+          "disabled": true,
+          "implicit-actions": [
             "resource-manager.organization.edit"
-          ],
-          "resource-id": "containerId",
-          "resource-id-type": "dynamic",
-          "resource-type": "organization"
+          ]
         }
       },
       "parameters": [
@@ -1460,7 +1410,7 @@
     },
     "/v2/organizations/{id}": {
       "get": {
-        "description": "Returns the organization and its metadata.",
+        "description": "Returns metadata for a specific organization.\n\nAuthorization \u0026 Permissions:\n- Evaluated on Target Organization: resource-manager.organization.get (required permission on the organization to view its details).",
         "operationId": "GetOrganization",
         "responses": {
           "200": {
@@ -1491,12 +1441,10 @@
         },
         "summary": "Get Organization Details",
         "x-stackit-authorization": {
-          "actions": [
+          "disabled": true,
+          "implicit-actions": [
             "resource-manager.organization.get"
-          ],
-          "resource-id": "id",
-          "resource-id-type": "dynamic",
-          "resource-type": "organization"
+          ]
         }
       },
       "parameters": [
@@ -1511,7 +1459,7 @@
         }
       ],
       "patch": {
-        "description": "Update the organization and its metadata.\n- Update organization name\n- Update organization labels",
+        "description": "Updates organization metadata (name, labels).\n\nAuthorization \u0026 Permissions:\n- Evaluated on Target Organization: resource-manager.organization.edit (required permission on the organization to update metadata and labels).",
         "operationId": "PartialUpdateOrganization",
         "requestBody": {
           "content": {
@@ -1566,18 +1514,16 @@
         },
         "summary": "Update Organization",
         "x-stackit-authorization": {
-          "actions": [
+          "disabled": true,
+          "implicit-actions": [
             "resource-manager.organization.edit"
-          ],
-          "resource-id": "id",
-          "resource-id-type": "dynamic",
-          "resource-type": "organization"
+          ]
         }
       }
     },
     "/v2/projects": {
       "get": {
-        "description": "Returns all projects and their metadata that: \n- Are children of the specific containerParentId\n- Match the given containerIds\n- User is member of\n\nFilter:\n- Either containerParentId OR containerIds OR member must be passed\n- If containerId and containerParentId are given, both are used for filtering - containers must point to the same parent\n- If member and containerParentId are given, both are used for filtering\n- If member is given, containers must not point to the same container parent",
+        "description": "Returns all projects and their metadata that: \n- Are children of the specific containerParentId\n- Match the given containerIds\n- User is member of\n\nFilter:\n- Either containerParentId OR containerIds OR member must be passed\n- If containerId and containerParentId are given, both are used for filtering - containers must point to the same parent\n- If member and containerParentId are given, both are used for filtering\n- If member is given, containers must not point to the same container parent\n\nAuthorization \u0026 Permissions:\n- Evaluated on Target Projects: resource-manager.project.get, resource-manager.project.list, or resource-manager.project.direct.get to filter and return accessible projects.",
         "operationId": "ListProjects",
         "parameters": [
           {
@@ -1654,16 +1600,18 @@
             "description": "Forbidden"
           }
         },
-        "summary": "Get All Projects",
+        "summary": "Get All Projects of a member.",
         "x-stackit-authorization": {
           "disabled": true,
           "implicit-actions": [
-            "resource-manager.project.list"
+            "resource-manager.project.get",
+            "resource-manager.project.list",
+            "resource-manager.project.direct.get"
           ]
         }
       },
       "post": {
-        "description": "Create a new project. \n- The request is synchronous, but the workflow-based creation is asynchronous.\n- Lifecycle state remains in CREATING, until workflow completes",
+        "description": "Creates a new project within a parent container.\n- Creation request returns synchronously, while underlying resource provisioning runs asynchronously.\n- Initial lifecycle state is CREATING until provisioning completes.\n\nAuthorization \u0026 Permissions:\n- Evaluated on Target Parent Container: resource-manager.project.create (required permission on the target parent organization or folder to create a project).",
         "operationId": "CreateProject",
         "requestBody": {
           "content": {
@@ -1742,7 +1690,7 @@
     },
     "/v2/projects/{containerId}/labels": {
       "delete": {
-        "description": "Deletes all project labels by given keys.\n- Specific labels may be deleted by key(s)\n- If no key is specified, all labels will be deleted!",
+        "description": "Deletes project labels by specified keys, or removes all labels if no key is provided.\n\nAuthorization \u0026 Permissions:\n- Evaluated on Target Project: resource-manager.project.edit (required permission on the project to delete its labels).",
         "operationId": "DeleteProjectLabels",
         "parameters": [
           {
@@ -1779,12 +1727,10 @@
         },
         "summary": "Delete Project Labels",
         "x-stackit-authorization": {
-          "actions": [
+          "disabled": true,
+          "implicit-actions": [
             "resource-manager.project.edit"
-          ],
-          "resource-id": "containerId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project"
+          ]
         }
       },
       "parameters": [
@@ -1801,7 +1747,7 @@
     },
     "/v2/projects/{id}": {
       "delete": {
-        "description": "Triggers the deletion of a project. \n- The request is synchronous, but the workflow-based deletion is asynchronous\n- Lifecycle state remains in DELETING, until workflow completes",
+        "description": "Triggers the deletion of a project.\n- Request returns synchronously, while deletion process runs asynchronously.\n- Initial lifecycle state is DELETING until workflow completes.\n\nAuthorization \u0026 Permissions:\n- Evaluated on Target Project: resource-manager.project.delete (required permission on the project to delete it).",
         "operationId": "DeleteProject",
         "responses": {
           "202": {
@@ -1825,16 +1771,14 @@
         },
         "summary": "Delete Project",
         "x-stackit-authorization": {
-          "actions": [
+          "disabled": true,
+          "implicit-actions": [
             "resource-manager.project.delete"
-          ],
-          "resource-id": "id",
-          "resource-id-type": "dynamic",
-          "resource-type": "project"
+          ]
         }
       },
       "get": {
-        "description": "Returns the project and its metadata.",
+        "description": "Returns the project and its metadata.\n\nAuthorization \u0026 Permissions:\n- Evaluated on Target Project: resource-manager.project.get (required primary permission to view project details).\n- Evaluated on Parent Containers: resource-manager.organization.get and resource-manager.folder.get on parent organizations/folders implicitly to resolve and include parent metadata in the response hierarchy.",
         "operationId": "GetProject",
         "parameters": [
           {
@@ -1890,12 +1834,12 @@
         },
         "summary": "Get Project Details",
         "x-stackit-authorization": {
-          "actions": [
+          "disabled": true,
+          "implicit-actions": [
+            "resource-manager.organization.get",
+            "resource-manager.folder.get",
             "resource-manager.project.get"
-          ],
-          "resource-id": "id",
-          "resource-id-type": "dynamic",
-          "resource-type": "project"
+          ]
         }
       },
       "parameters": [
@@ -1910,7 +1854,7 @@
         }
       ],
       "patch": {
-        "description": "Update the project and its metadata.\n- Update project name \n- Update project labels \n- Update project parent (folder or organization)",
+        "description": "Updates project metadata (name, labels, or parent hierarchy).\n\nAuthorization \u0026 Permissions:\n- Evaluated on Target Project: resource-manager.project.edit (required permission on the project to modify its details, labels, or parent).",
         "operationId": "PartialUpdateProject",
         "requestBody": {
           "content": {
@@ -1980,12 +1924,10 @@
         },
         "summary": "Update Project",
         "x-stackit-authorization": {
-          "actions": [
+          "disabled": true,
+          "implicit-actions": [
             "resource-manager.project.edit"
-          ],
-          "resource-id": "id",
-          "resource-id-type": "dynamic",
-          "resource-type": "project"
+          ]
         }
       }
     }

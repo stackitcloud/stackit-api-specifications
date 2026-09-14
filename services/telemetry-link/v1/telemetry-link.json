@@ -1,6 +1,16 @@
 {
   "components": {
     "parameters": {
+      "backflushJobId": {
+        "description": "The Backflush Job UUID.",
+        "in": "path",
+        "name": "backflushJobId",
+        "required": true,
+        "schema": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
       "folderId": {
         "description": "The STACKIT portal folder UUID the resource is located in.",
         "in": "path",
@@ -26,6 +36,28 @@
         "required": true,
         "schema": {
           "format": "uuid",
+          "type": "string"
+        }
+      },
+      "pageSize": {
+        "description": "Maximum number of items to return",
+        "in": "query",
+        "name": "pageSize",
+        "schema": {
+          "default": 10,
+          "format": "int32",
+          "maximum": 100,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "pageToken": {
+        "allowEmptyValue": true,
+        "description": "A token to retrieve the next page of results.",
+        "in": "query",
+        "name": "pageToken",
+        "schema": {
+          "maxLength": 1024,
           "type": "string"
         }
       },
@@ -102,6 +134,80 @@
       }
     },
     "schemas": {
+      "backflushJobResponse": {
+        "properties": {
+          "createTime": {
+            "description": "The point in time the resource was created.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-]*)?$",
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "id": {
+            "description": "A auto generated unique id which identifies the resource.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "regionId": {
+            "description": "The STACKIT region name the resource is located in.",
+            "enum": [
+              "eu01",
+              "eu02"
+            ],
+            "type": "string"
+          },
+          "status": {
+            "description": "The current state of the link.",
+            "enum": [
+              "active",
+              "complete",
+              "failed",
+              "reconciling",
+              "deleting"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "regionId",
+          "status",
+          "createTime"
+        ],
+        "type": "object"
+      },
+      "create-folder-backflush-jobPayload": {
+        "properties": {
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-]*)?$",
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9 \\-]*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName"
+        ],
+        "type": "object"
+      },
       "create-or-update-folder-telemetry-linkPayload": {
         "allOf": [
           {
@@ -146,6 +252,66 @@
             "$ref": "#/components/schemas/telemetryLinkRequest"
           }
         ]
+      },
+      "create-organization-backflush-jobPayload": {
+        "properties": {
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-]*)?$",
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9 \\-]*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName"
+        ],
+        "type": "object"
+      },
+      "create-project-backflush-jobPayload": {
+        "properties": {
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-]*)?$",
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9 \\-]*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName"
+        ],
+        "type": "object"
+      },
+      "listBackflushJobsResponse": {
+        "properties": {
+          "backflushJobs": {
+            "items": {
+              "$ref": "#/components/schemas/backflushJobResponse"
+            },
+            "type": "array"
+          },
+          "nextPageToken": {
+            "description": "A token to retrieve the next page of results.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "backflushJobs"
+        ],
+        "type": "object"
       },
       "partial-update-folder-telemetry-linkPayload": {
         "allOf": [
@@ -484,6 +650,152 @@
         }
       }
     },
+    "/v1/folders/{folderId}/regions/{regionId}/telemetry-link/backflush-jobs": {
+      "get": {
+        "description": "Returns a list of all Backflush Jobs for the folder.",
+        "operationId": "list-folder-backflush-jobs",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pageToken"
+          },
+          {
+            "$ref": "#/components/parameters/pageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/listBackflushJobsResponse"
+                }
+              }
+            },
+            "description": "Successful response with all Backflush Jobs."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.get"
+          ],
+          "resource-id": "folderId",
+          "resource-id-type": "dynamic",
+          "resource-type": "folder"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/folderId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        }
+      ],
+      "post": {
+        "description": "Creates a new Backflush Job for the folder.",
+        "operationId": "create-folder-backflush-job",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/create-folder-backflush-jobPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/backflushJobResponse"
+                }
+              }
+            },
+            "description": "Backflush Job was created successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.update"
+          ],
+          "resource-id": "folderId",
+          "resource-id-type": "dynamic",
+          "resource-type": "folder"
+        }
+      }
+    },
+    "/v1/folders/{folderId}/regions/{regionId}/telemetry-link/backflush-jobs/{backflushJobId}": {
+      "get": {
+        "description": "Returns the details for the given Backflush Job in a folder.",
+        "operationId": "get-folder-backflush-job",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/backflushJobResponse"
+                }
+              }
+            },
+            "description": "Backflush Job details successfully retrieved."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.get"
+          ],
+          "resource-id": "folderId",
+          "resource-id-type": "dynamic",
+          "resource-type": "folder"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/folderId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/backflushJobId"
+        }
+      ]
+    },
     "/v1/organizations/{organizationId}/regions/{regionId}/telemetry-link": {
       "delete": {
         "description": "Deletes the given Telemetry Link within the organization.",
@@ -678,6 +990,152 @@
         }
       }
     },
+    "/v1/organizations/{organizationId}/regions/{regionId}/telemetry-link/backflush-jobs": {
+      "get": {
+        "description": "Returns a list of all Backflush Jobs for the organization.",
+        "operationId": "list-organization-backflush-jobs",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pageToken"
+          },
+          {
+            "$ref": "#/components/parameters/pageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/listBackflushJobsResponse"
+                }
+              }
+            },
+            "description": "Successful response with all Backflush Jobs."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.get"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/organizationId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        }
+      ],
+      "post": {
+        "description": "Creates a new Backflush Job for the organization.",
+        "operationId": "create-organization-backflush-job",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/create-organization-backflush-jobPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/backflushJobResponse"
+                }
+              }
+            },
+            "description": "Backflush Job was created successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.update"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/regions/{regionId}/telemetry-link/backflush-jobs/{backflushJobId}": {
+      "get": {
+        "description": "Returns the details for the given Backflush Job in a organization.",
+        "operationId": "get-organization-backflush-job",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/backflushJobResponse"
+                }
+              }
+            },
+            "description": "Backflush Job details successfully retrieved."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.get"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/organizationId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/backflushJobId"
+        }
+      ]
+    },
     "/v1/projects/{projectId}/regions/{regionId}/telemetry-link": {
       "delete": {
         "description": "Deletes the given Telemetry Link within the project.",
@@ -871,6 +1329,152 @@
           "resource-type": "project"
         }
       }
+    },
+    "/v1/projects/{projectId}/regions/{regionId}/telemetry-link/backflush-jobs": {
+      "get": {
+        "description": "Returns a list of all Backflush Jobs for the project.",
+        "operationId": "list-project-backflush-jobs",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pageToken"
+          },
+          {
+            "$ref": "#/components/parameters/pageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/listBackflushJobsResponse"
+                }
+              }
+            },
+            "description": "Successful response with all Backflush Jobs."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        }
+      ],
+      "post": {
+        "description": "Creates a new Backflush Job for the project.",
+        "operationId": "create-project-backflush-job",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/create-project-backflush-jobPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/backflushJobResponse"
+                }
+              }
+            },
+            "description": "Backflush Job was created successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{regionId}/telemetry-link/backflush-jobs/{backflushJobId}": {
+      "get": {
+        "description": "Returns the details for the given Backflush Job in a project.",
+        "operationId": "get-project-backflush-job",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/backflushJobResponse"
+                }
+              }
+            },
+            "description": "Backflush Job details successfully retrieved."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-link.instance.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        },
+        {
+          "$ref": "#/components/parameters/regionId"
+        },
+        {
+          "$ref": "#/components/parameters/backflushJobId"
+        }
+      ]
     }
   },
   "servers": [

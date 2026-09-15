@@ -615,21 +615,7 @@
         "type": "object"
       },
       "UpdateFunctionPayload": {
-        "description": "Represents a STACKIT Functions function.",
         "properties": {
-          "created_at": {
-            "description": "Time the function was created.",
-            "format": "date-time",
-            "type": "string"
-          },
-          "current_revision": {
-            "description": "The ID of the currently-deployed revision associated with this function.",
-            "type": "string"
-          },
-          "id": {
-            "description": "Unique identifier for the function.",
-            "type": "string"
-          },
           "labels": {
             "additionalProperties": {
               "type": "string"
@@ -639,47 +625,14 @@
           "name": {
             "description": "User-defined name of the function.",
             "type": "string"
-          },
-          "state": {
-            "description": "Status of this function's latest revision.",
-            "enum": [
-              "CREATING",
-              "ACTIVE",
-              "FAILED"
-            ],
-            "type": "string"
-          },
-          "state_error": {
-            "description": "Error message related to this function's status.",
-            "type": "string"
-          },
-          "updated_at": {
-            "description": "Time the function was last updated.",
-            "format": "date-time",
-            "type": "string"
-          },
-          "url": {
-            "description": "URLs that resolve to the function.",
-            "items": {
-              "type": "string"
-            },
-            "maxItems": 100,
-            "type": "array"
           }
         },
-        "required": [
-          "name"
-        ],
         "type": "object"
       },
       "UpdatePullCredentialPayload": {
         "properties": {
           "address": {
             "description": "The OCI registry address.",
-            "type": "string"
-          },
-          "id": {
-            "description": "Unique identifier for the OCI registry pull credential.",
             "type": "string"
           },
           "labels": {
@@ -689,7 +642,7 @@
             "type": "object"
           },
           "name": {
-            "description": "Unique name for the OCI registry pull credential.",
+            "description": "Unique name for the OCI registry pull secret.",
             "maxLength": 32,
             "minLength": 1,
             "type": "string"
@@ -703,98 +656,23 @@
             "type": "string"
           }
         },
-        "required": [
-          "address",
-          "username",
-          "password"
-        ],
         "type": "object"
       },
       "UpdateRevisionPayload": {
-        "description": "The function revision",
         "properties": {
-          "created_at": {
-            "description": "Time the function was created.",
-            "format": "date-time",
-            "type": "string"
-          },
-          "digest": {
-            "description": "A hashed fingerprint of the revision artifact.",
-            "type": "string"
-          },
-          "function_id": {
-            "description": "The ID of the function associated with this revision.",
-            "type": "string"
-          },
-          "id": {
-            "description": "The revision identifier.",
-            "type": "string"
-          },
           "labels": {
             "additionalProperties": {
               "type": "string"
             },
             "type": "object"
           },
-          "limits": {
-            "$ref": "#/components/schemas/ResourceLimits"
-          },
-          "message": {
-            "description": "Revision message",
-            "type": "string"
-          },
           "name": {
             "description": "The name of the the revision. Must be unique within the function.",
             "maxLength": 32,
             "minLength": 1,
             "type": "string"
-          },
-          "oci_pull_credential_id": {
-            "description": "OCI Registry pull credential to use for pulling the revision's image.",
-            "type": "string"
-          },
-          "oci_reference": {
-            "description": "OCI reference for the revision.",
-            "pattern": "(:[vV]?\\d+\\.\\d+\\.\\d+(@sha256:[a-fA-F0-9]{64})?)$|((:latest)?@sha256:[a-fA-F0-9]{64})$",
-            "type": "string"
-          },
-          "state": {
-            "description": "Status of this revision.",
-            "enum": [
-              "CANCELLED",
-              "CREATING",
-              "ACTIVE",
-              "FAILED"
-            ],
-            "type": "string"
-          },
-          "state_error": {
-            "description": "Error message related to this revision.",
-            "type": "string"
-          },
-          "updated_at": {
-            "description": "Time the function was last updated.",
-            "format": "date-time",
-            "type": "string"
-          },
-          "variables": {
-            "description": "Variable values for this revision. Each variable must reference a variable definition on the function.",
-            "items": {
-              "$ref": "#/components/schemas/RevisionVariable"
-            },
-            "maxItems": 100,
-            "type": "array"
-          },
-          "version": {
-            "description": "The version number of the revision.",
-            "format": "int64",
-            "type": "integer"
           }
         },
-        "required": [
-          "oci_reference",
-          "limits"
-        ],
         "type": "object"
       },
       "createFunctionRevisionPayload": {
@@ -1064,7 +942,7 @@
           "$ref": "#/components/parameters/functionId"
         }
       ],
-      "put": {
+      "patch": {
         "description": "Updates a specific function.",
         "operationId": "UpdateFunction",
         "requestBody": {
@@ -1294,7 +1172,7 @@
           "$ref": "#/components/parameters/revisionId"
         }
       ],
-      "put": {
+      "patch": {
         "description": "Updates a specific revision.",
         "operationId": "UpdateRevision",
         "requestBody": {
@@ -1518,7 +1396,7 @@
           "$ref": "#/components/parameters/pullCredentialId"
         }
       ],
-      "put": {
+      "patch": {
         "description": "Updates the OCI image registry pull credential configuration.",
         "operationId": "UpdatePullCredential",
         "requestBody": {

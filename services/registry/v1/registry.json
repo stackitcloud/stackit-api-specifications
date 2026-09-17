@@ -1,0 +1,998 @@
+{
+  "components": {
+    "parameters": {
+      "ArtifactoryId": {
+        "description": "Artifactory identifier.",
+        "example": "83b8e9c4-e3d1-4dc4-bb89-9854c8b5383e",
+        "explode": false,
+        "in": "path",
+        "name": "artifactoryId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        },
+        "style": "simple"
+      },
+      "ProjectId": {
+        "description": "Project identifier.",
+        "example": "83b8e9c4-e3d1-4dc4-bb89-9854c8b5383e",
+        "explode": false,
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        },
+        "style": "simple"
+      },
+      "RegionId": {
+        "description": "STACKIT region identification",
+        "example": "eu01",
+        "in": "path",
+        "name": "regionId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "schemas": {
+      "Artifactory": {
+        "description": "Artifactory Information.",
+        "properties": {
+          "consumed_quota_bytes": {
+            "description": "How many bytes of quota is consumed. Read Only.",
+            "format": "int64",
+            "type": "integer"
+          },
+          "create_time": {
+            "description": "The date and time the creation of the STACKIT Artifactory was triggered.",
+            "format": "date-time",
+            "maxLength": 48,
+            "type": "string"
+          },
+          "id": {
+            "description": "A auto generated unique id which identifies the STACKIT Artifactory.",
+            "format": "uuid",
+            "maxLength": 36,
+            "type": "string"
+          },
+          "name": {
+            "description": "A user chosen name to distinguish multiple STACKIT Artifactories.",
+            "maxLength": 255,
+            "type": "string"
+          },
+          "proxy": {
+            "$ref": "#/components/schemas/Proxy"
+          },
+          "state": {
+            "description": "The current state of the STACKIT Artifactory.",
+            "type": "string"
+          },
+          "url": {
+            "description": "The base URL of the STACKIT Artifactory.",
+            "format": "uri",
+            "type": "string"
+          },
+          "user_count": {
+            "description": "How many users does this artifactory have. Read Only.",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "create_time",
+          "state",
+          "url",
+          "consumed_quota_bytes",
+          "user_count"
+        ],
+        "type": "object"
+      },
+      "ArtifactoryList": {
+        "description": "A list of artifactories inside a STACKIT project.",
+        "properties": {
+          "artifactories": {
+            "items": {
+              "$ref": "#/components/schemas/Artifactory"
+            },
+            "type": "array"
+          },
+          "next_page_token": {
+            "description": "A token to retrieve the next page of results. Pass this value as `page_token` in the subsequent request. If empty, there are no more pages.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "artifactories"
+        ],
+        "type": "object"
+      },
+      "BadRequestErrorResponse": {
+        "description": "400 Error Response.",
+        "properties": {
+          "error": {
+            "example": "An error occurred.",
+            "type": "string"
+          },
+          "message": {
+            "example": "An error occurred.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
+      "ConflictErrorResponse": {
+        "description": "409 Error Response.",
+        "properties": {
+          "error": {
+            "example": "conflict",
+            "type": "string"
+          },
+          "message": {
+            "example": "conflict: ....",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
+      "CreateArtifactoryPayload": {
+        "description": "CreateArtifactory request data.",
+        "properties": {
+          "name": {
+            "description": "A user chosen name to distinguish multiple STACKIT Artifactories.\n",
+            "maxLength": 255,
+            "minLength": 5,
+            "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$",
+            "type": "string"
+          },
+          "proxy": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreateProxyRequest"
+              }
+            ],
+            "description": "If proxy configuration is provided, this project will be created as\na proxy-cache for the upstream registry.\n"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "CreateProxyRequest": {
+        "description": "Provide an upstream repository this project is a proxy for",
+        "properties": {
+          "credentials": {
+            "$ref": "#/components/schemas/Credentials"
+          },
+          "description": {
+            "description": "Description of the registry.",
+            "type": "string"
+          },
+          "registry_type": {
+            "description": "Which replication adapter to use for this registry. Discover the\nlist of supported replication adapters, and therefore supported\nregistry types, by calling GET /v1/projects/{projectId}/regions/{regionId}/replication/adapters\n",
+            "example": "docker-hub",
+            "type": "string"
+          },
+          "url": {
+            "description": "Upstream registry url to proxy",
+            "type": "string"
+          }
+        },
+        "required": [
+          "registry_type",
+          "url"
+        ],
+        "type": "object"
+      },
+      "Credentials": {
+        "description": "Credentials for upstream registry",
+        "properties": {
+          "access_key": {
+            "type": "string"
+          },
+          "access_secret": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ForbiddenErrorResponse": {
+        "description": "Forbidden Error Response.",
+        "properties": {
+          "error": {
+            "example": "Forbidden",
+            "type": "string"
+          },
+          "message": {
+            "example": "user not allowed to do operation",
+            "type": "string"
+          },
+          "path": {
+            "example": "/api.....",
+            "type": "string"
+          },
+          "status": {
+            "example": 403,
+            "format": "int64",
+            "type": "integer"
+          },
+          "timestamp": {
+            "example": "2022-05-25T14:55:36.789Z",
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
+      "GenericErrorResponse": {
+        "description": "Generic Error Response.",
+        "properties": {
+          "details": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "message": {
+            "example": "Internal server error.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
+      "InternalServerErrorResponse": {
+        "description": "Internal server error.",
+        "properties": {
+          "details": {
+            "example": "Internal server error.",
+            "type": "string"
+          },
+          "error": {
+            "example": "Internal server error.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "NotFoundErrorResponse": {
+        "description": "404 Error Response.",
+        "properties": {
+          "error": {
+            "example": "Not Found.",
+            "type": "string"
+          },
+          "message": {
+            "example": "Not Found.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
+      "PatchArtifactoryPayload": {
+        "description": "Patch artifactory request",
+        "properties": {
+          "proxy": {
+            "$ref": "#/components/schemas/UpdateProxyRequest"
+          }
+        },
+        "type": "object"
+      },
+      "Proxy": {
+        "description": "Replication settings for a proxy-cache artifactory",
+        "properties": {
+          "credentials": {
+            "$ref": "#/components/schemas/RedactedCredentials"
+          },
+          "description": {
+            "description": "Description of the registry.",
+            "type": "string"
+          },
+          "registry_type": {
+            "description": "Which replication adapter to use for this registry. Discover the\nlist of supported replication adapters, and therefore supported\nregistry types, by calling GET /v1/projects/{projectId}/regions/{regionId}/replication/adapters\n",
+            "example": "docker-hub",
+            "type": "string"
+          },
+          "url": {
+            "description": "Upstream registry url to proxy",
+            "type": "string"
+          }
+        },
+        "required": [
+          "registry_type",
+          "url"
+        ],
+        "type": "object"
+      },
+      "RedactedCredentials": {
+        "description": "Credentials for upstream registry, redacted",
+        "properties": {
+          "access_key": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ReplicationAdapter": {
+        "properties": {
+          "display_name": {
+            "description": "Human-friendly name of the provider the adapter relates to.",
+            "example": "Docker Hub",
+            "type": "string"
+          },
+          "registry_type": {
+            "description": "Identifies the replication adapter",
+            "example": "docker-hub",
+            "type": "string"
+          }
+        },
+        "required": [
+          "registry_type",
+          "display_name"
+        ],
+        "type": "object"
+      },
+      "ReplicationAdapterList": {
+        "description": "A list of replication adapters",
+        "properties": {
+          "next_page_token": {
+            "description": "A token to retrieve the next page of results. Pass this value as `page_token` in the subsequent request. If empty, there are no more pages.",
+            "type": "string"
+          },
+          "replication_adapters": {
+            "items": {
+              "$ref": "#/components/schemas/ReplicationAdapter"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "replication_adapters"
+        ],
+        "type": "object"
+      },
+      "UUID": {
+        "description": "Universally Unique Identifier (UUID).",
+        "example": "d61a8564-c8dd-4ffb-bc15-143e7d0c85ed",
+        "format": "uuid",
+        "maxLength": 36,
+        "minLength": 36,
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+        "type": "string"
+      },
+      "UnauthorizedErrorResponse": {
+        "description": "Unauthorized Error Response.",
+        "properties": {
+          "error": {
+            "example": "Unauthorized",
+            "type": "string"
+          },
+          "message": {
+            "example": "invalid token",
+            "type": "string"
+          },
+          "path": {
+            "example": "/api.....",
+            "type": "string"
+          },
+          "status": {
+            "example": 401,
+            "format": "int64",
+            "type": "integer"
+          },
+          "timestamp": {
+            "example": "2022-05-25T14:55:36.789Z",
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
+      "UpdateProxyRequest": {
+        "description": "Update an upstream repository for a proxy-cache project",
+        "properties": {
+          "credentials": {
+            "$ref": "#/components/schemas/Credentials"
+          },
+          "description": {
+            "description": "Description of the registry.",
+            "type": "string"
+          },
+          "url": {
+            "description": "Upstream registry url to proxy",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "contact": {
+      "email": "devex_development@stackit.cloud",
+      "name": "STACKIT Container Registry",
+      "url": "https://docs.stackit.cloud/products/developer-platform/container-registry/"
+    },
+    "description": "STACKIT Container Registry management API.",
+    "title": "STACKIT Container Registry API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1/projects/{projectId}/regions/{regionId}/artifactories": {
+      "get": {
+        "description": "Lists all artifactories associated to the specified project.\n",
+        "operationId": "ListArtifactories",
+        "parameters": [
+          {
+            "description": "The maximum number of artifactories to return. The service may return fewer than this value.",
+            "in": "query",
+            "name": "page_size",
+            "schema": {
+              "default": 50,
+              "format": "int32",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "A page token, received from a previous `ListArtifactories` call. Provide this to retrieve the subsequent page.",
+            "in": "query",
+            "name": "next_page_token",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactoryList"
+                }
+              }
+            },
+            "description": "Successful response with all the artifactories."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "List artifactories inside a STACKIT project",
+        "x-stackit-authorization": {
+          "actions": [
+            "container-registry.project.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.container-registry"
+            ]
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ProjectId"
+        },
+        {
+          "$ref": "#/components/parameters/RegionId"
+        }
+      ],
+      "post": {
+        "description": "Creates an artifactory associated to the specified project.\n",
+        "operationId": "CreateArtifactory",
+        "parameters": [
+          {
+            "description": "If true, claims ownership of an existing Harbor project instead of creating a new one.",
+            "in": "query",
+            "name": "claim",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateArtifactoryPayload"
+              }
+            }
+          },
+          "description": "CreateArtifactory request data",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Artifactory"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorResponse"
+                }
+              }
+            },
+            "description": "Project not found."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConflictErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "Creates an artifactory",
+        "x-stackit-authorization": {
+          "actions": [
+            "container-registry.project.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.container-registry"
+            ]
+          }
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{regionId}/artifactories/{artifactoryId}": {
+      "delete": {
+        "description": "Deletes the artifactory associated to the specified project.\n",
+        "operationId": "DeleteArtifactory",
+        "responses": {
+          "204": {
+            "description": "Artifactory was deleted."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Not found."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "Soft delete the artifactory.",
+        "x-stackit-authorization": {
+          "actions": [
+            "container-registry.project.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.container-registry"
+            ]
+          }
+        }
+      },
+      "get": {
+        "description": "Retrieves information about a STACKIT Artifactory.",
+        "operationId": "GetArtifactory",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Artifactory"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "Get Artifactory information.",
+        "x-stackit-authorization": {
+          "actions": [
+            "container-registry.project.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.container-registry"
+            ]
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ProjectId"
+        },
+        {
+          "$ref": "#/components/parameters/RegionId"
+        },
+        {
+          "$ref": "#/components/parameters/ArtifactoryId"
+        }
+      ],
+      "patch": {
+        "description": "Update Artifactory",
+        "operationId": "PatchArtifactory",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchArtifactoryPayload"
+              }
+            }
+          },
+          "description": "Patch artifactory request",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Artifactory"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "container-registry.project.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.container-registry"
+            ]
+          }
+        }
+      }
+    },
+    "/v1/projects/{projectId}/regions/{regionId}/replication/adapters": {
+      "get": {
+        "description": "List available adapters for replication to/from other registries\n",
+        "operationId": "ListReplicationAdapters",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReplicationAdapterList"
+                }
+              }
+            },
+            "description": "List of supported replication adapters"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "container-registry.project.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project",
+          "service-enablement": {
+            "services": [
+              "cloud.stackit.container-registry"
+            ]
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ProjectId"
+        },
+        {
+          "$ref": "#/components/parameters/RegionId"
+        }
+      ]
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://registry.api.stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "global"
+        }
+      }
+    }
+  ]
+}

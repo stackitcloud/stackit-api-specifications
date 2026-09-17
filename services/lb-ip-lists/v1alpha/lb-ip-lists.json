@@ -37,9 +37,10 @@
           "numberOfIps": {
             "description": "Number of IPv4 CIDR entries stored in the list.",
             "example": 1234,
+            "format": "int32",
             "maximum": 50000,
             "minimum": 1,
-            "type": "string"
+            "type": "integer"
           },
           "usage": {
             "allOf": [
@@ -102,7 +103,7 @@
           "items": {
             "description": "List of load balancers that reference this IP list.",
             "items": {
-              "$ref": "#/components/schemas/UsageItem"
+              "type": "string"
             },
             "type": "array"
           }
@@ -186,8 +187,7 @@
         "description": "Request payload for creating or replacing an IP list.\n\n**Limits \u0026 Restrictions:**\n- **Project Quota:** Maximum of 3 IP lists allowed per project.\n- **Payload Size:** The entire HTTP request body JSON payload is restricted to a maximum size of 2 MB. This limit applies to the full JSON structure, including all fields (`name`, `projectId`, `region`, `fileContent`) and all `labels` keys and values.\n- **Rate Limit:** 1 request per minute.",
         "properties": {
           "fileContent": {
-            "description": "Raw upload payload. Base64-encoded over JSON. Newline-separated `.txt` list of IPv4 CIDR entries, or CSV with `cidr,labels` columns (any other columns are ignored).",
-            "format": "byte",
+            "description": "Raw upload payload as a plain UTF-8 string. Newline-separated `.txt` list of IPv4 CIDR entries, or CSV with `cidr,labels` columns (any other columns are ignored).",
             "type": "string"
           },
           "labels": {
@@ -232,25 +232,11 @@
           "fileContent"
         ],
         "type": "object"
-      },
-      "UsageItem": {
-        "description": "IPListUsageItem names the LB referencing the IP list.",
-        "properties": {
-          "loadBalancerName": {
-            "description": "The display name of the load balancer.",
-            "example": "my-alb",
-            "type": "string"
-          }
-        },
-        "required": [
-          "loadBalancerName"
-        ],
-        "type": "object"
       }
     }
   },
   "info": {
-    "description": "This API manages IP lists (sets of IPv4 CIDR ranges) scoped to a project and region. IP lists enable blacklisting: they can be referenced by Application and Network Load Balancer to deny traffic from matching source addresses.\n\n**Upload format**\nLists are uploaded as a single raw payload in `file_content` (base64 in JSON transport). The server first tries to parse the payload as CSV (with a `cidr` column; any other columns are ignored) and falls back to a newline-separated `.txt` list of CIDR entries when CSV parsing fails.\n\n**Limits**\n- Maximum request payload size: 2 MB JSON (enforced before parsing).\n- Maximum number of CIDR entries per list: 50000 (enforced during streaming parse).\n- Maximum number of IP lists per project: 3.\n- Empty lists (0 CIDRs) are rejected.\n- Only IPv4 CIDR entries are supported for now; IPv6 entries are rejected.\n- No duplicate or overlap checks are performed.\n\n**Semantics**\n- `Upload` creates the list if it does not exist and replaces its content otherwise.   Uploads with identical stored content are a no-op (no version bump, no reload).\n- `List` returns each stored IP list without its CIDR entries (name, labels, number of IPs, content hash, usage).   The CIDR entries themselves are never returned by the API.\n- There is no single-item Get endpoint. Clients verify content by comparing the returned `content_hash`.\n- IP lists referenced by any load balancer cannot be deleted; the reference must be cleared or   replaced with a different list first.\n",
+    "description": "This API manages IP lists (sets of IPv4 CIDR ranges) scoped to a project and region. IP lists enable blacklisting: they can be referenced by Application and Network Load Balancer to deny traffic from matching source addresses.\n\n**Upload format**\nLists are uploaded as a single raw text payload in `file_content` (plain UTF-8 string in JSON). The server first tries to parse the payload as CSV (with a `cidr` column; any other columns are ignored) and falls back to a newline-separated `.txt` list of CIDR entries when CSV parsing fails.\n\n**Limits**\n- Maximum request payload size: 2 MB JSON (enforced before parsing).\n- Maximum number of CIDR entries per list: 50000 (enforced during streaming parse).\n- Maximum number of IP lists per project: 3.\n- Empty lists (0 CIDRs) are rejected.\n- Only IPv4 CIDR entries are supported for now; IPv6 entries are rejected.\n- No duplicate or overlap checks are performed.\n\n**Semantics**\n- `Upload` creates the list if it does not exist and replaces its content otherwise.   Uploads with identical stored content are a no-op (no version bump, no reload).\n- `List` returns each stored IP list without its CIDR entries (name, labels, number of IPs, content hash, usage).   The CIDR entries themselves are never returned by the API.\n- There is no single-item Get endpoint. Clients verify content by comparing the returned `content_hash`.\n- IP lists referenced by any load balancer cannot be deleted; the reference must be cleared or   replaced with a different list first.\n",
     "title": "STACKIT Load Balancer IP Lists API",
     "version": "1alpha.0.0"
   },
@@ -513,7 +499,7 @@
         }
       },
       "put": {
-        "description": "UploadIPList creates the IP list or replaces its content. Raw upload\n is in `file_content`.",
+        "description": "UploadIPList creates the IP list or replaces its content. Raw upload is in `file_content`.",
         "operationId": "UploadIPList",
         "parameters": [
           {

@@ -38,13 +38,13 @@
       "CreateLabelPayload": {
         "properties": {
           "key": {
-            "example": "stage",
-            "maxLength": 63,
+            "example": "kubernetes.io/cluster",
+            "maxLength": 314,
             "minLength": 1,
             "type": "string"
           },
           "value": {
-            "example": "prod",
+            "example": "foobar",
             "maxLength": 63,
             "type": "string"
           }
@@ -212,6 +212,17 @@
             "description": "if the zone is a reverse zone or not",
             "example": false,
             "type": "boolean"
+          },
+          "labelsMap": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "labels for the zone - max 64 items. Keys: 1-314 chars (up to 250 prefix, 1 for slash, 1-63 the actual key). Values: 0-63 chars.",
+            "example": {
+              "foo": "bar",
+              "kubernetes.io/cluster": "foobar"
+            },
+            "type": "object"
           },
           "name": {
             "description": "user given name",
@@ -394,13 +405,13 @@
       "Label": {
         "properties": {
           "key": {
-            "example": "stage",
-            "maxLength": 63,
+            "example": "kubernetes.io/cluster",
+            "maxLength": 314,
             "minLength": 1,
             "type": "string"
           },
           "value": {
-            "example": "prod",
+            "example": "foobar",
             "maxLength": 63,
             "type": "string"
           }
@@ -660,6 +671,17 @@
               }
             ],
             "description": "optional extensions",
+            "type": "object"
+          },
+          "labelsMap": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "labels for the zone - max 64 items. Keys: 1-314 chars (up to 250 prefix, 1 for slash, 1-63 the actual key). Values: 0-63 chars.",
+            "example": {
+              "foo": "bar",
+              "kubernetes.io/cluster": "foobar"
+            },
             "type": "object"
           },
           "name": {
@@ -1019,6 +1041,16 @@
               "$ref": "#/components/schemas/Label"
             },
             "type": "array"
+          },
+          "labelsMap": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "labels for the zone",
+            "example": {
+              "kubernetes.io/cluster": "foobar"
+            },
+            "type": "object"
           },
           "name": {
             "description": "user given name",
@@ -2658,7 +2690,8 @@
     },
     "/v1/projects/{projectId}/zones/{zoneId}/labels": {
       "get": {
-        "description": "All Labels",
+        "deprecated": true,
+        "description": "All Labels DEPRECATED: Scheduled for sunset on 2027-10-01. Use the labelsMap field in the Zone resource instead.",
         "operationId": "ListLabels",
         "parameters": [
           {
@@ -2742,7 +2775,7 @@
             "description": "Bad Gateway"
           }
         },
-        "summary": "Get all labels",
+        "summary": "Get all labels [DEPRECATED]",
         "x-stackit-authorization": {
           "actions": [
             "dns.zone.list"
@@ -2758,7 +2791,8 @@
         }
       },
       "put": {
-        "description": "Create or update label",
+        "deprecated": true,
+        "description": "Create or update label DEPRECATED: Scheduled for sunset on 2027-10-01. Use the labelsMap field in the Zone resource instead.",
         "operationId": "CreateLabel",
         "parameters": [
           {
@@ -2843,7 +2877,7 @@
             "description": "Bad Gateway"
           }
         },
-        "summary": "Create or update label",
+        "summary": "Create or update label [DEPRECATED]",
         "x-stackit-authorization": {
           "actions": [
             "dns.zone.create"
@@ -2861,7 +2895,8 @@
     },
     "/v1/projects/{projectId}/zones/{zoneId}/labels/{key}": {
       "delete": {
-        "description": "Delete a label",
+        "deprecated": true,
+        "description": "Delete a label DEPRECATED: Scheduled for sunset on 2027-10-01. Use the labelsMap field in the Zone resource instead.",
         "operationId": "DeleteLabel",
         "parameters": [
           {
@@ -2954,7 +2989,7 @@
             "description": "Bad Gateway"
           }
         },
-        "summary": "Delete a label",
+        "summary": "Delete a label [DEPRECATED]",
         "x-stackit-authorization": {
           "actions": [
             "dns.zone.create"

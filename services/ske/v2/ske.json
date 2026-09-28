@@ -5,9 +5,6 @@
         "example": {
           "allowedCidrs": [
             "allowedCidrs",
-            "allowedCidrs",
-            "allowedCidrs",
-            "allowedCidrs",
             "allowedCidrs"
           ],
           "enabled": true
@@ -18,7 +15,6 @@
             "items": {
               "type": "string"
             },
-            "maxItems": 10,
             "type": "array"
           },
           "enabled": {
@@ -113,9 +109,15 @@
       },
       "CRI": {
         "example": {
+          "kata": {
+            "enabled": true
+          },
           "name": "containerd"
         },
         "properties": {
+          "kata": {
+            "$ref": "#/components/schemas/Kata"
+          },
           "name": {
             "enum": [
               "containerd"
@@ -144,9 +146,6 @@
           "extensions": {
             "acl": {
               "allowedCidrs": [
-                "allowedCidrs",
-                "allowedCidrs",
-                "allowedCidrs",
                 "allowedCidrs",
                 "allowedCidrs"
               ],
@@ -209,7 +208,15 @@
             "controlPlane": {
               "accessScope": "PUBLIC"
             },
-            "id": "id"
+            "id": "id",
+            "podAddressRanges": [
+              "podAddressRanges",
+              "podAddressRanges"
+            ],
+            "serviceAddressRanges": [
+              "serviceAddressRanges",
+              "serviceAddressRanges"
+            ]
           },
           "nodepools": [
             {
@@ -219,6 +226,9 @@
                 "eu01-2"
               ],
               "cri": {
+                "kata": {
+                  "enabled": true
+                },
                 "name": "containerd"
               },
               "kubernetes": {
@@ -263,6 +273,9 @@
                 "eu01-2"
               ],
               "cri": {
+                "kata": {
+                  "enabled": true
+                },
                 "name": "containerd"
               },
               "kubernetes": {
@@ -307,6 +320,9 @@
                 "eu01-2"
               ],
               "cri": {
+                "kata": {
+                  "enabled": true
+                },
                 "name": "containerd"
               },
               "kubernetes": {
@@ -351,6 +367,9 @@
                 "eu01-2"
               ],
               "cri": {
+                "kata": {
+                  "enabled": true
+                },
                 "name": "containerd"
               },
               "kubernetes": {
@@ -395,6 +414,9 @@
                 "eu01-2"
               ],
               "cri": {
+                "kata": {
+                  "enabled": true
+                },
                 "name": "containerd"
               },
               "kubernetes": {
@@ -485,10 +507,16 @@
             },
             "hibernated": true,
             "identity": "identity",
-            "podAddressRanges": [
-              "100.64.0.0/14"
+            "nodeAddressRanges": [
+              "10.250.0.0/16"
             ],
-            "serviceAccountIssuer": "serviceAccountIssuer"
+            "podAddressRanges": [
+              "100.64.0.0/13"
+            ],
+            "serviceAccountIssuer": "serviceAccountIssuer",
+            "serviceAddressRanges": [
+              "100.82.0.0/16"
+            ]
           }
         },
         "properties": {
@@ -637,10 +665,16 @@
           },
           "hibernated": true,
           "identity": "identity",
-          "podAddressRanges": [
-            "100.64.0.0/14"
+          "nodeAddressRanges": [
+            "10.250.0.0/16"
           ],
-          "serviceAccountIssuer": "serviceAccountIssuer"
+          "podAddressRanges": [
+            "100.64.0.0/13"
+          ],
+          "serviceAccountIssuer": "serviceAccountIssuer",
+          "serviceAddressRanges": [
+            "100.82.0.0/16"
+          ]
         },
         "properties": {
           "aggregated": {
@@ -685,10 +719,20 @@
             "title": "The unique identifier for the cluster",
             "type": "string"
           },
+          "nodeAddressRanges": {
+            "description": "The network ranges (in CIDR notation) used by nodes of the cluster.",
+            "example": [
+              "10.250.0.0/16"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "podAddressRanges": {
             "description": "The network ranges (in CIDR notation) used by pods of the cluster.",
             "example": [
-              "100.64.0.0/14"
+              "100.64.0.0/13"
             ],
             "items": {
               "type": "string"
@@ -698,6 +742,16 @@
           "serviceAccountIssuer": {
             "title": "Service account issuer URL of the cluster",
             "type": "string"
+          },
+          "serviceAddressRanges": {
+            "description": "The network ranges (in CIDR notation) used by services of the cluster.",
+            "example": [
+              "100.82.0.0/16"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
           }
         },
         "type": "object"
@@ -938,9 +992,6 @@
           "acl": {
             "allowedCidrs": [
               "allowedCidrs",
-              "allowedCidrs",
-              "allowedCidrs",
-              "allowedCidrs",
               "allowedCidrs"
             ],
             "enabled": true
@@ -1101,6 +1152,21 @@
         ],
         "type": "object"
       },
+      "Kata": {
+        "example": {
+          "enabled": true
+        },
+        "properties": {
+          "enabled": {
+            "description": "Enable workload isolation via Kata Containers for pods scheduled on this node pool.\n⚠️ Note: This feature is in private preview. Enabling is only possible for enabled accounts. Otherwise the request will be rejected.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "type": "object"
+      },
       "Kubeconfig": {
         "example": {
           "expirationTimestamp": "2000-01-23T04:56:07Z",
@@ -1185,9 +1251,6 @@
                 "acl": {
                   "allowedCidrs": [
                     "allowedCidrs",
-                    "allowedCidrs",
-                    "allowedCidrs",
-                    "allowedCidrs",
                     "allowedCidrs"
                   ],
                   "enabled": true
@@ -1249,7 +1312,15 @@
                 "controlPlane": {
                   "accessScope": "PUBLIC"
                 },
-                "id": "id"
+                "id": "id",
+                "podAddressRanges": [
+                  "podAddressRanges",
+                  "podAddressRanges"
+                ],
+                "serviceAddressRanges": [
+                  "serviceAddressRanges",
+                  "serviceAddressRanges"
+                ]
               },
               "nodepools": [
                 {
@@ -1259,6 +1330,9 @@
                     "eu01-2"
                   ],
                   "cri": {
+                    "kata": {
+                      "enabled": true
+                    },
                     "name": "containerd"
                   },
                   "kubernetes": {
@@ -1303,6 +1377,9 @@
                     "eu01-2"
                   ],
                   "cri": {
+                    "kata": {
+                      "enabled": true
+                    },
                     "name": "containerd"
                   },
                   "kubernetes": {
@@ -1347,6 +1424,9 @@
                     "eu01-2"
                   ],
                   "cri": {
+                    "kata": {
+                      "enabled": true
+                    },
                     "name": "containerd"
                   },
                   "kubernetes": {
@@ -1391,6 +1471,9 @@
                     "eu01-2"
                   ],
                   "cri": {
+                    "kata": {
+                      "enabled": true
+                    },
                     "name": "containerd"
                   },
                   "kubernetes": {
@@ -1435,6 +1518,9 @@
                     "eu01-2"
                   ],
                   "cri": {
+                    "kata": {
+                      "enabled": true
+                    },
                     "name": "containerd"
                   },
                   "kubernetes": {
@@ -1525,10 +1611,16 @@
                 },
                 "hibernated": true,
                 "identity": "identity",
-                "podAddressRanges": [
-                  "100.64.0.0/14"
+                "nodeAddressRanges": [
+                  "10.250.0.0/16"
                 ],
-                "serviceAccountIssuer": "serviceAccountIssuer"
+                "podAddressRanges": [
+                  "100.64.0.0/13"
+                ],
+                "serviceAccountIssuer": "serviceAccountIssuer",
+                "serviceAddressRanges": [
+                  "100.82.0.0/16"
+                ]
               }
             },
             {
@@ -1545,9 +1637,6 @@
                 "acl": {
                   "allowedCidrs": [
                     "allowedCidrs",
-                    "allowedCidrs",
-                    "allowedCidrs",
-                    "allowedCidrs",
                     "allowedCidrs"
                   ],
                   "enabled": true
@@ -1609,7 +1698,15 @@
                 "controlPlane": {
                   "accessScope": "PUBLIC"
                 },
-                "id": "id"
+                "id": "id",
+                "podAddressRanges": [
+                  "podAddressRanges",
+                  "podAddressRanges"
+                ],
+                "serviceAddressRanges": [
+                  "serviceAddressRanges",
+                  "serviceAddressRanges"
+                ]
               },
               "nodepools": [
                 {
@@ -1619,6 +1716,9 @@
                     "eu01-2"
                   ],
                   "cri": {
+                    "kata": {
+                      "enabled": true
+                    },
                     "name": "containerd"
                   },
                   "kubernetes": {
@@ -1663,6 +1763,9 @@
                     "eu01-2"
                   ],
                   "cri": {
+                    "kata": {
+                      "enabled": true
+                    },
                     "name": "containerd"
                   },
                   "kubernetes": {
@@ -1707,6 +1810,9 @@
                     "eu01-2"
                   ],
                   "cri": {
+                    "kata": {
+                      "enabled": true
+                    },
                     "name": "containerd"
                   },
                   "kubernetes": {
@@ -1751,6 +1857,9 @@
                     "eu01-2"
                   ],
                   "cri": {
+                    "kata": {
+                      "enabled": true
+                    },
                     "name": "containerd"
                   },
                   "kubernetes": {
@@ -1795,6 +1904,9 @@
                     "eu01-2"
                   ],
                   "cri": {
+                    "kata": {
+                      "enabled": true
+                    },
                     "name": "containerd"
                   },
                   "kubernetes": {
@@ -1885,10 +1997,16 @@
                 },
                 "hibernated": true,
                 "identity": "identity",
-                "podAddressRanges": [
-                  "100.64.0.0/14"
+                "nodeAddressRanges": [
+                  "10.250.0.0/16"
                 ],
-                "serviceAccountIssuer": "serviceAccountIssuer"
+                "podAddressRanges": [
+                  "100.64.0.0/13"
+                ],
+                "serviceAccountIssuer": "serviceAccountIssuer",
+                "serviceAddressRanges": [
+                  "100.82.0.0/16"
+                ]
               }
             }
           ]
@@ -1944,9 +2062,15 @@
             {
               "cri": [
                 {
+                  "kata": {
+                    "enabled": true
+                  },
                   "name": "containerd"
                 },
                 {
+                  "kata": {
+                    "enabled": true
+                  },
                   "name": "containerd"
                 }
               ],
@@ -1957,9 +2081,15 @@
             {
               "cri": [
                 {
+                  "kata": {
+                    "enabled": true
+                  },
                   "name": "containerd"
                 },
                 {
+                  "kata": {
+                    "enabled": true
+                  },
                   "name": "containerd"
                 }
               ],
@@ -1987,9 +2117,15 @@
         "example": {
           "cri": [
             {
+              "kata": {
+                "enabled": true
+              },
               "name": "containerd"
             },
             {
+              "kata": {
+                "enabled": true
+              },
               "name": "containerd"
             }
           ],
@@ -2100,7 +2236,15 @@
           "controlPlane": {
             "accessScope": "PUBLIC"
           },
-          "id": "id"
+          "id": "id",
+          "podAddressRanges": [
+            "podAddressRanges",
+            "podAddressRanges"
+          ],
+          "serviceAddressRanges": [
+            "serviceAddressRanges",
+            "serviceAddressRanges"
+          ]
         },
         "properties": {
           "cni": {
@@ -2112,6 +2256,20 @@
           "id": {
             "title": "ID of the SNA network into which the cluster will be deployed",
             "type": "string"
+          },
+          "podAddressRanges": {
+            "description": "PodAddressRanges contains the CIDRs that are used to allocate Pod IPs from.\nCurrently only 1 range is allowed.\nImmutable after creation.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "serviceAddressRanges": {
+            "description": "ServiceAddressRanges contains the CIDRs that are used to allocate Service ClusterIPs from.\nCurrently only 1 range is allowed.\nImmutable after creation.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
           }
         },
         "type": "object"
@@ -2124,6 +2282,9 @@
             "eu01-2"
           ],
           "cri": {
+            "kata": {
+              "enabled": true
+            },
             "name": "containerd"
           },
           "kubernetes": {
@@ -2316,9 +2477,15 @@
                 {
                   "cri": [
                     {
+                      "kata": {
+                        "enabled": true
+                      },
                       "name": "containerd"
                     },
                     {
+                      "kata": {
+                        "enabled": true
+                      },
                       "name": "containerd"
                     }
                   ],
@@ -2329,9 +2496,15 @@
                 {
                   "cri": [
                     {
+                      "kata": {
+                        "enabled": true
+                      },
                       "name": "containerd"
                     },
                     {
+                      "kata": {
+                        "enabled": true
+                      },
                       "name": "containerd"
                     }
                   ],
@@ -2347,9 +2520,15 @@
                 {
                   "cri": [
                     {
+                      "kata": {
+                        "enabled": true
+                      },
                       "name": "containerd"
                     },
                     {
+                      "kata": {
+                        "enabled": true
+                      },
                       "name": "containerd"
                     }
                   ],
@@ -2360,9 +2539,15 @@
                 {
                   "cri": [
                     {
+                      "kata": {
+                        "enabled": true
+                      },
                       "name": "containerd"
                     },
                     {
+                      "kata": {
+                        "enabled": true
+                      },
                       "name": "containerd"
                     }
                   ],

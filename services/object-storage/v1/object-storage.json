@@ -568,6 +568,19 @@
       },
       "ProjectStatus": {
         "properties": {
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Project labels",
+            "example": {
+              "contact": "Bob",
+              "environment": "development",
+              "owner": "Alice"
+            },
+            "title": "Labels",
+            "type": "object"
+          },
           "project": {
             "description": "Project ID",
             "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
@@ -652,6 +665,28 @@
           "days"
         ],
         "title": "DefaultRetentionRequest",
+        "type": "object"
+      },
+      "UpdateServicePayload": {
+        "properties": {
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Project labels",
+            "example": {
+              "contact": "Bob",
+              "environment": "development",
+              "owner": "Alice"
+            },
+            "title": "Labels",
+            "type": "object"
+          }
+        },
+        "required": [
+          "labels"
+        ],
+        "title": "PutProjectRequest",
         "type": "object"
       },
       "ValidationError": {
@@ -1020,6 +1055,115 @@
         "x-stackit-authorization": {
           "actions": [
             "object-storage.service.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "put": {
+        "description": "Update project details.",
+        "operationId": "UpdateService",
+        "parameters": [
+          {
+            "description": "STACKIT project ID",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "description": "STACKIT project ID",
+              "example": "cd5e788d-5b7b-4ab9-a20d-e790205df10b",
+              "title": "Project ID",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateServicePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitError"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Update Project",
+        "x-stackit-authorization": {
+          "actions": [
+            "object-storage.service.update"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

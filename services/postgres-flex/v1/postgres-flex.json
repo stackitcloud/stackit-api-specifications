@@ -42,6 +42,7 @@
             "type": "object"
           },
           "size": {
+            "format": "int64",
             "type": "integer"
           },
           "startTime": {
@@ -58,6 +59,7 @@
           },
           "size": {
             "example": 10,
+            "format": "int64",
             "type": "integer"
           },
           "timestamp": {
@@ -124,6 +126,7 @@
           },
           "replicas": {
             "example": 3,
+            "format": "int64",
             "type": "integer"
           },
           "storage": {
@@ -139,7 +142,6 @@
           "backupSchedule",
           "flavorId",
           "name",
-          "options",
           "replicas",
           "storage",
           "version"
@@ -181,6 +183,7 @@
         "properties": {
           "code": {
             "example": 404,
+            "format": "int32",
             "type": "integer"
           },
           "fields": {
@@ -206,6 +209,7 @@
         "properties": {
           "cpu": {
             "example": 1,
+            "format": "int32",
             "type": "integer"
           },
           "description": {
@@ -218,6 +222,7 @@
           },
           "memory": {
             "example": 1,
+            "format": "int32",
             "type": "integer"
           }
         },
@@ -266,6 +271,7 @@
           },
           "replicas": {
             "example": 3,
+            "format": "int32",
             "type": "integer"
           },
           "status": {
@@ -293,6 +299,7 @@
       "ListBackupsResponse": {
         "properties": {
           "count": {
+            "format": "int64",
             "type": "integer"
           },
           "items": {
@@ -318,6 +325,7 @@
       "ListInstancesResponse": {
         "properties": {
           "count": {
+            "format": "int64",
             "type": "integer"
           },
           "items": {
@@ -346,6 +354,7 @@
       "ListUsersResponse": {
         "properties": {
           "count": {
+            "format": "int64",
             "type": "integer"
           },
           "items": {
@@ -413,6 +422,7 @@
           },
           "replicas": {
             "example": 3,
+            "format": "int32",
             "type": "integer"
           },
           "storage": {
@@ -470,10 +480,12 @@
         "properties": {
           "max": {
             "example": 1000,
+            "format": "int64",
             "type": "integer"
           },
           "min": {
             "example": 10,
+            "format": "int64",
             "type": "integer"
           }
         },
@@ -482,9 +494,9 @@
       "StorageUpdate": {
         "properties": {
           "class": {
-            "deprecated": true,
             "description": "\n⚠️ **DEPRECATED AND NON-FUNCTIONAL:** Updating the performance class field is not possible.\n",
             "type": "string",
+            "x-deprecated": true,
             "x-deprecation-reason": "Never worked correctly"
           },
           "size": {
@@ -536,6 +548,7 @@
           },
           "replicas": {
             "example": 3,
+            "format": "int32",
             "type": "integer"
           },
           "storage": {
@@ -577,6 +590,7 @@
             "type": "string"
           },
           "port": {
+            "format": "int64",
             "type": "integer"
           },
           "roles": {
@@ -603,6 +617,7 @@
             "type": "string"
           },
           "port": {
+            "format": "int64",
             "type": "integer"
           },
           "roles": {
@@ -624,112 +639,6 @@
           },
           "setting": {
             "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "api.ExtensionConfigLoadResponse": {
-        "properties": {
-          "configuration": {
-            "description": "Returns marshalled JSON of the new configuration of whatever extension is called",
-            "items": {
-              "$ref": "#/components/schemas/api.Configuration"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "api.ExtensionConfigureResponse": {
-        "properties": {
-          "configuration": {
-            "description": "Returns marshalled JSON of the new configuration of whatever extension is called",
-            "items": {
-              "$ref": "#/components/schemas/api.Configuration"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "api.ExtensionDeleteResponse": {
-        "properties": {
-          "isSucceded": {
-            "type": "boolean"
-          }
-        },
-        "type": "object"
-      },
-      "api.ExtensionList": {
-        "properties": {
-          "ID": {
-            "type": "integer"
-          },
-          "description": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "api.ExtensionLoadResponse": {
-        "properties": {
-          "extension": {
-            "$ref": "#/components/schemas/api.ExtensionList"
-          }
-        },
-        "type": "object"
-      },
-      "api.InstallResponse": {
-        "properties": {
-          "extension": {
-            "$ref": "#/components/schemas/api.ExtensionList"
-          }
-        },
-        "type": "object"
-      },
-      "api.InstalledListResponse": {
-        "properties": {
-          "installed": {
-            "items": {
-              "$ref": "#/components/schemas/api.ExtensionList"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "extensions.Configuration": {
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "setting": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "extensions.ExtensionListResponse": {
-        "properties": {
-          "list": {
-            "items": {
-              "$ref": "#/components/schemas/api.ExtensionList"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "extensions.NewConfig": {
-        "properties": {
-          "configuration": {
-            "items": {
-              "$ref": "#/components/schemas/extensions.Configuration"
-            },
-            "type": "array"
           }
         },
         "type": "object"
@@ -929,13 +838,85 @@
       "name": "STACKIT Postgres Service Support",
       "url": "https://www.stackit.de/en/contact"
     },
-    "description": "⚠️ This API is deprecated. It will be retired on 01.07.2027. Please use the STACKIT PostgreSQL Flex API v2 instead.",
+    "description": "\u003e This is the documentation for the STACKIT postgres service\n\u003e **DEPRECATED \u0026 EOL NOTICE**\n\u003e This api is deprecated as of **30-09-2026** and will reach End of Life (EOL) on **30-09-2027**\n\u003e Please migrate to [`{api_url}/v3/`].\n",
     "termsOfService": "https://www.stackit.de/en/general-terms-and-conditions/",
-    "title": "STACKIT PostgreSQL Flex API (deprecated)",
-    "version": "1.0.0"
+    "title": "STACKIT PostgreSQL Flex API",
+    "version": "1.0.0",
+    "x-deprecated": true
   },
   "openapi": "3.0.1",
   "paths": {
+    "/v1/projects/{projectId}": {
+      "delete": {
+        "description": "Termination is the deletion of a whole project which causes the deletion of all instances for this project. Only System with permission system.databases-project.remove is able to call this resource",
+        "operationId": "DisableService",
+        "parameters": [
+          {
+            "description": "Project ID",
+            "explode": false,
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
+          },
+          "405": {
+            "description": "Method Not Allowed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Terminate the Project",
+        "x-stackit-authorization": {
+          "actions": [
+            "postgres-flex.project.delete"
+          ],
+          "resource-id": "system",
+          "resource-id-type": "static",
+          "resource-type": "system"
+        }
+      }
+    },
     "/v1/projects/{projectId}/flavors": {
       "get": {
         "description": "Get available flavors for a specific projectID",
@@ -973,6 +954,16 @@
               }
             },
             "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
           },
           "405": {
             "description": "Method Not Allowed"
@@ -1034,6 +1025,16 @@
               }
             },
             "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
           },
           "405": {
             "description": "Method Not Allowed"
@@ -1105,6 +1106,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
+          },
           "405": {
             "description": "Method Not Allowed"
           },
@@ -1169,6 +1180,16 @@
               }
             },
             "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
           },
           "404": {
             "content": {
@@ -1257,6 +1278,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
+          },
           "405": {
             "description": "Method Not Allowed"
           },
@@ -1280,7 +1311,7 @@
         }
       },
       "patch": {
-        "description": "Update available instance of a postgres database. Supported Versions are 12, 13, 14, 15 -- only upgrades are allowed!",
+        "description": "Update available instance of a postgres database. Supported Versions are 14, 15, 16, 17 -- only upgrades are allowed!",
         "operationId": "PartialUpdateInstance",
         "parameters": [
           {
@@ -1338,6 +1369,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
+          },
           "405": {
             "description": "Method Not Allowed"
           },
@@ -1361,7 +1402,7 @@
         }
       },
       "put": {
-        "description": "Update available instance of a postgres database. Supported Versions are 12, 13, 14, 15 -- only upgrades are allowed!",
+        "description": "Update available instance of a postgres database. Supported Versions are 14, 15, 16, 17 -- only upgrades are allowed!",
         "operationId": "UpdateInstance",
         "parameters": [
           {
@@ -1418,6 +1459,16 @@
               }
             },
             "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
           },
           "405": {
             "description": "Method Not Allowed"
@@ -1490,6 +1541,16 @@
               }
             },
             "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
           },
           "404": {
             "description": "Not Found"
@@ -1567,6 +1628,16 @@
               }
             },
             "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
           },
           "403": {
             "description": "Forbidden"
@@ -1657,6 +1728,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
+          },
           "404": {
             "description": "Not Found"
           },
@@ -1743,6 +1824,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
+          },
           "405": {
             "description": "Method Not Allowed"
           },
@@ -1814,6 +1905,26 @@
               }
             },
             "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Found"
           },
           "405": {
             "description": "Method Not Allowed"
@@ -1896,6 +2007,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
+          },
           "405": {
             "description": "Method Not Allowed"
           },
@@ -1972,6 +2093,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
+          },
           "405": {
             "description": "Method Not Allowed"
           },
@@ -2026,6 +2157,26 @@
         "responses": {
           "202": {
             "description": "Accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
           },
           "405": {
             "description": "Method Not Allowed"
@@ -2168,6 +2319,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
+          },
           "405": {
             "content": {
               "application/json": {
@@ -2254,6 +2415,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
+          },
           "405": {
             "description": "Method Not Allowed"
           },
@@ -2325,6 +2496,26 @@
               }
             },
             "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Found"
           },
           "405": {
             "description": "Method Not Allowed"
@@ -2407,6 +2598,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
+          },
           "405": {
             "description": "Method Not Allowed"
           },
@@ -2482,6 +2683,16 @@
               }
             },
             "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
           },
           "405": {
             "description": "Method Not Allowed"
@@ -2563,6 +2774,16 @@
               }
             },
             "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
           },
           "405": {
             "description": "Method Not Allowed"
@@ -2647,6 +2868,16 @@
               }
             },
             "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
           },
           "405": {
             "description": "Method Not Allowed"
@@ -2739,6 +2970,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
+          },
           "405": {
             "description": "Method Not Allowed"
           },
@@ -2829,6 +3070,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
+          },
           "404": {
             "content": {
               "application/json": {
@@ -2918,6 +3169,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
+          },
           "405": {
             "description": "Method Not Allowed"
           },
@@ -2989,6 +3250,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Authorized"
+          },
           "405": {
             "description": "Method Not Allowed"
           },
@@ -3015,13 +3286,10 @@
   },
   "servers": [
     {
-      "url": "https://postgres-flex-service.api.{region}stackit.cloud",
+      "url": "https://postgres-flex-service.api.stackit.cloud",
       "variables": {
         "region": {
-          "default": "eu01.",
-          "enum": [
-            "eu01."
-          ]
+          "default": "global"
         }
       }
     }

@@ -1430,6 +1430,9 @@
       "CreateNetworkPayload": {
         "description": "Object that represents the request body for a network create.",
         "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
           "dhcp": {
             "allOf": [
               {
@@ -1915,6 +1918,9 @@
         "description": "IPv4 Classless Inter-Domain Routing (CIDR) Object.",
         "properties": {
           "type": {
+            "enum": [
+              "cidrv4"
+            ],
             "example": "cidrv4",
             "type": "string",
             "x-stackit-logging": true
@@ -1937,6 +1943,9 @@
         "description": "IPv6 Classless Inter-Domain Routing (CIDR) Object.",
         "properties": {
           "type": {
+            "enum": [
+              "cidrv6"
+            ],
             "example": "cidrv6",
             "type": "string",
             "x-stackit-logging": true
@@ -2365,6 +2374,9 @@
           "diskFormat": {
             "$ref": "#/components/schemas/DiskFormat"
           },
+          "force": {
+            "$ref": "#/components/schemas/VolumeUploadForce"
+          },
           "name": {
             "$ref": "#/components/schemas/GenericName"
           },
@@ -2556,7 +2568,7 @@
         "type": "object"
       },
       "Labels": {
-        "description": "Object that represents the labels of an object. Regex for keys: `^(?=.{1,63}$)([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$`. Regex for values: `^(?=.{0,63}$)(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])*$`. Providing a `null` value for a key will remove that key. The `stackit-` prefix is reserved and cannot be used for Keys.",
+        "description": "Object that represents the labels as key-value pairs of a resource.\nKey constraints: - May contain an optional domain prefix separated by a slash (`/`). - Domain prefix must be less than or equal to 250 characters. - Domain prefix must ba a valid DNS subdomain containing only lowercase alphanumerics (`[a-z0-9]`) and dashes (`-`), separated by dots (`.`). - Length (excluding the domain prefix) must be between 1 and 63 characters. - Must begin and end with an alphanumerical character (`[a-z0-9A-Z]`). - May contain dashes (`-`), underscores (`_`), dots (`.`), and alphanumerics in between. - Keys starting with the prefix `stackit-` or having a domain prefix of `stackit.cloud` (including its subdomains, e.g., `*.stackit.cloud/`) are reserved for system use.\nValue constraints: - Must be less than or equal to 63 characters long (can be empty). - If not empty it must begin and end with an alphanumeric character (`[a-z0-9A-Z]`). - May contain dashes (`-`), underscores (`_`), dots (`.`), and alphanumerics in between.\nA resource can have a maximum of 64 labels. Reserved labels are excluded from this count. Providing a `null` value for a key will remove that key.",
         "example": {
           "key": "value"
         },
@@ -2824,6 +2836,9 @@
               }
             ],
             "readOnly": true
+          },
+          "description": {
+            "$ref": "#/components/schemas/Description"
           },
           "dhcp": {
             "$ref": "#/components/schemas/DHCP"
@@ -3104,6 +3119,9 @@
         "description": "Object that represents a blackhole route.",
         "properties": {
           "type": {
+            "enum": [
+              "blackhole"
+            ],
             "example": "blackhole",
             "type": "string",
             "x-stackit-logging": true
@@ -3118,6 +3136,9 @@
         "description": "Object that represents an IPv4 address.",
         "properties": {
           "type": {
+            "enum": [
+              "ipv4"
+            ],
             "example": "ipv4",
             "type": "string",
             "x-stackit-logging": true
@@ -3140,6 +3161,9 @@
         "description": "Object that represents an IPv6 address.",
         "properties": {
           "type": {
+            "enum": [
+              "ipv6"
+            ],
             "example": "ipv6",
             "type": "string",
             "x-stackit-logging": true
@@ -3162,6 +3186,9 @@
         "description": "Object that represents a route to the internet.",
         "properties": {
           "type": {
+            "enum": [
+              "internet"
+            ],
             "example": "internet",
             "type": "string",
             "x-stackit-logging": true
@@ -3189,6 +3216,9 @@
       "PartialUpdateNetworkPayload": {
         "description": "Object that represents the request body for a network update.",
         "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
           "dhcp": {
             "$ref": "#/components/schemas/DHCP"
           },
@@ -3263,6 +3293,17 @@
             "type": "boolean",
             "x-stackit-logging": true
           },
+          "projectType": {
+            "description": "Possible values: `Schwarz`, `Public`, `SNA`, `VPC`.",
+            "example": "Public",
+            "type": "string",
+            "x-extensible-enum": [
+              "Schwarz",
+              "Public",
+              "SNA",
+              "VPC"
+            ]
+          },
           "status": {
             "$ref": "#/components/schemas/ResourceState"
           },
@@ -3273,6 +3314,9 @@
               }
             ],
             "readOnly": true
+          },
+          "vpcId": {
+            "$ref": "#/components/schemas/UUID"
           }
         },
         "required": [
@@ -3903,8 +3947,7 @@
             ],
             "properties": {
               "type": {
-                "type": "string",
-                "x-stackit-logging": true
+                "$ref": "#/components/schemas/v2RouteDestinationType"
               }
             },
             "required": [
@@ -5468,6 +5511,12 @@
         "example": "ATTACHED",
         "type": "string"
       },
+      "VolumeUploadForce": {
+        "default": false,
+        "description": "When true the image is force created from a volume is currently being used.",
+        "example": true,
+        "type": "boolean"
+      },
       "VolumeUploadProtected": {
         "default": false,
         "description": "When true the created image is prevented from being deleted.",
@@ -5488,6 +5537,11 @@
       "v1RegionName": {
         "description": "Name of the region.",
         "example": "eu01",
+        "type": "string"
+      },
+      "v2RouteDestinationType": {
+        "description": "Possible values: `cidrv4`, `cidrv6`.",
+        "example": "cidrv4",
         "type": "string"
       }
     }

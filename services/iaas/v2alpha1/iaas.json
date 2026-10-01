@@ -89,6 +89,24 @@
           "$ref": "#/components/schemas/UUID"
         }
       },
+      "v1VolumeID": {
+        "description": "The identifier (ID) of a STACKIT Volume.",
+        "in": "path",
+        "name": "volumeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
+      "v2PrefixListID": {
+        "description": "The identifier (ID) of a STACKIT Prefix List.",
+        "in": "path",
+        "name": "prefixListId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/UUID"
+        }
+      },
       "v2RoutingTableID": {
         "description": "The identifier (ID) of a STACKIT Routing Table.",
         "in": "path",
@@ -440,8 +458,7 @@
             ],
             "properties": {
               "type": {
-                "type": "string",
-                "x-stackit-logging": true
+                "$ref": "#/components/schemas/v2RouteDestinationType"
               }
             },
             "required": [
@@ -509,6 +526,187 @@
         "required": [
           "destination",
           "nexthop"
+        ],
+        "type": "object"
+      },
+      "AllRouteList": {
+        "description": "A list of all routes.",
+        "items": {
+          "$ref": "#/components/schemas/AnyRoute"
+        },
+        "type": "array"
+      },
+      "AllRouteListResponse": {
+        "description": "All routes list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/AllRouteList"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "AnyRoute": {
+        "description": "Object that represents route of any type.",
+        "discriminator": {
+          "mapping": {
+            "dynamic": "#/components/schemas/AnyRouteDynamic",
+            "service": "#/components/schemas/AnyRouteService",
+            "static": "#/components/schemas/AnyRouteStatic",
+            "system": "#/components/schemas/AnyRouteSystem"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/AnyRouteStatic"
+          },
+          {
+            "$ref": "#/components/schemas/AnyRouteDynamic"
+          },
+          {
+            "$ref": "#/components/schemas/AnyRouteSystem"
+          },
+          {
+            "$ref": "#/components/schemas/AnyRouteService"
+          }
+        ],
+        "type": "object"
+      },
+      "AnyRouteDynamic": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseRoute"
+          },
+          {
+            "properties": {
+              "source": {
+                "$ref": "#/components/schemas/AnyRouteSource"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "description": "Object representing route of type dynamic."
+      },
+      "AnyRouteService": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseRoute"
+          },
+          {
+            "properties": {
+              "source": {
+                "$ref": "#/components/schemas/AnyRouteSource"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "description": "Object representing route of type service."
+      },
+      "AnyRouteSource": {
+        "description": "Object that represents the source information for any route.",
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              },
+              {
+                "$ref": "#/components/schemas/GenericName"
+              }
+            ],
+            "description": "The identifier of the source that created this route."
+          },
+          "type": {
+            "description": "The origin of the route.",
+            "type": "string",
+            "x-stackit-logging": true
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "AnyRouteStatic": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseRoute"
+          },
+          {
+            "properties": {
+              "createdAt": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreatedAt"
+                  }
+                ],
+                "readOnly": true
+              },
+              "error": {
+                "description": "Displays an error message with the reason why the route is invalid. Invalid routes are not applied and therefore not considered in the routing. A route can become invalid on creation and during its life-cycle.",
+                "type": "string"
+              },
+              "id": {
+                "$ref": "#/components/schemas/UUID"
+              },
+              "labels": {
+                "$ref": "#/components/schemas/Labels"
+              },
+              "nexthop": {
+                "$ref": "#/components/schemas/RouteNexthop"
+              },
+              "updatedAt": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdatedAt"
+                  }
+                ],
+                "readOnly": true
+              }
+            },
+            "required": [
+              "id",
+              "nexthop",
+              "createdAt"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "Object that represents route of type static."
+      },
+      "AnyRouteSystem": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseRoute"
+          }
+        ],
+        "description": "Object representing route of type system."
+      },
+      "BaseRoute": {
+        "description": "Object that represents common route properties. Filterable Fields: `type`.",
+        "properties": {
+          "destination": {
+            "$ref": "#/components/schemas/RouteDestination"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RouteType"
+              }
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "expr": "type"
+            }
+          }
+        },
+        "required": [
+          "destination",
+          "type"
         ],
         "type": "object"
       },
@@ -655,6 +853,9 @@
       "CreateNetworkPayload": {
         "description": "Object that represents the request body for a network create.",
         "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
           "dhcp": {
             "allOf": [
               {
@@ -765,6 +966,9 @@
         "description": "IPv4 Classless Inter-Domain Routing (CIDR) Object.",
         "properties": {
           "type": {
+            "enum": [
+              "cidrv4"
+            ],
             "example": "cidrv4",
             "type": "string",
             "x-stackit-logging": true
@@ -787,6 +991,9 @@
         "description": "IPv6 Classless Inter-Domain Routing (CIDR) Object.",
         "properties": {
           "type": {
+            "enum": [
+              "cidrv6"
+            ],
             "example": "cidrv6",
             "type": "string",
             "x-stackit-logging": true
@@ -849,7 +1056,7 @@
         "type": "string"
       },
       "Labels": {
-        "description": "Object that represents the labels of an object. Regex for keys: `^(?=.{1,63}$)([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$`. Regex for values: `^(?=.{0,63}$)(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])*$`. Providing a `null` value for a key will remove that key. The `stackit-` prefix is reserved and cannot be used for Keys.",
+        "description": "Object that represents the labels as key-value pairs of a resource.\nKey constraints: - May contain an optional domain prefix separated by a slash (`/`). - Domain prefix must be less than or equal to 250 characters. - Domain prefix must ba a valid DNS subdomain containing only lowercase alphanumerics (`[a-z0-9]`) and dashes (`-`), separated by dots (`.`). - Length (excluding the domain prefix) must be between 1 and 63 characters. - Must begin and end with an alphanumerical character (`[a-z0-9A-Z]`). - May contain dashes (`-`), underscores (`_`), dots (`.`), and alphanumerics in between. - Keys starting with the prefix `stackit-` or having a domain prefix of `stackit.cloud` (including its subdomains, e.g., `*.stackit.cloud/`) are reserved for system use.\nValue constraints: - Must be less than or equal to 63 characters long (can be empty). - If not empty it must begin and end with an alphanumeric character (`[a-z0-9A-Z]`). - May contain dashes (`-`), underscores (`_`), dots (`.`), and alphanumerics in between.\nA resource can have a maximum of 64 labels. Reserved labels are excluded from this count. Providing a `null` value for a key will remove that key.",
         "example": {
           "key": "value"
         },
@@ -890,6 +1097,9 @@
               }
             ],
             "readOnly": true
+          },
+          "description": {
+            "$ref": "#/components/schemas/Description"
           },
           "dhcp": {
             "$ref": "#/components/schemas/DHCP"
@@ -1154,6 +1364,9 @@
         "description": "Object that represents a blackhole route.",
         "properties": {
           "type": {
+            "enum": [
+              "blackhole"
+            ],
             "example": "blackhole",
             "type": "string",
             "x-stackit-logging": true
@@ -1168,6 +1381,9 @@
         "description": "Object that represents an IPv4 address.",
         "properties": {
           "type": {
+            "enum": [
+              "ipv4"
+            ],
             "example": "ipv4",
             "type": "string",
             "x-stackit-logging": true
@@ -1190,6 +1406,9 @@
         "description": "Object that represents an IPv6 address.",
         "properties": {
           "type": {
+            "enum": [
+              "ipv6"
+            ],
             "example": "ipv6",
             "type": "string",
             "x-stackit-logging": true
@@ -1212,6 +1431,9 @@
         "description": "Object that represents a route to the internet.",
         "properties": {
           "type": {
+            "enum": [
+              "internet"
+            ],
             "example": "internet",
             "type": "string",
             "x-stackit-logging": true
@@ -1225,6 +1447,9 @@
       "PartialUpdateNetworkPayload": {
         "description": "Object that represents the request body for a network update.",
         "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
           "dhcp": {
             "$ref": "#/components/schemas/DHCP"
           },
@@ -1262,6 +1487,132 @@
             "$ref": "#/components/schemas/GenericName"
           }
         },
+        "type": "object"
+      },
+      "PrefixEntries": {
+        "description": "Object containing all CIDR entries of a prefix list.",
+        "properties": {
+          "entries": {
+            "description": "List of CIDR blocks in the prefix list.",
+            "example": [
+              "192.168.0.0/24",
+              "10.0.0.0/8"
+            ],
+            "items": {
+              "example": "192.168.0.0/24",
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "entries"
+        ],
+        "type": "object"
+      },
+      "PrefixList": {
+        "description": "Object that represents a prefix list.",
+        "properties": {
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatedAt"
+              }
+            ],
+            "readOnly": true
+          },
+          "description": {
+            "$ref": "#/components/schemas/Description"
+          },
+          "entries": {
+            "description": "The list of CIDR blocks contained in this prefix list.",
+            "example": [
+              "192.168.0.0/24"
+            ],
+            "items": {
+              "example": "192.168.0.0/24",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "ethertype": {
+            "description": "The IP version of this prefix list.\nPossible values: `ipv4`, `ipv6`.",
+            "example": "ipv4",
+            "type": "string",
+            "x-extensible-enum": [
+              "ipv4",
+              "ipv6"
+            ],
+            "x-stackit-logging": true
+          },
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UUID"
+              }
+            ],
+            "readOnly": true
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "maxEntries": {
+            "description": "Maximum number of entries this prefix list can hold.",
+            "example": 128,
+            "format": "int64",
+            "maximum": 65535,
+            "minimum": 1,
+            "type": "integer",
+            "x-stackit-logging": true
+          },
+          "name": {
+            "$ref": "#/components/schemas/GenericName"
+          },
+          "type": {
+            "default": "custom",
+            "description": "Indicates the type of prefix list. Managed prefix lists are created by the provider and cannot be modified or deleted by users.\nPossible values: `custom`, `managed`.",
+            "example": "custom",
+            "readOnly": true,
+            "type": "string",
+            "x-extensible-enum": [
+              "custom",
+              "managed"
+            ],
+            "x-stackit-logging": true
+          },
+          "updatedAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpdatedAt"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "name",
+          "ethertype",
+          "maxEntries"
+        ],
+        "type": "object"
+      },
+      "PrefixListList": {
+        "description": "A list of prefix lists.",
+        "items": {
+          "$ref": "#/components/schemas/PrefixList"
+        },
+        "type": "array"
+      },
+      "PrefixListListResponse": {
+        "description": "Prefix list response.",
+        "properties": {
+          "items": {
+            "$ref": "#/components/schemas/PrefixListList"
+          }
+        },
+        "required": [
+          "items"
+        ],
         "type": "object"
       },
       "RegionalVPC": {
@@ -1338,6 +1689,17 @@
         "example": "CREATING",
         "type": "string"
       },
+      "RetypeVolumePayload": {
+        "properties": {
+          "performanceClass": {
+            "$ref": "#/components/schemas/GenericName"
+          }
+        },
+        "required": [
+          "performanceClass"
+        ],
+        "type": "object"
+      },
       "Route": {
         "description": "Object represents a network route.",
         "properties": {
@@ -1367,8 +1729,7 @@
             ],
             "properties": {
               "type": {
-                "type": "string",
-                "x-stackit-logging": true
+                "$ref": "#/components/schemas/v2RouteDestinationType"
               }
             },
             "required": [
@@ -1439,6 +1800,33 @@
         ],
         "type": "object"
       },
+      "RouteDestination": {
+        "description": "Object representing the destination for a route.",
+        "discriminator": {
+          "mapping": {
+            "cidrv4": "#/components/schemas/DestinationCIDRv4",
+            "cidrv6": "#/components/schemas/DestinationCIDRv6"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/DestinationCIDRv4"
+          },
+          {
+            "$ref": "#/components/schemas/DestinationCIDRv6"
+          }
+        ],
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/v2RouteDestinationType"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
       "RouteList": {
         "description": "A list of routes.",
         "items": {
@@ -1457,6 +1845,46 @@
           "items"
         ],
         "type": "object"
+      },
+      "RouteNexthop": {
+        "description": "Object representing the nexthop for a static route.",
+        "discriminator": {
+          "mapping": {
+            "blackhole": "#/components/schemas/NexthopBlackhole",
+            "internet": "#/components/schemas/NexthopInternet",
+            "ipv4": "#/components/schemas/NexthopIPv4",
+            "ipv6": "#/components/schemas/NexthopIPv6"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/NexthopIPv4"
+          },
+          {
+            "$ref": "#/components/schemas/NexthopIPv6"
+          },
+          {
+            "$ref": "#/components/schemas/NexthopInternet"
+          },
+          {
+            "$ref": "#/components/schemas/NexthopBlackhole"
+          }
+        ],
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/v2StaticRouteNexthopType"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "RouteType": {
+        "description": "The type of the route.\nPossible values: `STATIC`, `DYNAMIC`, `SYSTEM`, `SERVICE`.",
+        "example": "STATIC",
+        "type": "string"
       },
       "Routed": {
         "description": "Shows if the network is routed and therefore accessible from other networks.",
@@ -2085,6 +2513,16 @@
         },
         "type": "array"
       },
+      "v2RouteDestinationType": {
+        "description": "Possible values: `cidrv4`, `cidrv6`.",
+        "example": "cidrv4",
+        "type": "string"
+      },
+      "v2StaticRouteNexthopType": {
+        "description": "Possible values: `ipv4`, `ipv6`, `internet`, `blackhole`.",
+        "example": "ipv4",
+        "type": "string"
+      },
       "v3NetworkRangeList": {
         "description": "A list of VPC network ranges.",
         "items": {
@@ -2367,6 +2805,67 @@
           "resource-type": "organization"
         }
       }
+    },
+    "/v2alpha1/organizations/{organizationId}/network-areas/{areaId}/regions/{region}/routing-tables/{routingTableId}/all-routes": {
+      "get": {
+        "description": "Get a list of all routes in a routing table including system, dynamic, service and static routes.",
+        "operationId": "ListAllRoutesOfRoutingTable",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1FieldFilter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllRouteListResponse"
+                }
+              }
+            },
+            "description": "List all routes of a routing table including system, dynamic, service and static routes."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all routes of a routing table.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.network-area.all-route.list"
+          ],
+          "resource-id": "organizationId",
+          "resource-id-type": "dynamic",
+          "resource-type": "organization"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1OrganizationID"
+        },
+        {
+          "$ref": "#/components/parameters/v1NetworkAreaID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        },
+        {
+          "$ref": "#/components/parameters/v2RoutingTableID"
+        }
+      ]
     },
     "/v2alpha1/organizations/{organizationId}/network-areas/{areaId}/regions/{region}/routing-tables/{routingTableId}/networks": {
       "get": {
@@ -2925,6 +3424,262 @@
         "x-stackit-authorization": {
           "actions": [
             "iaas.network.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v2alpha1/projects/{projectId}/regions/{region}/prefix-lists": {
+      "get": {
+        "description": "Get a list of all prefix lists inside a project.",
+        "operationId": "ListPrefixLists",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1LabelSelector"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrefixListListResponse"
+                }
+              }
+            },
+            "description": "List all prefix lists of a project."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List all prefix lists inside a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.prefix-list.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        }
+      ]
+    },
+    "/v2alpha1/projects/{projectId}/regions/{region}/prefix-lists/{prefixListId}": {
+      "delete": {
+        "description": "Delete a prefix list. If the prefix list is still in use, the deletion will fail.",
+        "operationId": "DeletePrefixList",
+        "responses": {
+          "204": {
+            "description": "Delete request for prefix list has been accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Delete prefix list.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.prefix-list.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "description": "Get details about a prefix list of a project.",
+        "operationId": "GetPrefixList",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrefixList"
+                }
+              }
+            },
+            "description": "Show prefix list details."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get prefix list details.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.prefix-list.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        },
+        {
+          "$ref": "#/components/parameters/v2PrefixListID"
+        }
+      ]
+    },
+    "/v2alpha1/projects/{projectId}/regions/{region}/prefix-lists/{prefixListId}/entries": {
+      "get": {
+        "description": "Get the list of all CIDR entries in a prefix list.",
+        "operationId": "GetPrefixListEntries",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrefixEntries"
+                }
+              }
+            },
+            "description": "Get prefix list entries was successful."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get prefix list entries.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.prefix-list.entry.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        },
+        {
+          "$ref": "#/components/parameters/v2PrefixListID"
+        }
+      ]
+    },
+    "/v2alpha1/projects/{projectId}/regions/{region}/volumes/{volumeId}/retype": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        },
+        {
+          "$ref": "#/components/parameters/v1VolumeID"
+        }
+      ],
+      "post": {
+        "description": "Update the performanceClass of a block device volume. This request can only be performend once in 7 days if the requested performanceClass is slower compared to the current one. Upgrades to faster performanceClasses are always allowed. This operation is async can take a few minutes to complete.",
+        "operationId": "RetypeVolume",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RetypeVolumePayload"
+              }
+            }
+          },
+          "description": "Request a volume retype."
+        },
+        "responses": {
+          "202": {
+            "description": "Volume retype request accepted."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Update the performanceClass of a volume.",
+        "x-stackit-authorization": {
+          "actions": [
+            "iaas.volume.retype"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

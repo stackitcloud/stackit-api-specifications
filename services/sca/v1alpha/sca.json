@@ -76,8 +76,7 @@
         "required": [
           "containers",
           "displayName",
-          "scaling",
-          "network"
+          "scaling"
         ],
         "type": "object"
       },
@@ -176,6 +175,10 @@
             "description": "Application's running instances.",
             "format": "int32",
             "type": "integer"
+          },
+          "internalUrl": {
+            "description": "Application's internal URL.",
+            "type": "string"
           },
           "lastDeployment": {
             "description": "Date of the last moment the application got the running status in RFC3339 format.",
@@ -337,8 +340,7 @@
         "required": [
           "containers",
           "displayName",
-          "scaling",
-          "network"
+          "scaling"
         ],
         "type": "object"
       },
@@ -364,6 +366,9 @@
             "description": "Environment identifier, for example: default.",
             "readOnly": true,
             "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EnvironmentStatus"
           }
         },
         "required": [
@@ -498,12 +503,25 @@
             "description": "Environment identifier, for example: default.",
             "readOnly": true,
             "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EnvironmentStatus"
           }
         },
         "required": [
           "displayName"
         ],
         "type": "object"
+      },
+      "EnvironmentStatus": {
+        "default": "ENVIRONMENT_STATUS_UNSPECIFIED",
+        "description": " - ENVIRONMENT_STATUS_UNSPECIFIED: Used as zero value.\n - ENVIRONMENT_STATUS_PROGRESSING: Environment is being created.\n - ENVIRONMENT_STATUS_CREATED: Environment is successfully created.",
+        "enum": [
+          "ENVIRONMENT_STATUS_UNSPECIFIED",
+          "ENVIRONMENT_STATUS_PROGRESSING",
+          "ENVIRONMENT_STATUS_CREATED"
+        ],
+        "type": "string"
       },
       "EnvironmentSummary": {
         "description": "Environment summary.",
@@ -680,6 +698,11 @@
             },
             "type": "array"
           },
+          "internalPort": {
+            "description": "Internal port number for inter application communication.",
+            "format": "int32",
+            "type": "integer"
+          },
           "port": {
             "description": "Port number.",
             "format": "int32",
@@ -690,9 +713,6 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "publicIngress"
-        ],
         "type": "object"
       },
       "RuleType": {
@@ -725,6 +745,11 @@
             "readOnly": true,
             "title": "List of the application instance names",
             "type": "array"
+          },
+          "internalUrl": {
+            "description": "Internal URL for the running application.",
+            "readOnly": true,
+            "type": "string"
           },
           "lastDeployment": {
             "description": "Last time the application was deployed.",
@@ -1704,7 +1729,7 @@
             "description": "Request failed. Check the request and retry operation."
           }
         },
-        "summary": "GetApplicationEvents retrieves events of an application.",
+        "summary": "Retrieves events of an application.",
         "x-stackit-authorization": {
           "actions": [
             "sca.application.get"
@@ -1828,7 +1853,7 @@
             "description": "Request failed. Check the request and retry operation."
           }
         },
-        "summary": "GetApplicationLogs retrieves logs of an application.",
+        "summary": "Retrieves logs of an application.",
         "x-stackit-authorization": {
           "actions": [
             "sca.application.get"
@@ -1886,6 +1911,7 @@
             "description": "Request failed. Check the request and retry operation."
           }
         },
+        "summary": "Retrieves the overview for an environment.",
         "x-stackit-authorization": {
           "actions": [
             "sca.project.overview"

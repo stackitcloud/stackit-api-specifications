@@ -4744,6 +4744,67 @@
         }
       }
     },
+    "/v2alpha1/projects/{projectId}/vpcs/{vpcId}/regions/{region}/routing-tables/{routingTableId}/routes": {
+      "get": {
+        "description": "Get a list of routes in a VPC routing table including system, dynamic, service and static routes.",
+        "operationId": "ListRoutesOfRoutingTableVPC",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1FieldFilter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllRouteListResponse"
+                }
+              }
+            },
+            "description": "List routes of a VPC routing table including system, dynamic, service and static routes."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "List routes of a routing table of a VPC.",
+        "x-stackit-authorization": {
+          "actions": [
+            "vpc.routing-table.route.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/v1ProjectID"
+        },
+        {
+          "$ref": "#/components/parameters/v1VPCID"
+        },
+        {
+          "$ref": "#/components/parameters/v1Region"
+        },
+        {
+          "$ref": "#/components/parameters/v2RoutingTableID"
+        }
+      ]
+    },
     "/v2alpha1/projects/{projectId}/vpcs/{vpcId}/regions/{region}/routing-tables/{routingTableId}/static-routes": {
       "get": {
         "description": "Get a list of all static routes of a VPC for this region.",

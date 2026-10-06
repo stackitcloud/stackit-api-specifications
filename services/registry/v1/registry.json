@@ -73,11 +73,6 @@
             "description": "The base URL of the STACKIT Artifactory.",
             "format": "uri",
             "type": "string"
-          },
-          "user_count": {
-            "description": "How many users does this artifactory have. Read Only.",
-            "format": "int64",
-            "type": "integer"
           }
         },
         "required": [
@@ -86,8 +81,7 @@
           "create_time",
           "state",
           "url",
-          "consumed_quota_bytes",
-          "user_count"
+          "consumed_quota_bytes"
         ],
         "type": "object"
       },
@@ -204,6 +198,10 @@
             "type": "string"
           }
         },
+        "required": [
+          "access_key",
+          "access_secret"
+        ],
         "type": "object"
       },
       "ForbiddenErrorResponse": {
@@ -329,10 +327,22 @@
             "type": "string"
           }
         },
+        "required": [
+          "access_key"
+        ],
         "type": "object"
       },
       "ReplicationAdapter": {
         "properties": {
+          "credential_type": {
+            "description": "User-hint for what type of credentials are expected for replication\nadapter type. Values are one of `basic` for username/password, `oauth`\nfor token based access, and `secret` for json-secret file.\n",
+            "enum": [
+              "basic",
+              "oauth",
+              "secret"
+            ],
+            "type": "string"
+          },
           "display_name": {
             "description": "Human-friendly name of the provider the adapter relates to.",
             "example": "Docker Hub",
@@ -346,7 +356,8 @@
         },
         "required": [
           "registry_type",
-          "display_name"
+          "display_name",
+          "credential_type"
         ],
         "type": "object"
       },
@@ -723,7 +734,7 @@
             "description": "Internal server error."
           }
         },
-        "summary": "Soft delete the artifactory.",
+        "summary": "Delete the artifactory.",
         "x-stackit-authorization": {
           "actions": [
             "container-registry.project.delete"

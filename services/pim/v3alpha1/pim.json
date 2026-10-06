@@ -32,7 +32,7 @@
       "CursorParam": {
         "description": "The cursor base64 encoded is used to retrieve the next page of results",
         "in": "query",
-        "name": "cursor",
+        "name": "page_token",
         "schema": {
           "$ref": "#/components/schemas/Cursor"
         }
@@ -40,7 +40,7 @@
       "LimitParam": {
         "description": "The number of items to retrieve per page",
         "in": "query",
-        "name": "limit",
+        "name": "page_size",
         "schema": {
           "$ref": "#/components/schemas/Limit"
         }
@@ -119,17 +119,27 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/Problem"
+              "$ref": "#/components/schemas/ErrorResponse"
             }
           }
         },
         "description": "The request was invalid or malformed"
       },
+      "Conflict": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "A conflict occurred"
+      },
       "Forbidden": {
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/Problem"
+              "$ref": "#/components/schemas/ErrorResponse"
             }
           }
         },
@@ -139,17 +149,17 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/Problem"
+              "$ref": "#/components/schemas/ErrorResponse"
             }
           }
         },
-        "description": "An unexpected server common occurred"
+        "description": "An unexpected server error occurred"
       },
       "NotFound": {
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/Problem"
+              "$ref": "#/components/schemas/ErrorResponse"
             }
           }
         },
@@ -299,15 +309,35 @@
         },
         "description": "List SKUS successful response"
       },
+      "TooManyRequests": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "Too many requests have been made in a short period of time"
+      },
       "Unauthorized": {
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/Problem"
+              "$ref": "#/components/schemas/ErrorResponse"
             }
           }
         },
         "description": "Authentication credentials are required"
+      },
+      "UnprocessableEntity": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "The request could not be processed due to a problem with the input data"
       }
     },
     "schemas": {
@@ -354,6 +384,135 @@
         "description": "The cursor base64 encoded is used to retrieve the next page of results",
         "type": "string"
       },
+      "ErrorBody": {
+        "properties": {
+          "code": {
+            "example": 429,
+            "type": "integer",
+            "x-order": 1
+          },
+          "details": {
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "type.googleapis.com/google.rpc.ErrorInfo": "#/components/schemas/ErrorInfo",
+                  "type.googleapis.com/google.rpc.Help": "#/components/schemas/Help",
+                  "type.googleapis.com/google.rpc.LocalizedMessage": "#/components/schemas/LocalizedMessage"
+                },
+                "propertyName": "@type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ErrorInfo"
+                },
+                {
+                  "$ref": "#/components/schemas/LocalizedMessage"
+                },
+                {
+                  "$ref": "#/components/schemas/Help"
+                }
+              ]
+            },
+            "type": "array",
+            "x-order": 4
+          },
+          "message": {
+            "example": "The zone 'us-east1-a' does not have enough resources available to fulfill the request. Try a different zone, or try again later.",
+            "type": "string",
+            "x-order": 3
+          },
+          "status": {
+            "example": "RESOURCE_EXHAUSTED",
+            "type": "string",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "status",
+          "details"
+        ],
+        "type": "object"
+      },
+      "ErrorInfo": {
+        "properties": {
+          "@type": {
+            "enum": [
+              "type.googleapis.com/google.rpc.ErrorInfo"
+            ],
+            "type": "string",
+            "x-order": 1
+          },
+          "domain": {
+            "type": "string",
+            "x-order": 3
+          },
+          "metadata": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "x-order": 4
+          },
+          "reason": {
+            "type": "string",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "@type",
+          "reason",
+          "domain",
+          "metadata"
+        ],
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "example": {
+          "error": {
+            "code": 429,
+            "details": [
+              {
+                "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+                "domain": "compute.googleapis.com",
+                "metadata": {
+                  "attachment": "local-ssd=3,nvidia-t4=2",
+                  "vmType": "e2-medium",
+                  "zone": "us-east1-a",
+                  "zonesWithCapacity": "us-central1-f,us-central1-c"
+                },
+                "reason": "RESOURCE_AVAILABILITY"
+              },
+              {
+                "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+                "locale": "en-US",
+                "message": "An \u003ce2-medium\u003e VM instance with \u003clocal-ssd=3,nvidia-t4=2\u003e is currently unavailable in the \u003cus-east1-a\u003e zone. Consider trying your request in the \u003cus-central1-f,us-central1-c\u003e zone(s), which currently has/have capacity to accommodate your request. Alternatively, you can try your request again with a different VM hardware configuration or at a later time. For more information, see the troubleshooting documentation."
+              },
+              {
+                "@type": "type.googleapis.com/google.rpc.Help",
+                "links": [
+                  {
+                    "description": "Additional information on this error",
+                    "url": "https://cloud.google.com/compute/docs/resource-error"
+                  }
+                ]
+              }
+            ],
+            "message": "The zone 'us-east1-a' does not have enough resources available to fulfill the request. Try a different zone, or try again later.",
+            "status": "RESOURCE_EXHAUSTED"
+          }
+        },
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
       "FinOpsFocus": {
         "properties": {
           "serviceCategory": {
@@ -367,6 +526,45 @@
         },
         "type": "object"
       },
+      "Help": {
+        "properties": {
+          "@type": {
+            "enum": [
+              "type.googleapis.com/google.rpc.Help"
+            ],
+            "type": "string"
+          },
+          "links": {
+            "items": {
+              "$ref": "#/components/schemas/HelpLink"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "@type",
+          "links"
+        ],
+        "type": "object"
+      },
+      "HelpLink": {
+        "properties": {
+          "description": {
+            "type": "string",
+            "x-order": 1
+          },
+          "url": {
+            "format": "uri",
+            "type": "string",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "description",
+          "url"
+        ],
+        "type": "object"
+      },
       "IDFilter": {
         "maxLength": 100,
         "minLength": 1,
@@ -374,10 +572,35 @@
       },
       "Limit": {
         "default": 10,
-        "format": "int64",
+        "format": "int32",
         "maximum": 100,
         "minimum": 1,
         "type": "integer"
+      },
+      "LocalizedMessage": {
+        "properties": {
+          "@type": {
+            "enum": [
+              "type.googleapis.com/google.rpc.LocalizedMessage"
+            ],
+            "type": "string",
+            "x-order": 1
+          },
+          "locale": {
+            "type": "string",
+            "x-order": 2
+          },
+          "message": {
+            "type": "string",
+            "x-order": 3
+          }
+        },
+        "required": [
+          "@type",
+          "locale",
+          "message"
+        ],
+        "type": "object"
       },
       "MarketingAdvantage": {
         "properties": {
@@ -527,62 +750,6 @@
           "currencyCode"
         ]
       },
-      "Problem": {
-        "properties": {
-          "detail": {
-            "description": "Error detail",
-            "type": "string",
-            "x-order": 3
-          },
-          "entity": {
-            "description": "Entity for not found errors",
-            "type": "string",
-            "x-order": 6
-          },
-          "errors": {
-            "description": "Additional common information",
-            "items": {
-              "additionalProperties": true,
-              "type": "object"
-            },
-            "type": "array",
-            "x-order": 5
-          },
-          "id": {
-            "description": "Unique identifier for not found errors",
-            "type": "string",
-            "x-order": 8
-          },
-          "instance": {
-            "description": "Request URI",
-            "type": "string",
-            "x-order": 4
-          },
-          "language": {
-            "description": "Language for not found errors",
-            "type": "string",
-            "x-order": 7
-          },
-          "status": {
-            "description": "HTTP status code",
-            "format": "int64",
-            "type": "integer",
-            "x-order": 2
-          },
-          "title": {
-            "description": "Error title",
-            "type": "string",
-            "x-order": 1
-          }
-        },
-        "required": [
-          "status",
-          "title",
-          "detail",
-          "instance"
-        ],
-        "type": "object"
-      },
       "Product": {
         "properties": {
           "id": {
@@ -600,7 +767,7 @@
       },
       "PublicArchivingSpecificAttributes": {
         "properties": {
-          "discriminator": {
+          "categoryType": {
             "type": "string"
           },
           "metro": {
@@ -611,12 +778,20 @@
           }
         },
         "required": [
-          "discriminator"
+          "categoryType"
         ],
         "type": "object"
       },
       "PublicCategory": {
         "properties": {
+          "createTime": {
+            "description": "Date and time when the component was created(fixing a linter false positive)",
+            "example": "2026-08-06T10:00:00",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-order": 9
+          },
           "description": {
             "description": "Description of the category",
             "example": "Compute Engine offers various services",
@@ -648,6 +823,13 @@
             "type": "string",
             "x-order": 2
           },
+          "updateTime": {
+            "description": "This field tracks modification dates, which are write operations (fixing a linter false positive)",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-order": 8
+          },
           "validStart": {
             "description": "Date when the current version was approved and became valid in PIM",
             "example": "2023-01-15T10:30:00",
@@ -671,15 +853,15 @@
       },
       "PublicComputeEngineGPUSpecificAttributes": {
         "properties": {
+          "categoryType": {
+            "type": "string"
+          },
           "cpuOverprovisioning": {
             "description": "CPU overprovisioning",
             "example": false,
             "nullable": true,
             "type": "boolean",
             "x-order": 15
-          },
-          "discriminator": {
-            "type": "string"
           },
           "flavor": {
             "description": "Flavor",
@@ -721,21 +903,21 @@
           }
         },
         "required": [
-          "discriminator"
+          "categoryType"
         ],
         "type": "object"
       },
       "PublicComputeEngineSpecificAttributes": {
         "properties": {
+          "categoryType": {
+            "type": "string"
+          },
           "cpuOverprovisioning": {
             "description": "CPU overprovisioning",
             "example": false,
             "nullable": true,
             "type": "boolean",
             "x-order": 15
-          },
-          "discriminator": {
-            "type": "string"
           },
           "flavor": {
             "description": "Flavor",
@@ -814,21 +996,21 @@
           }
         },
         "required": [
-          "discriminator"
+          "categoryType"
         ],
         "type": "object"
       },
       "PublicConfidentialComputingSpecificAttributes": {
         "properties": {
+          "categoryType": {
+            "type": "string"
+          },
           "cpuOverprovisioning": {
             "description": "CPU overprovisioning",
             "example": false,
             "nullable": true,
             "type": "boolean",
             "x-order": 15
-          },
-          "discriminator": {
-            "type": "string"
           },
           "flavor": {
             "description": "Flavor",
@@ -907,13 +1089,13 @@
           }
         },
         "required": [
-          "discriminator"
+          "categoryType"
         ],
         "type": "object"
       },
       "PublicDataAndAISpecificAttributes": {
         "properties": {
-          "discriminator": {
+          "categoryType": {
             "type": "string"
           },
           "type": {
@@ -924,13 +1106,13 @@
           }
         },
         "required": [
-          "discriminator"
+          "categoryType"
         ],
         "type": "object"
       },
       "PublicDatabaseSpecificAttributes": {
         "properties": {
-          "discriminator": {
+          "categoryType": {
             "type": "string"
           },
           "diskStoragePerNode": {
@@ -996,13 +1178,13 @@
           }
         },
         "required": [
-          "discriminator"
+          "categoryType"
         ],
         "type": "object"
       },
       "PublicDeveloperPlatformSpecificAttributes": {
         "properties": {
-          "discriminator": {
+          "categoryType": {
             "type": "string"
           },
           "diskStoragePerNode": {
@@ -1025,13 +1207,13 @@
           }
         },
         "required": [
-          "discriminator"
+          "categoryType"
         ],
         "type": "object"
       },
       "PublicLoggingAndMonitoringSpecificAttributes": {
         "properties": {
-          "discriminator": {
+          "categoryType": {
             "type": "string"
           },
           "diskStoragePerNode": {
@@ -1069,7 +1251,7 @@
           }
         },
         "required": [
-          "discriminator"
+          "categoryType"
         ],
         "type": "object"
       },
@@ -1090,6 +1272,14 @@
             },
             "type": "array",
             "x-order": 12
+          },
+          "createTime": {
+            "description": "Date and time when the component was created(fixing a linter false positive)",
+            "example": "2026-08-06T10:00:00",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-order": 14
           },
           "functions": {
             "description": "List of functions provided by the product",
@@ -1135,6 +1325,13 @@
             "type": "string",
             "x-order": 2
           },
+          "updateTime": {
+            "description": "This field tracks modification dates, which are write operations (fixing a linter false positive)",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-order": 15
+          },
           "validStart": {
             "description": "Date when the current version was approved and became valid in PIM",
             "example": "2023-01-15T10:30:00",
@@ -1158,7 +1355,7 @@
       },
       "PublicMessagingSpecificAttributes": {
         "properties": {
-          "discriminator": {
+          "categoryType": {
             "type": "string"
           },
           "diskStoragePerNode": {
@@ -1196,22 +1393,22 @@
           }
         },
         "required": [
-          "discriminator"
+          "categoryType"
         ],
         "type": "object"
       },
       "PublicNetworkSpecificAttributes": {
         "properties": {
+          "categoryType": {
+            "type": "string",
+            "x-order": 1
+          },
           "connectionLimitPerLoadBalancer": {
             "description": "Connection limit per Load Balancer",
             "example": 500,
             "format": "float",
             "nullable": true,
             "type": "number"
-          },
-          "discriminator": {
-            "type": "string",
-            "x-order": 1
           },
           "maxBandWidth": {
             "description": "Maximum Bandwidth",
@@ -1248,13 +1445,13 @@
           }
         },
         "required": [
-          "discriminator"
+          "categoryType"
         ],
         "type": "object"
       },
       "PublicProduct": {
         "properties": {
-          "apiIdentifier": {
+          "apiIdentifiers": {
             "description": "Api identifier",
             "example": "api-explorer",
             "items": {
@@ -1265,6 +1462,14 @@
           },
           "category": {
             "$ref": "#/components/schemas/Category"
+          },
+          "createTime": {
+            "description": "Date and time when the component was created(fixing a linter false positive)",
+            "example": "2026-08-06T10:00:00",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-order": 13
           },
           "description": {
             "description": "Description of the product",
@@ -1303,6 +1508,13 @@
             "type": "string",
             "x-order": 2
           },
+          "updateTime": {
+            "description": "This field tracks modification dates, which are write operations (fixing a linter false positive)",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-order": 12
+          },
           "validStart": {
             "description": "Date when the current version was approved and became valid in PIM",
             "example": "2023-01-15T10:30:00",
@@ -1326,7 +1538,7 @@
       },
       "PublicRuntimeSpecificAttributes": {
         "properties": {
-          "discriminator": {
+          "categoryType": {
             "type": "string"
           },
           "planId": {
@@ -1343,7 +1555,7 @@
           }
         },
         "required": [
-          "discriminator"
+          "categoryType"
         ],
         "type": "object"
       },
@@ -1374,7 +1586,7 @@
                     "Storage": "#/components/schemas/PublicStorageSpecificAttributes",
                     "Support": "#/components/schemas/PublicSupportSpecificAttributes"
                   },
-                  "propertyName": "discriminator"
+                  "propertyName": "categoryType"
                 },
                 "oneOf": [
                   {
@@ -1452,15 +1664,15 @@
       },
       "PublicStorageSpecificAttributes": {
         "properties": {
+          "categoryType": {
+            "type": "string",
+            "x-order": 1
+          },
           "class": {
             "description": "Storage Class type",
             "example": "storage_premium_perf0",
             "nullable": true,
             "type": "string"
-          },
-          "discriminator": {
-            "type": "string",
-            "x-order": 1
           },
           "maxIOPerSec": {
             "description": "Storage maxIOPerSec",
@@ -1496,14 +1708,18 @@
           }
         },
         "required": [
-          "discriminator"
+          "categoryType"
         ],
         "type": "object"
       },
       "PublicSupportSpecificAttributes": {
         "properties": {
-          "communicationChannel": {
-            "description": "Communication Channel",
+          "categoryType": {
+            "type": "string",
+            "x-order": 1
+          },
+          "communicationChannels": {
+            "description": "Communication Channels",
             "example": [
               "Telephone",
               "Portal"
@@ -1519,10 +1735,6 @@
             "format": "int64",
             "nullable": true,
             "type": "integer"
-          },
-          "discriminator": {
-            "type": "string",
-            "x-order": 1
           },
           "escalationAvailabilityBCINC": {
             "description": "Escalation availability BC INC",
@@ -1666,7 +1878,7 @@
           }
         },
         "required": [
-          "discriminator"
+          "categoryType"
         ],
         "type": "object"
       },
@@ -1680,6 +1892,13 @@
         "properties": {
           "category": {
             "$ref": "#/components/schemas/Category"
+          },
+          "denominator": {
+            "description": "Conversion of the quantity value from the quantity input unit to the invoice unit.",
+            "example": 1024,
+            "format": "float",
+            "type": "number",
+            "x-order": 23
           },
           "deprecated": {
             "description": "Attribute that indicates if product is deprecated or not.",
@@ -1698,12 +1917,31 @@
           "finOpsFocus": {
             "$ref": "#/components/schemas/FinOpsFocus"
           },
+          "focusConsumedUnit": {
+            "description": "The unit displayed in the Focus Report.",
+            "example": "Hours",
+            "type": "string",
+            "x-order": 20
+          },
+          "focusDocumentation": {
+            "description": "The documentation in the Focus Report.",
+            "example": "Focus documentation example",
+            "nullable": true,
+            "type": "string",
+            "x-order": 21
+          },
           "generalProductGroup": {
             "description": "Category designation one level below the generic designation that describes the overall product group to which all the SKUs are allocated to.",
             "example": "Managed Windows Server",
             "nullable": true,
             "type": "string",
             "x-order": 10
+          },
+          "hourlyAggregation": {
+            "description": "Aggregation logic to be applied to the sent events within the metering bucket (currently 1 day)",
+            "example": "SUM",
+            "type": "string",
+            "x-order": 22
           },
           "id": {
             "description": "Unique identifier of the sku in PIM (Stibo)",
@@ -1724,6 +1962,12 @@
             "type": "string",
             "x-order": 8
           },
+          "meteringType": {
+            "description": "Defines which type of calculation is applied. Either discrete (point-in-time) or continuously (continuous).",
+            "example": "discrete",
+            "type": "string",
+            "x-order": 19
+          },
           "name": {
             "description": "How the line item will appear on the bill",
             "example": "Compute Optimized Server",
@@ -1736,10 +1980,16 @@
             "example": true,
             "nullable": true,
             "type": "boolean",
-            "x-order": 21
+            "x-order": 24
           },
           "product": {
             "$ref": "#/components/schemas/Product"
+          },
+          "quantityInputUnit": {
+            "description": "The unit sent in the quantity field of the Consumption API and Metering API.",
+            "example": "Bytes",
+            "type": "string",
+            "x-order": 18
           },
           "region": {
             "description": "Region of sku",
@@ -1752,13 +2002,13 @@
             "example": "ST-01234567",
             "type": "string"
           },
-          "serviceId": {
+          "serviceIds": {
             "description": "List of unique service look up ids (ASCII ordered, ascending)",
             "items": {
               "type": "string"
             },
             "type": "array",
-            "x-order": 23
+            "x-order": 25
           },
           "technicalProductGroup": {
             "description": "Technical differentiation",
@@ -1783,7 +2033,7 @@
             "description": "Unit billing",
             "example": "per hour",
             "type": "string",
-            "x-order": 18
+            "x-order": 19
           },
           "validStart": {
             "description": "Date when the current version was approved and became valid in PIM",
@@ -1813,7 +2063,12 @@
           "title",
           "priceListVisibility",
           "unit",
+          "quantityInputUnit",
           "unitBilling",
+          "meteringType",
+          "hourlyAggregation",
+          "denominator",
+          "focusConsumedUnit",
           "region",
           "finOpsFocus"
         ],
@@ -1837,7 +2092,7 @@
     "/v3alpha1/categories": {
       "get": {
         "description": "Returns all categories, available for general public.",
-        "operationId": "listCategories",
+        "operationId": "ListCategories",
         "parameters": [
           {
             "$ref": "#/components/parameters/LimitParam"
@@ -1865,6 +2120,9 @@
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
@@ -1878,7 +2136,7 @@
     "/v3alpha1/categories/{categoryId}": {
       "get": {
         "description": "Retrieves a specific category by its ID, available for general public.",
-        "operationId": "getCategory",
+        "operationId": "GetCategory",
         "parameters": [
           {
             "$ref": "#/components/parameters/CategoryIdPathParam"
@@ -1900,6 +2158,15 @@
           "404": {
             "$ref": "#/components/responses/NotFound"
           },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
@@ -1913,7 +2180,7 @@
     "/v3alpha1/marketing": {
       "get": {
         "description": "Returns a list of all marketing materials for all products, available for general public.",
-        "operationId": "listMarketingData",
+        "operationId": "ListMarketingData",
         "parameters": [
           {
             "$ref": "#/components/parameters/LimitParam"
@@ -1944,6 +2211,15 @@
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
@@ -1957,7 +2233,7 @@
     "/v3alpha1/products": {
       "get": {
         "description": "Returns all products, available for general public.",
-        "operationId": "listProducts",
+        "operationId": "ListProducts",
         "parameters": [
           {
             "$ref": "#/components/parameters/LimitParam"
@@ -1991,6 +2267,15 @@
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
@@ -2004,7 +2289,7 @@
     "/v3alpha1/products/{productId}": {
       "get": {
         "description": "Retrieves a specific product by its ID, available for general public.",
-        "operationId": "getProduct",
+        "operationId": "GetProduct",
         "parameters": [
           {
             "$ref": "#/components/parameters/ProductIdPathParam"
@@ -2026,6 +2311,15 @@
           "404": {
             "$ref": "#/components/responses/NotFound"
           },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
@@ -2039,7 +2333,7 @@
     "/v3alpha1/products/{productId}/marketing": {
       "get": {
         "description": "Retrieves the marketing data for a specific product, available for general public.",
-        "operationId": "getMarketingData",
+        "operationId": "GetMarketingData",
         "parameters": [
           {
             "$ref": "#/components/parameters/ProductIdPathParam"
@@ -2061,6 +2355,15 @@
           "404": {
             "$ref": "#/components/responses/NotFound"
           },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
@@ -2074,7 +2377,7 @@
     "/v3alpha1/skus": {
       "get": {
         "description": "Retrieves a list of all SKUs, available for general public.",
-        "operationId": "listSKUs",
+        "operationId": "ListSKUs",
         "parameters": [
           {
             "$ref": "#/components/parameters/LimitParam"
@@ -2111,6 +2414,15 @@
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
@@ -2124,7 +2436,7 @@
     "/v3alpha1/skus/{skuId}": {
       "get": {
         "description": "Retrieves a specific SKU by its ID, available for general public.",
-        "operationId": "getSKU",
+        "operationId": "GetSKU",
         "parameters": [
           {
             "$ref": "#/components/parameters/SKUIdPathParam"
@@ -2146,6 +2458,15 @@
           "404": {
             "$ref": "#/components/responses/NotFound"
           },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
@@ -2159,7 +2480,7 @@
     "/v3alpha1/stackitx/skus": {
       "get": {
         "description": "Get all STACKIT:X SKUs data, available for general public.",
-        "operationId": "listSTAXSKUs",
+        "operationId": "ListSTAXSKUs",
         "parameters": [
           {
             "$ref": "#/components/parameters/LimitParam"
@@ -2199,6 +2520,15 @@
           "403": {
             "$ref": "#/components/responses/Forbidden"
           },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
@@ -2212,7 +2542,7 @@
     "/v3alpha1/stackitx/skus/{skuId}": {
       "get": {
         "description": "Retrieves a specific STACKIT:X SKU by its ID, available for general public.",
-        "operationId": "getSTAXSKU",
+        "operationId": "GetSTAXSKU",
         "parameters": [
           {
             "$ref": "#/components/parameters/SKUIdPathParam"
@@ -2233,6 +2563,15 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"

@@ -999,7 +999,12 @@
               "title",
               "priceListVisibility",
               "unit",
+              "quantityInputUnit",
               "unitBilling",
+              "meteringType",
+              "focusConsumedUnit",
+              "hourlyAggregation",
+              "denominator",
               "region",
               "prices",
               "finOpsFocus"
@@ -1069,6 +1074,12 @@
             "nullable": true,
             "type": "boolean"
           },
+          "denominator": {
+            "description": "Conversion of the quantity value from the quantity input unit to the invoice unit.",
+            "example": 1024,
+            "format": "float",
+            "type": "number"
+          },
           "deprecated": {
             "description": "Attribute that indicates if product is deprecated or not.",
             "example": "yes",
@@ -1084,10 +1095,26 @@
           "finOpsFocus": {
             "$ref": "#/components/schemas/FinOpsFocus"
           },
+          "focusConsumedUnit": {
+            "description": "The unit displayed in the Focus Report.",
+            "example": "Hours",
+            "type": "string"
+          },
+          "focusDocumentation": {
+            "description": "The documentation in the Focus Report.",
+            "example": "focus documentation example",
+            "nullable": true,
+            "type": "string"
+          },
           "generalProductGroup": {
             "description": "Category designation one level below the generic designation that describes the overall product group to which all the SKUs are allocated to.",
             "example": "Managed Windows Server",
             "nullable": true,
+            "type": "string"
+          },
+          "hourlyAggregation": {
+            "description": "Aggregation logic to be applied to the sent events within the metering bucket (currently 1 day)",
+            "example": "SUM",
             "type": "string"
           },
           "id": {
@@ -1110,6 +1137,11 @@
             "description": "State of the SKU following the mandatory product‘s maturity model progress (e.g. `beta`, `ga`)",
             "example": "beta",
             "nullable": true,
+            "type": "string"
+          },
+          "meteringType": {
+            "description": "Defines which type of calculation is applied. Either discrete (point-in-time) or continuously (continuous).",
+            "example": "discrete",
             "type": "string"
           },
           "metric": {
@@ -1147,6 +1179,11 @@
             "description": "Generic product (e.g. `Windows Server`, `Server Backup Management`, `Server`)",
             "example": "Windows Server",
             "nullable": true,
+            "type": "string"
+          },
+          "quantityInputUnit": {
+            "description": "The unit sent in the quantity field of the Consumption API and Metering API.",
+            "example": "Bytes",
             "type": "string"
           },
           "rateType": {
@@ -1485,6 +1522,12 @@
             "nullable": true,
             "type": "integer"
           },
+          "denominator": {
+            "description": "Conversion of the quantity value from the quantity input unit to the invoice unit.",
+            "example": 1024,
+            "format": "float",
+            "type": "number"
+          },
           "deprecated": {
             "description": "Attribute that indicates if product is deprecated or not.",
             "example": "yes",
@@ -1558,6 +1601,17 @@
             "example": "c1.1",
             "type": "string"
           },
+          "focusConsumedUnit": {
+            "description": "The unit displayed in the Focus Report.",
+            "example": "Hours",
+            "type": "string"
+          },
+          "focusDocumentation": {
+            "description": "The documentation in the Focus Report.",
+            "example": "focus documentation example",
+            "nullable": true,
+            "type": "string"
+          },
           "generalProductGroup": {
             "description": "Category designation one level below the generic designation that describes the overall product group to which all the SKUs are allocated to.",
             "example": "Managed Windows Server",
@@ -1566,6 +1620,11 @@
           "hardware": {
             "description": "Hardware",
             "example": "Intel",
+            "type": "string"
+          },
+          "hourlyAggregation": {
+            "description": "Aggregation logic to be applied to the sent events within the metering bucket (currently 1 day)",
+            "example": "SUM",
             "type": "string"
           },
           "initialRuntimeInMonths": {
@@ -1604,6 +1663,11 @@
             "example": 25,
             "format": "int64",
             "type": "integer"
+          },
+          "meteringType": {
+            "description": "Defines which type of calculation is applied. Either discrete (point-in-time) or continuously (continuous).",
+            "example": "discrete",
+            "type": "string"
           },
           "metricPerMin": {
             "description": "metricPerMin",
@@ -1654,6 +1718,11 @@
             "format": "int64",
             "nullable": true,
             "type": "integer"
+          },
+          "quantityInputUnit": {
+            "description": "Quantity input unit",
+            "example": "Hours",
+            "type": "string"
           },
           "ram": {
             "description": "RAM (in GB)",

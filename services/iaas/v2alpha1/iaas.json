@@ -98,15 +98,6 @@
           "$ref": "#/components/schemas/UUID"
         }
       },
-      "v2PrefixListID": {
-        "description": "The identifier (ID) of a STACKIT Prefix List.",
-        "in": "path",
-        "name": "prefixListId",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/UUID"
-        }
-      },
       "v2RoutingTableID": {
         "description": "The identifier (ID) of a STACKIT Routing Table.",
         "in": "path",
@@ -1489,27 +1480,6 @@
         },
         "type": "object"
       },
-      "PrefixEntries": {
-        "description": "Object containing all CIDR entries of a prefix list.",
-        "properties": {
-          "entries": {
-            "description": "List of CIDR blocks in the prefix list.",
-            "example": [
-              "192.168.0.0/24",
-              "10.0.0.0/8"
-            ],
-            "items": {
-              "example": "192.168.0.0/24",
-              "type": "string"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "entries"
-        ],
-        "type": "object"
-      },
       "PrefixList": {
         "description": "Object that represents a prefix list.",
         "properties": {
@@ -1523,17 +1493,6 @@
           },
           "description": {
             "$ref": "#/components/schemas/Description"
-          },
-          "entries": {
-            "description": "The list of CIDR blocks contained in this prefix list.",
-            "example": [
-              "192.168.0.0/24"
-            ],
-            "items": {
-              "example": "192.168.0.0/24",
-              "type": "string"
-            },
-            "type": "array"
           },
           "ethertype": {
             "description": "The IP version of this prefix list.\nPossible values: `ipv4`, `ipv6`.",
@@ -1559,7 +1518,7 @@
           "maxEntries": {
             "description": "Maximum number of entries this prefix list can hold.",
             "example": 128,
-            "format": "int64",
+            "format": "int",
             "maximum": 65535,
             "minimum": 1,
             "type": "integer",
@@ -3487,42 +3446,6 @@
       ]
     },
     "/v2alpha1/projects/{projectId}/regions/{region}/prefix-lists/{prefixListId}": {
-      "delete": {
-        "description": "Delete a prefix list. If the prefix list is still in use, the deletion will fail.",
-        "operationId": "DeletePrefixList",
-        "responses": {
-          "204": {
-            "description": "Delete request for prefix list has been accepted."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "409": {
-            "$ref": "#/components/responses/Conflict"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "summary": "Delete prefix list.",
-        "x-stackit-authorization": {
-          "actions": [
-            "iaas.prefix-list.delete"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project"
-        }
-      },
       "get": {
         "description": "Get details about a prefix list of a project.",
         "operationId": "GetPrefixList",
@@ -3557,59 +3480,6 @@
         "x-stackit-authorization": {
           "actions": [
             "iaas.prefix-list.get"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project"
-        }
-      },
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/v1ProjectID"
-        },
-        {
-          "$ref": "#/components/parameters/v1Region"
-        },
-        {
-          "$ref": "#/components/parameters/v2PrefixListID"
-        }
-      ]
-    },
-    "/v2alpha1/projects/{projectId}/regions/{region}/prefix-lists/{prefixListId}/entries": {
-      "get": {
-        "description": "Get the list of all CIDR entries in a prefix list.",
-        "operationId": "GetPrefixListEntries",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PrefixEntries"
-                }
-              }
-            },
-            "description": "Get prefix list entries was successful."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "summary": "Get prefix list entries.",
-        "x-stackit-authorization": {
-          "actions": [
-            "iaas.prefix-list.entry.list"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

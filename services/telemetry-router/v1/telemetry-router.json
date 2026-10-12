@@ -223,6 +223,7 @@
           "key": {
             "maxLength": 1024,
             "minLength": 1,
+            "pattern": "^[^\u0000-\u001f-]+$",
             "type": "string"
           },
           "level": {
@@ -235,6 +236,7 @@
             "items": {
               "maxLength": 1024,
               "minLength": 1,
+              "pattern": "^[^\u0000-\u001f-]+$",
               "type": "string"
             },
             "maxItems": 100,
@@ -314,6 +316,9 @@
           },
           "filter": {
             "$ref": "#/components/schemas/configFilter"
+          },
+          "resourceLabels": {
+            "$ref": "#/components/schemas/resourceLabels"
           }
         },
         "required": [
@@ -369,11 +374,13 @@
             "description": "A bearer token to authenticate at the OpenTelemetry URI.",
             "maxLength": 2048,
             "minLength": 1,
+            "pattern": "^[^\u0000-\u001f-]+$",
             "type": "string"
           },
           "uri": {
             "description": "The URI for reaching the resource.",
             "maxLength": 1024,
+            "pattern": "^[^\u0000-\u001f-]+$",
             "type": "string"
           }
         },
@@ -388,11 +395,13 @@
           "password": {
             "maxLength": 1024,
             "minLength": 1,
+            "pattern": "^[^\u0000-\u001f-]+$",
             "type": "string"
           },
           "username": {
             "maxLength": 1024,
             "minLength": 1,
+            "pattern": "^[^\u0000-\u001f-]+$",
             "type": "string"
           }
         },
@@ -410,11 +419,13 @@
           "bucket": {
             "maxLength": 63,
             "minLength": 3,
+            "pattern": "^[a-z0-9\\-]+$",
             "type": "string"
           },
           "endpoint": {
             "description": "The URI for reaching the resource.",
             "maxLength": 1024,
+            "pattern": "^[^\u0000-\u001f-]+$",
             "type": "string"
           }
         },
@@ -430,11 +441,13 @@
           "id": {
             "maxLength": 1024,
             "minLength": 1,
+            "pattern": "^[^\u0000-\u001f-]+$",
             "type": "string"
           },
           "secret": {
             "maxLength": 1024,
             "minLength": 1,
+            "pattern": "^[^\u0000-\u001f-]+$",
             "type": "string"
           }
         },
@@ -570,6 +583,12 @@
         ],
         "type": "object"
       },
+      "resourceLabels": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "type": "object"
+      },
       "response4xx": {
         "properties": {
           "message": {
@@ -595,6 +614,12 @@
             "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-]*)?$",
             "type": "string"
           },
+          "destinationCount": {
+            "description": "The number of destinations configured for the telemetry router.",
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
           "displayName": {
             "description": "The display name is a short name chosen by the user to identify the resource.",
             "maxLength": 32,
@@ -609,6 +634,9 @@
             "description": "A auto generated unique id which identifies the resource.",
             "format": "uuid",
             "type": "string"
+          },
+          "resourceLabels": {
+            "$ref": "#/components/schemas/resourceLabels"
           },
           "status": {
             "description": "The current status of the resource.",
@@ -690,6 +718,9 @@
           },
           "filter": {
             "$ref": "#/components/schemas/configFilter"
+          },
+          "resourceLabels": {
+            "$ref": "#/components/schemas/resourceLabels"
           }
         },
         "type": "object"

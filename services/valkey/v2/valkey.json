@@ -361,6 +361,25 @@
         ],
         "type": "object"
       },
+      "GetUpdatesResponse": {
+        "properties": {
+          "automaticUpdatesEnabled": {
+            "description": "Whether automatic updates are allowed.",
+            "type": "boolean"
+          },
+          "availableUpdates": {
+            "description": "Number of available update components.",
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "automaticUpdatesEnabled",
+          "availableUpdates"
+        ],
+        "type": "object"
+      },
       "Instance": {
         "properties": {
           "cfGuid": {
@@ -379,6 +398,19 @@
             "type": "string"
           },
           "instanceId": {
+            "type": "string"
+          },
+          "instanceStatus": {
+            "description": "Current state of a service instance",
+            "enum": [
+              "provisioned",
+              "available",
+              "deleted",
+              "deploying",
+              "failed",
+              "stopped",
+              "unknown"
+            ],
             "type": "string"
           },
           "lastOperation": {
@@ -404,6 +436,7 @@
             "type": "string"
           },
           "status": {
+            "description": "State of the last operation and this instance",
             "enum": [
               "active",
               "failed",
@@ -847,6 +880,30 @@
           "message"
         ],
         "type": "object"
+      },
+      "UpdateUpdatesSettingsPayload": {
+        "properties": {
+          "automaticUpdatesEnabled": {
+            "description": "Set to true to enable automatic updates or false to disable them.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "automaticUpdatesEnabled"
+        ],
+        "type": "object"
+      },
+      "UpdateUpdatesSettingsResponse": {
+        "properties": {
+          "automaticUpdatesEnabled": {
+            "description": "Whether automatic updates are allowed.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "automaticUpdatesEnabled"
+        ],
+        "type": "object"
       }
     }
   },
@@ -857,7 +914,7 @@
     "description": "The STACKIT Key Value Store API provides endpoints to list service offerings, manage service instances and service credentials within STACKIT portal projects.",
     "termsOfService": "https://www.stackit.de/en/general-terms-and-conditions/terms-of-use/",
     "title": "STACKIT Key Value Store API",
-    "version": "2.1"
+    "version": "2.1.1"
   },
   "openapi": "3.0.3",
   "paths": {
@@ -1746,6 +1803,194 @@
         "x-stackit-authorization": {
           "actions": [
             "key-value-store.proxy.read"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v2/projects/{projectId}/regions/{regionId}/instances/{instanceId}/updates": {
+      "get": {
+        "description": "Returns whether automatic updates are enabled and the number of available updates.",
+        "operationId": "GetUpdates",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          },
+          {
+            "$ref": "#/components/parameters/regionId"
+          },
+          {
+            "$ref": "#/components/parameters/instanceId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUpdatesResponse"
+                }
+              }
+            },
+            "description": "Current update settings"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "The instance has not been provisioned successfully."
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "get update settings",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.proxy.read"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "patch": {
+        "description": "Enables or disables automatic updates. The platform operator must allow changing this setting.",
+        "operationId": "UpdateUpdatesSettings",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          },
+          {
+            "$ref": "#/components/parameters/regionId"
+          },
+          {
+            "$ref": "#/components/parameters/instanceId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUpdatesSettingsPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateUpdatesSettingsResponse"
+                }
+              }
+            },
+            "description": "update setting confirmed by the broker"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "The instance has not been provisioned successfully."
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "update update settings",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.proxy.write"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v2/projects/{projectId}/regions/{regionId}/instances/{instanceId}/updates/start": {
+      "post": {
+        "description": "Starts all available updates asynchronously using the instance's service offering. No request body is required.",
+        "operationId": "TriggerUpdate",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          },
+          {
+            "$ref": "#/components/parameters/regionId"
+          },
+          {
+            "$ref": "#/components/parameters/instanceId"
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateInstanceResponse"
+                }
+              }
+            },
+            "description": "update accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "The instance has not been provisioned successfully."
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "start updates",
+        "x-stackit-authorization": {
+          "actions": [
+            "key-value-store.proxy.write"
           ],
           "resource-id": "projectId",
           "resource-id-type": "dynamic",

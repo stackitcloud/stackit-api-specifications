@@ -284,6 +284,11 @@
       "CreateRunnerPayload": {
         "description": "Request a runner to be created supporting the requested list of runtime labels.",
         "properties": {
+          "familyName": {
+            "description": "The runner's job family name.",
+            "example": "classic",
+            "type": "string"
+          },
           "labels": {
             "items": {
               "example": "stackit-docker",
@@ -709,6 +714,11 @@
             "maxLength": 48,
             "type": "string"
           },
+          "familyName": {
+            "description": "The runner's job family name.",
+            "example": "classic",
+            "type": "string"
+          },
           "id": {
             "format": "uuid",
             "maxLength": 36,
@@ -734,16 +744,80 @@
           "status"
         ]
       },
+      "RunnerFamily": {
+        "description": "Describes a STACKIT Git Runner Family.",
+        "properties": {
+          "arch": {
+            "description": "Indicates the runner image architecture.",
+            "example": "linux-amd",
+            "type": "string"
+          },
+          "availability": {
+            "description": "Indicates the availability of the runner label",
+            "example": "available",
+            "type": "string"
+          },
+          "cpu": {
+            "description": "CPU virtual cores resource limit of jobs.",
+            "type": "string"
+          },
+          "disk": {
+            "description": "Disk size limit of jobs.",
+            "type": "string"
+          },
+          "display_name": {
+            "description": "Human-friendly name of the runtime.",
+            "type": "string"
+          },
+          "name": {
+            "description": "Family name identifier.",
+            "example": "classic",
+            "type": "string"
+          },
+          "ram": {
+            "description": "RAM resource limit of jobs.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "display_name",
+          "cpu",
+          "ram",
+          "disk",
+          "arch",
+          "availability"
+        ]
+      },
+      "RunnerFamilyList": {
+        "description": "A list of STACKIT Git RunnerFamily.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RunnerFamily"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
       "RunnerRuntime": {
         "description": "Describes a STACKIT Git Runner runtime.",
         "properties": {
+          "arch": {
+            "description": "Indicates the runner image architecture.",
+            "example": "linux-amd",
+            "type": "string"
+          },
           "availability": {
             "description": "Indicates the availability of the runner label",
             "example": "available",
             "type": "string"
           },
           "description": {
-            "description": "Human-friendly description of the runtime and its capabilities.",
+            "description": "Human-friendly description of the runtime and it's capabilities.",
             "example": "A runner capable of building Docker images and runner Docker containers.",
             "type": "string"
           },
@@ -768,7 +842,8 @@
           "display_name",
           "description",
           "availability",
-          "status"
+          "status",
+          "arch"
         ]
       },
       "RunnerRuntimeList": {
@@ -2165,6 +2240,70 @@
           "resource-type": "project"
         }
       }
+    },
+    "/v1beta/projects/{projectId}/runner-families": {
+      "get": {
+        "description": "A list of runner job families that are available for the project.",
+        "operationId": "ListRunnerFamilies",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunnerFamilyList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "git.runner.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ProjectId"
+        }
+      ]
     },
     "/v1beta/projects/{projectId}/runner-runtimes": {
       "get": {

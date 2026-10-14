@@ -98,6 +98,18 @@
       }
     },
     "schemas": {
+      "acl": {
+        "description": "The Access Control List (ACL) defining the IPv4 or IPv6 CIDR ranges allowed to connect to the Dremio instance. An empty list allows access from any address. Omitting this field on creation allows access from any address. Omitting it on update preserves the current list. Updates replace the entire list and take effect asynchronously.",
+        "example": [
+          "192.0.2.0/24",
+          "2001:db8::/32"
+        ],
+        "items": {
+          "format": "cidr",
+          "type": "string"
+        },
+        "type": "array"
+      },
       "authParameters": {
         "description": "An additional parameter the Identity Provider requires.",
         "example": {
@@ -171,6 +183,9 @@
       },
       "create-dremio-instancePayload": {
         "properties": {
+          "acl": {
+            "$ref": "#/components/schemas/acl"
+          },
           "authentication": {
             "$ref": "#/components/schemas/authentication"
           },
@@ -242,6 +257,9 @@
       },
       "dremioResponse": {
         "properties": {
+          "acl": {
+            "$ref": "#/components/schemas/acl"
+          },
           "authentication": {
             "$ref": "#/components/schemas/authentication"
           },
@@ -292,7 +310,8 @@
           "state",
           "create_time",
           "endpoints",
-          "authentication"
+          "authentication",
+          "acl"
         ]
       },
       "dremioUserResponse": {
@@ -489,6 +508,9 @@
       },
       "update-dremio-instancePayload": {
         "properties": {
+          "acl": {
+            "$ref": "#/components/schemas/acl"
+          },
           "authentication": {
             "$ref": "#/components/schemas/authentication"
           },

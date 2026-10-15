@@ -1,6 +1,16 @@
 {
   "components": {
     "responses": {
+      "ConflictError": {
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/ConflictError"
+            }
+          }
+        },
+        "description": "The request conflicts with the current state of the resource."
+      },
       "InternalServerError": {
         "content": {
           "application/problem+json": {
@@ -33,6 +43,44 @@
       }
     },
     "schemas": {
+      "ConflictError": {
+        "description": "Conflict error response",
+        "example": {
+          "detail": "resource pool 'test-rp' already exists",
+          "error_description": "An error occurred",
+          "status_code": 409,
+          "type": "storage.stackit.cloud/conflict"
+        },
+        "properties": {
+          "detail": {
+            "description": "Human-readable explanation of the specific problem",
+            "example": "resource pool 'test-rp' already exists",
+            "type": "string"
+          },
+          "error_description": {
+            "description": "Human-readable string of the error that occurred",
+            "example": "An error occurred",
+            "type": "string"
+          },
+          "status_code": {
+            "description": "The HTTP status code",
+            "example": 409,
+            "type": "integer"
+          },
+          "type": {
+            "description": "URI Uniquely identifies the error type. It will be in the format of storage.stackit.cloud/\u003cerror-type\u003e e.g. storage.stackit.cloud/conflict",
+            "example": "storage.stackit.cloud/conflict",
+            "type": "string"
+          }
+        },
+        "required": [
+          "detail",
+          "error_description",
+          "status_code",
+          "type"
+        ],
+        "type": "object"
+      },
       "CreateResourcePoolPayload": {
         "properties": {
           "availabilityZone": {
@@ -1027,6 +1075,9 @@
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
           },
+          "409": {
+            "$ref": "#/components/responses/ConflictError"
+          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
@@ -1088,6 +1139,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictError"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -1218,6 +1272,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictError"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -1350,6 +1407,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictError"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -1699,6 +1759,9 @@
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
           },
+          "409": {
+            "$ref": "#/components/responses/ConflictError"
+          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
@@ -1768,6 +1831,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictError"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -1952,6 +2018,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictError"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"

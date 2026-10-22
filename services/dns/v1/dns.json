@@ -1205,6 +1205,159 @@
         ],
         "type": "object"
       },
+      "dnslookup.LookupResponse": {
+        "properties": {
+          "message": {
+            "example": "Success",
+            "type": "string"
+          },
+          "state": {
+            "items": {
+              "$ref": "#/components/schemas/dnslookup_models.LookupResult"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "dnslookupPayload": {
+        "properties": {
+          "address": {
+            "description": "Address is the domain name to look up",
+            "example": "stackit.cloud",
+            "type": "string"
+          },
+          "includeRawResponse": {
+            "default": false,
+            "description": "IncludeRawResponse indicates whether to include the raw DNS response in the result",
+            "example": false,
+            "type": "boolean"
+          },
+          "recordType": {
+            "default": "A",
+            "description": "RecordType specifies the DNS record type to query (A, AAAA, MX, etc.)\nIf omitted, defaults to ANY records",
+            "enum": [
+              "A",
+              "AAAA",
+              "SOA",
+              "CNAME",
+              "NS",
+              "MX",
+              "TXT",
+              "SRV",
+              "PTR",
+              "ALIAS",
+              "DNAME",
+              "CAA",
+              "DNSKEY",
+              "DS",
+              "LOC",
+              "NAPTR",
+              "SSHFP",
+              "TLSA",
+              "URI",
+              "CERT",
+              "SVCB",
+              "TYPE",
+              "CSYNC",
+              "HINFO",
+              "HTTPS",
+              "ANY"
+            ],
+            "example": "A",
+            "type": "string"
+          },
+          "region": {
+            "description": "Region optionally specifies a STACKIT region to scope the DNS lookup",
+            "example": "eu01",
+            "type": "string"
+          },
+          "type": {
+            "default": "one",
+            "description": "Type specifies whether to query all configured resolvers or just one\n\"one\" - query a single resolver chosen by round-robin (default)\n\"all\" - query all configured resolvers",
+            "enum": [
+              "all",
+              "one"
+            ],
+            "example": "one",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dnslookup_models.LookupRecord": {
+        "properties": {
+          "data": {
+            "description": "Data contains the record-specific data (e.g., IP address for A records)",
+            "example": "192.0.2.1",
+            "type": "string"
+          },
+          "name": {
+            "description": "Name is the domain name to which this record applies",
+            "example": "example.com",
+            "type": "string"
+          },
+          "ttl": {
+            "description": "TTL (Time To Live) is the duration in seconds that the record may be cached",
+            "example": 3600,
+            "type": "integer"
+          },
+          "type": {
+            "description": "Type is the DNS record type (A, AAAA, MX, etc.)",
+            "enum": [
+              "A",
+              "AAAA",
+              "SOA",
+              "CNAME",
+              "NS",
+              "MX",
+              "TXT",
+              "SRV",
+              "PTR",
+              "ALIAS",
+              "DNAME",
+              "CAA",
+              "DNSKEY",
+              "DS",
+              "LOC",
+              "NAPTR",
+              "SSHFP",
+              "TLSA",
+              "URI",
+              "CERT",
+              "SVCB",
+              "TYPE",
+              "CSYNC",
+              "HINFO",
+              "HTTPS"
+            ],
+            "example": "A",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dnslookup_models.LookupResult": {
+        "properties": {
+          "rawResponse": {
+            "description": "RawResponse contains the raw DNS response in a human-readable format (only included when requested)",
+            "type": "string"
+          },
+          "records": {
+            "description": "Records contains the DNS records returned by the lookup",
+            "items": {
+              "$ref": "#/components/schemas/dnslookup_models.LookupRecord"
+            },
+            "type": "array"
+          },
+          "resolverIP": {
+            "description": "ResolverIP is the IP address of the DNS resolver used for the query",
+            "example": "192.0.2.1",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "domain.Extensions": {
         "properties": {
           "observabilityExtension": {
@@ -1229,6 +1382,56 @@
         },
         "required": [
           "observabilityInstanceId"
+        ],
+        "type": "object"
+      },
+      "flush.CreateFlushResponse": {
+        "properties": {
+          "message": {
+            "example": "Success",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "flushPayload": {
+        "properties": {
+          "domain": {
+            "example": "example.com",
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "A",
+              "AAAA",
+              "SOA",
+              "CNAME",
+              "NS",
+              "MX",
+              "TXT",
+              "SRV",
+              "PTR",
+              "DNAME",
+              "CAA",
+              "DNSKEY",
+              "DS",
+              "LOC",
+              "NAPTR",
+              "SSHFP",
+              "TLSA",
+              "URI",
+              "CERT",
+              "SVCB",
+              "CSYNC",
+              "HINFO",
+              "HTTPS"
+            ],
+            "example": "A",
+            "type": "string"
+          }
+        },
+        "required": [
+          "domain"
         ],
         "type": "object"
       },
@@ -1307,6 +1510,69 @@
   },
   "openapi": "3.0.1",
   "paths": {
+    "/v1/dnslookup": {
+      "post": {
+        "description": "allows the user to lookup a domain on the STACKIT DNS Resolvers",
+        "operationId": "dnslookup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dnslookupPayload"
+              }
+            }
+          },
+          "description": "records to lookup",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dnslookup.LookupResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        },
+        "summary": "DNS Lookup Route",
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      }
+    },
     "/v1/projects/{projectId}/move-zone": {
       "post": {
         "description": "move zone from one project to another",
@@ -4521,6 +4787,69 @@
               "cloud.stackit.dns"
             ]
           }
+        }
+      }
+    },
+    "/v1/resolver/flush": {
+      "post": {
+        "description": "allows the user to flush the cache for a domain on the STACKIT DNS Resolvers",
+        "operationId": "flush",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/flushPayload"
+              }
+            }
+          },
+          "description": "domain to flush",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/flush.CreateFlushResponse"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        },
+        "summary": "Flush Route",
+        "x-stackit-authorization": {
+          "disabled": true
         }
       }
     }

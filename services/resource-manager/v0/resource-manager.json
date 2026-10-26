@@ -83,7 +83,7 @@
       "CreateFolderPayload": {
         "properties": {
           "containerParentId": {
-            "description": "Identifier of the parent resource container - containerId as well as UUID identifier is supported.",
+            "description": "Identifier of the parent resource container",
             "example": "name-of-parent-173523",
             "type": "string"
           },
@@ -91,18 +91,17 @@
             "$ref": "#/components/schemas/Labels"
           },
           "members": {
-            "description": "The initial members assigned to the project. At least one subject needs to be a user, and not a client or service account.",
+            "description": "The initial members assigned to the folder.",
             "items": {
               "$ref": "#/components/schemas/Member"
             },
-            "minItems": 1,
             "type": "array",
             "uniqueItems": true
           },
           "name": {
-            "description": "The name of the folder matching the regex `^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$`.",
+            "description": "Folder name matching the regex `^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){1,40}$`.",
             "example": "My Folder",
-            "pattern": "^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$",
+            "pattern": "^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){1,40}$",
             "type": "string"
           }
         },
@@ -137,21 +136,19 @@
             "items": {
               "$ref": "#/components/schemas/Member"
             },
-            "minItems": 1,
             "type": "array",
             "uniqueItems": true
           },
           "name": {
-            "description": "Project name matching the regex `^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$`.",
+            "description": "Project name matching the regex `^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){1,40}$`.",
             "example": "My first project",
-            "pattern": "^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$",
+            "pattern": "^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){1,40}$",
             "type": "string"
           }
         },
         "required": [
           "name",
-          "containerParentId",
-          "members"
+          "containerParentId"
         ],
         "title": "CreateProjectRequest",
         "type": "object"
@@ -353,7 +350,7 @@
         "additionalProperties": {
           "type": "string"
         },
-        "description": "Key-value string pairs attached to an existing resource container. Certain labels may be enforced via organizational policies.\n\n* **Key:** Must be between 1 and 63 characters long (excluding an optional domain prefix). Must start and end with an alphanumeric character `[a-zA-Z0-9]` and can contain alphanumerics, dashes (-), underscores (_), and dots (.). May include an optional domain prefix up to 250 characters (a lowercase DNS subdomain containing `[a-z0-9]`, `-`, and `.`) followed by a slash (/). Total maximum key length is 314 characters.\n* **Value:** Must be 63 characters or less. May be empty (\"\"). If non-empty, must start and end with an alphanumeric character `[a-zA-Z0-9]` and can contain alphanumerics, dashes (-), underscores (_), and dots (.).\n\n\u003e Note: Additional naming restrictions may apply depending on your specific organization.*",
+        "description": "Key-value string pairs attached to an existing resource container. Certain labels may be enforced via organizational policies.\n\n* **Key:** Must be between 1 and 63 characters long (excluding an optional domain prefix). Must start and end with an alphanumeric character `[a-zA-Z0-9]` and can contain alphanumerics, dashes (-), underscores (_), and dots (.). May include an optional domain prefix up to 250 characters (a lowercase DNS subdomain containing `[a-z0-9]`, `-`, and `.`) followed by a slash (/). Total maximum key length is 314 characters.\n* **Value:** Must be 63 characters or less. May be empty (\"\"). If non-empty, must start and end with an alphanumeric character `[a-zA-Z0-9]` and can contain alphanumerics, dashes (-), underscores (_), and dots (.). Can be set to null to delete the label.\n\n\u003e Note: Additional naming restrictions may apply depending on your specific organization.*",
         "maxProperties": 64,
         "title": "Labels",
         "type": "object"
@@ -703,8 +700,8 @@
             "$ref": "#/components/schemas/UpdateLabels"
           },
           "name": {
-            "description": "New name for the resource container matching the regex `^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$`.",
-            "pattern": "^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$",
+            "description": "New name for the resource container matching the regex `^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){1,40}$`.",
+            "pattern": "^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){1,40}$",
             "type": "string"
           }
         },
@@ -717,9 +714,9 @@
             "$ref": "#/components/schemas/UpdateLabels"
           },
           "name": {
-            "description": "The new name of the organization matching the regex `^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$`.",
+            "description": "The new name of the organization matching the regex `^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){1,40}$`.",
             "example": "My Organization",
-            "pattern": "^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$",
+            "pattern": "^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){1,40}$",
             "type": "string"
           }
         },
@@ -737,8 +734,8 @@
             "$ref": "#/components/schemas/UpdateLabels"
           },
           "name": {
-            "description": "New name for the resource container matching the regex `^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$`.",
-            "pattern": "^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){0,39}$",
+            "description": "New name for the resource container matching the regex `^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){1,40}$`.",
+            "pattern": "^[a-zA-ZäüöÄÜÖ0-9]( ?[a-zA-ZäüöÄÜÖß0-9_+\u0026-]){1,40}$",
             "type": "string"
           }
         },
@@ -802,7 +799,7 @@
           "nullable": true,
           "type": "string"
         },
-        "description": "Key-value string pairs attached to an existing resource container. Certain labels may be enforced via organizational policies.\n\nSetting an individual label's value to `null` removes/deletes that label from the resource.\n\n* **Key:** Must be between 1 and 63 characters long (excluding an optional domain prefix). Must start and end with an alphanumeric character `[a-zA-Z0-9]` and can contain alphanumerics, dashes (-), underscores (_), and dots (.). May include an optional domain prefix up to 250 characters (a lowercase DNS subdomain containing `[a-z0-9]`, `-`, and `.`) followed by a slash (/). Total maximum key length is 314 characters.\n* **Value:** Must be 63 characters or less. May be empty (\"\"). If non-empty, must start and end with an alphanumeric character `[a-zA-Z0-9]` and can contain alphanumerics, dashes (-), underscores (_), and dots (.).\n\n\u003e Note: Additional naming restrictions may apply depending on your specific organization.*",
+        "description": "Key-value string pairs attached to an existing resource container. Certain labels may be enforced via organizational policies.\n\nSetting an individual label's value to `null` removes/deletes that label from the resource.\n\n* **Key:** Must be between 1 and 63 characters long (excluding an optional domain prefix). Must start and end with an alphanumeric character `[a-zA-Z0-9]` and can contain alphanumerics, dashes (-), underscores (_), and dots (.). May include an optional domain prefix up to 250 characters (a lowercase DNS subdomain containing `[a-z0-9]`, `-`, and `.`) followed by a slash (/). Total maximum key length is 314 characters.\n* **Value:** Must be 63 characters or less. May be empty (\"\"). If non-empty, must start and end with an alphanumeric character `[a-zA-Z0-9]` and can contain alphanumerics, dashes (-), underscores (_), and dots (.). Can be set to null to delete the label.\n\n\u003e Note: Additional naming restrictions may apply depending on your specific organization.*",
         "title": "Labels",
         "type": "object"
       }

@@ -583,6 +583,30 @@
         ],
         "type": "object"
       },
+      "partial-update-telemetry-routerPayload": {
+        "properties": {
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-]*)?$",
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9 \\-]*$",
+            "type": "string"
+          },
+          "filter": {
+            "$ref": "#/components/schemas/configFilter"
+          },
+          "resourceLabels": {
+            "$ref": "#/components/schemas/resourceLabels"
+          }
+        },
+        "type": "object"
+      },
       "resourceLabels": {
         "additionalProperties": {
           "type": "string"
@@ -923,6 +947,55 @@
           "$ref": "#/components/parameters/telemetryRouterId"
         }
       ],
+      "patch": {
+        "description": "Patches the given Telemetry Router.",
+        "operationId": "partial-update-telemetry-router",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/partial-update-telemetry-routerPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/telemetryRouterResponse"
+                }
+              }
+            },
+            "description": "Telemetry Router was patched successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-router.instance.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
       "put": {
         "description": "Updates the given Telemetry Router.",
         "operationId": "update-telemetry-router",

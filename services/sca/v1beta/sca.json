@@ -1,0 +1,2760 @@
+{
+  "components": {
+    "schemas": {
+      "ApiErrorResponse": {
+        "description": "ApiErrorResponse represents a standard error response from the API.",
+        "properties": {
+          "code": {
+            "description": "The HTTP status code or internal error code.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "message": {
+            "description": "A human-readable error message.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Application": {
+        "description": "Application describes a deployable multi-container workload instance.",
+        "properties": {
+          "containers": {
+            "description": "Containers to deploy for the application.",
+            "items": {
+              "$ref": "#/components/schemas/Container"
+            },
+            "type": "array"
+          },
+          "createdAt": {
+            "description": "Creation date in RFC3339 format.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "Human-readable display name.",
+            "example": "my-app",
+            "type": "string"
+          },
+          "environmentId": {
+            "description": "Environment identifier where the application belongs.",
+            "example": "sca-environment-id",
+            "readOnly": true,
+            "type": "string"
+          },
+          "environmentName": {
+            "description": "Environment human-readable display name.",
+            "example": "sandbox-env",
+            "readOnly": true,
+            "type": "string"
+          },
+          "id": {
+            "description": "Application identifier.",
+            "example": "sca-application-id",
+            "readOnly": true,
+            "type": "string"
+          },
+          "network": {
+            "$ref": "#/components/schemas/ApplicationNetwork"
+          },
+          "region": {
+            "description": "Region of the environment.",
+            "example": "eu01",
+            "readOnly": true,
+            "type": "string"
+          },
+          "scaling": {
+            "$ref": "#/components/schemas/ApplicationScaling"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ApplicationStatus"
+          },
+          "stopped": {
+            "description": "Indicates if the application resources are stopped.",
+            "example": false,
+            "type": "boolean"
+          },
+          "updatedAt": {
+            "description": "Last update date in RFC3339 format.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName",
+          "containers",
+          "scaling"
+        ],
+        "type": "object"
+      },
+      "ApplicationAccessControl": {
+        "properties": {
+          "egress": {
+            "description": "List of IPv4 CIDR ranges that the application is allowed to communicate with.",
+            "example": [],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "ingress": {
+            "description": "List of IPv4 CIDR ranges allowed to access the application.",
+            "example": [
+              "0.0.0.0/0"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ApplicationAutoScaling": {
+        "description": "AutoScaling configuration.",
+        "properties": {
+          "allowScaleToZero": {
+            "description": "Allow automatically scale to zero.",
+            "example": false,
+            "type": "boolean"
+          },
+          "maxInstances": {
+            "description": "Maximum number of instances.",
+            "example": 5,
+            "format": "int32",
+            "type": "integer"
+          },
+          "minInstances": {
+            "description": "Minimum number of instances.",
+            "example": 2,
+            "format": "int32",
+            "type": "integer"
+          },
+          "rules": {
+            "description": "Scaling rules.",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationScaleRule"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "minInstances",
+          "maxInstances",
+          "rules"
+        ],
+        "type": "object"
+      },
+      "ApplicationCurrentStatus": {
+        "default": "CURRENT_STATUS_UNSPECIFIED",
+        "description": "Current status of the application.\n\n - CURRENT_STATUS_UNSPECIFIED: Used as zero value.\n - CURRENT_STATUS_PROGRESSING: Applications replicas are being created.\n - CURRENT_STATUS_RUNNING: Application is ready and has the desired replicas running.\n - CURRENT_STATUS_FAILED: Application is not available and has some error.\n - CURRENT_STATUS_IDLE: Application is ready but is scaled to 0 replicas.\n - CURRENT_STATUS_NONE: Application is stopped.",
+        "enum": [
+          "CURRENT_STATUS_UNSPECIFIED",
+          "CURRENT_STATUS_PROGRESSING",
+          "CURRENT_STATUS_RUNNING",
+          "CURRENT_STATUS_FAILED",
+          "CURRENT_STATUS_IDLE",
+          "CURRENT_STATUS_NONE"
+        ],
+        "example": "CURRENT_STATUS_RUNNING",
+        "type": "string"
+      },
+      "ApplicationCustomRuleParameter": {
+        "description": "CustomRuleParameter defines a single scaler parameter from KEDA Scaler metadata configuration.",
+        "properties": {
+          "name": {
+            "description": "Parameter name/key from KEDA metadata parameters.",
+            "example": "activationValue",
+            "type": "string"
+          },
+          "value": {
+            "description": "Parameter value for KEDA metadata key.",
+            "example": "10.5",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "value"
+        ],
+        "type": "object"
+      },
+      "ApplicationCustomRuleSecretMapping": {
+        "description": "CustomRuleSecretMapping maps a scaler parameter to an environment secret.",
+        "properties": {
+          "parameter": {
+            "description": "Secret parameter name.",
+            "example": "host",
+            "type": "string"
+          },
+          "secret": {
+            "description": "Environment secret name.",
+            "example": "amqp-host-environment-secret",
+            "type": "string"
+          }
+        },
+        "required": [
+          "secret",
+          "parameter"
+        ],
+        "type": "object"
+      },
+      "ApplicationCustomScaleRule": {
+        "description": "CustomScaleRule defines parameters for KEDA Scalers.",
+        "properties": {
+          "parameters": {
+            "description": "Scaler parameters.",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationCustomRuleParameter"
+            },
+            "type": "array"
+          },
+          "secretsMapping": {
+            "description": "Secret mappings for the scaler.",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationCustomRuleSecretMapping"
+            },
+            "type": "array"
+          },
+          "type": {
+            "description": "Scaler type.",
+            "example": "rabbitmq",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "ApplicationDomains": {
+        "description": "List of application domains.",
+        "properties": {
+          "default": {
+            "description": "Default domain for the application.",
+            "example": "sca-application-id.sca.eu01.stackit.cloud",
+            "type": "string"
+          },
+          "internal": {
+            "description": "Internal domain for the application.",
+            "example": "my-app.sandbox-env.local",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ApplicationEvent": {
+        "description": "Event defines an event line.",
+        "properties": {
+          "message": {
+            "description": "Event message.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ApplicationHttpScaleRule": {
+        "description": "HttpScaleRule defines parameters for HTTP-based scaling.",
+        "properties": {
+          "concurrency": {
+            "description": "Target concurrency per instance.",
+            "example": 5,
+            "format": "int32",
+            "type": "integer"
+          },
+          "rps": {
+            "description": "Target requests per second per instance.",
+            "example": 10,
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "ApplicationInstance": {
+        "description": "Application instance summary.",
+        "properties": {
+          "name": {
+            "description": "Instance's name.",
+            "example": "container-1",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ApplicationInstanceStatus"
+          }
+        },
+        "type": "object"
+      },
+      "ApplicationInstanceStatus": {
+        "default": "INSTANCE_STATUS_PROGRESSING",
+        "description": " - INSTANCE_STATUS_PROGRESSING: Instance is being created.\n - INSTANCE_STATUS_RUNNING: Instance is available and running.\n - INSTANCE_STATUS_FAILED: Instance is not available and has some error.",
+        "enum": [
+          "INSTANCE_STATUS_PROGRESSING",
+          "INSTANCE_STATUS_RUNNING",
+          "INSTANCE_STATUS_FAILED"
+        ],
+        "example": "INSTANCE_STATUS_RUNNING",
+        "type": "string"
+      },
+      "ApplicationInternalNetwork": {
+        "properties": {
+          "enabled": {
+            "description": "Enable or disable internal networking.",
+            "example": false,
+            "type": "boolean"
+          },
+          "port": {
+            "description": "Port to expose the application internally.",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "type": "object"
+      },
+      "ApplicationLog": {
+        "description": "Log defines a log line.",
+        "properties": {
+          "message": {
+            "description": "Log message.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ApplicationManualScaling": {
+        "description": "ManualScaling configuration.",
+        "properties": {
+          "instances": {
+            "description": "Number of instances to run.",
+            "example": 2,
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "instances"
+        ],
+        "type": "object"
+      },
+      "ApplicationNetwork": {
+        "description": "Network configuration for an application.",
+        "properties": {
+          "internal": {
+            "$ref": "#/components/schemas/ApplicationInternalNetwork"
+          },
+          "public": {
+            "$ref": "#/components/schemas/ApplicationPublicNetwork"
+          }
+        },
+        "type": "object"
+      },
+      "ApplicationPublicNetwork": {
+        "properties": {
+          "accessControl": {
+            "$ref": "#/components/schemas/ApplicationAccessControl"
+          },
+          "enabled": {
+            "description": "Enable or disable public networking.",
+            "type": "boolean"
+          },
+          "port": {
+            "description": "Port to expose the application.",
+            "example": 8080,
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "type": "object"
+      },
+      "ApplicationRuleType": {
+        "default": "RULE_TYPE_UNSPECIFIED",
+        "description": " - RULE_TYPE_UNSPECIFIED: Used as zero value.\n - RULE_TYPE_HTTP: HTTP scaling rule.\n - RULE_TYPE_CUSTOM: Custom scaling rule (e.g. KEDA).",
+        "enum": [
+          "RULE_TYPE_UNSPECIFIED",
+          "RULE_TYPE_HTTP",
+          "RULE_TYPE_CUSTOM"
+        ],
+        "example": "RULE_TYPE_HTTP",
+        "type": "string"
+      },
+      "ApplicationScaleRule": {
+        "description": "ScaleRule defines one autoscaling trigger.",
+        "properties": {
+          "customRule": {
+            "$ref": "#/components/schemas/ApplicationCustomScaleRule"
+          },
+          "httpRule": {
+            "$ref": "#/components/schemas/ApplicationHttpScaleRule"
+          },
+          "name": {
+            "description": "Rule name.",
+            "example": "traffic-rule",
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ApplicationRuleType"
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ],
+        "type": "object"
+      },
+      "ApplicationScaling": {
+        "description": "Scaling configuration for the application.",
+        "example": {
+          "autoScaling": {
+            "allowScaleToZero": false,
+            "maxInstances": 5,
+            "minInstances": 2,
+            "rules": [
+              {
+                "httpRule": {
+                  "rps": 5
+                },
+                "name": "traffic-rule",
+                "type": "RULE_TYPE_HTTP"
+              }
+            ]
+          },
+          "type": "SCALING_TYPE_AUTO"
+        },
+        "properties": {
+          "autoScaling": {
+            "$ref": "#/components/schemas/ApplicationAutoScaling"
+          },
+          "manualScaling": {
+            "$ref": "#/components/schemas/ApplicationManualScaling"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ApplicationScalingType"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "ApplicationScalingType": {
+        "default": "SCALING_TYPE_UNSPECIFIED",
+        "description": "ScalingType for the scaling configuration of the application.\n\n - SCALING_TYPE_UNSPECIFIED: Used as zero value.\n - SCALING_TYPE_AUTO: Auto scaling based on rules.\n - SCALING_TYPE_MANUAL: Manual scaling with fixed number of instances.",
+        "enum": [
+          "SCALING_TYPE_UNSPECIFIED",
+          "SCALING_TYPE_AUTO",
+          "SCALING_TYPE_MANUAL"
+        ],
+        "example": "SCALING_TYPE_AUTO",
+        "type": "string"
+      },
+      "ApplicationStatus": {
+        "description": "Status of the application.",
+        "properties": {
+          "current": {
+            "$ref": "#/components/schemas/ApplicationCurrentStatus"
+          },
+          "domains": {
+            "$ref": "#/components/schemas/ApplicationDomains"
+          },
+          "instances": {
+            "items": {
+              "$ref": "#/components/schemas/ApplicationInstance"
+            },
+            "title": "List of the application instance names",
+            "type": "array"
+          },
+          "lastDeployment": {
+            "description": "Last time the application was deployed.",
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "readOnly": true,
+        "type": "object"
+      },
+      "ApplicationSummary": {
+        "description": "ApplicationSummary describes a briefer representation of an application.",
+        "properties": {
+          "createdAt": {
+            "description": "Creation date in RFC3339 format.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "Human-readable display name.",
+            "example": "my-app",
+            "type": "string"
+          },
+          "environmentId": {
+            "description": "Environment identifier where the application belongs.",
+            "example": "sca-environment-id",
+            "type": "string"
+          },
+          "environmentName": {
+            "description": "Environment human-readable display name.",
+            "example": "sandbox-env",
+            "type": "string"
+          },
+          "id": {
+            "description": "Application identifier.",
+            "example": "sca-application-id",
+            "type": "string"
+          },
+          "region": {
+            "description": "Region of the environment.",
+            "example": "eu01",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ApplicationStatus"
+          },
+          "stopped": {
+            "description": "Indicates if the application resources are stopped.",
+            "example": false,
+            "type": "boolean"
+          },
+          "updatedAt": {
+            "description": "Last update date in RFC3339 format.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Container": {
+        "description": "Container describes a simplified container configuration for the application.",
+        "properties": {
+          "args": {
+            "description": "Container argument override.",
+            "example": [],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "command": {
+            "description": "Container command override.",
+            "example": [],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "cpu": {
+            "description": "CPU limit for the container.",
+            "example": 1000,
+            "format": "int32",
+            "type": "integer"
+          },
+          "environmentVariables": {
+            "description": "Environment variables exposed to the container.",
+            "items": {
+              "$ref": "#/components/schemas/ContainerEnvVar"
+            },
+            "type": "array"
+          },
+          "image": {
+            "description": "Container image configuration.",
+            "example": "nginxinc/nginx-unprivileged",
+            "type": "string"
+          },
+          "memory": {
+            "description": "Memory limit for the container.",
+            "example": 1024,
+            "format": "int32",
+            "type": "integer"
+          },
+          "name": {
+            "description": "Container name.",
+            "example": "container-1",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "image"
+        ],
+        "type": "object"
+      },
+      "ContainerEnvVar": {
+        "description": "EnvVar defines a single environment variable.",
+        "properties": {
+          "key": {
+            "description": "Environment variable key.",
+            "example": "NGINX_PORT",
+            "type": "string"
+          },
+          "origin": {
+            "$ref": "#/components/schemas/ContainerEnvVarType"
+          },
+          "value": {
+            "description": "Environment variable value.",
+            "example": "8080",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "value"
+        ],
+        "type": "object"
+      },
+      "ContainerEnvVarType": {
+        "default": "ENV_FROM_SOURCE_TYPE_UNSPECIFIED",
+        "description": "EnvVarType identifies the origin of an environment variable.\n\n - ENV_FROM_SOURCE_TYPE_UNSPECIFIED: Used as zero value.\n - ENV_FROM_SOURCE_TYPE_MANUAL: Environment source from a literal value.\n - ENV_FROM_SOURCE_TYPE_SECRET: Environment source from a secret.",
+        "enum": [
+          "ENV_FROM_SOURCE_TYPE_UNSPECIFIED",
+          "ENV_FROM_SOURCE_TYPE_MANUAL",
+          "ENV_FROM_SOURCE_TYPE_SECRET"
+        ],
+        "example": "ENV_FROM_SOURCE_TYPE_MANUAL",
+        "type": "string"
+      },
+      "CreateApplicationPayload": {
+        "description": "Application describes a deployable multi-container workload instance.",
+        "properties": {
+          "containers": {
+            "description": "Containers to deploy for the application.",
+            "items": {
+              "$ref": "#/components/schemas/Container"
+            },
+            "type": "array"
+          },
+          "createdAt": {
+            "description": "Creation date in RFC3339 format.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "Human-readable display name.",
+            "example": "my-app",
+            "type": "string"
+          },
+          "environmentId": {
+            "description": "Environment identifier where the application belongs.",
+            "example": "sca-environment-id",
+            "readOnly": true,
+            "type": "string"
+          },
+          "environmentName": {
+            "description": "Environment human-readable display name.",
+            "example": "sandbox-env",
+            "readOnly": true,
+            "type": "string"
+          },
+          "id": {
+            "description": "Application identifier.",
+            "example": "sca-application-id",
+            "readOnly": true,
+            "type": "string"
+          },
+          "network": {
+            "$ref": "#/components/schemas/ApplicationNetwork"
+          },
+          "region": {
+            "description": "Region of the environment.",
+            "example": "eu01",
+            "readOnly": true,
+            "type": "string"
+          },
+          "scaling": {
+            "$ref": "#/components/schemas/ApplicationScaling"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ApplicationStatus"
+          },
+          "stopped": {
+            "description": "Indicates if the application resources are stopped.",
+            "example": false,
+            "type": "boolean"
+          },
+          "updatedAt": {
+            "description": "Last update date in RFC3339 format.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName",
+          "containers",
+          "scaling"
+        ],
+        "type": "object"
+      },
+      "CreateEnvironmentPayload": {
+        "description": "Environment describes an isolated container scope within a project.",
+        "properties": {
+          "createdAt": {
+            "description": "Creation date in RFC3339 format.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "default": {
+            "description": "Is the default environmet.",
+            "readOnly": true,
+            "type": "boolean"
+          },
+          "displayName": {
+            "description": "Human-readable display name.",
+            "example": "sandbox-env",
+            "type": "string"
+          },
+          "id": {
+            "description": "Environment identifier.",
+            "example": "sca-environment-id",
+            "readOnly": true,
+            "type": "string"
+          },
+          "region": {
+            "description": "Region of the environment.",
+            "example": "eu01",
+            "readOnly": true,
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EnvironmentStatus"
+          }
+        },
+        "required": [
+          "displayName"
+        ],
+        "type": "object"
+      },
+      "Environment": {
+        "description": "Environment describes an isolated container scope within a project.",
+        "properties": {
+          "createdAt": {
+            "description": "Creation date in RFC3339 format.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "default": {
+            "description": "Is the default environmet.",
+            "readOnly": true,
+            "type": "boolean"
+          },
+          "displayName": {
+            "description": "Human-readable display name.",
+            "example": "sandbox-env",
+            "type": "string"
+          },
+          "id": {
+            "description": "Environment identifier.",
+            "example": "sca-environment-id",
+            "readOnly": true,
+            "type": "string"
+          },
+          "region": {
+            "description": "Region of the environment.",
+            "example": "eu01",
+            "readOnly": true,
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EnvironmentStatus"
+          }
+        },
+        "required": [
+          "displayName"
+        ],
+        "type": "object"
+      },
+      "EnvironmentCurrentStatus": {
+        "default": "CURRENT_STATUS_UNSPECIFIED",
+        "description": " - CURRENT_STATUS_UNSPECIFIED: Used as zero value.\n - CURRENT_STATUS_PROGRESSING: Environment is being created.\n - CURRENT_STATUS_CREATED: Environment is successfully created.",
+        "enum": [
+          "CURRENT_STATUS_UNSPECIFIED",
+          "CURRENT_STATUS_PROGRESSING",
+          "CURRENT_STATUS_CREATED"
+        ],
+        "example": "CURRENT_STATUS_CREATED",
+        "type": "string"
+      },
+      "EnvironmentRegistriesVault": {
+        "description": "Represents the collection Environment registries.",
+        "properties": {
+          "registries": {
+            "description": "The collection of configured registries.",
+            "items": {
+              "$ref": "#/components/schemas/EnvironmentRegistry"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "registries"
+        ],
+        "type": "object"
+      },
+      "EnvironmentRegistry": {
+        "description": "EnvironmentRegistry defines a single registry representation.",
+        "properties": {
+          "createdAt": {
+            "description": "Creation timestamp of this registry entry.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "password": {
+            "description": "Registry password.\nOmit or set to null to keep the existing value unchanged.",
+            "example": "my-docker-password",
+            "type": "string"
+          },
+          "region": {
+            "description": "Registry region.",
+            "example": "eu01",
+            "readOnly": true,
+            "type": "string"
+          },
+          "server": {
+            "description": "Registry server.",
+            "example": "https://index.docker.io/v1/",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EnvironmentRegistryStatus"
+          },
+          "updatedAt": {
+            "description": "Last update timestamp of this registry entry.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "username": {
+            "description": "Registry username.\nOmit or set to null to keep the existing value unchanged.",
+            "example": "my-docker-username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "server"
+        ],
+        "type": "object"
+      },
+      "EnvironmentRegistryStatus": {
+        "description": "EnvironmentRegistryStatus computed fields for a single registry.",
+        "properties": {
+          "consumers": {
+            "description": "List of entities actively consuming this registry.",
+            "items": {
+              "$ref": "#/components/schemas/RegistryConsumer"
+            },
+            "type": "array"
+          }
+        },
+        "readOnly": true,
+        "type": "object"
+      },
+      "EnvironmentSecret": {
+        "description": "EnvironmentSecret defines a single secret representation.",
+        "properties": {
+          "createdAt": {
+            "description": "Creation timestamp of this registry entry.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "key": {
+            "description": "Secret key.",
+            "example": "mysql-uri",
+            "type": "string"
+          },
+          "region": {
+            "description": "Secret region.",
+            "example": "eu01",
+            "readOnly": true,
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EnvironmentSecretStatus"
+          },
+          "updatedAt": {
+            "description": "Last update timestamp of this registry entry.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "value": {
+            "description": "Secret value.\nOmit or set to null to keep the existing value unchanged.",
+            "example": "mysql://user:pass@host:port",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key"
+        ],
+        "type": "object"
+      },
+      "EnvironmentSecretStatus": {
+        "description": "EnvironmentSecretStatus computed fields for a single secret.",
+        "properties": {
+          "consumers": {
+            "description": "List of entities actively consuming this secret.",
+            "items": {
+              "$ref": "#/components/schemas/SecretConsumer"
+            },
+            "type": "array"
+          }
+        },
+        "readOnly": true,
+        "type": "object"
+      },
+      "EnvironmentSecretsVault": {
+        "description": "Represents the vault containing the Environment secrets.",
+        "properties": {
+          "secrets": {
+            "description": "The collection of configured secrets.",
+            "items": {
+              "$ref": "#/components/schemas/EnvironmentSecret"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "secrets"
+        ],
+        "type": "object"
+      },
+      "EnvironmentStatus": {
+        "description": "Status of the environment.",
+        "properties": {
+          "applicationsNumber": {
+            "description": "Amount of applications in the environment.",
+            "example": 5,
+            "format": "int32",
+            "type": "integer"
+          },
+          "current": {
+            "$ref": "#/components/schemas/EnvironmentCurrentStatus"
+          }
+        },
+        "readOnly": true,
+        "type": "object"
+      },
+      "GetApplicationEventsResponse": {
+        "description": "GetApplicationEventsResponse contains an application's events list.",
+        "properties": {
+          "events": {
+            "description": "Events list.",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationEvent"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "GetApplicationLogsResponse": {
+        "description": "GetApplicationLogsResponse contains an application's logs list.",
+        "properties": {
+          "logs": {
+            "description": "Logs list.",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationLog"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "GetOverviewResponse": {
+        "description": "GetOverviewResponse contains a summary of the current state of the project's application.",
+        "properties": {
+          "region": {
+            "description": "Region where the overview is being fetched from.",
+            "example": "eu01",
+            "type": "string"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/OverviewSummary"
+          }
+        },
+        "type": "object"
+      },
+      "ListApplicationsResponse": {
+        "description": "ListApplicationsResponse contains applications and pagination metadata.",
+        "properties": {
+          "items": {
+            "description": "Applications summaries under the requested parent.",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationSummary"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ListEnvironmentsResponse": {
+        "description": "ListEnvironmentsResponse contains environments and pagination metadata.",
+        "properties": {
+          "items": {
+            "description": "Environments under the requested parent.",
+            "items": {
+              "$ref": "#/components/schemas/Environment"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "OverviewSummary": {
+        "description": "Summary describes the current status of a project.",
+        "properties": {
+          "applicationsRunning": {
+            "description": "Number of applications running in a project.",
+            "example": 2,
+            "format": "int32",
+            "type": "integer"
+          },
+          "applicationsTotal": {
+            "description": "Number of applications created in a project.",
+            "example": 5,
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "RegistryConsumer": {
+        "description": "RegistryConsumer lists the usages of a single Environment registry.",
+        "properties": {
+          "container": {
+            "description": "The container where the registry is used.",
+            "example": "container-1",
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name of the entity.",
+            "example": "my-app",
+            "type": "string"
+          },
+          "id": {
+            "description": "The entity that is consuming the registry.",
+            "example": "sca-application-id",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SecretConsumer": {
+        "description": "SecretConsumer lists the usages of a single Environment secret.",
+        "properties": {
+          "container": {
+            "description": "The container where the secret is used.",
+            "example": "container-1",
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name of the entity.",
+            "example": "my-app",
+            "type": "string"
+          },
+          "id": {
+            "description": "The entity that is consuming the secret.",
+            "example": "sca-application-id",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateApplicationPayload": {
+        "description": "Application describes a deployable multi-container workload instance.",
+        "properties": {
+          "containers": {
+            "description": "Containers to deploy for the application.",
+            "items": {
+              "$ref": "#/components/schemas/Container"
+            },
+            "type": "array"
+          },
+          "createdAt": {
+            "description": "Creation date in RFC3339 format.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "displayName": {
+            "description": "Human-readable display name.",
+            "example": "my-app",
+            "type": "string"
+          },
+          "environmentId": {
+            "description": "Environment identifier where the application belongs.",
+            "example": "sca-environment-id",
+            "readOnly": true,
+            "type": "string"
+          },
+          "environmentName": {
+            "description": "Environment human-readable display name.",
+            "example": "sandbox-env",
+            "readOnly": true,
+            "type": "string"
+          },
+          "id": {
+            "description": "Application identifier.",
+            "example": "sca-application-id",
+            "readOnly": true,
+            "type": "string"
+          },
+          "network": {
+            "$ref": "#/components/schemas/ApplicationNetwork"
+          },
+          "region": {
+            "description": "Region of the environment.",
+            "example": "eu01",
+            "readOnly": true,
+            "type": "string"
+          },
+          "scaling": {
+            "$ref": "#/components/schemas/ApplicationScaling"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ApplicationStatus"
+          },
+          "stopped": {
+            "description": "Indicates if the application resources are stopped.",
+            "example": false,
+            "type": "boolean"
+          },
+          "updatedAt": {
+            "description": "Last update date in RFC3339 format.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName",
+          "containers",
+          "scaling"
+        ],
+        "type": "object"
+      },
+      "UpdateEnvironmentRegistriesPayload": {
+        "description": "Represents the collection Environment registries.",
+        "properties": {
+          "registries": {
+            "description": "The collection of configured registries.",
+            "items": {
+              "$ref": "#/components/schemas/EnvironmentRegistry"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "registries"
+        ],
+        "type": "object"
+      },
+      "UpdateEnvironmentSecretsPayload": {
+        "description": "Represents the vault containing the Environment secrets.",
+        "properties": {
+          "secrets": {
+            "description": "The collection of configured secrets.",
+            "items": {
+              "$ref": "#/components/schemas/EnvironmentSecret"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "secrets"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "STACKIT Container Applications (SCA) is a Platform as a Service (PaaS) that provides developers with a complete, managed platform to deploy and operate applications without managing the underlying infrastructure.",
+    "termsOfService": "https://stackit.de/en/imprint",
+    "title": "STACKIT Container Applications (SCA)",
+    "version": "1beta.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1beta/projects/{projectId}/regions/{region}/applications": {
+      "get": {
+        "operationId": "ListProjectApplications",
+        "parameters": [
+          {
+            "description": "Project to list the applications in.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Region to list the applications from.",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListApplicationsResponse"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request. Invalid payload supplied."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Lists applications within a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.application.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{region}/environments": {
+      "get": {
+        "operationId": "ListEnvironments",
+        "parameters": [
+          {
+            "description": "Project to list environments from.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Region to fetch the environments from.",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListEnvironmentsResponse"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request. Invalid payload supplied."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Lists environments within a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.environment.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "operationId": "CreateEnvironment",
+        "parameters": [
+          {
+            "description": "Project to create the environment",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Region to place the environment",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEnvironmentPayload"
+              }
+            }
+          },
+          "description": "Environment to create.",
+          "required": true,
+          "x-originalParamName": "environment"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Environment"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request. Invalid payload supplied."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict. Environment already exists."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Creates a new environment within a project.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.environment.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{region}/environments/{environmentId}": {
+      "get": {
+        "operationId": "GetEnvironment",
+        "parameters": [
+          {
+            "description": "Project to retrieve the environment",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Region to fetch the environment",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Environment identifier, for example: default.",
+            "in": "path",
+            "name": "environmentId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Environment"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found. Environment not found."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Retrieves an environment by resource name.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.environment.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{region}/environments/{environmentId}/applications": {
+      "get": {
+        "operationId": "ListApplications",
+        "parameters": [
+          {
+            "description": "Project to list the applications from.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Region to list the applications from.",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Environment to list the applications from.",
+            "in": "path",
+            "name": "environmentId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListApplicationsResponse"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request. Invalid payload supplied."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Lists applications within an environment.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.application.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "operationId": "CreateApplication",
+        "parameters": [
+          {
+            "description": "Project to create the application in.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Region to create the application in.",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Environment to create the application in.",
+            "in": "path",
+            "name": "environmentId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApplicationPayload"
+              }
+            }
+          },
+          "description": "Application to create.",
+          "required": true,
+          "x-originalParamName": "application"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Application"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request. Invalid payload supplied."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict. Application already exists."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Creates a new application within an environment.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.application.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{region}/environments/{environmentId}/applications/{applicationId}": {
+      "delete": {
+        "operationId": "DeleteApplication",
+        "parameters": [
+          {
+            "description": "Project to delete the application in.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Region to delete the application in.",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Environment to delete the application in.",
+            "in": "path",
+            "name": "environmentId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Application id to delete.",
+            "in": "path",
+            "name": "applicationId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Application"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found. Application not found."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Deletes an application by resource name.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.application.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "operationId": "GetApplication",
+        "parameters": [
+          {
+            "description": "Project to fetch the application from.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Region to fetch the application from.",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Environment to fetch the application from.",
+            "in": "path",
+            "name": "environmentId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Application id to fetch.",
+            "in": "path",
+            "name": "applicationId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Application"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found. Application not found."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Retrieves a application by resource name.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.application.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "patch": {
+        "operationId": "UpdateApplication",
+        "parameters": [
+          {
+            "description": "Project to update the application in.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Region to update the application in.",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Environment to update the application in.",
+            "in": "path",
+            "name": "environmentId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Application id to update.",
+            "in": "path",
+            "name": "applicationId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateApplicationPayload"
+              }
+            }
+          },
+          "description": "The application to update.",
+          "required": true,
+          "x-originalParamName": "application"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Application"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request. Invalid payload supplied."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found. Application not found."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict. Application already exists."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Updates an existing application.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.application.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{region}/environments/{environmentId}/applications/{applicationId}/events": {
+      "get": {
+        "operationId": "GetApplicationEvents",
+        "parameters": [
+          {
+            "description": "Project to fetch the application events from.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Region to fetch the application events from.",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Environment to fetch the application events from.",
+            "in": "path",
+            "name": "environmentId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Application id to fetch the events.",
+            "in": "path",
+            "name": "applicationId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApplicationEventsResponse"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found. Resource not found."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Retrieves events of an application.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.application.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{region}/environments/{environmentId}/applications/{applicationId}/logs": {
+      "get": {
+        "operationId": "GetApplicationLogs",
+        "parameters": [
+          {
+            "description": "Project to fetch the application logs from.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Region to fetch the application logs from.",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Environment to fetch the application logs from.",
+            "in": "path",
+            "name": "environmentId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Application id to fetch the logs.",
+            "in": "path",
+            "name": "applicationId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Instance name of the application.",
+            "in": "query",
+            "name": "instance",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Container name to collect logs.",
+            "in": "query",
+            "name": "container",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Get previous failed execution of the container.",
+            "in": "query",
+            "name": "previous",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApplicationLogsResponse"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request. Container has no previous execution."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found. Resource not found."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Retrieves logs of an application.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.application.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{region}/environments/{environmentId}/registries": {
+      "get": {
+        "operationId": "ListEnvironmentRegistries",
+        "parameters": [
+          {
+            "description": "Project to fetch the environment registries from.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Region to fetch the environment registries from.",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Environment to fetch the environment registries from.",
+            "in": "path",
+            "name": "environmentId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentRegistriesVault"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found. Environment not found."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Retrieves the registries defined within an environment.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.environment.registry.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "patch": {
+        "operationId": "UpdateEnvironmentRegistries",
+        "parameters": [
+          {
+            "description": "Project to update the environment registries in.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Region to update the environment registries from.",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Environment to update the environment registries in.",
+            "in": "path",
+            "name": "environmentId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEnvironmentRegistriesPayload"
+              }
+            }
+          },
+          "description": "The subset of registries to merge or replace in the vault.",
+          "required": true,
+          "x-originalParamName": "vault"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentRegistriesVault"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request. Invalid payload supplied."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found. Environment not found."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Updates the environment registries collection.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.environment.registry.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{region}/environments/{environmentId}/secrets": {
+      "get": {
+        "operationId": "ListEnvironmentSecrets",
+        "parameters": [
+          {
+            "description": "Project to fetch the environment secrets from.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Region to fetch the environment secrets from.",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Environment to fetch the environment secrets from.",
+            "in": "path",
+            "name": "environmentId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentSecretsVault"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found. Environment not found."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Retrieves the secrets defined within an environment.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.environment.secret.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "patch": {
+        "operationId": "UpdateEnvironmentSecrets",
+        "parameters": [
+          {
+            "description": "Project to update the environment secrets in.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Region to update the environment secrets from.",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Environment to update the environment secrets in.",
+            "in": "path",
+            "name": "environmentId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEnvironmentSecretsPayload"
+              }
+            }
+          },
+          "description": "The subset of secrets to merge or replace in the vault.",
+          "required": true,
+          "x-originalParamName": "vault"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentSecretsVault"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request. Invalid payload supplied."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found. Environment not found."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Updates the environment secrets collection.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.environment.secret.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta/projects/{projectId}/regions/{region}/overview": {
+      "get": {
+        "operationId": "GetOverview",
+        "parameters": [
+          {
+            "description": "Project to fetch the overview from.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Region to fetch the overview from.",
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "pattern": "[^/]+",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetOverviewResponse"
+                }
+              }
+            },
+            "description": "A successful response."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized. Authentication token is missing or invalid."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description": "Request failed. Check the request and retry operation."
+          }
+        },
+        "summary": "Retrieves an aggregated overview of the project's current state.",
+        "x-stackit-authorization": {
+          "actions": [
+            "sca.project.overview"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://sca.api.{region}stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "eu01.",
+          "enum": [
+            "eu01."
+          ]
+        }
+      }
+    }
+  ]
+}

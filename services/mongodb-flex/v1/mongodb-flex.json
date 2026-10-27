@@ -557,7 +557,7 @@
             "type": "integer"
           },
           "storage": {
-            "$ref": "#/components/schemas/Storage"
+            "$ref": "#/components/schemas/StorageUpdate"
           },
           "version": {
             "example": "1.0",
@@ -702,6 +702,20 @@
         },
         "type": "object"
       },
+      "StorageUpdate": {
+        "properties": {
+          "class": {
+            "deprecated": true,
+            "description": "DEPRECATED: Starting November 2026, the API will reject requests that attempt to modify the storage class.",
+            "type": "string"
+          },
+          "size": {
+            "example": 10,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
       "SuggestedIndex": {
         "properties": {
           "id": {
@@ -796,7 +810,7 @@
             "type": "integer"
           },
           "storage": {
-            "$ref": "#/components/schemas/Storage"
+            "$ref": "#/components/schemas/StorageUpdate"
           },
           "version": {
             "example": "1.0",
@@ -1092,16 +1106,18 @@
       "name": "STACKIT MongoDB Service Support",
       "url": "https://www.stackit.de/en/contact"
     },
-    "description": "## ⚠️ WARNING: THIS API IS DEPRECATED\n\nUse V2\n",
+    "description": "\u003e **⚠️ DEPRECATION NOTICE**\n\u003e \n\u003e **Version 1 of this API is deprecated but remains fully supported.** \u003e We strongly recommend migrating to [Version 2 (v2)](https://docs.api.stackit.cloud/documentation/mongodb-flex-service/version/v2) for all new integrations to take advantage of the latest features.\n\u003e \n\u003e End-of-life (EOL) for v2 is planned for 2027-09-20.\n",
     "termsOfService": "https://www.stackit.de/en/general-terms-and-conditions/",
     "title": "[DEPRECATED] STACKIT MongoDB Service API",
     "version": "1.0.0",
-    "x-deprecated": true
+    "x-deprecated": true,
+    "x-sunset-date": "2027-09-20T23:59:59Z"
   },
   "openapi": "3.0.1",
   "paths": {
     "/v1/projects/{projectId}/flavors": {
       "get": {
+        "deprecated": true,
         "description": "returns all possible flavors",
         "operationId": "ListFlavors",
         "parameters": [
@@ -1167,6 +1183,7 @@
     },
     "/v1/projects/{projectId}/instances": {
       "get": {
+        "deprecated": true,
         "description": "list all instances for a projectID",
         "operationId": "ListInstances",
         "parameters": [
@@ -1241,6 +1258,7 @@
         }
       },
       "post": {
+        "deprecated": true,
         "description": "Create and deploys an instance\u003cbr/\u003e Note that the time format for the backupSchedule is in UTC",
         "operationId": "CreateInstance",
         "parameters": [
@@ -1327,6 +1345,7 @@
     },
     "/v1/projects/{projectId}/instances/{instanceId}": {
       "delete": {
+        "deprecated": true,
         "description": "removes an instance",
         "operationId": "DeleteInstance",
         "parameters": [
@@ -1404,6 +1423,7 @@
         }
       },
       "get": {
+        "deprecated": true,
         "description": "gets information of an instance",
         "operationId": "GetInstance",
         "parameters": [
@@ -1478,6 +1498,7 @@
         }
       },
       "patch": {
+        "deprecated": true,
         "description": "Updates a deployment plan\u003cbr/\u003e Note that the time format for the backupSchedule is in UTC",
         "operationId": "PartialUpdateInstance",
         "parameters": [
@@ -1593,6 +1614,7 @@
         }
       },
       "put": {
+        "deprecated": true,
         "description": "Updates a deployment plan\u003cbr/\u003e Note that the time format for the backupSchedule is in UTC",
         "operationId": "UpdateInstance",
         "parameters": [
@@ -1710,6 +1732,7 @@
     },
     "/v1/projects/{projectId}/instances/{instanceId}/advisor/slow-queries": {
       "get": {
+        "deprecated": true,
         "description": "gets slow queries from the Opsmanager performance advisor",
         "operationId": "ListAdvisorSlowQueries",
         "parameters": [
@@ -1796,6 +1819,7 @@
     },
     "/v1/projects/{projectId}/instances/{instanceId}/advisor/suggested-indexes": {
       "get": {
+        "deprecated": true,
         "description": "gets suggested indexes from the Opsmanager performance advisor",
         "operationId": "ListSuggestedIndexes",
         "parameters": [
@@ -1882,6 +1906,7 @@
     },
     "/v1/projects/{projectId}/instances/{instanceId}/backups": {
       "get": {
+        "deprecated": true,
         "description": "List backups of an instance",
         "operationId": "ListBackups",
         "parameters": [
@@ -1956,6 +1981,7 @@
         }
       },
       "put": {
+        "deprecated": true,
         "description": "Updates a backup schedule\u003cbr/\u003e Note that the time format is in UTC",
         "operationId": "UpdateBackupSchedule",
         "parameters": [
@@ -2043,6 +2069,7 @@
     },
     "/v1/projects/{projectId}/instances/{instanceId}/backups/{backupId}": {
       "get": {
+        "deprecated": true,
         "description": "Get details about a specific backup",
         "operationId": "GetBackup",
         "parameters": [
@@ -2130,6 +2157,7 @@
     },
     "/v1/projects/{projectId}/instances/{instanceId}/clone": {
       "post": {
+        "deprecated": true,
         "description": "Clone an instance via PIT restore\u003cbr/\u003e Note that the Timestamp is a RFC3339 standard and uses by default UTC time format\u003cbr/\u003e\nAs an example a valid timestamp look like \"2023-04-20T15:05:15Z\"",
         "operationId": "CloneInstance",
         "parameters": [
@@ -2217,6 +2245,7 @@
     },
     "/v1/projects/{projectId}/instances/{instanceId}/metrics/{metric}": {
       "get": {
+        "deprecated": true,
         "description": "returns metrics for an instance",
         "operationId": "ListMetrics",
         "parameters": [
@@ -2355,6 +2384,7 @@
     },
     "/v1/projects/{projectId}/instances/{instanceId}/restores": {
       "get": {
+        "deprecated": true,
         "description": "List restore jobs of an instance",
         "operationId": "ListRestoreJobs",
         "parameters": [
@@ -2429,6 +2459,7 @@
         }
       },
       "post": {
+        "deprecated": true,
         "description": "Restore an instance based on snapshot",
         "operationId": "RestoreInstance",
         "parameters": [
@@ -2516,6 +2547,7 @@
     },
     "/v1/projects/{projectId}/instances/{instanceId}/users": {
       "get": {
+        "deprecated": true,
         "description": "list all users for a mongodb instance",
         "operationId": "ListUsers",
         "parameters": [
@@ -2590,6 +2622,7 @@
         }
       },
       "post": {
+        "deprecated": true,
         "description": "create a new user for a mongodb instance",
         "operationId": "CreateUser",
         "parameters": [
@@ -2697,6 +2730,7 @@
     },
     "/v1/projects/{projectId}/instances/{instanceId}/users/{userId}": {
       "delete": {
+        "deprecated": true,
         "description": "delete mongodb user",
         "operationId": "DeleteUser",
         "parameters": [
@@ -2775,6 +2809,7 @@
         }
       },
       "get": {
+        "deprecated": true,
         "description": "get detailed information of a user of a mongodb instance",
         "operationId": "GetUser",
         "parameters": [
@@ -2860,6 +2895,7 @@
         }
       },
       "patch": {
+        "deprecated": true,
         "description": "updates user for a mongodb instance",
         "operationId": "PartialUpdateUser",
         "parameters": [
@@ -2959,6 +2995,7 @@
         }
       },
       "put": {
+        "deprecated": true,
         "description": "updates user for a mongodb instance",
         "operationId": "UpdateUser",
         "parameters": [
@@ -3060,6 +3097,7 @@
     },
     "/v1/projects/{projectId}/instances/{instanceId}/users/{userId}/reset": {
       "post": {
+        "deprecated": true,
         "description": "resets mongodb user's password",
         "operationId": "ResetUser",
         "parameters": [
@@ -3147,6 +3185,7 @@
     },
     "/v1/projects/{projectId}/storages/{flavor}": {
       "get": {
+        "deprecated": true,
         "description": "returns the storage for a certain flavor",
         "operationId": "ListStorages",
         "parameters": [
@@ -3223,6 +3262,7 @@
     },
     "/v1/projects/{projectId}/versions": {
       "get": {
+        "deprecated": true,
         "description": "returns all available versions for creating endpoint",
         "operationId": "ListVersions",
         "parameters": [

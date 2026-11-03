@@ -129,7 +129,7 @@
           "description": {
             "description": "The description of the access token.",
             "maxLength": 1024,
-            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-]*)?$",
+            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-.]*)?$",
             "type": "string"
           },
           "displayName": {
@@ -161,7 +161,7 @@
           "description": {
             "description": "The description of the access token.",
             "maxLength": 1024,
-            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-]*)?$",
+            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-.]*)?$",
             "type": "string"
           },
           "displayName": {
@@ -282,7 +282,7 @@
           "description": {
             "description": "The description is a longer text chosen by the user to provide more context for the resource.",
             "maxLength": 1024,
-            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-]*)?$",
+            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-.]*)?$",
             "type": "string"
           },
           "displayName": {
@@ -304,7 +304,7 @@
           "description": {
             "description": "The description is a longer text chosen by the user to provide more context for the resource.",
             "maxLength": 1024,
-            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-]*)?$",
+            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-.]*)?$",
             "type": "string"
           },
           "displayName": {
@@ -487,7 +487,7 @@
           "description": {
             "description": "The description is a longer text chosen by the user to provide more context for the resource.",
             "maxLength": 1024,
-            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-]*)?$",
+            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-.]*)?$",
             "type": "string"
           },
           "displayName": {
@@ -583,12 +583,51 @@
         ],
         "type": "object"
       },
+      "partial-update-access-tokenPayload": {
+        "properties": {
+          "description": {
+            "maxLength": 1024,
+            "nullable": true,
+            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-.]*)?$",
+            "type": "string"
+          },
+          "displayName": {
+            "maxLength": 32,
+            "minLength": 1,
+            "nullable": true,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9 \\-]*$",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "partial-update-destinationPayload": {
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/destinationConfig"
+          },
+          "description": {
+            "description": "The description is a longer text chosen by the user to provide more context for the resource.",
+            "maxLength": 1024,
+            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-.]*)?$",
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The display name is a short name chosen by the user to identify the resource.",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9 \\-]*$",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "partial-update-telemetry-routerPayload": {
         "properties": {
           "description": {
             "description": "The description is a longer text chosen by the user to provide more context for the resource.",
             "maxLength": 1024,
-            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-]*)?$",
+            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-.]*)?$",
             "type": "string"
           },
           "displayName": {
@@ -635,7 +674,7 @@
           "description": {
             "description": "The description is a longer text chosen by the user to provide more context for the resource.",
             "maxLength": 1024,
-            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-]*)?$",
+            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-.]*)?$",
             "type": "string"
           },
           "destinationCount": {
@@ -691,7 +730,7 @@
           "description": {
             "maxLength": 1024,
             "nullable": true,
-            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-]*)?$",
+            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-.]*)?$",
             "type": "string"
           },
           "displayName": {
@@ -712,7 +751,7 @@
           "description": {
             "description": "The description is a longer text chosen by the user to provide more context for the resource.",
             "maxLength": 1024,
-            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-]*)?$",
+            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-.]*)?$",
             "type": "string"
           },
           "displayName": {
@@ -730,7 +769,7 @@
           "description": {
             "description": "The description is a longer text chosen by the user to provide more context for the resource.",
             "maxLength": 1024,
-            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-]*)?$",
+            "pattern": "^([a-zA-Z0-9][a-zA-Z0-9 \\-.]*)?$",
             "type": "string"
           },
           "displayName": {
@@ -1241,6 +1280,55 @@
           "$ref": "#/components/parameters/accessTokenId"
         }
       ],
+      "patch": {
+        "description": "Patch an existing access token for the given Telemetry Router by its ID.",
+        "operationId": "partial-update-access-token",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/partial-update-access-tokenPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/updateAccessTokenResponse"
+                }
+              }
+            },
+            "description": "Access Token patched successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-router.access-token.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
       "put": {
         "description": "Update an existing access token for the given Telemetry Router by its ID.",
         "operationId": "update-access-token",
@@ -1474,6 +1562,55 @@
           "$ref": "#/components/parameters/destinationId"
         }
       ],
+      "patch": {
+        "description": "Patches the given destination.",
+        "operationId": "partial-update-destination",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/partial-update-destinationPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/destinationResponse"
+                }
+              }
+            },
+            "description": "Destination was patched successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/internalServerError"
+          }
+        },
+        "x-stackit-authorization": {
+          "actions": [
+            "telemetry-router.destination.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
       "put": {
         "description": "Updates the given destination.",
         "operationId": "update-destination",

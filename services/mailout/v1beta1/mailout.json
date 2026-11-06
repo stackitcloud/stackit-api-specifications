@@ -1,0 +1,1724 @@
+{
+  "components": {
+    "parameters": {
+      "AuthorizedSenderId": {
+        "description": "UUID of the authorized sender resource",
+        "in": "path",
+        "name": "authorizedSenderId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/AuthorizedSenderId"
+        }
+      },
+      "Cursor": {
+        "description": "Pagination cursor from a previous response's nextCursor",
+        "in": "query",
+        "name": "cursor",
+        "schema": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "Limit": {
+        "description": "Maximum number of messages to return per page.",
+        "in": "query",
+        "name": "limit",
+        "schema": {
+          "format": "int64",
+          "maximum": 100,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "MessageSpoolId": {
+        "description": "The message spool id of the email",
+        "in": "path",
+        "name": "messageSpoolId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "MetricsEndTime": {
+        "description": "The end time for a metrics timespan (RFC 3339). Must not be before startTime (returns HTTP 400 if startTime \u003e endTime). When specified with a timespan (e.g. day, week), the query interval spans backward by that duration ending at endTime. If timespan is 'all' or omitted, queries all history up to endTime.",
+        "in": "query",
+        "name": "endTime",
+        "schema": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "MetricsStartTime": {
+        "description": "The start time for a metrics timespan (RFC 3339). Must not be after endTime (returns HTTP 400 if startTime \u003e endTime). When specified with a timespan (e.g. day, week), the query interval spans forward by that duration starting from startTime. If timespan is 'all' or omitted, queries from startTime until the current time.",
+        "in": "query",
+        "name": "startTime",
+        "schema": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "MetricsTimespan": {
+        "description": "The time span for the metrics query. Can be combined with startTime or endTime to query relative time intervals (e.g., timespan=day with startTime queries 24h starting from startTime; timespan=week with endTime queries 7d ending at endTime). Ignored if both startTime and endTime are provided. Defaults to all time if omitted.",
+        "in": "query",
+        "name": "timespan",
+        "schema": {
+          "$ref": "#/components/schemas/MetricsTimespan"
+        }
+      },
+      "ProjectId": {
+        "description": "The STACKIT portal project UUID the resource is located in.",
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/ProjectId"
+        }
+      },
+      "Recipient": {
+        "description": "Case-insensitive substring search for recipient address (minimum 3 characters).",
+        "in": "query",
+        "name": "recipient",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "RecipientAddress": {
+        "description": "The email address of the suppressed recipient.",
+        "in": "path",
+        "name": "recipientAddress",
+        "required": true,
+        "schema": {
+          "format": "email",
+          "type": "string"
+        }
+      },
+      "RegionId": {
+        "description": "The STACKIT region name the resource is located in.",
+        "in": "path",
+        "name": "regionId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/RegionId"
+        }
+      },
+      "Sender": {
+        "description": "Case-insensitive substring search for sender address (minimum 3 characters).",
+        "in": "query",
+        "name": "sender",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "SendingDomainId": {
+        "description": "UUID of the sending domain resource",
+        "in": "path",
+        "name": "sendingDomainId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/SendingDomainId"
+        }
+      },
+      "State": {
+        "description": "Filter by the state of the message (maps to event_type).",
+        "in": "query",
+        "name": "state",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Subject": {
+        "description": "Case-insensitive substring search for subject (minimum 3 characters).",
+        "in": "query",
+        "name": "subject",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "Bad request"
+      },
+      "Conflict": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "Conflict"
+      },
+      "NotFound": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "Resource not found"
+      },
+      "ServerError": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "Server error"
+      },
+      "Unauthorized": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "Unauthorized"
+      }
+    },
+    "schemas": {
+      "AddRecipientToSuppressionListPayload": {
+        "properties": {
+          "recipientAddress": {
+            "description": "The email address of the recipient to suppress",
+            "example": "user@example.com",
+            "format": "email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "recipientAddress"
+        ],
+        "type": "object"
+      },
+      "AuthorizedSender": {
+        "properties": {
+          "description": {
+            "description": "User-provided description for the sender",
+            "example": "Marketing Team Sender",
+            "type": "string"
+          },
+          "id": {
+            "description": "UUID of the authorized sender resource",
+            "example": "550e8400-e29b-41d4-a716-446655440000",
+            "format": "uuid",
+            "type": "string"
+          },
+          "smtpEndpoint": {
+            "description": "SMTP endpoint to use for this sending domain",
+            "example": "smtp.mailout.eu01.stackit.cloud:25",
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/AuthorizedSenderState"
+          },
+          "username": {
+            "description": "Auto-generated username for SMTP authentication",
+            "example": "aBc123DeFgHi",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "description",
+          "username",
+          "smtpEndpoint",
+          "state"
+        ],
+        "type": "object"
+      },
+      "AuthorizedSenderId": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "AuthorizedSenderState": {
+        "enum": [
+          "creating",
+          "deleting",
+          "active"
+        ],
+        "type": "string"
+      },
+      "CreateAuthorizedSenderPayload": {
+        "properties": {
+          "description": {
+            "description": "User-provided description for the sender (e.g., \"Marketing Team\")",
+            "example": "Marketing Team Sender",
+            "maxLength": 100,
+            "type": "string"
+          }
+        },
+        "required": [
+          "description"
+        ],
+        "type": "object"
+      },
+      "CreateAuthorizedSenderResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuthorizedSender"
+          },
+          {
+            "properties": {
+              "password": {
+                "example": "aB3cD!eFgHiJ...",
+                "type": "string"
+              }
+            },
+            "required": [
+              "password"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "CreateSendingDomainPayload": {
+        "properties": {
+          "domain": {
+            "example": "example.com",
+            "format": "hostname",
+            "type": "string"
+          }
+        },
+        "required": [
+          "domain"
+        ],
+        "type": "object"
+      },
+      "CreateSendingDomainResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SendingDomain"
+          }
+        ]
+      },
+      "DKIMValidationReport": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "selector": {
+            "description": "DKIM Selector",
+            "type": "string"
+          },
+          "status": {
+            "description": "Validation status of the DKIM Selector",
+            "enum": [
+              "Valid",
+              "Invalid"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      },
+      "DNSRecord": {
+        "description": "A single DNS record",
+        "properties": {
+          "host": {
+            "description": "DNS record host",
+            "example": "abc123._domainkey",
+            "type": "string"
+          },
+          "type": {
+            "description": "DNS record type (e.g. CNAME, TXT)",
+            "example": "CNAME",
+            "type": "string"
+          },
+          "value": {
+            "description": "DNS record value",
+            "example": "abc123.dkim.mailout.eu01.stackit.cloud",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "host",
+          "value"
+        ],
+        "type": "object"
+      },
+      "DNSRecords": {
+        "description": "DNS configuration for the sending domain",
+        "properties": {
+          "dkim": {
+            "description": "List of DKIM records",
+            "items": {
+              "$ref": "#/components/schemas/DNSRecord"
+            },
+            "type": "array"
+          },
+          "dmarc": {
+            "$ref": "#/components/schemas/DNSRecord"
+          },
+          "returnPath": {
+            "$ref": "#/components/schemas/DNSRecord"
+          },
+          "spf": {
+            "$ref": "#/components/schemas/DNSRecord"
+          }
+        },
+        "type": "object"
+      },
+      "DomainValidationReport": {
+        "properties": {
+          "dkim": {
+            "items": {
+              "$ref": "#/components/schemas/DKIMValidationReport"
+            },
+            "type": "array"
+          },
+          "dmarc": {
+            "$ref": "#/components/schemas/ValidationReport"
+          },
+          "returnPath": {
+            "$ref": "#/components/schemas/ValidationReport"
+          },
+          "spf": {
+            "$ref": "#/components/schemas/ValidationReport"
+          }
+        },
+        "type": "object"
+      },
+      "DomainValidationStatus": {
+        "properties": {
+          "lastValidationTime": {
+            "description": "The timestamp of the last validation",
+            "format": "date-time",
+            "type": "string"
+          },
+          "status": {
+            "description": "The current validation status of the sending domain",
+            "enum": [
+              "ValidationSucceeded",
+              "ValidationFailed",
+              "ValidationPending",
+              "RecordsNotReady"
+            ],
+            "type": "string"
+          },
+          "validationReport": {
+            "$ref": "#/components/schemas/DomainValidationReport"
+          }
+        },
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "code": {
+            "description": "A specific, machine-readable string representing the exact error condition.",
+            "example": "DOMAIN_ALREADY_EXISTS",
+            "type": "string"
+          },
+          "message": {
+            "description": "A human-readable explanation of the error.",
+            "example": "The domain 'example.com' is already registered in this project.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object"
+      },
+      "GetAuthorizedSenderResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuthorizedSender"
+          }
+        ]
+      },
+      "GetSendingDomainResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SendingDomain"
+          },
+          {
+            "properties": {
+              "config": {
+                "$ref": "#/components/schemas/SendingDomainConfig"
+              }
+            },
+            "required": [
+              "config"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "ListAuthorizedSendersResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AuthorizedSender"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "ListMessagesResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SendingDomainMessage"
+            },
+            "type": "array"
+          },
+          "nextCursor": {
+            "description": "Timestamp cursor for the next page. Absent when there are no more messages.",
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "ListSendingDomainsResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SendingDomain"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "ListSuppressedRecipientsResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Suppression"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "MetricsResponse": {
+        "properties": {
+          "acceptedEmails": {
+            "description": "Number of accepted e-mails",
+            "example": 456789,
+            "format": "int64",
+            "type": "integer"
+          },
+          "bounceRatePercent": {
+            "description": "Bounce rate as a percentage, or \"-\" if deliveredEmails is 0",
+            "example": "1.90%",
+            "type": "string"
+          },
+          "deliveredEmails": {
+            "description": "Number of delivered e-mails",
+            "example": 448234,
+            "format": "int64",
+            "type": "integer"
+          },
+          "deliveryRatePercent": {
+            "description": "Delivery rate as a percentage, or \"-\" if acceptedEmails is 0",
+            "example": "98.10%",
+            "type": "string"
+          },
+          "hardBounces": {
+            "description": "Number of hard bounces",
+            "example": 2345,
+            "format": "int64",
+            "type": "integer"
+          },
+          "softBounces": {
+            "description": "Number of soft bounces",
+            "example": 6210,
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "acceptedEmails",
+          "deliveredEmails",
+          "deliveryRatePercent",
+          "hardBounces",
+          "softBounces",
+          "bounceRatePercent"
+        ],
+        "type": "object"
+      },
+      "MetricsTimespan": {
+        "enum": [
+          "day",
+          "week",
+          "all"
+        ],
+        "type": "string"
+      },
+      "ProjectId": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "RegionId": {
+        "enum": [
+          "eu01",
+          "eu02"
+        ],
+        "type": "string"
+      },
+      "SendingDomain": {
+        "properties": {
+          "blockedUntil": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "domain": {
+            "example": "example.com",
+            "format": "hostname",
+            "type": "string"
+          },
+          "id": {
+            "description": "UUID of the sending domain resource",
+            "example": "05cea56b-82a3-4a30-997f-01a320be51d1",
+            "format": "uuid",
+            "type": "string"
+          },
+          "messages": {
+            "description": "List of errors related to state",
+            "items": {
+              "example": "DNS record not found",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "state": {
+            "$ref": "#/components/schemas/SendingDomainState"
+          }
+        },
+        "required": [
+          "id",
+          "domain",
+          "state"
+        ],
+        "type": "object"
+      },
+      "SendingDomainConfig": {
+        "description": "Configuration returned for a single sending domain",
+        "properties": {
+          "dnsRecords": {
+            "$ref": "#/components/schemas/DNSRecords"
+          },
+          "domainValidationStatus": {
+            "$ref": "#/components/schemas/DomainValidationStatus"
+          },
+          "region": {
+            "description": "Region of this sending domain config (e.g. eu01)",
+            "example": "eu01",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SendingDomainId": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "SendingDomainMessage": {
+        "properties": {
+          "details": {
+            "$ref": "#/components/schemas/SendingDomainMessageDetails"
+          },
+          "headers": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "The original email headers.",
+            "type": "object"
+          }
+        },
+        "required": [
+          "details",
+          "headers"
+        ],
+        "type": "object"
+      },
+      "SendingDomainMessageDetails": {
+        "description": "The logged email event details plus the resolved status.",
+        "properties": {
+          "accepted_at": {
+            "type": "string"
+          },
+          "attachment": {
+            "type": "string"
+          },
+          "attachment_size": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "attempts": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "delivered_at": {
+            "type": "string"
+          },
+          "from": {
+            "example": "sender@example.com",
+            "type": "string"
+          },
+          "last_attempt": {
+            "type": "string"
+          },
+          "message_direction": {
+            "example": "Outgoing",
+            "type": "string"
+          },
+          "message_id": {
+            "example": "20260910090719.006191@domain.local",
+            "type": "string"
+          },
+          "message_size": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "message_spool_id": {
+            "example": "ca8bef88adda11f1be510a6c7175da2d",
+            "type": "string"
+          },
+          "recipient": {
+            "example": "recipient1@example.com",
+            "type": "string"
+          },
+          "smtp_code": {
+            "example": 250,
+            "format": "int64",
+            "type": "integer"
+          },
+          "smtp_description": {
+            "type": "string"
+          },
+          "status": {
+            "description": "Customer-facing delivery status.",
+            "enum": [
+              "Delivered",
+              "Queued",
+              "Soft Bounce",
+              "Hard Bounce",
+              "Expired",
+              "Hard Bounce (OOB)"
+            ],
+            "example": "Delivered",
+            "type": "string"
+          },
+          "subject": {
+            "example": "Your invoice",
+            "type": "string"
+          },
+          "timestamp": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "to": {
+            "example": "recipient1@example.com,recipient2@example.com",
+            "type": "string"
+          }
+        },
+        "required": [
+          "timestamp",
+          "from",
+          "to",
+          "recipient",
+          "subject",
+          "message_id",
+          "message_spool_id",
+          "message_direction",
+          "status",
+          "smtp_code",
+          "smtp_description",
+          "attempts",
+          "attachment",
+          "attachment_size",
+          "message_size"
+        ],
+        "type": "object"
+      },
+      "SendingDomainState": {
+        "enum": [
+          "creating",
+          "validating",
+          "blocked",
+          "restricted",
+          "active",
+          "deleting"
+        ],
+        "type": "string"
+      },
+      "Suppression": {
+        "properties": {
+          "addedAt": {
+            "description": "Timestamp when the recipient was added to the suppression list",
+            "format": "date-time",
+            "type": "string"
+          },
+          "blockedUntil": {
+            "description": "Timestamp until which the recipient is blocked (null if permanent)",
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/SuppressionReason"
+          },
+          "recipientAddress": {
+            "description": "The email address of the suppressed recipient",
+            "example": "user@example.com",
+            "format": "email",
+            "type": "string"
+          },
+          "smtpCode": {
+            "description": "SMTP status code that triggered the suppression",
+            "example": "5.1.2",
+            "type": "string"
+          },
+          "smtpDescription": {
+            "description": "SMTP error description",
+            "example": "5.1.1 User Unknown",
+            "type": "string"
+          }
+        },
+        "required": [
+          "recipientAddress",
+          "addedAt",
+          "reason",
+          "smtpCode",
+          "smtpDescription"
+        ],
+        "type": "object"
+      },
+      "SuppressionReason": {
+        "description": "Reason why the recipient was added to the suppression list",
+        "enum": [
+          "Bounce",
+          "Added Manually"
+        ],
+        "type": "string"
+      },
+      "ValidationReport": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "status": {
+            "description": "Validation status of the DNS record",
+            "enum": [
+              "Valid",
+              "Invalid",
+              "NotConfigured"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "This API provides endpoints for managing STACKIT MailOut.\n",
+    "title": "STACKIT MailOut API",
+    "version": "1beta1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1beta1/projects/{projectId}/regions/{regionId}/sending-domains": {
+      "get": {
+        "operationId": "ListSendingDomains",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/RegionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListSendingDomainsResponse"
+                }
+              }
+            },
+            "description": "List of sending domains"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "List sending domains",
+        "x-stackit-authorization": {
+          "actions": [
+            "mailout.sending-domain.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "operationId": "CreateSendingDomain",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/RegionId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSendingDomainPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateSendingDomainResponse"
+                }
+              }
+            },
+            "description": "Sending domain created"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "Create a sending domain",
+        "x-stackit-authorization": {
+          "actions": [
+            "mailout.sending-domain.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta1/projects/{projectId}/regions/{regionId}/sending-domains/{sendingDomainId}": {
+      "delete": {
+        "operationId": "DeleteSendingDomain",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/RegionId"
+          },
+          {
+            "$ref": "#/components/parameters/SendingDomainId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "Delete a sending domain",
+        "x-stackit-authorization": {
+          "actions": [
+            "mailout.sending-domain.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "operationId": "GetSendingDomain",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/RegionId"
+          },
+          {
+            "$ref": "#/components/parameters/SendingDomainId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetSendingDomainResponse"
+                }
+              }
+            },
+            "description": "Sending domain configuration"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "Get configuration for a sending domain",
+        "x-stackit-authorization": {
+          "actions": [
+            "mailout.sending-domain.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta1/projects/{projectId}/regions/{regionId}/sending-domains/{sendingDomainId}/authorized-senders": {
+      "get": {
+        "operationId": "ListAuthorizedSenders",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/RegionId"
+          },
+          {
+            "$ref": "#/components/parameters/SendingDomainId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListAuthorizedSendersResponse"
+                }
+              }
+            },
+            "description": "Authorized senders"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "List authorized senders for this sending domain",
+        "x-stackit-authorization": {
+          "actions": [
+            "mailout.authorized-sender.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "operationId": "CreateAuthorizedSender",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/RegionId"
+          },
+          {
+            "$ref": "#/components/parameters/SendingDomainId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAuthorizedSenderPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateAuthorizedSenderResponse"
+                }
+              }
+            },
+            "description": "Sender authorized"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "Authorize a sender for this sending domain",
+        "x-stackit-authorization": {
+          "actions": [
+            "mailout.authorized-sender.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta1/projects/{projectId}/regions/{regionId}/sending-domains/{sendingDomainId}/authorized-senders/{authorizedSenderId}": {
+      "delete": {
+        "operationId": "DeleteAuthorizedSender",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/RegionId"
+          },
+          {
+            "$ref": "#/components/parameters/SendingDomainId"
+          },
+          {
+            "$ref": "#/components/parameters/AuthorizedSenderId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "Revoke authorization for sender",
+        "x-stackit-authorization": {
+          "actions": [
+            "mailout.authorized-sender.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "get": {
+        "operationId": "GetAuthorizedSender",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/RegionId"
+          },
+          {
+            "$ref": "#/components/parameters/SendingDomainId"
+          },
+          {
+            "$ref": "#/components/parameters/AuthorizedSenderId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAuthorizedSenderResponse"
+                }
+              }
+            },
+            "description": "Authorized sender"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "Get authorized sender information",
+        "x-stackit-authorization": {
+          "actions": [
+            "mailout.authorized-sender.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta1/projects/{projectId}/regions/{regionId}/sending-domains/{sendingDomainId}/dns-records": {
+      "get": {
+        "operationId": "ExportSendingDomainDNSRecords",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/RegionId"
+          },
+          {
+            "$ref": "#/components/parameters/SendingDomainId"
+          },
+          {
+            "description": "Export format for the DNS records file",
+            "in": "query",
+            "name": "format",
+            "required": true,
+            "schema": {
+              "enum": [
+                "json",
+                "csv",
+                "bind"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "DNS records export file"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "Get DNS records for a sending domain as a downloadable file",
+        "x-stackit-authorization": {
+          "actions": [
+            "mailout.sending-domain.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta1/projects/{projectId}/regions/{regionId}/sending-domains/{sendingDomainId}/messages": {
+      "get": {
+        "operationId": "ListSendingDomainMessages",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/RegionId"
+          },
+          {
+            "$ref": "#/components/parameters/SendingDomainId"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Cursor"
+          },
+          {
+            "$ref": "#/components/parameters/State"
+          },
+          {
+            "$ref": "#/components/parameters/Subject"
+          },
+          {
+            "$ref": "#/components/parameters/Sender"
+          },
+          {
+            "$ref": "#/components/parameters/Recipient"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListMessagesResponse"
+                }
+              }
+            },
+            "description": "A page of messages, newest first"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "List messages for a specific sending domain",
+        "x-stackit-authorization": {
+          "actions": [
+            "mailout.sending-domain.message.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta1/projects/{projectId}/regions/{regionId}/sending-domains/{sendingDomainId}/messages/{messageSpoolId}": {
+      "get": {
+        "operationId": "GetSendingDomainMessage",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/RegionId"
+          },
+          {
+            "$ref": "#/components/parameters/SendingDomainId"
+          },
+          {
+            "$ref": "#/components/parameters/MessageSpoolId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SendingDomainMessage"
+                }
+              }
+            },
+            "description": "The newest event of the message"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "Get the newest event of a message",
+        "x-stackit-authorization": {
+          "actions": [
+            "mailout.sending-domain.message.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta1/projects/{projectId}/regions/{regionId}/sending-domains/{sendingDomainId}/metrics": {
+      "get": {
+        "operationId": "GetSendingDomainMetrics",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/RegionId"
+          },
+          {
+            "$ref": "#/components/parameters/SendingDomainId"
+          },
+          {
+            "$ref": "#/components/parameters/MetricsTimespan"
+          },
+          {
+            "$ref": "#/components/parameters/MetricsStartTime"
+          },
+          {
+            "$ref": "#/components/parameters/MetricsEndTime"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetricsResponse"
+                }
+              }
+            },
+            "description": "Sending domain metrics"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "Retrieves aggregated email metrics for a sending domain",
+        "x-stackit-authorization": {
+          "actions": [
+            "mailout.sending-domain.get"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta1/projects/{projectId}/regions/{regionId}/sending-domains/{sendingDomainId}/suppressions": {
+      "get": {
+        "operationId": "ListSuppressedRecipients",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/RegionId"
+          },
+          {
+            "$ref": "#/components/parameters/SendingDomainId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListSuppressedRecipientsResponse"
+                }
+              }
+            },
+            "description": "List of suppressions for the sending domain"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "List suppressions for a specific sending domain",
+        "x-stackit-authorization": {
+          "actions": [
+            "mailout.sending-domain.suppression.list"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
+      "post": {
+        "operationId": "AddRecipientToSuppressionList",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/RegionId"
+          },
+          {
+            "$ref": "#/components/parameters/SendingDomainId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddRecipientToSuppressionListPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Suppression"
+                }
+              }
+            },
+            "description": "Recipient added to suppression list"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "Add a recipient to the suppression list",
+        "x-stackit-authorization": {
+          "actions": [
+            "mailout.sending-domain.suppression.create"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta1/projects/{projectId}/regions/{regionId}/sending-domains/{sendingDomainId}/suppressions/{recipientAddress}": {
+      "delete": {
+        "operationId": "RemoveRecipientFromSuppressionList",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/RegionId"
+          },
+          {
+            "$ref": "#/components/parameters/SendingDomainId"
+          },
+          {
+            "$ref": "#/components/parameters/RecipientAddress"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Recipient removed from suppression list"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "Delete a recipient from the suppression list",
+        "x-stackit-authorization": {
+          "actions": [
+            "mailout.sending-domain.suppression.delete"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    },
+    "/v1beta1/projects/{projectId}/regions/{regionId}/sending-domains/{sendingDomainId}/validate": {
+      "post": {
+        "operationId": "ValidateSendingDomain",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/RegionId"
+          },
+          {
+            "$ref": "#/components/parameters/SendingDomainId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Validation triggered"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "summary": "Manually trigger validation for a sending domain",
+        "x-stackit-authorization": {
+          "actions": [
+            "mailout.sending-domain.validate"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://mailout.api.{region}stackit.cloud",
+      "variables": {
+        "region": {
+          "default": "eu01.",
+          "enum": [
+            "eu01."
+          ]
+        }
+      }
+    }
+  ]
+}

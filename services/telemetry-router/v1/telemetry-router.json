@@ -223,7 +223,7 @@
           "key": {
             "maxLength": 1024,
             "minLength": 1,
-            "pattern": "^[^\\\\0-\\\\x1F\\\\x7F-\\\\x9F]+$",
+            "pattern": "^[^\\0-\\x1F\\x7F-\\x9F]+$",
             "type": "string"
           },
           "level": {
@@ -236,7 +236,7 @@
             "items": {
               "maxLength": 1024,
               "minLength": 1,
-              "pattern": "^[^\\\\0-\\\\x1F\\\\x7F-\\\\x9F]+$",
+              "pattern": "^[^\\0-\\x1F\\x7F-\\x9F]+$",
               "type": "string"
             },
             "maxItems": 100,
@@ -266,6 +266,22 @@
           "!="
         ],
         "type": "string"
+      },
+      "configFilterPatch": {
+        "properties": {
+          "attributes": {
+            "items": {
+              "$ref": "#/components/schemas/configFilterAttributes"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "type": "array"
+          },
+          "disabled": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
       },
       "create-access-tokenPayload": {
         "allOf": [
@@ -374,13 +390,13 @@
             "description": "A bearer token to authenticate at the OpenTelemetry URI.",
             "maxLength": 2048,
             "minLength": 1,
-            "pattern": "^[^\\\\0-\\\\x1F\\\\x7F-\\\\x9F]+$",
+            "pattern": "^[^\\0-\\x1F\\x7F-\\x9F]+$",
             "type": "string"
           },
           "uri": {
             "description": "The URI for reaching the resource.",
             "maxLength": 1024,
-            "pattern": "^[^\\\\0-\\\\x1F\\\\x7F-\\\\x9F]+$",
+            "pattern": "^[^\\0-\\x1F\\x7F-\\x9F]+$",
             "type": "string"
           }
         },
@@ -395,13 +411,13 @@
           "password": {
             "maxLength": 1024,
             "minLength": 1,
-            "pattern": "^[^\\\\0-\\\\x1F\\\\x7F-\\\\x9F]+$",
+            "pattern": "^[^\\0-\\x1F\\x7F-\\x9F]+$",
             "type": "string"
           },
           "username": {
             "maxLength": 1024,
             "minLength": 1,
-            "pattern": "^[^\\\\0-\\\\x1F\\\\x7F-\\\\x9F]+$",
+            "pattern": "^[^\\0-\\x1F\\x7F-\\x9F]+$",
             "type": "string"
           }
         },
@@ -409,6 +425,100 @@
           "username",
           "password"
         ],
+        "type": "object"
+      },
+      "destinationConfigPatch": {
+        "properties": {
+          "configType": {
+            "$ref": "#/components/schemas/destinationConfigType"
+          },
+          "filter": {
+            "$ref": "#/components/schemas/configFilterPatch"
+          },
+          "openTelemetry": {
+            "$ref": "#/components/schemas/destinationConfigPatchOpenTelemetry"
+          },
+          "s3": {
+            "$ref": "#/components/schemas/destinationConfigPatchS3"
+          }
+        },
+        "type": "object"
+      },
+      "destinationConfigPatchOpenTelemetry": {
+        "properties": {
+          "basicAuth": {
+            "$ref": "#/components/schemas/destinationConfigPatchOpenTelemetryBasicAuth"
+          },
+          "bearerToken": {
+            "description": "A bearer token to authenticate at the OpenTelemetry URI.",
+            "maxLength": 2048,
+            "minLength": 1,
+            "pattern": "^[^\\0-\\x1F\\x7F-\\x9F]+$",
+            "type": "string"
+          },
+          "uri": {
+            "description": "The URI for reaching the resource.",
+            "maxLength": 1024,
+            "pattern": "^[^\\0-\\x1F\\x7F-\\x9F]+$",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "destinationConfigPatchOpenTelemetryBasicAuth": {
+        "description": "Basic auth to authenticate at the OpenTelemetry URI",
+        "properties": {
+          "password": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "pattern": "^[^\\0-\\x1F\\x7F-\\x9F]+$",
+            "type": "string"
+          },
+          "username": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "pattern": "^[^\\0-\\x1F\\x7F-\\x9F]+$",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "destinationConfigPatchS3": {
+        "properties": {
+          "accessKey": {
+            "$ref": "#/components/schemas/destinationConfigPatchS3AccessKey"
+          },
+          "bucket": {
+            "maxLength": 63,
+            "minLength": 3,
+            "pattern": "^[a-z0-9\\-]+$",
+            "type": "string"
+          },
+          "endpoint": {
+            "description": "The URI for reaching the resource.",
+            "maxLength": 1024,
+            "pattern": "^[^\\0-\\x1F\\x7F-\\x9F]+$",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "destinationConfigPatchS3AccessKey": {
+        "description": "The S3 access key",
+        "properties": {
+          "id": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "pattern": "^[^\\0-\\x1F\\x7F-\\x9F]+$",
+            "type": "string"
+          },
+          "secret": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "pattern": "^[^\\0-\\x1F\\x7F-\\x9F]+$",
+            "type": "string"
+          }
+        },
         "type": "object"
       },
       "destinationConfigS3": {
@@ -425,7 +535,7 @@
           "endpoint": {
             "description": "The URI for reaching the resource.",
             "maxLength": 1024,
-            "pattern": "^[^\\\\0-\\\\x1F\\\\x7F-\\\\x9F]+$",
+            "pattern": "^[^\\0-\\x1F\\x7F-\\x9F]+$",
             "type": "string"
           }
         },
@@ -441,13 +551,13 @@
           "id": {
             "maxLength": 1024,
             "minLength": 1,
-            "pattern": "^[^\\\\0-\\\\x1F\\\\x7F-\\\\x9F]+$",
+            "pattern": "^[^\\0-\\x1F\\x7F-\\x9F]+$",
             "type": "string"
           },
           "secret": {
             "maxLength": 1024,
             "minLength": 1,
-            "pattern": "^[^\\\\0-\\\\x1F\\\\x7F-\\\\x9F]+$",
+            "pattern": "^[^\\0-\\x1F\\x7F-\\x9F]+$",
             "type": "string"
           }
         },
@@ -604,7 +714,7 @@
       "partial-update-destinationPayload": {
         "properties": {
           "config": {
-            "$ref": "#/components/schemas/destinationConfig"
+            "$ref": "#/components/schemas/destinationConfigPatch"
           },
           "description": {
             "description": "The description is a longer text chosen by the user to provide more context for the resource.",
@@ -638,7 +748,7 @@
             "type": "string"
           },
           "filter": {
-            "$ref": "#/components/schemas/configFilter"
+            "$ref": "#/components/schemas/configFilterPatch"
           },
           "resourceLabels": {
             "$ref": "#/components/schemas/resourceLabels"

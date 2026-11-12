@@ -92,25 +92,17 @@
         "type": "object"
       },
       "CNI": {
-        "description": "CNI to use for the cluster. Only one type of CNI can be used.\nThe type of CNI is immutable after creation. \nDefaults to calico.",
+        "description": "CNI to use for the cluster. Only one type of CNI can be used. The type of CNI is immutable after creation. Defaults to calico",
         "example": {
-          "calico": "{}",
-          "cilium": {
-            "hubble": {
-              "enabled": true
-            }
-          }
+          "calico": "{}"
         },
         "properties": {
           "calico": {
-            "title": "Configuration options for the Calico CNI",
+            "description": "configuration options for the Calico CNI",
             "type": "object",
             "x-stackit-sdk": {
               "schema-name": "CalicoConfig"
             }
-          },
-          "cilium": {
-            "$ref": "#/components/schemas/CiliumConfig"
           }
         },
         "type": "object"
@@ -137,33 +129,7 @@
         "type": "object"
       },
       "CalicoConfig": {
-        "title": "Configuration options for the Calico CNI",
-        "type": "object"
-      },
-      "CiliumConfig": {
-        "description": "Configuration options for the Cilium CNI\n⚠️ Note: This feature is in private preview. Enabling Cilium is only possible for enabled accounts. If your account does not have access, the request will be rejected.",
-        "example": {
-          "hubble": {
-            "enabled": true
-          }
-        },
-        "properties": {
-          "hubble": {
-            "$ref": "#/components/schemas/CiliumHubble"
-          }
-        },
-        "type": "object"
-      },
-      "CiliumHubble": {
-        "example": {
-          "enabled": true
-        },
-        "properties": {
-          "enabled": {
-            "title": "Enable Cilium Hubble to allow cluster-wide network observability",
-            "type": "boolean"
-          }
-        },
+        "description": "configuration options for the Calico CNI",
         "type": "object"
       },
       "Cluster": {
@@ -237,12 +203,7 @@
           "name": "name",
           "network": {
             "cni": {
-              "calico": "{}",
-              "cilium": {
-                "hubble": {
-                  "enabled": true
-                }
-              }
+              "calico": "{}"
             },
             "controlPlane": {
               "accessScope": "PUBLIC"
@@ -1346,12 +1307,7 @@
               "name": "name",
               "network": {
                 "cni": {
-                  "calico": "{}",
-                  "cilium": {
-                    "hubble": {
-                      "enabled": true
-                    }
-                  }
+                  "calico": "{}"
                 },
                 "controlPlane": {
                   "accessScope": "PUBLIC"
@@ -1737,12 +1693,7 @@
               "name": "name",
               "network": {
                 "cni": {
-                  "calico": "{}",
-                  "cilium": {
-                    "hubble": {
-                      "enabled": true
-                    }
-                  }
+                  "calico": "{}"
                 },
                 "controlPlane": {
                   "accessScope": "PUBLIC"
@@ -2111,9 +2062,15 @@
             {
               "cri": [
                 {
+                  "kata": {
+                    "enabled": true
+                  },
                   "name": "containerd"
                 },
                 {
+                  "kata": {
+                    "enabled": true
+                  },
                   "name": "containerd"
                 }
               ],
@@ -2124,9 +2081,15 @@
             {
               "cri": [
                 {
+                  "kata": {
+                    "enabled": true
+                  },
                   "name": "containerd"
                 },
                 {
+                  "kata": {
+                    "enabled": true
+                  },
                   "name": "containerd"
                 }
               ],
@@ -2154,9 +2117,15 @@
         "example": {
           "cri": [
             {
+              "kata": {
+                "enabled": true
+              },
               "name": "containerd"
             },
             {
+              "kata": {
+                "enabled": true
+              },
               "name": "containerd"
             }
           ],
@@ -2167,7 +2136,7 @@
         "properties": {
           "cri": {
             "items": {
-              "$ref": "#/components/schemas/MachineImageVersionCRI"
+              "$ref": "#/components/schemas/CRI"
             },
             "title": "supported container runtimes",
             "type": "array"
@@ -2182,21 +2151,6 @@
           "version": {
             "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$",
             "title": "Image version",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "MachineImageVersionCRI": {
-        "example": {
-          "name": "containerd"
-        },
-        "properties": {
-          "name": {
-            "enum": [
-              "containerd"
-            ],
-            "title": "Name of the cri library",
             "type": "string"
           }
         },
@@ -2277,12 +2231,7 @@
       "Network": {
         "example": {
           "cni": {
-            "calico": "{}",
-            "cilium": {
-              "hubble": {
-                "enabled": true
-              }
-            }
+            "calico": "{}"
           },
           "controlPlane": {
             "accessScope": "PUBLIC"
@@ -2528,9 +2477,15 @@
                 {
                   "cri": [
                     {
+                      "kata": {
+                        "enabled": true
+                      },
                       "name": "containerd"
                     },
                     {
+                      "kata": {
+                        "enabled": true
+                      },
                       "name": "containerd"
                     }
                   ],
@@ -2541,9 +2496,15 @@
                 {
                   "cri": [
                     {
+                      "kata": {
+                        "enabled": true
+                      },
                       "name": "containerd"
                     },
                     {
+                      "kata": {
+                        "enabled": true
+                      },
                       "name": "containerd"
                     }
                   ],
@@ -2559,9 +2520,15 @@
                 {
                   "cri": [
                     {
+                      "kata": {
+                        "enabled": true
+                      },
                       "name": "containerd"
                     },
                     {
+                      "kata": {
+                        "enabled": true
+                      },
                       "name": "containerd"
                     }
                   ],
@@ -2572,9 +2539,15 @@
                 {
                   "cri": [
                     {
+                      "kata": {
+                        "enabled": true
+                      },
                       "name": "containerd"
                     },
                     {
+                      "kata": {
+                        "enabled": true
+                      },
                       "name": "containerd"
                     }
                   ],

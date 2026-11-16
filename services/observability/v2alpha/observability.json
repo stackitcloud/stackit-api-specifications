@@ -31,7 +31,40 @@
         ],
         "type": "string"
       },
-      "AlertDataWithoutCredentials": {
+      "AlertConfigReceiverResponse": {
+        "properties": {
+          "emailConfigs": {
+            "description": "Email configurations.",
+            "items": {
+              "$ref": "#/components/schemas/EmailConfigDataWithoutCredentials"
+            },
+            "type": "array"
+          },
+          "name": {
+            "description": "The name of the receiver.\n\n**Additional Validators:**\n* Must be unique\n* Allowed characters: a-zA-Z0-9-",
+            "type": "string"
+          },
+          "opsgenieConfigs": {
+            "description": "Configuration for ops genie.",
+            "items": {
+              "$ref": "#/components/schemas/OpsGenieDataWithoutCredentialsConfig"
+            },
+            "type": "array"
+          },
+          "webHookConfigs": {
+            "description": "A list of webhook configurations to send notifications to HTTP endpoints. Supports standard webhooks as well as special integrations like Microsoft Teams and Google Chat.",
+            "items": {
+              "$ref": "#/components/schemas/WebHookData"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "AlertConfigResponse": {
         "properties": {
           "global": {
             "allOf": [
@@ -51,7 +84,7 @@
           "receivers": {
             "description": "A list of notification receivers.",
             "items": {
-              "$ref": "#/components/schemas/ReceiverDataWithoutCredentials"
+              "$ref": "#/components/schemas/AlertConfigReceiverResponse"
             },
             "type": "array"
           },
@@ -95,20 +128,6 @@
         "required": [
           "name",
           "rules"
-        ],
-        "type": "object"
-      },
-      "AlertGroupsResponse": {
-        "properties": {
-          "data": {
-            "items": {
-              "$ref": "#/components/schemas/AlertGroup"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "data"
         ],
         "type": "object"
       },
@@ -230,64 +249,6 @@
         ],
         "type": "string"
       },
-      "BackupResponse": {
-        "properties": {
-          "alertConfigBackups": {
-            "description": "List of available alertConfig backups (ISO 8601 format).",
-            "items": {
-              "format": "date-time",
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "alertRulesBackups": {
-            "description": "List of available alertRules backups (ISO 8601 format).",
-            "items": {
-              "format": "date-time",
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "grafanaBackups": {
-            "description": "List of available grafana backups (ISO 8601 format).",
-            "items": {
-              "format": "date-time",
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "scrapeConfigBackups": {
-            "description": "List of available scrapeConfig backups (ISO 8601 format).",
-            "items": {
-              "format": "date-time",
-              "type": "string"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "BackupRestoreResponse": {
-        "properties": {
-          "backupDate": {
-            "description": "Timestamp indicating which backup to restore (ISO 8601 format).",
-            "format": "date-time",
-            "type": "string"
-          },
-          "restoreTargets": {
-            "description": "List of targets to restore from backup.",
-            "items": {
-              "$ref": "#/components/schemas/RestoreTargetsEnum"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "backupDate",
-          "restoreTargets"
-        ],
-        "type": "object"
-      },
       "BadRequest": {
         "properties": {
           "error": {
@@ -351,56 +312,6 @@
         ],
         "type": "object"
       },
-      "BasicCredentials": {
-        "properties": {
-          "description": {
-            "description": "Custom description of the technical credentials..\n\n**Additional Validators:**\n* Allowed characters: a-zA-Z0-9/() _-",
-            "maxLength": 1000,
-            "minLength": 1,
-            "type": "string"
-          },
-          "username": {
-            "description": "Username of the technical credentials.",
-            "readOnly": true,
-            "type": "string"
-          }
-        },
-        "required": [
-          "username"
-        ],
-        "type": "object"
-      },
-      "BucketRetentionTime": {
-        "properties": {
-          "metricsRetentionTime1h": {
-            "description": "Retention time of longtime storage of 1h sampled data.\nAfter that time the 1h sampled data will be deleted permanently.\nThe goal of downsampling is to get fast results for queries over long time intervals.\nIt is recommended to set this value to be the same as `metricsRetentionTimeRaw` to ensure zoom-in\ncapabilities in your dashboards. The default value is 90 days.",
-            "format": "int32",
-            "maximum": 780,
-            "minimum": 10,
-            "type": "integer"
-          },
-          "metricsRetentionTime5m": {
-            "description": "Retention time of longtime storage of 5m sampled data.\nAfter that time the 5m sampled data will be deleted permanently.\nAll 5m resolution metrics older than 10 days are downsampled at a 1h resolution.\nThe goal of downsampling is to get fast results for queries over long time intervals.\nIt is recommended to set this value to be the same as `metricsRetentionTimeRaw` to ensure zoom-in\ncapabilities in your dashboards. The default value is 90 days.",
-            "format": "int32",
-            "maximum": 780,
-            "minimum": 10,
-            "type": "integer"
-          },
-          "metricsRetentionTimeRaw": {
-            "description": "Retention time of longtime storage of raw data.\nAfter that time the raw data will be deleted permanently.\nAll raw resolution metrics that are older than 40 hours are downsampled at a 5m resolution.\nThe default value is 90 days..",
-            "format": "int32",
-            "maximum": 780,
-            "minimum": 2,
-            "type": "integer"
-          }
-        },
-        "required": [
-          "metricsRetentionTime1h",
-          "metricsRetentionTime5m",
-          "metricsRetentionTimeRaw"
-        ],
-        "type": "object"
-      },
       "CertCheckResponse": {
         "properties": {
           "id": {
@@ -416,21 +327,6 @@
         "required": [
           "id",
           "source"
-        ],
-        "type": "object"
-      },
-      "CertChecksResponse": {
-        "properties": {
-          "certChecks": {
-            "items": {
-              "$ref": "#/components/schemas/CertCheckResponse"
-            },
-            "maxItems": 100,
-            "type": "array"
-          }
-        },
-        "required": [
-          "certChecks"
         ],
         "type": "object"
       },
@@ -521,6 +417,31 @@
         },
         "type": "object"
       },
+      "CreateCredentialsResponse": {
+        "properties": {
+          "description": {
+            "description": "Custom description of the technical credentials..\n\n**Additional Validators:**\n* Allowed characters: a-zA-Z0-9/() _-",
+            "maxLength": 1000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "password": {
+            "description": "The generated password for the credentials. Make sure to copy it, as it will not be displayed again.",
+            "readOnly": true,
+            "type": "string"
+          },
+          "username": {
+            "description": "Username of the technical credentials.",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "password",
+          "username"
+        ],
+        "type": "object"
+      },
       "CreateElasticsearchCheckPayload": {
         "properties": {
           "password": {
@@ -578,6 +499,19 @@
         "required": [
           "name",
           "planId"
+        ],
+        "type": "object"
+      },
+      "CreateInstanceResponse": {
+        "properties": {
+          "instanceId": {
+            "description": "The newly allocated UUID of the created instance.",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "instanceId"
         ],
         "type": "object"
       },
@@ -761,6 +695,131 @@
         ],
         "type": "object"
       },
+      "CreateScrapeConfig": {
+        "properties": {
+          "basicAuth": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BasicAuth"
+              }
+            ],
+            "description": "Basic authentication credentials for scraping targets."
+          },
+          "honorLabels": {
+            "default": false,
+            "description": "Controls how Prometheus handles conflicts between labels. Send `null` during an update to reset this field to the default.",
+            "type": "boolean"
+          },
+          "honorTimestamps": {
+            "default": false,
+            "description": "Controls whether Prometheus respects the timestamps present in scraped data. Send `null` during an update to reset this field to the default.",
+            "type": "boolean"
+          },
+          "httpSdConfigs": {
+            "description": "HTTP-based service discovery configurations.",
+            "items": {
+              "$ref": "#/components/schemas/HTTPServiceSD"
+            },
+            "type": "array"
+          },
+          "jobName": {
+            "description": "The job name assigned to scraped metrics by default.\n\n**Additional Validators:**\n* Allowed characters: a-zA-Z0-9-",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "metricRelabelConfigs": {
+            "description": "Metric relabeling configurations.",
+            "items": {
+              "$ref": "#/components/schemas/MetricRelabelConfig"
+            },
+            "type": "array"
+          },
+          "metricsPath": {
+            "default": "/metrics",
+            "description": "The HTTP resource path on which to fetch metrics from targets. Send `null` during an update to reset this field to the default.",
+            "maxLength": 200,
+            "type": "string"
+          },
+          "oauth2": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OAuth2"
+              }
+            ],
+            "description": "OAuth2 authentication configuration."
+          },
+          "params": {
+            "additionalProperties": {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 5,
+              "type": "array"
+            },
+            "description": "Optional HTTP URL parameters.\n\n**Additional Validators:**\n* Must not contain more than 5 keys\n* Each key must not be longer than 200 characters",
+            "type": "object"
+          },
+          "proxyUrl": {
+            "description": "Optional proxy URL.",
+            "maxLength": 2048,
+            "type": "string"
+          },
+          "sampleLimit": {
+            "default": 5000,
+            "description": "Per-scrape limit on number of scraped samples that will be accepted. Send `null` during an update to reset this field to the default.",
+            "format": "int32",
+            "maximum": 1000000000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "scheme": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SchemeEnum"
+              }
+            ],
+            "default": "http",
+            "description": "Configures the protocol scheme used for requests. Send `null` during an update to reset this field to the default.\n\n* `http` - http\n* `https` - https"
+          },
+          "scrapeInterval": {
+            "description": "How frequently to scrape targets from this job.\n\n**Additional Validators:**\n* The minimum interval is `60s`.",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "scrapeTimeout": {
+            "description": "Per-scrape timeout when scraping this job.\n\n**Additional Validators:**\n* Must be smaller than scrapeInterval.",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "staticConfigs": {
+            "description": "List of static target configurations including URLs and labels.",
+            "items": {
+              "$ref": "#/components/schemas/StaticConfigs"
+            },
+            "type": "array"
+          },
+          "tlsConfig": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TLSConfig"
+              }
+            ],
+            "description": "TLS configuration for encrypted scraping."
+          }
+        },
+        "required": [
+          "jobName",
+          "scrapeInterval",
+          "scrapeTimeout",
+          "staticConfigs"
+        ],
+        "type": "object"
+      },
       "CreateScrapeConfigPayload": {
         "properties": {
           "basicAuth": {
@@ -895,32 +954,12 @@
         ],
         "type": "object"
       },
-      "CredentialsListResponse": {
-        "properties": {
-          "credentials": {
-            "description": "List of all technical credentials.",
-            "items": {
-              "$ref": "#/components/schemas/BasicCredentials"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "credentials"
-        ],
-        "type": "object"
-      },
-      "CredentialsPostResponse": {
+      "Credentials": {
         "properties": {
           "description": {
             "description": "Custom description of the technical credentials..\n\n**Additional Validators:**\n* Allowed characters: a-zA-Z0-9/() _-",
             "maxLength": 1000,
             "minLength": 1,
-            "type": "string"
-          },
-          "password": {
-            "description": "The generated password for the credentials. Make sure to copy it, as it will not be displayed again.",
-            "readOnly": true,
             "type": "string"
           },
           "username": {
@@ -930,12 +969,11 @@
           }
         },
         "required": [
-          "password",
           "username"
         ],
         "type": "object"
       },
-      "CredentialsRemoteGetResponse": {
+      "CredentialsRemoteWriteLimitResponse": {
         "properties": {
           "appliedLimitType": {
             "allOf": [
@@ -1169,20 +1207,6 @@
         },
         "required": [
           "grafanaUiUrl"
-        ],
-        "type": "object"
-      },
-      "GetAllJob": {
-        "properties": {
-          "scrapeConfigs": {
-            "items": {
-              "$ref": "#/components/schemas/Job"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "scrapeConfigs"
         ],
         "type": "object"
       },
@@ -1668,7 +1692,7 @@
         },
         "type": "object"
       },
-      "InstanceDetailResponse": {
+      "InstanceResponse": {
         "properties": {
           "endpoints": {
             "allOf": [
@@ -1690,7 +1714,7 @@
           "plan": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/PlanModel"
+                "$ref": "#/components/schemas/Plan"
               }
             ],
             "description": "Detailed plan object associated with this instance."
@@ -1741,128 +1765,247 @@
         },
         "type": "object"
       },
-      "Job": {
+      "ListBackupResponse": {
         "properties": {
-          "basicAuth": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/BasicAuth"
-              }
-            ],
-            "description": "Basic authentication credentials for scraping targets."
-          },
-          "honorLabels": {
-            "default": false,
-            "description": "Controls how Prometheus handles conflicts between labels. Send `null` during an update to reset this field to the default.",
-            "type": "boolean"
-          },
-          "honorTimestamps": {
-            "default": false,
-            "description": "Controls whether Prometheus respects the timestamps present in scraped data. Send `null` during an update to reset this field to the default.",
-            "type": "boolean"
-          },
-          "httpSdConfigs": {
-            "description": "HTTP-based service discovery configurations.",
+          "alertConfigBackups": {
+            "description": "List of available alertConfig backups (ISO 8601 format).",
             "items": {
-              "$ref": "#/components/schemas/HTTPServiceSD"
+              "format": "date-time",
+              "type": "string"
             },
             "type": "array"
           },
-          "jobName": {
-            "description": "The job name assigned to scraped metrics by default.\n\n**Additional Validators:**\n* Allowed characters: a-zA-Z0-9-",
-            "maxLength": 200,
-            "minLength": 1,
-            "type": "string"
-          },
-          "metricRelabelConfigs": {
-            "description": "Metric relabeling configurations.",
+          "alertRulesBackups": {
+            "description": "List of available alertRules backups (ISO 8601 format).",
             "items": {
-              "$ref": "#/components/schemas/MetricRelabelConfig"
+              "format": "date-time",
+              "type": "string"
             },
             "type": "array"
           },
-          "metricsPath": {
-            "default": "/metrics",
-            "description": "The HTTP resource path on which to fetch metrics from targets. Send `null` during an update to reset this field to the default.",
-            "maxLength": 200,
-            "type": "string"
-          },
-          "oauth2": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/OAuth2"
-              }
-            ],
-            "description": "OAuth2 authentication configuration."
-          },
-          "params": {
-            "additionalProperties": {
-              "items": {
-                "maxLength": 200,
-                "minLength": 1,
-                "type": "string"
-              },
-              "maxItems": 5,
-              "type": "array"
-            },
-            "description": "Optional HTTP URL parameters.\n\n**Additional Validators:**\n* Must not contain more than 5 keys\n* Each key must not be longer than 200 characters",
-            "type": "object"
-          },
-          "proxyUrl": {
-            "description": "Optional proxy URL.",
-            "maxLength": 2048,
-            "type": "string"
-          },
-          "sampleLimit": {
-            "default": 5000,
-            "description": "Per-scrape limit on number of scraped samples that will be accepted. Send `null` during an update to reset this field to the default.",
-            "format": "int32",
-            "maximum": 1000000000,
-            "minimum": 1,
-            "type": "integer"
-          },
-          "scheme": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/SchemeEnum"
-              }
-            ],
-            "default": "http",
-            "description": "Configures the protocol scheme used for requests. Send `null` during an update to reset this field to the default.\n\n* `http` - http\n* `https` - https"
-          },
-          "scrapeInterval": {
-            "description": "How frequently to scrape targets from this job.\n\n**Additional Validators:**\n* The minimum interval is `60s`.",
-            "maxLength": 8,
-            "minLength": 2,
-            "type": "string"
-          },
-          "scrapeTimeout": {
-            "description": "Per-scrape timeout when scraping this job.\n\n**Additional Validators:**\n* Must be smaller than scrapeInterval.",
-            "maxLength": 8,
-            "minLength": 2,
-            "type": "string"
-          },
-          "staticConfigs": {
-            "description": "List of static target configurations including URLs and labels.",
+          "grafanaBackups": {
+            "description": "List of available grafana backups (ISO 8601 format).",
             "items": {
-              "$ref": "#/components/schemas/StaticConfigs"
+              "format": "date-time",
+              "type": "string"
             },
             "type": "array"
           },
-          "tlsConfig": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/TLSConfig"
-              }
-            ],
-            "description": "TLS configuration for encrypted scraping."
+          "scrapeConfigBackups": {
+            "description": "List of available scrapeConfig backups (ISO 8601 format).",
+            "items": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ListCertChecksResponse": {
+        "properties": {
+          "certChecks": {
+            "items": {
+              "$ref": "#/components/schemas/CertCheckResponse"
+            },
+            "maxItems": 100,
+            "type": "array"
           }
         },
         "required": [
-          "jobName",
-          "scrapeInterval",
-          "scrapeTimeout",
-          "staticConfigs"
+          "certChecks"
+        ],
+        "type": "object"
+      },
+      "ListCredentialsResponse": {
+        "properties": {
+          "credentials": {
+            "description": "List of all technical credentials.",
+            "items": {
+              "$ref": "#/components/schemas/Credentials"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "credentials"
+        ],
+        "type": "object"
+      },
+      "ListInstancesResponse": {
+        "properties": {
+          "instances": {
+            "description": "List of all instances inside the project.",
+            "items": {
+              "$ref": "#/components/schemas/ProjectInstance"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "instances"
+        ],
+        "type": "object"
+      },
+      "ListLogsAlertGroupsResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/LogsAlertGroup"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "ListMetricsAlertGroupsResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/AlertGroup"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "ListMongoDBChecksResponse": {
+        "properties": {
+          "mongodbChecks": {
+            "items": {
+              "$ref": "#/components/schemas/MongoDBCheckResponse"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "mongodbChecks"
+        ],
+        "type": "object"
+      },
+      "ListMySQLChecksResponse": {
+        "properties": {
+          "mysqlChecks": {
+            "items": {
+              "$ref": "#/components/schemas/MySQLCheckResponse"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "mysqlChecks"
+        ],
+        "type": "object"
+      },
+      "ListNetworkChecksResponse": {
+        "properties": {
+          "networkChecks": {
+            "items": {
+              "$ref": "#/components/schemas/NetworkCheckResponse"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "networkChecks"
+        ],
+        "type": "object"
+      },
+      "ListPingChecksResponse": {
+        "properties": {
+          "pingChecks": {
+            "items": {
+              "$ref": "#/components/schemas/PingCheckResponse"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "pingChecks"
+        ],
+        "type": "object"
+      },
+      "ListPlansResponse": {
+        "properties": {
+          "plans": {
+            "description": "List of available plans.",
+            "items": {
+              "$ref": "#/components/schemas/Plan"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "plans"
+        ],
+        "type": "object"
+      },
+      "ListPostgreSQLChecksResponse": {
+        "properties": {
+          "postgresqlChecks": {
+            "items": {
+              "$ref": "#/components/schemas/PostgreSQLCheckResponse"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "postgresqlChecks"
+        ],
+        "type": "object"
+      },
+      "ListRabbitMQChecksResponse": {
+        "properties": {
+          "rabbitmqChecks": {
+            "items": {
+              "$ref": "#/components/schemas/RabbitMQCheckResponse"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "rabbitmqChecks"
+        ],
+        "type": "object"
+      },
+      "ListRedisChecksResponse": {
+        "properties": {
+          "redisChecks": {
+            "items": {
+              "$ref": "#/components/schemas/RedisCheckResponse"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "redisChecks"
+        ],
+        "type": "object"
+      },
+      "ListScrapeConfigsResponse": {
+        "properties": {
+          "scrapeConfigs": {
+            "items": {
+              "$ref": "#/components/schemas/ScrapeConfigResponse"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "scrapeConfigs"
         ],
         "type": "object"
       },
@@ -1918,20 +2061,6 @@
         "required": [
           "name",
           "rules"
-        ],
-        "type": "object"
-      },
-      "LogsAlertGroupsResponse": {
-        "properties": {
-          "data": {
-            "items": {
-              "$ref": "#/components/schemas/LogsAlertGroup"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "data"
         ],
         "type": "object"
       },
@@ -2032,7 +2161,7 @@
         ],
         "type": "object"
       },
-      "LogsConfig": {
+      "LogsConfigResponse": {
         "properties": {
           "retention": {
             "description": "Logs retention time in days. Default is 7 days.",
@@ -2192,6 +2321,37 @@
         },
         "type": "object"
       },
+      "MetricsConfigResponse": {
+        "properties": {
+          "metricsRetentionTime1h": {
+            "description": "Retention time of longtime storage of 1h sampled data.\nAfter that time the 1h sampled data will be deleted permanently.\nThe goal of downsampling is to get fast results for queries over long time intervals.\nIt is recommended to set this value to be the same as `metricsRetentionTimeRaw` to ensure zoom-in\ncapabilities in your dashboards. The default value is 90 days.",
+            "format": "int32",
+            "maximum": 780,
+            "minimum": 10,
+            "type": "integer"
+          },
+          "metricsRetentionTime5m": {
+            "description": "Retention time of longtime storage of 5m sampled data.\nAfter that time the 5m sampled data will be deleted permanently.\nAll 5m resolution metrics older than 10 days are downsampled at a 1h resolution.\nThe goal of downsampling is to get fast results for queries over long time intervals.\nIt is recommended to set this value to be the same as `metricsRetentionTimeRaw` to ensure zoom-in\ncapabilities in your dashboards. The default value is 90 days.",
+            "format": "int32",
+            "maximum": 780,
+            "minimum": 10,
+            "type": "integer"
+          },
+          "metricsRetentionTimeRaw": {
+            "description": "Retention time of longtime storage of raw data.\nAfter that time the raw data will be deleted permanently.\nAll raw resolution metrics that are older than 40 hours are downsampled at a 5m resolution.\nThe default value is 90 days..",
+            "format": "int32",
+            "maximum": 780,
+            "minimum": 2,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "metricsRetentionTime1h",
+          "metricsRetentionTime5m",
+          "metricsRetentionTimeRaw"
+        ],
+        "type": "object"
+      },
       "MetricsData": {
         "properties": {
           "datasourceUrl": {
@@ -2260,21 +2420,6 @@
         ],
         "type": "object"
       },
-      "MongoDBChecksResponse": {
-        "properties": {
-          "mongodbChecks": {
-            "items": {
-              "$ref": "#/components/schemas/MongoDBCheckResponse"
-            },
-            "maxItems": 100,
-            "type": "array"
-          }
-        },
-        "required": [
-          "mongodbChecks"
-        ],
-        "type": "object"
-      },
       "MySQLCheckResponse": {
         "properties": {
           "id": {
@@ -2293,21 +2438,6 @@
         ],
         "type": "object"
       },
-      "MySQLChecksResponse": {
-        "properties": {
-          "mysqlChecks": {
-            "items": {
-              "$ref": "#/components/schemas/MySQLCheckResponse"
-            },
-            "maxItems": 100,
-            "type": "array"
-          }
-        },
-        "required": [
-          "mysqlChecks"
-        ],
-        "type": "object"
-      },
       "NetworkCheckResponse": {
         "properties": {
           "address": {
@@ -2323,21 +2453,6 @@
         "required": [
           "address",
           "id"
-        ],
-        "type": "object"
-      },
-      "NetworkChecksResponse": {
-        "properties": {
-          "networkChecks": {
-            "items": {
-              "$ref": "#/components/schemas/NetworkCheckResponse"
-            },
-            "maxItems": 100,
-            "type": "array"
-          }
-        },
-        "required": [
-          "networkChecks"
         ],
         "type": "object"
       },
@@ -2874,7 +2989,7 @@
         },
         "type": "object"
       },
-      "PartialUpdateTracesConfigsPayload": {
+      "PartialUpdateTracesConfigPayload": {
         "properties": {
           "retention": {
             "description": "Traces retention time in days. Default is 7 days.",
@@ -2904,37 +3019,7 @@
         ],
         "type": "object"
       },
-      "PingChecksResponse": {
-        "properties": {
-          "pingChecks": {
-            "items": {
-              "$ref": "#/components/schemas/PingCheckResponse"
-            },
-            "maxItems": 100,
-            "type": "array"
-          }
-        },
-        "required": [
-          "pingChecks"
-        ],
-        "type": "object"
-      },
       "Plan": {
-        "properties": {
-          "plans": {
-            "description": "List of available plans.",
-            "items": {
-              "$ref": "#/components/schemas/PlanModel"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "plans"
-        ],
-        "type": "object"
-      },
-      "PlanModel": {
         "properties": {
           "alertMatchers": {
             "description": "Maximum number of alert matchers (metrics and logs).",
@@ -3059,21 +3144,6 @@
         ],
         "type": "object"
       },
-      "PostgreSQLChecksResponse": {
-        "properties": {
-          "postgresqlChecks": {
-            "items": {
-              "$ref": "#/components/schemas/PostgreSQLCheckResponse"
-            },
-            "maxItems": 100,
-            "type": "array"
-          }
-        },
-        "required": [
-          "postgresqlChecks"
-        ],
-        "type": "object"
-      },
       "PriorityEnum": {
         "description": "* `P1` - P1\n* `P2` - P2\n* `P3` - P3\n* `P4` - P4\n* `P5` - P5",
         "enum": [
@@ -3120,34 +3190,6 @@
         ],
         "type": "object"
       },
-      "ProjectInstancesCreateResponse": {
-        "properties": {
-          "instanceId": {
-            "description": "The newly allocated UUID of the created instance.",
-            "format": "uuid",
-            "type": "string"
-          }
-        },
-        "required": [
-          "instanceId"
-        ],
-        "type": "object"
-      },
-      "ProjectInstancesResponse": {
-        "properties": {
-          "instances": {
-            "description": "List of all instances inside the project.",
-            "items": {
-              "$ref": "#/components/schemas/ProjectInstance"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "instances"
-        ],
-        "type": "object"
-      },
       "RabbitMQCheckResponse": {
         "properties": {
           "id": {
@@ -3167,54 +3209,6 @@
         "required": [
           "id",
           "url"
-        ],
-        "type": "object"
-      },
-      "RabbitMQChecksResponse": {
-        "properties": {
-          "rabbitmqChecks": {
-            "items": {
-              "$ref": "#/components/schemas/RabbitMQCheckResponse"
-            },
-            "maxItems": 100,
-            "type": "array"
-          }
-        },
-        "required": [
-          "rabbitmqChecks"
-        ],
-        "type": "object"
-      },
-      "ReceiverDataWithoutCredentials": {
-        "properties": {
-          "emailConfigs": {
-            "description": "Email configurations.",
-            "items": {
-              "$ref": "#/components/schemas/EmailConfigDataWithoutCredentials"
-            },
-            "type": "array"
-          },
-          "name": {
-            "description": "The name of the receiver.\n\n**Additional Validators:**\n* Must be unique\n* Allowed characters: a-zA-Z0-9-",
-            "type": "string"
-          },
-          "opsgenieConfigs": {
-            "description": "Configuration for ops genie.",
-            "items": {
-              "$ref": "#/components/schemas/OpsGenieDataWithoutCredentialsConfig"
-            },
-            "type": "array"
-          },
-          "webHookConfigs": {
-            "description": "A list of webhook configurations to send notifications to HTTP endpoints. Supports standard webhooks as well as special integrations like Microsoft Teams and Google Chat.",
-            "items": {
-              "$ref": "#/components/schemas/WebHookData"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "name"
         ],
         "type": "object"
       },
@@ -3253,12 +3247,12 @@
         ],
         "type": "object"
       },
-      "ReceiversResponseWithoutCredentials": {
+      "ReceiversResponse": {
         "properties": {
           "receivers": {
             "description": "A list of notification receivers.",
             "items": {
-              "$ref": "#/components/schemas/ReceiverDataWithoutCredentials"
+              "$ref": "#/components/schemas/AlertConfigReceiverResponse"
             },
             "type": "array"
           }
@@ -3290,21 +3284,6 @@
         ],
         "type": "object"
       },
-      "RedisChecksResponse": {
-        "properties": {
-          "redisChecks": {
-            "items": {
-              "$ref": "#/components/schemas/RedisCheckResponse"
-            },
-            "maxItems": 100,
-            "type": "array"
-          }
-        },
-        "required": [
-          "redisChecks"
-        ],
-        "type": "object"
-      },
       "RestoreBackupPayload": {
         "properties": {
           "restoreTargets": {
@@ -3316,6 +3295,27 @@
           }
         },
         "required": [
+          "restoreTargets"
+        ],
+        "type": "object"
+      },
+      "RestoreBackupResponse": {
+        "properties": {
+          "backupDate": {
+            "description": "Timestamp indicating which backup to restore (ISO 8601 format).",
+            "format": "date-time",
+            "type": "string"
+          },
+          "restoreTargets": {
+            "description": "List of targets to restore from backup.",
+            "items": {
+              "$ref": "#/components/schemas/RestoreTargetsEnum"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "backupDate",
           "restoreTargets"
         ],
         "type": "object"
@@ -3560,6 +3560,131 @@
         ],
         "type": "string"
       },
+      "ScrapeConfigResponse": {
+        "properties": {
+          "basicAuth": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BasicAuth"
+              }
+            ],
+            "description": "Basic authentication credentials for scraping targets."
+          },
+          "honorLabels": {
+            "default": false,
+            "description": "Controls how Prometheus handles conflicts between labels. Send `null` during an update to reset this field to the default.",
+            "type": "boolean"
+          },
+          "honorTimestamps": {
+            "default": false,
+            "description": "Controls whether Prometheus respects the timestamps present in scraped data. Send `null` during an update to reset this field to the default.",
+            "type": "boolean"
+          },
+          "httpSdConfigs": {
+            "description": "HTTP-based service discovery configurations.",
+            "items": {
+              "$ref": "#/components/schemas/HTTPServiceSD"
+            },
+            "type": "array"
+          },
+          "jobName": {
+            "description": "The job name assigned to scraped metrics by default.\n\n**Additional Validators:**\n* Allowed characters: a-zA-Z0-9-",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "metricRelabelConfigs": {
+            "description": "Metric relabeling configurations.",
+            "items": {
+              "$ref": "#/components/schemas/MetricRelabelConfig"
+            },
+            "type": "array"
+          },
+          "metricsPath": {
+            "default": "/metrics",
+            "description": "The HTTP resource path on which to fetch metrics from targets. Send `null` during an update to reset this field to the default.",
+            "maxLength": 200,
+            "type": "string"
+          },
+          "oauth2": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OAuth2"
+              }
+            ],
+            "description": "OAuth2 authentication configuration."
+          },
+          "params": {
+            "additionalProperties": {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 5,
+              "type": "array"
+            },
+            "description": "Optional HTTP URL parameters.\n\n**Additional Validators:**\n* Must not contain more than 5 keys\n* Each key must not be longer than 200 characters",
+            "type": "object"
+          },
+          "proxyUrl": {
+            "description": "Optional proxy URL.",
+            "maxLength": 2048,
+            "type": "string"
+          },
+          "sampleLimit": {
+            "default": 5000,
+            "description": "Per-scrape limit on number of scraped samples that will be accepted. Send `null` during an update to reset this field to the default.",
+            "format": "int32",
+            "maximum": 1000000000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "scheme": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SchemeEnum"
+              }
+            ],
+            "default": "http",
+            "description": "Configures the protocol scheme used for requests. Send `null` during an update to reset this field to the default.\n\n* `http` - http\n* `https` - https"
+          },
+          "scrapeInterval": {
+            "description": "How frequently to scrape targets from this job.\n\n**Additional Validators:**\n* The minimum interval is `60s`.",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "scrapeTimeout": {
+            "description": "Per-scrape timeout when scraping this job.\n\n**Additional Validators:**\n* Must be smaller than scrapeInterval.",
+            "maxLength": 8,
+            "minLength": 2,
+            "type": "string"
+          },
+          "staticConfigs": {
+            "description": "List of static target configurations including URLs and labels.",
+            "items": {
+              "$ref": "#/components/schemas/StaticConfigs"
+            },
+            "type": "array"
+          },
+          "tlsConfig": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TLSConfig"
+              }
+            ],
+            "description": "TLS configuration for encrypted scraping."
+          }
+        },
+        "required": [
+          "jobName",
+          "scrapeInterval",
+          "scrapeTimeout",
+          "staticConfigs"
+        ],
+        "type": "object"
+      },
       "StaticConfigs": {
         "properties": {
           "labels": {
@@ -3671,7 +3796,7 @@
         },
         "type": "object"
       },
-      "TraceConfig": {
+      "TracesConfigResponse": {
         "properties": {
           "retention": {
             "description": "Traces retention time in days. Default is 7 days.",
@@ -3808,7 +3933,7 @@
   "info": {
     "description": "This API provides endpoints for managing STACKIT Observability instances.",
     "title": "STACKIT Observability API",
-    "version": "2alpha.9.6"
+    "version": "2alpha.9.7"
   },
   "openapi": "3.0.3",
   "paths": {
@@ -3860,7 +3985,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectInstancesResponse"
+                  "$ref": "#/components/schemas/ListInstancesResponse"
                 }
               }
             },
@@ -3995,7 +4120,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectInstancesCreateResponse"
+                  "$ref": "#/components/schemas/CreateInstanceResponse"
                 }
               }
             },
@@ -4307,7 +4432,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/InstanceDetailResponse"
+                  "$ref": "#/components/schemas/InstanceResponse"
                 }
               }
             },
@@ -4497,7 +4622,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/InstanceDetailResponse"
+                  "$ref": "#/components/schemas/InstanceResponse"
                 }
               }
             },
@@ -4588,7 +4713,7 @@
     "/v2alpha/projects/{projectId}/regions/{regionId}/instances/{instanceId}/acl": {
       "get": {
         "description": "Get ACL (Access Control List) for instance.",
-        "operationId": "ListACL",
+        "operationId": "GetACL",
         "parameters": [
           {
             "description": "The Observability instance UUID.",
@@ -5018,7 +5143,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/AlertDataWithoutCredentials"
+                  "$ref": "#/components/schemas/AlertConfigResponse"
                 }
               }
             },
@@ -5355,7 +5480,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/AlertDataWithoutCredentials"
+                  "$ref": "#/components/schemas/AlertConfigResponse"
                 }
               }
             },
@@ -5533,7 +5658,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ReceiversResponseWithoutCredentials"
+                  "$ref": "#/components/schemas/ReceiversResponse"
                 }
               }
             },
@@ -5730,7 +5855,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ReceiverDataWithoutCredentials"
+                  "$ref": "#/components/schemas/AlertConfigReceiverResponse"
                 }
               }
             },
@@ -6055,7 +6180,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ReceiverDataWithoutCredentials"
+                  "$ref": "#/components/schemas/AlertConfigReceiverResponse"
                 }
               }
             },
@@ -6260,7 +6385,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/ReceiverDataWithoutCredentials"
+                  "$ref": "#/components/schemas/AlertConfigReceiverResponse"
                 }
               }
             },
@@ -6410,7 +6535,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BackupResponse"
+                  "$ref": "#/components/schemas/ListBackupResponse"
                 }
               }
             },
@@ -6562,7 +6687,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BackupRestoreResponse"
+                  "$ref": "#/components/schemas/RestoreBackupResponse"
                 }
               }
             },
@@ -6706,7 +6831,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/CertChecksResponse"
+                  "$ref": "#/components/schemas/ListCertChecksResponse"
                 }
               }
             },
@@ -7302,7 +7427,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/CredentialsListResponse"
+                  "$ref": "#/components/schemas/ListCredentialsResponse"
                 }
               }
             },
@@ -7447,7 +7572,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/CredentialsPostResponse"
+                  "$ref": "#/components/schemas/CreateCredentialsResponse"
                 }
               }
             },
@@ -7732,7 +7857,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/BasicCredentials"
+                  "$ref": "#/components/schemas/Credentials"
                 }
               }
             },
@@ -7871,7 +7996,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/CredentialsRemoteGetResponse"
+                  "$ref": "#/components/schemas/CredentialsRemoteWriteLimitResponse"
                 }
               }
             },
@@ -8027,7 +8152,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CredentialsRemoteGetResponse"
+                  "$ref": "#/components/schemas/CredentialsRemoteWriteLimitResponse"
                 }
               }
             },
@@ -9651,7 +9776,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LogsAlertGroupsResponse"
+                  "$ref": "#/components/schemas/ListLogsAlertGroupsResponse"
                 }
               }
             },
@@ -10375,7 +10500,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/LogsConfig"
+                  "$ref": "#/components/schemas/LogsConfigResponse"
                 }
               }
             },
@@ -10528,7 +10653,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/LogsConfig"
+                  "$ref": "#/components/schemas/LogsConfigResponse"
                 }
               }
             },
@@ -10660,7 +10785,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AlertGroupsResponse"
+                  "$ref": "#/components/schemas/ListMetricsAlertGroupsResponse"
                 }
               }
             },
@@ -11386,7 +11511,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/BucketRetentionTime"
+                  "$ref": "#/components/schemas/MetricsConfigResponse"
                 }
               }
             },
@@ -11543,7 +11668,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/BucketRetentionTime"
+                  "$ref": "#/components/schemas/MetricsConfigResponse"
                 }
               }
             },
@@ -11687,7 +11812,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/MongoDBChecksResponse"
+                  "$ref": "#/components/schemas/ListMongoDBChecksResponse"
                 }
               }
             },
@@ -12283,7 +12408,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/MySQLChecksResponse"
+                  "$ref": "#/components/schemas/ListMySQLChecksResponse"
                 }
               }
             },
@@ -12879,7 +13004,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/NetworkChecksResponse"
+                  "$ref": "#/components/schemas/ListNetworkChecksResponse"
                 }
               }
             },
@@ -13475,7 +13600,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/PingChecksResponse"
+                  "$ref": "#/components/schemas/ListPingChecksResponse"
                 }
               }
             },
@@ -14071,7 +14196,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/PostgreSQLChecksResponse"
+                  "$ref": "#/components/schemas/ListPostgreSQLChecksResponse"
                 }
               }
             },
@@ -14668,7 +14793,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/RabbitMQChecksResponse"
+                  "$ref": "#/components/schemas/ListRabbitMQChecksResponse"
                 }
               }
             },
@@ -15268,7 +15393,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/RedisChecksResponse"
+                  "$ref": "#/components/schemas/ListRedisChecksResponse"
                 }
               }
             },
@@ -15886,7 +16011,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/GetAllJob"
+                  "$ref": "#/components/schemas/ListScrapeConfigsResponse"
                 }
               }
             },
@@ -16080,7 +16205,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/Job"
+                  "$ref": "#/components/schemas/CreateScrapeConfig"
                 }
               }
             },
@@ -16404,7 +16529,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/Job"
+                  "$ref": "#/components/schemas/ScrapeConfigResponse"
                 }
               }
             },
@@ -16606,7 +16731,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/Job"
+                  "$ref": "#/components/schemas/ScrapeConfigResponse"
                 }
               }
             },
@@ -16745,7 +16870,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/TraceConfig"
+                  "$ref": "#/components/schemas/TracesConfigResponse"
                 }
               }
             },
@@ -16834,7 +16959,7 @@
       },
       "patch": {
         "description": "Update traces config.",
-        "operationId": "PartialUpdateTracesConfigs",
+        "operationId": "PartialUpdateTracesConfig",
         "parameters": [
           {
             "description": "The Observability instance UUID.",
@@ -16881,7 +17006,7 @@
                 }
               },
               "schema": {
-                "$ref": "#/components/schemas/PartialUpdateTracesConfigsPayload"
+                "$ref": "#/components/schemas/PartialUpdateTracesConfigPayload"
               }
             }
           }
@@ -16898,7 +17023,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/TraceConfig"
+                  "$ref": "#/components/schemas/TracesConfigResponse"
                 }
               }
             },
@@ -17047,7 +17172,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/Plan"
+                  "$ref": "#/components/schemas/ListPlansResponse"
                 }
               }
             },
@@ -17192,7 +17317,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/PlanModel"
+                  "$ref": "#/components/schemas/Plan"
                 }
               }
             },

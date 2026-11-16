@@ -10,26 +10,6 @@
           "$ref": "#/components/schemas/AuthorizedSenderId"
         }
       },
-      "Cursor": {
-        "description": "Pagination cursor from a previous response's nextCursor",
-        "in": "query",
-        "name": "cursor",
-        "schema": {
-          "format": "date-time",
-          "type": "string"
-        }
-      },
-      "Limit": {
-        "description": "Maximum number of messages to return per page.",
-        "in": "query",
-        "name": "limit",
-        "schema": {
-          "format": "int64",
-          "maximum": 100,
-          "minimum": 1,
-          "type": "integer"
-        }
-      },
       "MessageSpoolId": {
         "description": "The message spool id of the email",
         "in": "path",
@@ -74,14 +54,6 @@
           "$ref": "#/components/schemas/ProjectId"
         }
       },
-      "Recipient": {
-        "description": "Case-insensitive substring search for recipient address (minimum 3 characters).",
-        "in": "query",
-        "name": "recipient",
-        "schema": {
-          "type": "string"
-        }
-      },
       "RecipientAddress": {
         "description": "The email address of the suppressed recipient.",
         "in": "path",
@@ -101,14 +73,6 @@
           "$ref": "#/components/schemas/RegionId"
         }
       },
-      "Sender": {
-        "description": "Case-insensitive substring search for sender address (minimum 3 characters).",
-        "in": "query",
-        "name": "sender",
-        "schema": {
-          "type": "string"
-        }
-      },
       "SendingDomainId": {
         "description": "UUID of the sending domain resource",
         "in": "path",
@@ -116,22 +80,6 @@
         "required": true,
         "schema": {
           "$ref": "#/components/schemas/SendingDomainId"
-        }
-      },
-      "State": {
-        "description": "Filter by the state of the message (maps to event_type).",
-        "in": "query",
-        "name": "state",
-        "schema": {
-          "type": "string"
-        }
-      },
-      "Subject": {
-        "description": "Case-insensitive substring search for subject (minimum 3 characters).",
-        "in": "query",
-        "name": "subject",
-        "schema": {
-          "type": "string"
         }
       }
     },
@@ -475,25 +423,6 @@
         ],
         "type": "object"
       },
-      "ListMessagesResponse": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/SendingDomainMessage"
-            },
-            "type": "array"
-          },
-          "nextCursor": {
-            "description": "Timestamp cursor for the next page. Absent when there are no more messages.",
-            "format": "date-time",
-            "type": "string"
-          }
-        },
-        "required": [
-          "items"
-        ],
-        "type": "object"
-      },
       "ListSendingDomainsResponse": {
         "properties": {
           "items": {
@@ -508,17 +437,122 @@
         ],
         "type": "object"
       },
-      "ListSuppressedRecipientsResponse": {
+      "Message": {
         "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/Suppression"
+          "details": {
+            "$ref": "#/components/schemas/MessageDetails"
+          },
+          "headers": {
+            "additionalProperties": {
+              "type": "string"
             },
-            "type": "array"
+            "description": "The original email headers.",
+            "type": "object"
           }
         },
         "required": [
-          "items"
+          "details",
+          "headers"
+        ],
+        "type": "object"
+      },
+      "MessageDetails": {
+        "description": "The logged email event details plus the resolved status.",
+        "properties": {
+          "accepted_at": {
+            "type": "string"
+          },
+          "attachment": {
+            "type": "string"
+          },
+          "attachment_size": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "attempts": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "delivered_at": {
+            "type": "string"
+          },
+          "from": {
+            "example": "sender@example.com",
+            "type": "string"
+          },
+          "last_attempt": {
+            "type": "string"
+          },
+          "message_direction": {
+            "example": "Outgoing",
+            "type": "string"
+          },
+          "message_id": {
+            "example": "20260910090719.006191@domain.local",
+            "type": "string"
+          },
+          "message_size": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "message_spool_id": {
+            "example": "ca8bef88adda11f1be510a6c7175da2d",
+            "type": "string"
+          },
+          "recipient": {
+            "example": "recipient1@example.com",
+            "type": "string"
+          },
+          "smtp_code": {
+            "example": 250,
+            "format": "int64",
+            "type": "integer"
+          },
+          "smtp_description": {
+            "type": "string"
+          },
+          "status": {
+            "description": "Customer-facing delivery status.",
+            "enum": [
+              "Delivered",
+              "Queued",
+              "Soft Bounce",
+              "Hard Bounce",
+              "Expired",
+              "Hard Bounce (OOB)"
+            ],
+            "example": "Delivered",
+            "type": "string"
+          },
+          "subject": {
+            "example": "Your invoice",
+            "type": "string"
+          },
+          "timestamp": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "to": {
+            "example": "recipient1@example.com,recipient2@example.com",
+            "type": "string"
+          }
+        },
+        "required": [
+          "timestamp",
+          "from",
+          "to",
+          "recipient",
+          "subject",
+          "message_id",
+          "message_spool_id",
+          "message_direction",
+          "status",
+          "smtp_code",
+          "smtp_description",
+          "attempts",
+          "attachment",
+          "attachment_size",
+          "message_size"
         ],
         "type": "object"
       },
@@ -644,125 +678,6 @@
       "SendingDomainId": {
         "format": "uuid",
         "type": "string"
-      },
-      "SendingDomainMessage": {
-        "properties": {
-          "details": {
-            "$ref": "#/components/schemas/SendingDomainMessageDetails"
-          },
-          "headers": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "description": "The original email headers.",
-            "type": "object"
-          }
-        },
-        "required": [
-          "details",
-          "headers"
-        ],
-        "type": "object"
-      },
-      "SendingDomainMessageDetails": {
-        "description": "The logged email event details plus the resolved status.",
-        "properties": {
-          "accepted_at": {
-            "type": "string"
-          },
-          "attachment": {
-            "type": "string"
-          },
-          "attachment_size": {
-            "format": "int64",
-            "type": "integer"
-          },
-          "attempts": {
-            "format": "int64",
-            "type": "integer"
-          },
-          "delivered_at": {
-            "type": "string"
-          },
-          "from": {
-            "example": "sender@example.com",
-            "type": "string"
-          },
-          "last_attempt": {
-            "type": "string"
-          },
-          "message_direction": {
-            "example": "Outgoing",
-            "type": "string"
-          },
-          "message_id": {
-            "example": "20260910090719.006191@domain.local",
-            "type": "string"
-          },
-          "message_size": {
-            "format": "int64",
-            "type": "integer"
-          },
-          "message_spool_id": {
-            "example": "ca8bef88adda11f1be510a6c7175da2d",
-            "type": "string"
-          },
-          "recipient": {
-            "example": "recipient1@example.com",
-            "type": "string"
-          },
-          "smtp_code": {
-            "example": 250,
-            "format": "int64",
-            "type": "integer"
-          },
-          "smtp_description": {
-            "type": "string"
-          },
-          "status": {
-            "description": "Customer-facing delivery status.",
-            "enum": [
-              "Delivered",
-              "Queued",
-              "Soft Bounce",
-              "Hard Bounce",
-              "Expired",
-              "Hard Bounce (OOB)"
-            ],
-            "example": "Delivered",
-            "type": "string"
-          },
-          "subject": {
-            "example": "Your invoice",
-            "type": "string"
-          },
-          "timestamp": {
-            "format": "int64",
-            "type": "integer"
-          },
-          "to": {
-            "example": "recipient1@example.com,recipient2@example.com",
-            "type": "string"
-          }
-        },
-        "required": [
-          "timestamp",
-          "from",
-          "to",
-          "recipient",
-          "subject",
-          "message_id",
-          "message_spool_id",
-          "message_direction",
-          "status",
-          "smtp_code",
-          "smtp_description",
-          "attempts",
-          "attachment",
-          "attachment_size",
-          "message_size"
-        ],
-        "type": "object"
       },
       "SendingDomainState": {
         "enum": [
@@ -1329,76 +1244,9 @@
         }
       }
     },
-    "/v1beta1/projects/{projectId}/regions/{regionId}/sending-domains/{sendingDomainId}/messages": {
-      "get": {
-        "operationId": "ListSendingDomainMessages",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/ProjectId"
-          },
-          {
-            "$ref": "#/components/parameters/RegionId"
-          },
-          {
-            "$ref": "#/components/parameters/SendingDomainId"
-          },
-          {
-            "$ref": "#/components/parameters/Limit"
-          },
-          {
-            "$ref": "#/components/parameters/Cursor"
-          },
-          {
-            "$ref": "#/components/parameters/State"
-          },
-          {
-            "$ref": "#/components/parameters/Subject"
-          },
-          {
-            "$ref": "#/components/parameters/Sender"
-          },
-          {
-            "$ref": "#/components/parameters/Recipient"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListMessagesResponse"
-                }
-              }
-            },
-            "description": "A page of messages, newest first"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/ServerError"
-          }
-        },
-        "summary": "List messages for a specific sending domain",
-        "x-stackit-authorization": {
-          "actions": [
-            "mailout.sending-domain.message.list"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project"
-        }
-      }
-    },
     "/v1beta1/projects/{projectId}/regions/{regionId}/sending-domains/{sendingDomainId}/messages/{messageSpoolId}": {
       "get": {
-        "operationId": "GetSendingDomainMessage",
+        "operationId": "GetMessage",
         "parameters": [
           {
             "$ref": "#/components/parameters/ProjectId"
@@ -1418,7 +1266,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SendingDomainMessage"
+                  "$ref": "#/components/schemas/Message"
                 }
               }
             },
@@ -1450,7 +1298,7 @@
     },
     "/v1beta1/projects/{projectId}/regions/{regionId}/sending-domains/{sendingDomainId}/metrics": {
       "get": {
-        "operationId": "GetSendingDomainMetrics",
+        "operationId": "GetMetrics",
         "parameters": [
           {
             "$ref": "#/components/parameters/ProjectId"
@@ -1507,53 +1355,6 @@
       }
     },
     "/v1beta1/projects/{projectId}/regions/{regionId}/sending-domains/{sendingDomainId}/suppressions": {
-      "get": {
-        "operationId": "ListSuppressedRecipients",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/ProjectId"
-          },
-          {
-            "$ref": "#/components/parameters/RegionId"
-          },
-          {
-            "$ref": "#/components/parameters/SendingDomainId"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListSuppressedRecipientsResponse"
-                }
-              }
-            },
-            "description": "List of suppressions for the sending domain"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/ServerError"
-          }
-        },
-        "summary": "List suppressions for a specific sending domain",
-        "x-stackit-authorization": {
-          "actions": [
-            "mailout.sending-domain.suppression.list"
-          ],
-          "resource-id": "projectId",
-          "resource-id-type": "dynamic",
-          "resource-type": "project"
-        }
-      },
       "post": {
         "operationId": "AddRecipientToSuppressionList",
         "parameters": [

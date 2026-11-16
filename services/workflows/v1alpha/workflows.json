@@ -109,7 +109,9 @@
             "type": "array"
           },
           "dagsRepository": {
-            "$ref": "#/components/schemas/GitRepository"
+            "$ref": "#/components/schemas/GitRepository",
+            "deprecated": true,
+            "description": "DEPRECATED for Airflow 3. The Git DAG repository configuration.  If dagBundles is provided, this field is ignored. Creates a default  Git bundle named \"dags\". At least one of dagsRepository or dagBundles  must be provided.\n"
           },
           "description": {
             "description": "A user chosen description to distinguish multiple STACKIT Workflows instances.",
@@ -354,7 +356,8 @@
         },
         "properties": {
           "auth": {
-            "$ref": "#/components/schemas/GitAuthResponse"
+            "$ref": "#/components/schemas/GitAuthResponse",
+            "description": "Authentication configuration. Passwords are always masked in responses."
           },
           "branch": {
             "description": "The branch, tag or ref being tracked.",
@@ -458,7 +461,10 @@
             "type": "array"
           },
           "dagsRepository": {
-            "$ref": "#/components/schemas/GitRepository"
+            "$ref": "#/components/schemas/GitRepository",
+            "deprecated": true,
+            "description": "DEPRECATED. The primary Git DAG repository. Always populated from the first Git bundle in dagBundles for backward compatibility. Use dagBundles instead. May be None for S3-only Airflow 3 instances.\n",
+            "nullable": true
           },
           "description": {
             "description": "A user chosen description to distinguish multiple STACKIT Workflows instances.",
@@ -897,7 +903,8 @@
             "type": "integer"
           },
           "s3Auth": {
-            "$ref": "#/components/schemas/S3AuthResponse"
+            "$ref": "#/components/schemas/S3AuthResponse",
+            "description": "Authentication configuration. Secret keys are always masked in responses."
           },
           "type": {
             "description": "Bundle type identifier.",
@@ -997,7 +1004,8 @@
         "description": "Partial update payload for a Git DAG bundle. All fields except \"type\" are optional; only the provided fields will be updated.\n",
         "properties": {
           "auth": {
-            "$ref": "#/components/schemas/GitAuth"
+            "$ref": "#/components/schemas/GitAuth",
+            "description": "Updated authentication credentials. Must be provided when changing the URL.\n"
           },
           "branch": {
             "description": "Updated branch/tag/ref to track.",
@@ -1106,7 +1114,8 @@
             "type": "integer"
           },
           "s3Auth": {
-            "$ref": "#/components/schemas/S3Auth"
+            "$ref": "#/components/schemas/S3Auth",
+            "description": "Updated S3 authentication credentials. Must be provided when changing the bucket name or endpoint.\n"
           },
           "type": {
             "description": "Bundle type identifier — must match the existing bundle's type.",

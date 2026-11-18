@@ -2185,7 +2185,7 @@
         }
       }
     },
-    "/v3beta1/marketing": {
+    "/v3beta1/marketing/products": {
       "get": {
         "description": "Returns a list of all marketing materials for all products, available for general public.",
         "operationId": "ListMarketingData",
@@ -2233,6 +2233,50 @@
           }
         },
         "summary": "List all marketing materials",
+        "x-stackit-authorization": {
+          "disabled": true
+        }
+      }
+    },
+    "/v3beta1/marketing/products/{productId}": {
+      "get": {
+        "description": "Retrieves the marketing data for a specific product, available for general public.",
+        "operationId": "GetMarketingData",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProductIdPathParam"
+          },
+          {
+            "$ref": "#/components/parameters/Accept-Language"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/PublicGetMarketingResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "summary": "Get marketing data for a product",
         "x-stackit-authorization": {
           "disabled": true
         }
@@ -2333,50 +2377,6 @@
           }
         },
         "summary": "Get product by ID",
-        "x-stackit-authorization": {
-          "disabled": true
-        }
-      }
-    },
-    "/v3beta1/products/{productId}/marketing": {
-      "get": {
-        "description": "Retrieves the marketing data for a specific product, available for general public.",
-        "operationId": "GetMarketingData",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/ProductIdPathParam"
-          },
-          {
-            "$ref": "#/components/parameters/Accept-Language"
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/PublicGetMarketingResponse"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "409": {
-            "$ref": "#/components/responses/Conflict"
-          },
-          "422": {
-            "$ref": "#/components/responses/UnprocessableEntity"
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequests"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "summary": "Get marketing data for a product",
         "x-stackit-authorization": {
           "disabled": true
         }

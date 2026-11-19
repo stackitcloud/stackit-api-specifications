@@ -92,17 +92,25 @@
         "type": "object"
       },
       "CNI": {
-        "description": "CNI to use for the cluster. Only one type of CNI can be used. The type of CNI is immutable after creation. Defaults to calico",
+        "description": "CNI to use for the cluster. Only one type of CNI can be used.\nThe type of CNI is immutable after creation. \nDefaults to calico.",
         "example": {
-          "calico": "{}"
+          "calico": "{}",
+          "cilium": {
+            "hubble": {
+              "enabled": true
+            }
+          }
         },
         "properties": {
           "calico": {
-            "description": "configuration options for the Calico CNI",
+            "title": "Configuration options for the Calico CNI",
             "type": "object",
             "x-stackit-sdk": {
               "schema-name": "CalicoConfig"
             }
+          },
+          "cilium": {
+            "$ref": "#/components/schemas/CiliumConfig"
           }
         },
         "type": "object"
@@ -129,7 +137,33 @@
         "type": "object"
       },
       "CalicoConfig": {
-        "description": "configuration options for the Calico CNI",
+        "title": "Configuration options for the Calico CNI",
+        "type": "object"
+      },
+      "CiliumConfig": {
+        "description": "Configuration options for the Cilium CNI\n⚠️ Note: This feature is in private preview. Enabling Cilium is only possible for enabled accounts. If your account does not have access, the request will be rejected.",
+        "example": {
+          "hubble": {
+            "enabled": true
+          }
+        },
+        "properties": {
+          "hubble": {
+            "$ref": "#/components/schemas/CiliumHubble"
+          }
+        },
+        "type": "object"
+      },
+      "CiliumHubble": {
+        "example": {
+          "enabled": true
+        },
+        "properties": {
+          "enabled": {
+            "title": "Enable Cilium Hubble to allow cluster-wide network observability",
+            "type": "boolean"
+          }
+        },
         "type": "object"
       },
       "Cluster": {
@@ -196,14 +230,19 @@
               "machineImageVersion": true
             },
             "timeWindow": {
-              "end": "2000-01-23T04:56:07Z",
-              "start": "2000-01-23T04:56:07Z"
+              "end": "2000-01-23T04:56:07.000+00:00",
+              "start": "2000-01-23T04:56:07.000+00:00"
             }
           },
           "name": "name",
           "network": {
             "cni": {
-              "calico": "{}"
+              "calico": "{}",
+              "cilium": {
+                "hubble": {
+                  "enabled": true
+                }
+              }
             },
             "controlPlane": {
               "accessScope": "PUBLIC"
@@ -457,10 +496,10 @@
           ],
           "status": {
             "aggregated": "STATE_HEALTHY",
-            "creationTime": "2000-01-23T04:56:07Z",
+            "creationTime": "2000-01-23T04:56:07.000+00:00",
             "credentialsRotation": {
-              "lastCompletionTime": "2000-01-23T04:56:07Z",
-              "lastInitiationTime": "2000-01-23T04:56:07Z",
+              "lastCompletionTime": "2000-01-23T04:56:07.000+00:00",
+              "lastInitiationTime": "2000-01-23T04:56:07.000+00:00",
               "phase": "NEVER"
             },
             "egressAddressRanges": [
@@ -483,23 +522,23 @@
             ],
             "expiration": {
               "kubernetes": {
-                "expirationDate": "2000-01-23T04:56:07Z",
+                "expirationDate": "2000-01-23T04:56:07.000+00:00",
                 "version": "version"
               },
               "nodepools": [
                 {
-                  "kubernetesExpirationDate": "2000-01-23T04:56:07Z",
+                  "kubernetesExpirationDate": "2000-01-23T04:56:07.000+00:00",
                   "kubernetesVersion": "kubernetesVersion",
                   "name": "name",
-                  "osExpirationDate": "2000-01-23T04:56:07Z",
+                  "osExpirationDate": "2000-01-23T04:56:07.000+00:00",
                   "osName": "osName",
                   "osVersion": "osVersion"
                 },
                 {
-                  "kubernetesExpirationDate": "2000-01-23T04:56:07Z",
+                  "kubernetesExpirationDate": "2000-01-23T04:56:07.000+00:00",
                   "kubernetesVersion": "kubernetesVersion",
                   "name": "name",
-                  "osExpirationDate": "2000-01-23T04:56:07Z",
+                  "osExpirationDate": "2000-01-23T04:56:07.000+00:00",
                   "osName": "osName",
                   "osVersion": "osVersion"
                 }
@@ -615,10 +654,10 @@
       "ClusterStatus": {
         "example": {
           "aggregated": "STATE_HEALTHY",
-          "creationTime": "2000-01-23T04:56:07Z",
+          "creationTime": "2000-01-23T04:56:07.000+00:00",
           "credentialsRotation": {
-            "lastCompletionTime": "2000-01-23T04:56:07Z",
-            "lastInitiationTime": "2000-01-23T04:56:07Z",
+            "lastCompletionTime": "2000-01-23T04:56:07.000+00:00",
+            "lastInitiationTime": "2000-01-23T04:56:07.000+00:00",
             "phase": "NEVER"
           },
           "egressAddressRanges": [
@@ -641,23 +680,23 @@
           ],
           "expiration": {
             "kubernetes": {
-              "expirationDate": "2000-01-23T04:56:07Z",
+              "expirationDate": "2000-01-23T04:56:07.000+00:00",
               "version": "version"
             },
             "nodepools": [
               {
-                "kubernetesExpirationDate": "2000-01-23T04:56:07Z",
+                "kubernetesExpirationDate": "2000-01-23T04:56:07.000+00:00",
                 "kubernetesVersion": "kubernetesVersion",
                 "name": "name",
-                "osExpirationDate": "2000-01-23T04:56:07Z",
+                "osExpirationDate": "2000-01-23T04:56:07.000+00:00",
                 "osName": "osName",
                 "osVersion": "osVersion"
               },
               {
-                "kubernetesExpirationDate": "2000-01-23T04:56:07Z",
+                "kubernetesExpirationDate": "2000-01-23T04:56:07.000+00:00",
                 "kubernetesVersion": "kubernetesVersion",
                 "name": "name",
-                "osExpirationDate": "2000-01-23T04:56:07Z",
+                "osExpirationDate": "2000-01-23T04:56:07.000+00:00",
                 "osName": "osName",
                 "osVersion": "osVersion"
               }
@@ -833,8 +872,8 @@
       },
       "CredentialsRotationState": {
         "example": {
-          "lastCompletionTime": "2000-01-23T04:56:07Z",
-          "lastInitiationTime": "2000-01-23T04:56:07Z",
+          "lastCompletionTime": "2000-01-23T04:56:07.000+00:00",
+          "lastInitiationTime": "2000-01-23T04:56:07.000+00:00",
           "phase": "NEVER"
         },
         "properties": {
@@ -903,23 +942,23 @@
       "ExpirationStatus": {
         "example": {
           "kubernetes": {
-            "expirationDate": "2000-01-23T04:56:07Z",
+            "expirationDate": "2000-01-23T04:56:07.000+00:00",
             "version": "version"
           },
           "nodepools": [
             {
-              "kubernetesExpirationDate": "2000-01-23T04:56:07Z",
+              "kubernetesExpirationDate": "2000-01-23T04:56:07.000+00:00",
               "kubernetesVersion": "kubernetesVersion",
               "name": "name",
-              "osExpirationDate": "2000-01-23T04:56:07Z",
+              "osExpirationDate": "2000-01-23T04:56:07.000+00:00",
               "osName": "osName",
               "osVersion": "osVersion"
             },
             {
-              "kubernetesExpirationDate": "2000-01-23T04:56:07Z",
+              "kubernetesExpirationDate": "2000-01-23T04:56:07.000+00:00",
               "kubernetesVersion": "kubernetesVersion",
               "name": "name",
-              "osExpirationDate": "2000-01-23T04:56:07Z",
+              "osExpirationDate": "2000-01-23T04:56:07.000+00:00",
               "osName": "osName",
               "osVersion": "osVersion"
             }
@@ -940,7 +979,7 @@
       },
       "ExpirationStatusKubernetes": {
         "example": {
-          "expirationDate": "2000-01-23T04:56:07Z",
+          "expirationDate": "2000-01-23T04:56:07.000+00:00",
           "version": "version"
         },
         "properties": {
@@ -956,10 +995,10 @@
       },
       "ExpirationStatusNodepool": {
         "example": {
-          "kubernetesExpirationDate": "2000-01-23T04:56:07Z",
+          "kubernetesExpirationDate": "2000-01-23T04:56:07.000+00:00",
           "kubernetesVersion": "kubernetesVersion",
           "name": "name",
-          "osExpirationDate": "2000-01-23T04:56:07Z",
+          "osExpirationDate": "2000-01-23T04:56:07.000+00:00",
           "osName": "osName",
           "osVersion": "osVersion"
         },
@@ -1169,7 +1208,7 @@
       },
       "Kubeconfig": {
         "example": {
-          "expirationTimestamp": "2000-01-23T04:56:07Z",
+          "expirationTimestamp": "2000-01-23T04:56:07.000+00:00",
           "kubeconfig": "kubeconfig"
         },
         "properties": {
@@ -1202,7 +1241,7 @@
       },
       "KubernetesVersion": {
         "example": {
-          "expirationDate": "2000-01-23T04:56:07Z",
+          "expirationDate": "2000-01-23T04:56:07.000+00:00",
           "featureGates": {
             "key": "featureGates"
           },
@@ -1300,14 +1339,19 @@
                   "machineImageVersion": true
                 },
                 "timeWindow": {
-                  "end": "2000-01-23T04:56:07Z",
-                  "start": "2000-01-23T04:56:07Z"
+                  "end": "2000-01-23T04:56:07.000+00:00",
+                  "start": "2000-01-23T04:56:07.000+00:00"
                 }
               },
               "name": "name",
               "network": {
                 "cni": {
-                  "calico": "{}"
+                  "calico": "{}",
+                  "cilium": {
+                    "hubble": {
+                      "enabled": true
+                    }
+                  }
                 },
                 "controlPlane": {
                   "accessScope": "PUBLIC"
@@ -1561,10 +1605,10 @@
               ],
               "status": {
                 "aggregated": "STATE_HEALTHY",
-                "creationTime": "2000-01-23T04:56:07Z",
+                "creationTime": "2000-01-23T04:56:07.000+00:00",
                 "credentialsRotation": {
-                  "lastCompletionTime": "2000-01-23T04:56:07Z",
-                  "lastInitiationTime": "2000-01-23T04:56:07Z",
+                  "lastCompletionTime": "2000-01-23T04:56:07.000+00:00",
+                  "lastInitiationTime": "2000-01-23T04:56:07.000+00:00",
                   "phase": "NEVER"
                 },
                 "egressAddressRanges": [
@@ -1587,23 +1631,23 @@
                 ],
                 "expiration": {
                   "kubernetes": {
-                    "expirationDate": "2000-01-23T04:56:07Z",
+                    "expirationDate": "2000-01-23T04:56:07.000+00:00",
                     "version": "version"
                   },
                   "nodepools": [
                     {
-                      "kubernetesExpirationDate": "2000-01-23T04:56:07Z",
+                      "kubernetesExpirationDate": "2000-01-23T04:56:07.000+00:00",
                       "kubernetesVersion": "kubernetesVersion",
                       "name": "name",
-                      "osExpirationDate": "2000-01-23T04:56:07Z",
+                      "osExpirationDate": "2000-01-23T04:56:07.000+00:00",
                       "osName": "osName",
                       "osVersion": "osVersion"
                     },
                     {
-                      "kubernetesExpirationDate": "2000-01-23T04:56:07Z",
+                      "kubernetesExpirationDate": "2000-01-23T04:56:07.000+00:00",
                       "kubernetesVersion": "kubernetesVersion",
                       "name": "name",
-                      "osExpirationDate": "2000-01-23T04:56:07Z",
+                      "osExpirationDate": "2000-01-23T04:56:07.000+00:00",
                       "osName": "osName",
                       "osVersion": "osVersion"
                     }
@@ -1686,14 +1730,19 @@
                   "machineImageVersion": true
                 },
                 "timeWindow": {
-                  "end": "2000-01-23T04:56:07Z",
-                  "start": "2000-01-23T04:56:07Z"
+                  "end": "2000-01-23T04:56:07.000+00:00",
+                  "start": "2000-01-23T04:56:07.000+00:00"
                 }
               },
               "name": "name",
               "network": {
                 "cni": {
-                  "calico": "{}"
+                  "calico": "{}",
+                  "cilium": {
+                    "hubble": {
+                      "enabled": true
+                    }
+                  }
                 },
                 "controlPlane": {
                   "accessScope": "PUBLIC"
@@ -1947,10 +1996,10 @@
               ],
               "status": {
                 "aggregated": "STATE_HEALTHY",
-                "creationTime": "2000-01-23T04:56:07Z",
+                "creationTime": "2000-01-23T04:56:07.000+00:00",
                 "credentialsRotation": {
-                  "lastCompletionTime": "2000-01-23T04:56:07Z",
-                  "lastInitiationTime": "2000-01-23T04:56:07Z",
+                  "lastCompletionTime": "2000-01-23T04:56:07.000+00:00",
+                  "lastInitiationTime": "2000-01-23T04:56:07.000+00:00",
                   "phase": "NEVER"
                 },
                 "egressAddressRanges": [
@@ -1973,23 +2022,23 @@
                 ],
                 "expiration": {
                   "kubernetes": {
-                    "expirationDate": "2000-01-23T04:56:07Z",
+                    "expirationDate": "2000-01-23T04:56:07.000+00:00",
                     "version": "version"
                   },
                   "nodepools": [
                     {
-                      "kubernetesExpirationDate": "2000-01-23T04:56:07Z",
+                      "kubernetesExpirationDate": "2000-01-23T04:56:07.000+00:00",
                       "kubernetesVersion": "kubernetesVersion",
                       "name": "name",
-                      "osExpirationDate": "2000-01-23T04:56:07Z",
+                      "osExpirationDate": "2000-01-23T04:56:07.000+00:00",
                       "osName": "osName",
                       "osVersion": "osVersion"
                     },
                     {
-                      "kubernetesExpirationDate": "2000-01-23T04:56:07Z",
+                      "kubernetesExpirationDate": "2000-01-23T04:56:07.000+00:00",
                       "kubernetesVersion": "kubernetesVersion",
                       "name": "name",
-                      "osExpirationDate": "2000-01-23T04:56:07Z",
+                      "osExpirationDate": "2000-01-23T04:56:07.000+00:00",
                       "osName": "osName",
                       "osVersion": "osVersion"
                     }
@@ -2062,38 +2111,26 @@
             {
               "cri": [
                 {
-                  "kata": {
-                    "enabled": true
-                  },
                   "name": "containerd"
                 },
                 {
-                  "kata": {
-                    "enabled": true
-                  },
                   "name": "containerd"
                 }
               ],
-              "expirationDate": "2000-01-23T04:56:07Z",
+              "expirationDate": "2000-01-23T04:56:07.000+00:00",
               "state": "state",
               "version": "version"
             },
             {
               "cri": [
                 {
-                  "kata": {
-                    "enabled": true
-                  },
                   "name": "containerd"
                 },
                 {
-                  "kata": {
-                    "enabled": true
-                  },
                   "name": "containerd"
                 }
               ],
-              "expirationDate": "2000-01-23T04:56:07Z",
+              "expirationDate": "2000-01-23T04:56:07.000+00:00",
               "state": "state",
               "version": "version"
             }
@@ -2117,26 +2154,20 @@
         "example": {
           "cri": [
             {
-              "kata": {
-                "enabled": true
-              },
               "name": "containerd"
             },
             {
-              "kata": {
-                "enabled": true
-              },
               "name": "containerd"
             }
           ],
-          "expirationDate": "2000-01-23T04:56:07Z",
+          "expirationDate": "2000-01-23T04:56:07.000+00:00",
           "state": "state",
           "version": "version"
         },
         "properties": {
           "cri": {
             "items": {
-              "$ref": "#/components/schemas/CRI"
+              "$ref": "#/components/schemas/MachineImageVersionCRI"
             },
             "title": "supported container runtimes",
             "type": "array"
@@ -2151,6 +2182,21 @@
           "version": {
             "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$",
             "title": "Image version",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "MachineImageVersionCRI": {
+        "example": {
+          "name": "containerd"
+        },
+        "properties": {
+          "name": {
+            "enum": [
+              "containerd"
+            ],
+            "title": "Name of the cri library",
             "type": "string"
           }
         },
@@ -2197,8 +2243,8 @@
             "machineImageVersion": true
           },
           "timeWindow": {
-            "end": "2000-01-23T04:56:07Z",
-            "start": "2000-01-23T04:56:07Z"
+            "end": "2000-01-23T04:56:07.000+00:00",
+            "start": "2000-01-23T04:56:07.000+00:00"
           }
         },
         "properties": {
@@ -2231,7 +2277,12 @@
       "Network": {
         "example": {
           "cni": {
-            "calico": "{}"
+            "calico": "{}",
+            "cilium": {
+              "hubble": {
+                "enabled": true
+              }
+            }
           },
           "controlPlane": {
             "accessScope": "PUBLIC"
@@ -2454,7 +2505,7 @@
           ],
           "kubernetesVersions": [
             {
-              "expirationDate": "2000-01-23T04:56:07Z",
+              "expirationDate": "2000-01-23T04:56:07.000+00:00",
               "featureGates": {
                 "key": "featureGates"
               },
@@ -2462,7 +2513,7 @@
               "version": "version"
             },
             {
-              "expirationDate": "2000-01-23T04:56:07Z",
+              "expirationDate": "2000-01-23T04:56:07.000+00:00",
               "featureGates": {
                 "key": "featureGates"
               },
@@ -2477,38 +2528,26 @@
                 {
                   "cri": [
                     {
-                      "kata": {
-                        "enabled": true
-                      },
                       "name": "containerd"
                     },
                     {
-                      "kata": {
-                        "enabled": true
-                      },
                       "name": "containerd"
                     }
                   ],
-                  "expirationDate": "2000-01-23T04:56:07Z",
+                  "expirationDate": "2000-01-23T04:56:07.000+00:00",
                   "state": "state",
                   "version": "version"
                 },
                 {
                   "cri": [
                     {
-                      "kata": {
-                        "enabled": true
-                      },
                       "name": "containerd"
                     },
                     {
-                      "kata": {
-                        "enabled": true
-                      },
                       "name": "containerd"
                     }
                   ],
-                  "expirationDate": "2000-01-23T04:56:07Z",
+                  "expirationDate": "2000-01-23T04:56:07.000+00:00",
                   "state": "state",
                   "version": "version"
                 }
@@ -2520,38 +2559,26 @@
                 {
                   "cri": [
                     {
-                      "kata": {
-                        "enabled": true
-                      },
                       "name": "containerd"
                     },
                     {
-                      "kata": {
-                        "enabled": true
-                      },
                       "name": "containerd"
                     }
                   ],
-                  "expirationDate": "2000-01-23T04:56:07Z",
+                  "expirationDate": "2000-01-23T04:56:07.000+00:00",
                   "state": "state",
                   "version": "version"
                 },
                 {
                   "cri": [
                     {
-                      "kata": {
-                        "enabled": true
-                      },
                       "name": "containerd"
                     },
                     {
-                      "kata": {
-                        "enabled": true
-                      },
                       "name": "containerd"
                     }
                   ],
-                  "expirationDate": "2000-01-23T04:56:07Z",
+                  "expirationDate": "2000-01-23T04:56:07.000+00:00",
                   "state": "state",
                   "version": "version"
                 }
@@ -2685,8 +2712,8 @@
       },
       "TimeWindow": {
         "example": {
-          "end": "2000-01-23T04:56:07Z",
-          "start": "2000-01-23T04:56:07Z"
+          "end": "2000-01-23T04:56:07.000+00:00",
+          "start": "2000-01-23T04:56:07.000+00:00"
         },
         "properties": {
           "end": {

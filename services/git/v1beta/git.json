@@ -788,6 +788,26 @@
         ],
         "type": "object"
       },
+      "PatchRunnerPayload": {
+        "description": "Request a runner to be updated supporting the requested list of runtime labels.",
+        "properties": {
+          "familyName": {
+            "description": "The runner's job family name.",
+            "example": "classic",
+            "type": "string"
+          },
+          "labels": {
+            "items": {
+              "example": "stackit-docker",
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "labels"
+        ]
+      },
       "Pipelines": {
         "description": "Feature toggles for instance pipelines",
         "properties": {
@@ -2113,6 +2133,82 @@
           "$ref": "#/components/parameters/InstanceId"
         }
       ],
+      "patch": {
+        "description": "Patches the Runner information.\n",
+        "operationId": "PatchRunner",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchRunnerPayload"
+              }
+            }
+          },
+          "description": "Runner Definition configuration data.",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Runner"
+                }
+              }
+            },
+            "description": "Runner was updated."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorResponse"
+                }
+              }
+            },
+            "description": "Runner not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          }
+        },
+        "summary": "Patch Runner.",
+        "x-stackit-authorization": {
+          "actions": [
+            "git.runner.update"
+          ],
+          "resource-id": "projectId",
+          "resource-id-type": "dynamic",
+          "resource-type": "project"
+        }
+      },
       "post": {
         "description": "Creates the runner associated to this STACKIT Git instance.\n",
         "operationId": "CreateRunner",
@@ -2504,7 +2600,7 @@
     },
     "/v1beta/projects/{projectId}/runner-families": {
       "get": {
-        "description": "A list of runner job families that are available for the project.",
+        "description": "A list of runner families that are available for the project.",
         "operationId": "ListRunnerFamilies",
         "responses": {
           "200": {

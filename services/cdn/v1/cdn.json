@@ -220,8 +220,20 @@
           "cacheConfig": {
             "$ref": "#/components/schemas/CacheConfig"
           },
+          "custom404ErrorResponse": {
+            "description": "Configures a custom origin path to serve when the origin returns a 404 Not Found status (e.g. index.html or /404.html).\nMust not contain a URL scheme.\n",
+            "nullable": true,
+            "type": "string",
+            "x-go-type": "string"
+          },
           "defaultCacheDuration": {
             "description": "Sets the default cache duration for the distribution.\nThe default cache duration is applied when a 'Cache-Control' header is not presented in the origin's response.\nWe use ISO8601 duration format for cache duration (e.g. P1DT2H30M)\n",
+            "nullable": true,
+            "type": "string",
+            "x-go-type": "string"
+          },
+          "defaultRootObject": {
+            "description": "Configures the default root object served when a request targets the root path '/' of the distribution (e.g. index.html or /index.html).\nMust not contain a URL scheme.\n",
             "nullable": true,
             "type": "string",
             "x-go-type": "string"
@@ -338,8 +350,20 @@
           "cacheConfig": {
             "$ref": "#/components/schemas/CacheConfigPatch"
           },
+          "custom404ErrorResponse": {
+            "description": "Configures a custom origin path to serve when the origin returns a 404 Not Found status (e.g. index.html or /404.html).\nMust not contain a URL scheme. Setting to null removes the custom 404 error response.\n",
+            "nullable": true,
+            "type": "string",
+            "x-go-type": "string"
+          },
           "defaultCacheDuration": {
             "description": "Sets the default cache duration for the distribution.\nThe default cache duration is applied when a 'Cache-Control' header is not presented in the origin's response.\nWe use ISO8601 duration format for cache duration (e.g. P1DT2H30M)\n",
+            "nullable": true,
+            "type": "string",
+            "x-go-type": "string"
+          },
+          "defaultRootObject": {
+            "description": "Configures the default root object served when a request targets the root path '/' of the distribution (e.g. index.html or /index.html).\nMust not contain a URL scheme. Setting to null removes the default root object.\n",
             "nullable": true,
             "type": "string",
             "x-go-type": "string"
@@ -448,8 +472,18 @@
           "cacheConfig": {
             "$ref": "#/components/schemas/CacheConfigCreate"
           },
+          "custom404ErrorResponse": {
+            "description": "Configures a custom origin path to serve when the origin returns a 404 Not Found status (e.g. index.html or /404.html).\nMust not contain a URL scheme.\n",
+            "type": "string",
+            "x-go-type": "string"
+          },
           "defaultCacheDuration": {
             "description": "Sets the default cache duration for the distribution.\nThe default cache duration is applied when a 'Cache-Control' header is not presented in the origin's response.\nWe use ISO8601 duration format for cache duration (e.g. P1DT2H30M)\n",
+            "type": "string",
+            "x-go-type": "string"
+          },
+          "defaultRootObject": {
+            "description": "Configures the default root object served when a request targets the root path '/' of the distribution (e.g. index.html or /index.html).\nMust not contain a URL scheme.\n",
             "type": "string",
             "x-go-type": "string"
           },
@@ -2722,8 +2756,53 @@
           "content": {
             "application/json": {
               "examples": {
+                "full Bucket distribution": {
+                  "description": "Creates a Bucket distribution which is served in `EU` and `US`,\nconfigured for hosting a Single Page Application (SPA) from a protected STACKIT Object Storage Bucket.\nThis enables additional features in the initial request like\n- waf\n- geoblocking\n- labels\n- traffic limiting\n- logSink\n- defaultRootObject\n- custom404ErrorResponse\n",
+                  "value": {
+                    "backend": {
+                      "bucketUrl": "https://my-spa-bucket.object.storage.eu01.onstackit.cloud",
+                      "credentials": {
+                        "accessKeyId": "The access key",
+                        "secretAccessKey": "This is a secret"
+                      },
+                      "region": "eu01",
+                      "type": "bucket"
+                    },
+                    "blockedCountries": [
+                      "ES"
+                    ],
+                    "blockedIps": [
+                      "1.2.3.4"
+                    ],
+                    "custom404ErrorResponse": "/index.html",
+                    "defaultRootObject": "index.html",
+                    "intentId": "someRandomValue",
+                    "labels": {
+                      "environment": "production",
+                      "team": "web-development"
+                    },
+                    "logSink": {
+                      "credentials": {
+                        "token": "someBearerToken",
+                        "type": "bearer"
+                      },
+                      "pushUrl": "https://otlp.example.com/v1/logs",
+                      "type": "otlp"
+                    },
+                    "monthlyLimitBytes": 123000000,
+                    "regions": [
+                      "EU",
+                      "US"
+                    ],
+                    "waf": {
+                      "enabledRuleIds": [],
+                      "mode": "ENABLED",
+                      "type": "FREE"
+                    }
+                  }
+                },
                 "full HTTP distribution": {
-                  "description": "Creates a minimal distribution which is served in `EU` and `ASIA`.\nThe upstream host for this example is `httpbin.org`.\nThis enables some features in the initial request like\n- waf\n- geofencing\n- geoblocking\n- originRequestHeaders\n- labels\n- traffic limiting\n- logSink\n",
+                  "description": "Creates a minimal distribution which is served in `EU` and `ASIA`.\nThe upstream host for this example is `httpbin.org`.\nThis enables some features in the initial request like\n- waf\n- geofencing\n- geoblocking\n- originRequestHeaders\n- labels\n- traffic limiting\n- logSink\n- defaultRootObject\n- custom404ErrorResponse\n",
                   "value": {
                     "backend": {
                       "geofencing": {
@@ -2741,6 +2820,8 @@
                     "blockedIps": [
                       "1.2.3.4"
                     ],
+                    "custom404ErrorResponse": "/index.html",
+                    "defaultRootObject": "index.html",
                     "intentId": "someRandomValue",
                     "labels": {
                       "environment": "production",
@@ -2770,7 +2851,7 @@
                   "description": "Creates a minimal distribution which is served in `EU` and `US`.\nThe host is a protected S3 Bucket. By using the Bucket backend,\nwe can provide credentials which the CDN will use to fetch\nassets from the Bucket.\n",
                   "value": {
                     "backend": {
-                      "bucketUrl": "https://s3.example.com",
+                      "bucketUrl": "https://my-bucket.object.storage.eu01.onstackit.cloud",
                       "credentials": {
                         "accessKeyId": "The access key",
                         "secretAccessKey": "This is a secret"

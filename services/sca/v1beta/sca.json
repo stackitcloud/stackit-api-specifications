@@ -694,38 +694,26 @@
         "type": "object"
       },
       "CreateEnvironmentPayload": {
-        "description": "Environment describes an isolated container scope within a project.",
+        "description": "EnvironmentCreate defines the payload to create a new environment.",
         "properties": {
-          "createdAt": {
-            "description": "Creation date in RFC3339 format.",
-            "format": "date-time",
-            "readOnly": true,
-            "type": "string"
-          },
-          "default": {
-            "description": "Is the default environmet.",
-            "readOnly": true,
-            "type": "boolean"
-          },
           "displayName": {
             "description": "Human-readable display name.",
             "example": "sandbox-env",
             "type": "string"
           },
-          "id": {
-            "description": "Environment identifier.",
-            "example": "sca-environment-id",
-            "readOnly": true,
-            "type": "string"
+          "registries": {
+            "description": "Image registry configurations to create alongside the environment.",
+            "items": {
+              "$ref": "#/components/schemas/EnvironmentRegistry"
+            },
+            "type": "array"
           },
-          "region": {
-            "description": "Region of the environment.",
-            "example": "eu01",
-            "readOnly": true,
-            "type": "string"
-          },
-          "status": {
-            "$ref": "#/components/schemas/EnvironmentStatus"
+          "secrets": {
+            "description": "Secrets to create alongside the environment.",
+            "items": {
+              "$ref": "#/components/schemas/EnvironmentSecret"
+            },
+            "type": "array"
           }
         },
         "required": [
